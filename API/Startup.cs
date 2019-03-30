@@ -32,7 +32,7 @@ namespace API
                 options.SwaggerDoc("v1",
                     new Info
                     {
-                        Title = "Supplier Sync System (SSS)",
+                        Title = "SpotyPie API V 1.0",
                         Version = "v1",
                         Description = "For development purpose",
                         TermsOfService = "WTFPL",

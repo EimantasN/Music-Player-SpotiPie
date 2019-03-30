@@ -12,7 +12,7 @@ namespace API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseUrls("http://localhost:9876")
+            .UseUrls("http://localhost:2222")
             .UseStartup<Startup>();
     }
 }
