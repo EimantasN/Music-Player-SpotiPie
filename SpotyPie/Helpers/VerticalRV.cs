@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Models;
 using Square.Picasso;

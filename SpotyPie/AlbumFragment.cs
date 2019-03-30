@@ -1,16 +1,14 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
-using SpotyPie.Models;
-using SpotyPie.Player;
 using Square.Picasso;
 using System;
 using System.Collections.Generic;
@@ -170,7 +168,7 @@ namespace SpotyPie
                 await AlbumSongs.ClearAsync();
                 AlbumSongs.Add(null);
 
-                RestClient Client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/album/" + id + "/tracks");
+                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/" + id + "/tracks");
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)
@@ -199,7 +197,7 @@ namespace SpotyPie
                         AlbumSongs.Add(x);
                         await Task.Delay(200);
                     }
-                    AlbumSongs.RemoveLoading();
+                    //AlbumSongs.RemoveLoading();
                 }
                 else
                 {

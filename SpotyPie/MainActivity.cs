@@ -2,15 +2,14 @@
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
-using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using Java.Lang;
+using Mobile_Api;
+using SpotyPie.Helpers;
 using SpotyPie.Player;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using SupportFragment = Android.Support.V4.App.Fragment;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
@@ -20,6 +19,8 @@ namespace SpotyPie
     [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
     public class MainActivity : AppCompatActivity
     {
+        public SharedService Service = new SharedService();
+
         SupportFragment Home;
         SupportFragment Browse;
         SupportFragment Search;
@@ -212,36 +213,6 @@ namespace SpotyPie
             viewPager.Adapter = adapter;
         }
 
-        public class TabAdapter : FragmentPagerAdapter
-        {
-            public List<SupportFragment> Fragments { get; set; }
-            public List<string> FragmentsNames { get; set; }
-
-            public TabAdapter(SupportFragmentManager sfm) : base(sfm)
-            {
-                Fragments = new List<SupportFragment>();
-                FragmentsNames = new List<string>();
-            }
-
-            public void AddFragment(SupportFragment fragment, string name)
-            {
-                Fragments.Add(fragment);
-                FragmentsNames.Add(name);
-            }
-
-            public override int Count => Fragments.Count;
-
-            public override SupportFragment GetItem(int position)
-            {
-                return Fragments[position];
-            }
-
-            public override ICharSequence GetPageTitleFormatted(int position)
-            {
-                return new Java.Lang.String(FragmentsNames[position]);
-            }
-        }
-
         void LoadFragment(int id)
         {
             if (HeaderContainer.Visibility == ViewStates.Gone)
@@ -277,7 +248,6 @@ namespace SpotyPie
                 .Replace(Resource.Id.content_frame, fragment)
                 .Commit();
         }
-
 
         public void RemoveCurrentFragment()
         {

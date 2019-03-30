@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
@@ -79,7 +80,7 @@ namespace SpotyPie.Library.Fragments
                 await AlbumsData.ClearAsync();
                 AlbumsData.Add(null);
 
-                var client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/album/Albums");
+                var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/Albums");
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
                 IRestResponse response = await client.ExecuteTaskAsync(request);
@@ -99,8 +100,8 @@ namespace SpotyPie.Library.Fragments
                             foreach (var x in albums)
                             {
                                 AlbumsData.Add(x);
-                                if(AlbumsData.Count == 20)
-                                    AlbumsData.RemoveLoading();
+                                //if (AlbumsData.Count == 20)
+                                //AlbumsData.RemoveLoading();
                             }
                             while (AlbumsData.Count != albums.Count)
                                 await Task.Delay(50);
@@ -118,7 +119,7 @@ namespace SpotyPie.Library.Fragments
             }
             finally
             {
-                AlbumsData.RemoveLoading();
+                //AlbumsData.RemoveLoading();
             }
         }
     }
@@ -220,7 +221,7 @@ namespace SpotyPie.Library.Fragments
         {
             for (int i = 0; i < data.Count; i++)
             {
-                string name = data.Get(i).Name;
+                string name = data[i].Name;
                 string index = name.Substring(0, 1);
                 index = index.ToUpper();
 

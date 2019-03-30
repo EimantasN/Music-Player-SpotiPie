@@ -4,8 +4,10 @@ using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
+using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.Models;
 using SpotyPie.Player;
@@ -18,10 +20,8 @@ using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie
 {
-    public class Home : SupportFragment
+    public class Home : FragmentBase
     {
-        View RootView;
-
         //Recent albums
         public List<Album> RecentAlbumsData;
         public RecycleViewList<BlockWithImage> RecentAlbums;
@@ -57,9 +57,9 @@ namespace SpotyPie
         private RecyclerView.Adapter TopPlaylistAdapter;
         private RecyclerView TopPlaylistRecyclerView;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override void InitView()
         {
-            RootView = inflater.Inflate(Resource.Layout.home_layout, container, false);
+            base.InitView();
 
             RecentAlbums = new RecycleViewList<BlockWithImage>();
             BestAlbums = new RecycleViewList<BlockWithImage>();
@@ -81,9 +81,9 @@ namespace SpotyPie
                     MainActivity.Fragment.TranslationX = 0;
                     MainActivity.CurrentFragment = new AlbumFragment();
                     Current_state.SetAlbum(RecentAlbumsData[position]);
-                MainActivity.mSupportFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
-                    .Commit();
+                    MainActivity.mSupportFragmentManager.BeginTransaction()
+                    .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
+                        .Commit();
                 }
             });
 
@@ -173,13 +173,6 @@ namespace SpotyPie
                     .Commit();
                 }
             });
-
-            return RootView;
-        }
-
-        public override void OnDestroyView()
-        {
-            base.OnDestroyView();
         }
 
         public override void OnResume()
@@ -203,28 +196,15 @@ namespace SpotyPie
         {
             try
             {
-                RestClient Client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/album/Recent");
-                var request = new RestRequest(Method.GET);
-                IRestResponse response = await Client.ExecuteGetTaskAsync(request);
-                if (response.IsSuccessful)
+                var albums = await GetService().GetAlbumsAsync(AlbumType.Recent);
+                InvokeOnMainThread(() =>
                 {
-                    List<Album> album = JsonConvert.DeserializeObject<List<Album>>(response.Content);
-                    Application.SynchronizationContext.Post(_ =>
+                    foreach (var x in albums)
                     {
-                        RecentAlbumsData = album;
-                        foreach (var x in album)
-                        {
-                            RecentAlbums.Add(new BlockWithImage(x.Id, RvType.Album, x.Name, JsonConvert.DeserializeObject<List<Artist>>(x.Artists).First().Name, x.Images.First().Url));
-                        }
-                    }, null);
-                }
-                else
-                {
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        Toast.MakeText(this.Context, "Recent Albums API error", ToastLength.Short).Show();
-                    }, null);
-                }
+                        RecentAlbumsData.Add(x);
+                        RecentAlbums.Add(new BlockWithImage(x.Id, RvType.Album, x.Name, JsonConvert.DeserializeObject<List<Artist>>(x.Artists).First().Name, x.Images.First().Url));
+                    }
+                });
             }
             catch (Exception)
             {
@@ -236,7 +216,7 @@ namespace SpotyPie
         {
             try
             {
-                RestClient Client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/album/popular");
+                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/popular");
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)
@@ -269,7 +249,7 @@ namespace SpotyPie
         {
             try
             {
-                RestClient Client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/artist/popular");
+                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/artist/popular");
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)
@@ -325,7 +305,7 @@ namespace SpotyPie
         {
             try
             {
-                RestClient Client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/album/old");
+                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/old");
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)
@@ -358,7 +338,7 @@ namespace SpotyPie
         {
             try
             {
-                RestClient Client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/playlist/playlists");
+                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/playlist/playlists");
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)

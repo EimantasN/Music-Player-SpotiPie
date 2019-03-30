@@ -32,7 +32,7 @@ namespace SpotyPie
         }
         private void SetUpViewPager(ViewPager viewPager)
         {
-            MainActivity.TabAdapter adapter = new MainActivity.TabAdapter(MainActivity.mSupportFragmentManager);
+            TabAdapter adapter = new TabAdapter(MainActivity.mSupportFragmentManager);
             adapter.AddFragment(new Library.Fragments.Playlist(), "Playlists");
             adapter.AddFragment(new Artists(), "Artists");
             adapter.AddFragment(new Albums(), "Albums");

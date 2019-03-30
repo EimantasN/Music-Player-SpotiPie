@@ -155,7 +155,7 @@ namespace SpotyPie.Player
                                 {
                                     player.Reset();
                                     player.SetAudioStreamType(Stream.Music);
-                                    player.SetDataSource("http://spotypie.pertrauktiestaskas.lt/api/stream/play/" + Current_state.Current_Song.Id);
+                                    player.SetDataSource("http://pie.pertrauktiestaskas.lt/api/stream/play/" + Current_state.Current_Song.Id);
                                     player.Prepare();
                                 }
                                 catch (Exception e)

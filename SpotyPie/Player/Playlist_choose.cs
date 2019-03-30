@@ -65,7 +65,7 @@ namespace SpotyPie.Player
                     Snackbar = Snackbar.Make(RootView, "Adding...", Snackbar.LengthIndefinite);
                     Snackbar.Show();
                 }, null);
-                var client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/Playlist/" + id + "/tracks");
+                var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Playlist/" + id + "/tracks");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Postman-Token", "76285a40-ead5-4f55-8863-1ccbcb6d61d8");
                 request.AddHeader("cache-control", "no-cache");
@@ -130,7 +130,7 @@ namespace SpotyPie.Player
                 await Playlist.ClearAsync();
                 Playlist.Add(null);
 
-                RestClient Client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/Playlist/playlists");
+                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Playlist/playlists");
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)
@@ -143,7 +143,7 @@ namespace SpotyPie.Player
                         Playlist.Add(x);
                         await Task.Delay(200);
                     }
-                    Playlist.RemoveLoading();
+                    //Playlist.RemoveLoading();
                 }
                 else
                 {

@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Models;
@@ -55,7 +56,7 @@ namespace SpotyPie
 
                 async Task Update()
                 {
-                    var client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/songs/1/update");
+                    var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/songs/1/update");
                     var request = new RestRequest(Method.GET);
                     request.AddHeader("cache-control", "no-cache");
                     IRestResponse response = await client.ExecuteTaskAsync(request);
@@ -108,7 +109,7 @@ namespace SpotyPie
             Task.Run(() => Update());
             async Task Update()
             {
-                client.BaseUrl = new System.Uri("http://spotypie.pertrauktiestaskas.lt/api/album/update/" + album.Id);
+                client.BaseUrl = new System.Uri("http://pie.pertrauktiestaskas.lt/api/album/update/" + album.Id);
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
                 IRestResponse response = await client.ExecuteTaskAsync(request);

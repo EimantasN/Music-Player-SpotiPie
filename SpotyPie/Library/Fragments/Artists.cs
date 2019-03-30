@@ -72,7 +72,7 @@ namespace SpotyPie.Library.Fragments
             {
                 await ArtistsData.ClearAsync();
                 ArtistsData.Add(null);
-                var client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/Artist/Artists");
+                var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Artist/Artists");
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
                 IRestResponse response = await client.ExecuteTaskAsync(request);
@@ -102,7 +102,7 @@ namespace SpotyPie.Library.Fragments
             }
             finally
             {
-                ArtistsData.RemoveLoading();
+                //ArtistsData.RemoveLoading();
             }
         }
     }

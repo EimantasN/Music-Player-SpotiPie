@@ -3,13 +3,13 @@ using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
 using SpotyPie.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
@@ -61,7 +61,7 @@ namespace SpotyPie.Player
         {
             try
             {
-                RestClient Client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/album/" + id + "/tracks");
+                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/" + id + "/tracks");
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)

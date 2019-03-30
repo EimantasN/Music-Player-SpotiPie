@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SpotyPie
+namespace Mobile_Api.Models
 {
     public class Image
     {

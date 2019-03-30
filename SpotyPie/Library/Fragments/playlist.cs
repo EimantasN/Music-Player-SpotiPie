@@ -75,7 +75,7 @@ namespace SpotyPie.Library.Fragments
                 await PlaylistsData.ClearAsync();
                 PlaylistsData.Add(null);
 
-                var client = new RestClient("http://spotypie.pertrauktiestaskas.lt/api/Playlist/playlists");
+                var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Playlist/playlists");
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
                 IRestResponse response = await client.ExecuteTaskAsync(request);
@@ -105,7 +105,7 @@ namespace SpotyPie.Library.Fragments
             }
             finally
             {
-                PlaylistsData.RemoveLoading();
+                //PlaylistsData.RemoveLoading();
             }
         }
 

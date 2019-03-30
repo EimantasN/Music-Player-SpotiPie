@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Support.V7.Widget;
 using Android.Widget;
@@ -83,6 +83,11 @@ namespace SpotyPie.Helpers
                 }
                 Adapter.NotifyDataSetChanged();
             }, null);
+        }
+
+        internal Task ClearAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

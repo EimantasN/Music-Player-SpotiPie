@@ -18,7 +18,7 @@
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -33,7 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
-    <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidLinkMode>Full</AndroidLinkMode>
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <MandroidI18n>CJK;Mideast;Rare;West</MandroidI18n>
@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="AlbumFragment.cs" />
     <Compile Include="API_data.cs" />
+    <Compile Include="Base\FragmentBase.cs" />
     <Compile Include="Browse.cs" />
     <Compile Include="Current_state.cs" />
     <Compile Include="Helpers\BoxedRV.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Helpers\RecycleViewList.cs" />
     <Compile Include="Helpers\RV_click.cs" />
     <Compile Include="Helpers\Rv_OnTouch.cs" />
+    <Compile Include="Helpers\TabAdapter.cs" />
     <Compile Include="Helpers\VerticalRV.cs" />
     <Compile Include="Home.cs" />
     <Compile Include="Library\Fragments\Albums.cs" />
@@ -81,8 +83,6 @@
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Copyright.cs" />
     <Compile Include="Models\FrontEnd.cs" />
-    <Compile Include="Models\Image.cs" />
-    <Compile Include="Models\Item.cs" />
     <Compile Include="Models\List.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\Track.cs" />
@@ -444,6 +444,12 @@
     <AndroidResource Include="Resources\layout\playlist_list_choose.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mobile_Api\Mobile_Api.csproj">
+      <Project>{a3616152-df6e-4dcf-95b4-716d94fd7a8e}</Project>
+      <Name>Mobile_Api</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
