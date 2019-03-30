@@ -18,7 +18,6 @@
   <ItemGroup>
     <PackageReference Include="Config.Net" Version="4.13.2" />
     <PackageReference Include="Config.Net.Json" Version="4.13.2" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
