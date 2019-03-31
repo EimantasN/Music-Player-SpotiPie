@@ -1,4 +1,5 @@
 ﻿using Mobile_Api.Models;
+using Mobile_Api.Models.Enums;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -11,15 +12,37 @@ namespace Mobile_Api
     {
 
         ///api/album/Recent
-        public async Task<List<Album>> GetAlbumsAsync(AlbumType type)
+        public async Task<List<T>> GetListAsync<T>(AlbumType type)
+        {
+            CustomRestClient Client = GetClient("api/album/" + type);
+            return await GetList<T>(Client);
+        }
+
+        public async Task<List<T>> GetListAsync<T>(ArtistType type)
+        {
+            CustomRestClient Client = GetClient("api/artist/" + type);
+            return await GetList<T>(Client);
+        }
+
+        public async Task<List<T>> GetListAsync<T>(PlaylistType type)
+        {
+            CustomRestClient Client = GetClient("api/playlist/" + type);
+            return await GetList<T>(Client);
+        }
+
+        private async Task<List<T>> GetList<T>(CustomRestClient client)
         {
             try
             {
-                return await GetClient("api/album/" + type).CustomExecuteTaskAsync<Album>(Method.GET);
+                return await client.CustomExecuteTaskAsync<T>(Method.GET);
             }
             catch (Exception e)
             {
-                return new List<Album>();
+                return new List<T>();
+            }
+            finally
+            {
+                Release(client);
             }
         }
     }

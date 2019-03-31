@@ -29,13 +29,14 @@ namespace Mobile_Api
                 if (client != null)
                 {
                     client.LockClient();
-                    return client.GetClient();
+                    return client.GetClient(url);
                 }
                 else
                 {
                     client = new Client();
+                    client.LockClient();
                     _ClientList.Add(client);
-                    return client.GetClient();
+                    return client.GetClient(url);
                 }
             }
         }
@@ -47,7 +48,7 @@ namespace Mobile_Api
                 if (client == null)
                     return;
 
-                _ClientList.First(x => x.GetClient().Id == client.Id).ReleaseClient();
+                _ClientList.First(x => x.GetId() == client.GetId()).ReleaseClient();
             }
         }
     }

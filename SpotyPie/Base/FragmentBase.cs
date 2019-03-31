@@ -13,9 +13,14 @@ namespace SpotyPie.Base
 
         private MainActivity ParentActivity;
 
+        public virtual int GetLayout()
+        {
+            return Resource.Layout.home_layout;
+        }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            RootView = inflater.Inflate(Resource.Layout.home_layout, container, false);
+            RootView = inflater.Inflate(GetLayout(), container, false);
 
             ParentActivity = (MainActivity)this.Activity;
 
@@ -32,7 +37,7 @@ namespace SpotyPie.Base
         {
             Application.SynchronizationContext.Post(_ =>
             {
-
+                action.Invoke();
             }, null);
         }
 

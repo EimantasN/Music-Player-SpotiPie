@@ -11,6 +11,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
@@ -19,12 +20,12 @@ using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Library.Fragments
 {
-    public class Playlist : SupportFragment
+    public class PlaylistFragment : SupportFragment
     {
         View RootView;
 
-        public List<SpotyPie.Playlist> PlaylistLocal;
-        public RecycleViewList<SpotyPie.Playlist> PlaylistsData;
+        public List<Playlist> PlaylistLocal;
+        public RecycleViewList<Playlist> PlaylistsData;
         private RecyclerView.LayoutManager PlaylistSongsLayoutManager;
         private RecyclerView.Adapter PlaylistSongsAdapter;
         private RecyclerView PlaylistsSongsRecyclerView;
@@ -33,8 +34,8 @@ namespace SpotyPie.Library.Fragments
         {
             RootView = inflater.Inflate(Resource.Layout.library_playlist_layout, container, false);
 
-            PlaylistLocal = new List<SpotyPie.Playlist>();
-            PlaylistsData = new RecycleViewList<SpotyPie.Playlist>();
+            PlaylistLocal = new List<Playlist>();
+            PlaylistsData = new RecycleViewList<Playlist>();
             PlaylistSongsLayoutManager = new LinearLayoutManager(this.Activity);
             PlaylistsSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.playlist);
             PlaylistsSongsRecyclerView.SetLayoutManager(PlaylistSongsLayoutManager);
@@ -81,7 +82,7 @@ namespace SpotyPie.Library.Fragments
                 IRestResponse response = await client.ExecuteTaskAsync(request);
                 if (response.IsSuccessful)
                 {
-                    var playlists = JsonConvert.DeserializeObject<List<SpotyPie.Playlist>>(response.Content);
+                    var playlists = JsonConvert.DeserializeObject<List<Playlist>>(response.Content);
                     if (playlists != null && playlists.Count > 0)
                     {
                         if (playlists.Count != PlaylistLocal.Count)
@@ -111,10 +112,10 @@ namespace SpotyPie.Library.Fragments
 
         public class PlaylistRV : RecyclerView.Adapter
         {
-            private RecycleViewList<SpotyPie.Playlist> Dataset;
+            private RecycleViewList<Playlist> Dataset;
             private Context Context;
 
-            public PlaylistRV(RecycleViewList<SpotyPie.Playlist> data, Context context)
+            public PlaylistRV(RecycleViewList<Playlist> data, Context context)
             {
                 Dataset = data;
                 Context = context;

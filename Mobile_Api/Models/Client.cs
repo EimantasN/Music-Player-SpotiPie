@@ -13,13 +13,19 @@ namespace Mobile_Api.Models
         public Client()
         {
             RestClient = new CustomRestClient();
-            IsFree = false;
+            IsFree = true;
             UsedTime = 0;
             LastUsed = DateTime.Now;
         }
 
-        public CustomRestClient GetClient()
+        public long GetId()
         {
+            return RestClient.Id;
+        }
+
+        public CustomRestClient GetClient(string url)
+        {
+            RestClient.BaseUrl = new Uri(url);
             return RestClient;
         }
 
@@ -47,6 +53,7 @@ namespace Mobile_Api.Models
         public void ReleaseClient()
         {
             this.IsFree = true;
+            IncreaseUsedTime();
             UpdateUseTime();
         }
     }

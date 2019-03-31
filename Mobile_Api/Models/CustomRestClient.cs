@@ -8,9 +8,9 @@ namespace Mobile_Api.Models
 {
     public class CustomRestClient : RestClient
     {
-        private static RestRequest GET { get; set; } = new RestRequest(Method.GET);
+        private static IRestRequest GET { get; set; } = new RestRequest(Method.GET);
 
-        private static RestRequest POST { get; set; } = new RestRequest(Method.POST);
+        private static IRestRequest POST { get; set; } = new RestRequest(Method.POST);
 
         private bool Active { get; set; }
 
@@ -18,13 +18,18 @@ namespace Mobile_Api.Models
 
         public CustomRestClient()
         {
-
+            Id = DateTime.Now.Ticks;
         }
 
         public CustomRestClient(string baseUrl)
         {
             Id = DateTime.Now.Ticks;
             BaseUrl = new Uri(baseUrl);
+        }
+
+        public long GetId()
+        {
+            return Id;
         }
 
         private IRestRequest GetRequest(Method method)
@@ -42,14 +47,26 @@ namespace Mobile_Api.Models
 
         public async Task<List<T>> CustomExecuteTaskAsync<T>(Method method)
         {
-            IRestResponse response = await base.ExecuteTaskAsync(GetRequest(method));
-            if (response.IsSuccessful)
+            try
             {
-                return JsonConvert.DeserializeObject<List<T>>(response.Content);
+                IRestResponse response;
+                if (method == Method.GET)
+                    response = await base.ExecuteGetTaskAsync(GET);
+                else
+                    response = await base.ExecuteTaskAsync(POST);
+
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<List<T>>(response.Content);
+                }
+                else
+                {
+                    return new List<T>();
+                }
             }
-            else
+            catch (Exception e)
             {
-                return new List<T>();
+                throw e;
             }
         }
 
