@@ -25,7 +25,7 @@ namespace SpotyPie.Library.Fragments
         View RootView;
 
         public List<Playlist> PlaylistLocal;
-        public RecycleViewList<Playlist> PlaylistsData;
+        public RvList<Playlist> PlaylistsData;
         private RecyclerView.LayoutManager PlaylistSongsLayoutManager;
         private RecyclerView.Adapter PlaylistSongsAdapter;
         private RecyclerView PlaylistsSongsRecyclerView;
@@ -35,7 +35,7 @@ namespace SpotyPie.Library.Fragments
             RootView = inflater.Inflate(Resource.Layout.library_playlist_layout, container, false);
 
             PlaylistLocal = new List<Playlist>();
-            PlaylistsData = new RecycleViewList<Playlist>();
+            PlaylistsData = new RvList<Playlist>();
             PlaylistSongsLayoutManager = new LinearLayoutManager(this.Activity);
             PlaylistsSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.playlist);
             PlaylistsSongsRecyclerView.SetLayoutManager(PlaylistSongsLayoutManager);
@@ -112,10 +112,10 @@ namespace SpotyPie.Library.Fragments
 
         public class PlaylistRV : RecyclerView.Adapter
         {
-            private RecycleViewList<Playlist> Dataset;
+            private RvList<Playlist> Dataset;
             private Context Context;
 
-            public PlaylistRV(RecycleViewList<Playlist> data, Context context)
+            public PlaylistRV(RvList<Playlist> data, Context context)
             {
                 Dataset = data;
                 Context = context;

@@ -36,7 +36,7 @@ namespace SpotyPie
 
         //Album Songs
         public List<Item> AlbumSongsItem;
-        public RecycleViewList<Item> AlbumSongs;
+        public RvList<Item> AlbumSongs;
         private RecyclerView.LayoutManager AlbumSongsLayoutManager;
         private RecyclerView.Adapter AlbumSongsAdapter;
         private RecyclerView AlbumSongsRecyclerView;
@@ -104,7 +104,7 @@ namespace SpotyPie
             ScrollFather.ScrollChange += Scroll_ScrollChange;
 
             //ALBUM song list
-            AlbumSongs = new RecycleViewList<Item>();
+            AlbumSongs = new RvList<Item>();
             AlbumSongsItem = new List<Item>();
             AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
             AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);

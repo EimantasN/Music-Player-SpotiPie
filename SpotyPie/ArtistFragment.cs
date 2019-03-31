@@ -38,14 +38,14 @@ namespace SpotyPie
 
         //Artist Songs
         public List<Item> ArtistTopSongsData;
-        public RecycleViewList<Item> ArtistTopSongs;
+        public RvList<Item> ArtistTopSongs;
         private RecyclerView.LayoutManager ArtistSongsLayoutManager;
         private RecyclerView.Adapter ArtistSongsAdapter;
         private RecyclerView ArtistSongsRecyclerView;
 
         //Artist Albums
         List<Album> AlbumsData;
-        public RecycleViewList<TwoBlockWithImage> Albums;
+        public RvList<TwoBlockWithImage> Albums;
         private RecyclerView.LayoutManager AlbumsLayoutManager;
         private RecyclerView.Adapter AlbumsAdapter;
         private RecyclerView AlbumsRecyclerView;
@@ -105,7 +105,7 @@ namespace SpotyPie
             //Artist song list
 
             ArtistTopSongsData = new List<Item>();
-            ArtistTopSongs = new RecycleViewList<Item>();
+            ArtistTopSongs = new RvList<Item>();
             ArtistSongsLayoutManager = new LinearLayoutManager(this.Activity);
             ArtistSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
             ArtistSongsRecyclerView.SetLayoutManager(ArtistSongsLayoutManager);
@@ -116,7 +116,7 @@ namespace SpotyPie
 
             //Artist song list
             AlbumsData = new List<Album>();
-            Albums = new RecycleViewList<TwoBlockWithImage>();
+            Albums = new RvList<TwoBlockWithImage>();
             AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
             AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artist_albums_list);
             AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);

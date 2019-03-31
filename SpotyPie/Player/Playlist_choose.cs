@@ -21,7 +21,7 @@ namespace SpotyPie.Player
 
         //Album Songs
         public List<Playlist> PlaylistItem = new List<Playlist>();
-        public RecycleViewList<Playlist> Playlist = new RecycleViewList<Playlist>();
+        public RvList<Playlist> Playlist = new RvList<Playlist>();
         private RecyclerView.LayoutManager PlaylistsLayoutManager;
         private RecyclerView.Adapter PlaylistsAdapter;
         private RecyclerView PlaylistRecyclerView;
@@ -162,10 +162,10 @@ namespace SpotyPie.Player
 
         public class PlayListChoose : RecyclerView.Adapter
         {
-            private RecycleViewList<Playlist> Dataset;
+            private RvList<Playlist> Dataset;
             private Context Context;
 
-            public PlayListChoose(RecycleViewList<Playlist> data, Context context)
+            public PlayListChoose(RvList<Playlist> data, Context context)
             {
                 Dataset = data;
                 Context = context;

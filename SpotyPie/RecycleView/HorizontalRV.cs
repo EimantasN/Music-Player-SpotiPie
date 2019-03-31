@@ -1,27 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
+﻿using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using SpotyPie.Models;
 using Square.Picasso;
 
-namespace SpotyPie.Helpers
+namespace SpotyPie.RecycleView
 {
     public class HorizontalRV : RecyclerView.Adapter
     {
-        private RecycleViewList<BlockWithImage> Dataset;
+        private SpotyPie.RecycleView.RvList<BlockWithImage> Dataset;
         private readonly RecyclerView mRecyclerView;
         private Context Context;
 
-        public HorizontalRV(RecycleViewList<BlockWithImage> data, RecyclerView recyclerView, Context context)
+        public HorizontalRV(SpotyPie.RecycleView.RvList<BlockWithImage> data, RecyclerView recyclerView, Context context)
         {
             Dataset = data;
             mRecyclerView = recyclerView;

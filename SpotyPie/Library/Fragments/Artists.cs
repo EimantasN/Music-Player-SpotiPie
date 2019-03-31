@@ -25,7 +25,7 @@ namespace SpotyPie.Library.Fragments
         View RootView;
 
         public List<Artist> ArtistsLocal = new List<Artist>();
-        public RecycleViewList<Artist> ArtistsData = new RecycleViewList<Artist>();
+        public RvList<Artist> ArtistsData = new RvList<Artist>();
         private RecyclerView.LayoutManager ArtistsSongsLayoutManager;
         private RecyclerView.Adapter ArtistsSongsAdapter;
         private RecyclerView ArtistsSongsRecyclerView;
@@ -110,10 +110,10 @@ namespace SpotyPie.Library.Fragments
 
     public class ArtistRV : RecyclerView.Adapter
     {
-        private RecycleViewList<Artist> Dataset;
+        private RvList<Artist> Dataset;
         private Context Context;
 
-        public ArtistRV(RecycleViewList<Artist> data, Context context)
+        public ArtistRV(RvList<Artist> data, Context context)
         {
             Dataset = data;
             Context = context;

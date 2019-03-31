@@ -19,10 +19,10 @@ namespace SpotyPie.Helpers
 {
     public class VerticalRV : RecyclerView.Adapter
     {
-        private RecycleViewList<Item> Dataset;
+        private RvList<Item> Dataset;
         private Context Context;
 
-        public VerticalRV(RecycleViewList<Item> data, Context context)
+        public VerticalRV(RvList<Item> data, Context context)
         {
             Dataset = data;
             Context = context;

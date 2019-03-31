@@ -26,19 +26,19 @@ namespace SpotyPie
 
         //List Songs
         public List<Item> SearchSongs;
-        public RecycleViewList<Item> Songs;
+        public RvList<Item> Songs;
         private RecyclerView.LayoutManager SongsLayoutManager;
         private RecyclerView.Adapter SongsAdapter;
         private RecyclerView SongsRecyclerView;
 
         public List<Album> AlbumsData;
-        public RecycleViewList<TwoBlockWithImage> Albums = new RecycleViewList<TwoBlockWithImage>();
+        public RvList<TwoBlockWithImage> Albums = new RvList<TwoBlockWithImage>();
         private RecyclerView.LayoutManager AlbumsLayoutManager;
         private RecyclerView.Adapter AlbumsAdapter;
         private RecyclerView AlbumsRecyclerView;
 
         public List<Artist> ArtistsData;
-        public RecycleViewList<Artist> Artists;
+        public RvList<Artist> Artists;
         private RecyclerView.LayoutManager ArtistsLayoutManager;
         private RecyclerView.Adapter ArtistsAdapter;
         private RecyclerView ArtistsRecyclerView;
@@ -84,7 +84,7 @@ namespace SpotyPie
 
             // song list
             SearchSongs = new List<Item>();
-            Songs = new RecycleViewList<Item>();
+            Songs = new RvList<Item>();
             SongsLayoutManager = new LinearLayoutManager(this.Activity);
             SongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_rv);
             SongsRecyclerView.SetLayoutManager(SongsLayoutManager);
@@ -136,7 +136,7 @@ namespace SpotyPie
 
             //ARTIST RV
             ArtistsData = new List<Artist>();
-            Artists = new RecycleViewList<Artist>();
+            Artists = new RvList<Artist>();
             ArtistsLayoutManager = new LinearLayoutManager(this.Activity);
             ArtistsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artists_rv);
             ArtistsRecyclerView.SetLayoutManager(ArtistsLayoutManager);

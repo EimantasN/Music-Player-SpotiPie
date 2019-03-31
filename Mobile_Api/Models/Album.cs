@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Mobile_Api.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Album
+    public class Album : IRvModel
     {
         public int Id { get; set; }
 

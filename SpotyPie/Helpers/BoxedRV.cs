@@ -9,11 +9,11 @@ namespace SpotyPie.Helpers
 {
     public class BoxedRV : RecyclerView.Adapter
     {
-        private RecycleViewList<TwoBlockWithImage> Dataset;
+        private RvList<TwoBlockWithImage> Dataset;
         private readonly RecyclerView mRecyclerView;
         private Context Context;
 
-        public BoxedRV(RecycleViewList<TwoBlockWithImage> data, RecyclerView recyclerView, Context context)
+        public BoxedRV(RvList<TwoBlockWithImage> data, RecyclerView recyclerView, Context context)
         {
             Dataset = data;
             mRecyclerView = recyclerView;

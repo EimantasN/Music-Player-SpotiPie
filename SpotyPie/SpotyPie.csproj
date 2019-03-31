@@ -66,7 +66,7 @@
     <Compile Include="Browse.cs" />
     <Compile Include="Current_state.cs" />
     <Compile Include="Helpers\BoxedRV.cs" />
-    <Compile Include="Helpers\HorizontalRV.cs" />
+    <Compile Include="RecycleView\HorizontalRV.cs" />
     <Compile Include="Helpers\IFastScrollRecyclerViewAdapter.cs" />
     <Compile Include="Helpers\RecycleViewList.cs" />
     <Compile Include="Helpers\RV_click.cs" />
@@ -90,6 +90,8 @@
     <Compile Include="Player\Playlist_choose.cs" />
     <Compile Include="PlaylistSongList.cs" />
     <Compile Include="Playlist_view.cs" />
+    <Compile Include="RecycleView\BaseRecycleView.cs" />
+    <Compile Include="RecycleView\RvList.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search.cs" />

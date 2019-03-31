@@ -13,6 +13,11 @@ namespace SpotyPie.Base
 
         private MainActivity ParentActivity;
 
+        public View GetView()
+        {
+            return RootView;
+        }
+
         public virtual int GetLayout()
         {
             return Resource.Layout.home_layout;

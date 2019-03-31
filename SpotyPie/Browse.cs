@@ -1,22 +1,16 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
+﻿using Android.Content;
 using Android.Support.V7.Widget;
-using Android.Views;
-using Android.Widget;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using Newtonsoft.Json;
-using RestSharp;
 using SpotyPie.Base;
-using SpotyPie.Helpers;
 using SpotyPie.Models;
 using SpotyPie.Player;
+using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie
 {
@@ -24,38 +18,23 @@ namespace SpotyPie
     {
         //Recent albums
         public List<Album> RecentAlbumsData;
-        public RecycleViewList<BlockWithImage> RecentAlbums;
-        private RecyclerView.LayoutManager RecentAlbumsLayoutManager;
-        private RecyclerView.Adapter RecentAlbumsAdapter;
-        private RecyclerView RecentAlbumsRecyclerView;
+        public RvList<BlockWithImage> RecentAlbums;
 
         //Best albums
         public List<Album> BestAlbumsData;
-        public RecycleViewList<BlockWithImage> BestAlbums;
-        private RecyclerView.LayoutManager BestAlbumsLayoutManager;
-        private RecyclerView.Adapter BestAlbumsAdapter;
-        private RecyclerView BestAlbumsRecyclerView;
+        public RvList<BlockWithImage> BestAlbums;
 
         //Best artists
-        public List<Artist> BestArtistList;
-        public RecycleViewList<BlockWithImage> BestArtists;
-        private RecyclerView.LayoutManager BestArtistsLayoutManager;
-        private RecyclerView.Adapter BestArtistsAdapter;
-        private RecyclerView BestArtistsRecyclerView;
+        public List<Artist> BestArtistData;
+        public RvList<BlockWithImage> BestArtists;
 
         //Jump back albums
         public List<Album> JumpBackData;
-        public RecycleViewList<BlockWithImage> JumpBack;
-        private RecyclerView.LayoutManager JumpBackLayoutManager;
-        private RecyclerView.Adapter JumpBackAdapter;
-        private RecyclerView JumpBackRecyclerView;
+        public RvList<BlockWithImage> JumpBack;
 
         //Top playlist
         public List<Playlist> TopPlaylistData;
-        public RecycleViewList<BlockWithImage> TopPlaylist;
-        private RecyclerView.LayoutManager TopPlaylistLayoutManager;
-        private RecyclerView.Adapter TopPlaylistAdapter;
-        private RecyclerView TopPlaylistRecyclerView;
+        public RvList<BlockWithImage> TopPlaylist;
 
         public override int GetLayout()
         {
@@ -65,119 +44,11 @@ namespace SpotyPie
         protected override void InitView()
         {
             base.InitView();
-
-            RecentAlbums = new RecycleViewList<BlockWithImage>();
-            BestAlbums = new RecycleViewList<BlockWithImage>();
-            BestArtists = new RecycleViewList<BlockWithImage>();
-            JumpBack = new RecycleViewList<BlockWithImage>();
-            TopPlaylist = new RecycleViewList<BlockWithImage>();
-            //RECENT ALBUMS
-            RecentAlbumsLayoutManager = new LinearLayoutManager(this.Activity, LinearLayoutManager.Horizontal, false);
-            RecentAlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.recent_rv);
-            RecentAlbumsRecyclerView.SetLayoutManager(RecentAlbumsLayoutManager);
-            RecentAlbumsAdapter = new HorizontalRV(RecentAlbums, RecentAlbumsRecyclerView, this.Context);
-            RecentAlbums.Adapter = RecentAlbumsAdapter;
-            RecentAlbumsRecyclerView.SetAdapter(RecentAlbumsAdapter);
-
-            RecentAlbumsRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (RecentAlbumsRecyclerView != null && RecentAlbumsRecyclerView.ChildCount != 0)
-                {
-                    MainActivity.Fragment.TranslationX = 0;
-                    MainActivity.CurrentFragment = new AlbumFragment();
-                    Current_state.SetAlbum(RecentAlbumsData[position]);
-                    MainActivity.mSupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
-                        .Commit();
-                }
-            });
-
-            //MOST POLULAR ALL TIME ALBUMS
-            BestAlbumsLayoutManager = new LinearLayoutManager(this.Activity, LinearLayoutManager.Horizontal, false);
-            BestAlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.best_albums_rv);
-            BestAlbumsRecyclerView.SetLayoutManager(BestAlbumsLayoutManager);
-            BestAlbumsAdapter = new HorizontalRV(BestAlbums, BestAlbumsRecyclerView, this.Context);
-            BestAlbums.Adapter = BestAlbumsAdapter;
-            BestAlbumsRecyclerView.SetAdapter(BestAlbumsAdapter);
-
-            BestAlbumsRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (BestAlbumsRecyclerView != null && BestAlbumsRecyclerView.ChildCount != 0)
-                {
-                    MainActivity.Fragment.TranslationX = 0;
-                    MainActivity.CurrentFragment = new AlbumFragment();
-                    Current_state.SetAlbum(BestAlbumsData[position]);
-                    MainActivity.mSupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
-                    .Commit();
-                }
-            });
-
-
-
-            //MOST POPULAR ARTISTS
-            BestArtistsLayoutManager = new LinearLayoutManager(this.Activity, LinearLayoutManager.Horizontal, false);
-            BestArtistsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.best_artists_rv);
-            BestArtistsRecyclerView.SetLayoutManager(BestArtistsLayoutManager);
-            BestArtistsAdapter = new HorizontalRV(BestArtists, BestArtistsRecyclerView, this.Context);
-            BestArtists.Adapter = BestArtistsAdapter;
-            BestArtistsRecyclerView.SetAdapter(BestArtistsAdapter);
-
-            BestArtistsRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (BestArtistsRecyclerView != null && BestArtistsRecyclerView.ChildCount != 0)
-                {
-                    MainActivity.Fragment.TranslationX = 0;
-                    MainActivity.CurrentFragment = new ArtistFragment();
-                    Current_state.SetArtist(BestArtistList[position]);
-                    MainActivity.mSupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
-                    .Commit();
-                }
-            });
-
-            //OLD ALBUMS AND SONGS
-            JumpBackLayoutManager = new LinearLayoutManager(this.Activity, LinearLayoutManager.Horizontal, false);
-            JumpBackRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums_old_rv);
-            BestAlbumsRecyclerView.SetLayoutManager(JumpBackLayoutManager);
-            JumpBackAdapter = new HorizontalRV(JumpBack, JumpBackRecyclerView, this.Context);
-            JumpBack.Adapter = JumpBackAdapter;
-            JumpBackRecyclerView.SetAdapter(JumpBackAdapter);
-
-            JumpBackRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (JumpBackRecyclerView != null && JumpBackRecyclerView.ChildCount != 0)
-                {
-                    MainActivity.Fragment.TranslationX = 0;
-                    MainActivity.CurrentFragment = new AlbumFragment();
-                    Current_state.SetAlbum(JumpBackData[position]);
-                    MainActivity.mSupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
-                    .Commit();
-                }
-            });
-
-
-            //MOST POLUPAR USER PLAYLISTS
-            TopPlaylistLayoutManager = new LinearLayoutManager(this.Activity, LinearLayoutManager.Horizontal, false);
-            TopPlaylistRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.playlist_rv);
-            BestAlbumsRecyclerView.SetLayoutManager(TopPlaylistLayoutManager);
-            TopPlaylistAdapter = new HorizontalRV(TopPlaylist, TopPlaylistRecyclerView, this.Context);
-            TopPlaylist.Adapter = TopPlaylistAdapter;
-            TopPlaylistRecyclerView.SetAdapter(TopPlaylistAdapter);
-
-            TopPlaylistRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (TopPlaylistRecyclerView != null && TopPlaylistRecyclerView.ChildCount != 0)
-                {
-                    MainActivity.Fragment.TranslationX = 0;
-                    MainActivity.CurrentFragment = new Playlist_view();
-                    Current_state.Current_Playlist = TopPlaylistData[position];
-                    MainActivity.mSupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
-                    .Commit();
-                }
-            });
+            RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv, RecentAlbumsData).Setup();
+            BestAlbums = new BaseRecycleView<Album>(this, Resource.Id.best_albums_rv, BestAlbumsData).Setup();
+            //BestArtists = new BaseRecycleView<Album>(this, Resource.Id.best_artists_rv, BestArtistData).Setup();
+            JumpBack = new BaseRecycleView<Album>(this, Resource.Id.albums_old_rv, JumpBackData).Setup();
+            //TopPlaylist = new BaseRecycleView<Album>(this, Resource.Id.playlist_rv, TopPlaylistData).Setup();
         }
 
         public override void OnResume()
@@ -187,11 +58,11 @@ namespace SpotyPie
 
             Task.Run(() => GetPolularAlbumsAsync(this.Context));
 
-            Task.Run(() => GetPolularArtistsAsync(this.Context));
+            //Task.Run(() => GetPolularArtistsAsync(this.Context));
 
             Task.Run(() => GetOldAlbumsAsync(this.Context));
 
-            Task.Run(() => GetPlaylists(this.Context));
+            //Task.Run(() => GetPlaylists(this.Context));
         }
 
         public async Task GetRecentAlbumsAsync(Context cnt)
@@ -241,7 +112,7 @@ namespace SpotyPie
                 var artists = await GetService().GetListAsync<Artist>(ArtistType.Popular);
                 InvokeOnMainThread(() =>
                 {
-                    BestArtistList = artists;
+                    BestArtistData = artists;
                     foreach (var x in artists)
                     {
                         string DisplayGenre;

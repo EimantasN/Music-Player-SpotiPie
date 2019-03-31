@@ -21,7 +21,7 @@ namespace SpotyPie.Player
 
         //Album Songs
         public static List<Item> AlbumSongsItem = new List<Item>();
-        public static RecycleViewList<Item> AlbumSongs = new RecycleViewList<Item>();
+        public static RvList<Item> AlbumSongs = new RvList<Item>();
         private RecyclerView.LayoutManager AlbumSongsLayoutManager;
         private static RecyclerView.Adapter AlbumSongsAdapter;
         private static RecyclerView AlbumSongsRecyclerView;

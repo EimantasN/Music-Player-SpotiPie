@@ -23,7 +23,7 @@ namespace SpotyPie.Library.Fragments
 
         //Album Songs
         public List<Album> AlbumsLocal = new List<Album>();
-        public RecycleViewList<Album> AlbumsData = new RecycleViewList<Album>();
+        public RvList<Album> AlbumsData = new RvList<Album>();
         private RecyclerView.LayoutManager AlbumSongsLayoutManager;
         private RecyclerView.Adapter AlbumSongsAdapter;
         private RecyclerView AlbumSongsRecyclerView;
@@ -34,7 +34,7 @@ namespace SpotyPie.Library.Fragments
             RootView = inflater.Inflate(Resource.Layout.library_album_layout, container, false);
 
             //ALBUM song list
-            AlbumsData = new RecycleViewList<Album>();
+            AlbumsData = new RvList<Album>();
             AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
             AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums);
             AlbumSongsRecyclerView.HasFixedSize = true;
@@ -126,11 +126,11 @@ namespace SpotyPie.Library.Fragments
 
     public class AlbumRV : RecyclerView.Adapter, IFastScrollRecyclerViewAdapter
     {
-        private RecycleViewList<Album> Dataset;
+        private RvList<Album> Dataset;
         Dictionary<string, int> MapIndex;
         private Context Context;
 
-        public AlbumRV(RecycleViewList<Album> data, Context context)
+        public AlbumRV(RvList<Album> data, Context context)
         {
             Dataset = data;
             MapIndex = GetMapIndex(data);
@@ -217,7 +217,7 @@ namespace SpotyPie.Library.Fragments
             }
         }
 
-        public Dictionary<string, int> GetMapIndex(RecycleViewList<Album> data)
+        public Dictionary<string, int> GetMapIndex(RvList<Album> data)
         {
             for (int i = 0; i < data.Count; i++)
             {
