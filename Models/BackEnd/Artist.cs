@@ -20,6 +20,6 @@ namespace Models.BackEnd
 
         public long Popularity { get; set; }
 
-        public DateTime LastActiveTime { get; set; }
+        //public DateTime LastActiveTime { get; set; }
     }
 }

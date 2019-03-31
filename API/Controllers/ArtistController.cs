@@ -162,7 +162,15 @@ namespace API.Controllers
         {
             try
             {
-                var data = await _ctx.Artists.Include(x => x.Images).OrderByDescending(x => x.Popularity).Take(6).ToListAsync();
+                var data = await _ctx.Artists.Include(x => x.Images).Select(x => new
+                {
+                    x.Id,
+                    x.Popularity,
+                    x.Name,
+                    x.Genres,
+                    x.Images
+                }).
+                OrderByDescending(x => x.Popularity).Take(6).ToListAsync();
                 return Ok(data);
             }
             catch (Exception e)
