@@ -13,6 +13,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Models;
+using SpotyPie.RecycleView;
 using Square.Picasso;
 
 namespace SpotyPie.Helpers
@@ -36,7 +37,7 @@ namespace SpotyPie.Helpers
             { }
         }
 
-        public class BlockImage : RecyclerView.ViewHolder
+        public class SongItem : RecyclerView.ViewHolder
         {
             public View EmptyTimeView { get; set; }
 
@@ -46,7 +47,7 @@ namespace SpotyPie.Helpers
 
             public ImageButton Options { get; set; }
 
-            public BlockImage(View view) : base(view) { }
+            public SongItem(View view) : base(view) { }
         }
 
         public override int GetItemViewType(int position)
@@ -79,7 +80,7 @@ namespace SpotyPie.Helpers
                 TextView mSubTitle = EmptyTime.FindViewById<TextView>(Resource.Id.subtitle);
                 ImageButton mImage = EmptyTime.FindViewById<ImageButton>(Resource.Id.option);
 
-                BlockImage view = new BlockImage(EmptyTime)
+                SongItem view = new SongItem(EmptyTime)
                 {
                     Title = mTitle,
                     SubTitile = mSubTitle,
@@ -97,9 +98,9 @@ namespace SpotyPie.Helpers
             {
                 ;
             }
-            else if (holder is BlockImage)
+            else if (holder is SongItem)
             {
-                BlockImage view = holder as BlockImage;
+                SongItem view = holder as SongItem;
                 view.Title.Text = Dataset[position].Name;
                 view.SubTitile.Text = JsonConvert.DeserializeObject<List<Artist>>(Dataset[position].Artists).First().Name;
                 view.Options.Click += Options_Click;

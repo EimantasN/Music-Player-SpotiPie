@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
 using SpotyPie.Models;
+using SpotyPie.RecycleView;
 using Square.Picasso;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace SpotyPie.Library.Fragments
         {
             try
             {
-                await AlbumsData.ClearAsync();
+                AlbumsData.Clear();
                 AlbumsData.Add(null);
 
                 var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/Albums");

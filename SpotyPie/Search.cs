@@ -11,6 +11,7 @@ using RestSharp;
 using SpotyPie.Helpers;
 using SpotyPie.Library.Fragments;
 using SpotyPie.Models;
+using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,7 +107,7 @@ namespace SpotyPie
             AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
             AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums_rv);
             AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);
-            AlbumsAdapter = new BoxedRV(Albums, AlbumsRecyclerView, this.Context);
+            AlbumsAdapter = new BaseRv<TwoBlockWithImage>(Albums, AlbumsRecyclerView, this.Context);
             Albums.Adapter = AlbumsAdapter;
             AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
             AlbumsRecyclerView.NestedScrollingEnabled = false;
@@ -231,7 +232,7 @@ namespace SpotyPie
                 IRestResponse response = await Client.ExecuteTaskAsync(request);
                 if (response.IsSuccessful)
                 {
-                    await Songs.ClearAsync();
+                    Songs.Clear();
                     var Songsx = JsonConvert.DeserializeObject<List<Item>>(response.Content);
                     if (Songsx != null && Songsx.Count != 0)
                     {
@@ -290,7 +291,7 @@ namespace SpotyPie
                     var Albumsx = JsonConvert.DeserializeObject<List<Album>>(response.Content);
                     if (Albumsx != null && Albumsx.Count != 0)
                     {
-                        await Albums.ClearAsync();
+                        Albums.Clear();
                         Application.SynchronizationContext.Post(_ =>
                         {
                             AlbumsData = Albumsx;
@@ -372,7 +373,7 @@ namespace SpotyPie
                     var mArtists = JsonConvert.DeserializeObject<List<Artist>>(response.Content);
                     if (mArtists != null && mArtists.Count != 0)
                     {
-                        await Artists.ClearAsync();
+                        Artists.Clear();
                         foreach (var x in mArtists)
                         {
                             Artists.Add(x);

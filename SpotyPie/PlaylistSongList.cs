@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
 using SpotyPie.Models;
+using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace SpotyPie.Player
                 if (response.IsSuccessful)
                 {
                     Album album = JsonConvert.DeserializeObject<Album>(response.Content);
-                    await AlbumSongs.ClearAsync();
+                    AlbumSongs.Clear();
                     Application.SynchronizationContext.Post(_ =>
                     {
                         Current_state.Current_Song_List = album.Songs;

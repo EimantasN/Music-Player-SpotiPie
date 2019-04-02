@@ -9,6 +9,7 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
+using SpotyPie.RecycleView;
 using Square.Picasso;
 using System;
 using System.Collections.Generic;
@@ -165,7 +166,7 @@ namespace SpotyPie
         {
             try
             {
-                await AlbumSongs.ClearAsync();
+                AlbumSongs.Clear();
                 AlbumSongs.Add(null);
 
                 RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/" + id + "/tracks");

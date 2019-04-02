@@ -9,6 +9,7 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
+using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -128,7 +129,7 @@ namespace SpotyPie.Player
         {
             try
             {
-                await Playlist.ClearAsync();
+                Playlist.Clear();
                 Playlist.Add(null);
 
                 RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Playlist/playlists");

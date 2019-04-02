@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
 using SpotyPie.Models;
+using SpotyPie.RecycleView;
 using Square.Picasso;
 using System;
 using System.Collections.Generic;
@@ -120,7 +121,7 @@ namespace SpotyPie
             AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
             AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artist_albums_list);
             AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);
-            AlbumsAdapter = new BoxedRV(Albums, AlbumsRecyclerView, this.Context);
+            AlbumsAdapter = new BaseRv<TwoBlockWithImage>(Albums, AlbumsRecyclerView, this.Context);
             Albums.Adapter = AlbumsAdapter;
             AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
             AlbumsRecyclerView.NestedScrollingEnabled = false;

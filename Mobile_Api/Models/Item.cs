@@ -39,5 +39,14 @@ namespace Mobile_Api.Models
         //public int Frequency { get; set; }
 
         //public int Channels { get; set; }
+
+        public Item(bool fake)
+        {
+            Id = 10;
+            Artists = "";
+            Name = "Testas";
+            LocalUrl = "";
+            ImageUrl = "";
+        }
     }
 }

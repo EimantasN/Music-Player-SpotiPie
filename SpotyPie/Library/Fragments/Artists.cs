@@ -15,6 +15,7 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
+using SpotyPie.RecycleView;
 using Square.Picasso;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
@@ -71,7 +72,7 @@ namespace SpotyPie.Library.Fragments
         {
             try
             {
-                await ArtistsData.ClearAsync();
+                ArtistsData.Clear();
                 ArtistsData.Add(null);
                 var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Artist/Artists");
                 var request = new RestRequest(Method.GET);

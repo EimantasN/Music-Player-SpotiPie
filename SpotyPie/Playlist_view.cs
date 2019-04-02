@@ -7,6 +7,7 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
+using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -65,7 +66,7 @@ namespace SpotyPie.Player
                 if (response.IsSuccessful)
                 {
                     Playlist album = JsonConvert.DeserializeObject<Playlist>(response.Content);
-                    await AlbumSongs.ClearAsync();
+                    AlbumSongs.Clear();
                     Application.SynchronizationContext.Post(_ =>
                     {
                         Current_state.Current_Song_List = album.Items;

@@ -7,7 +7,7 @@ using Android.Widget;
 
 namespace SpotyPie.Helpers
 {
-    public class RvList<T>
+    public class RecycleViewList<T>
     {
         private List<T> mItems;
         private RecyclerView.Adapter mAdapter;
@@ -17,7 +17,7 @@ namespace SpotyPie.Helpers
             mItems = new List<T>();
         }
 
-        public RvList()
+        public RecycleViewList()
         {
             mItems = new List<T>();
         }

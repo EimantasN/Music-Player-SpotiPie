@@ -62,7 +62,7 @@ namespace SpotyPie.RecycleView
             get { return mItems.Count; }
         }
 
-        public void clear()
+        public void Clear()
         {
             Application.SynchronizationContext.Post(_ =>
             {

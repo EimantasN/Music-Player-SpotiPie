@@ -15,6 +15,7 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
+using SpotyPie.RecycleView;
 using Square.Picasso;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
@@ -73,7 +74,7 @@ namespace SpotyPie.Library.Fragments
         {
             try
             {
-                await PlaylistsData.ClearAsync();
+                PlaylistsData.Clear();
                 PlaylistsData.Add(null);
 
                 var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Playlist/playlists");
