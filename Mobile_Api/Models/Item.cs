@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Item
+    public class Item : BaseModel<Item>
     {
         public int Id { get; set; }
 

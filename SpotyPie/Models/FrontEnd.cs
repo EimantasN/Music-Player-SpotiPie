@@ -25,6 +25,12 @@ namespace SpotyPie.Models
 
         }
 
+        public BlockWithImage(bool fake)
+        {
+            Title = "Title";
+            SubTitle = "SubTitle";
+        }
+
         public BlockWithImage(int id, RvType type, string title, string subtitle, string url)
         {
             Id = id;

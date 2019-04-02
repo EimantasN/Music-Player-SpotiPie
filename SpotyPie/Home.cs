@@ -1,6 +1,9 @@
-﻿using SpotyPie.Base;
+﻿using Mobile_Api.Models;
+using SpotyPie.Base;
+using SpotyPie.Models;
 using SpotyPie.RecycleView;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SpotyPie
 {
@@ -20,6 +23,22 @@ namespace SpotyPie
         {
             base.InitView();
             RvData = new BaseRecycleView<dynamic, dynamic>(this, Resource.Id.main_rv, Data).Setup();
+            Task.Run(() => PopulateData());
+        }
+
+        public async Task PopulateData()
+        {
+            RvData.Add(new Item(true));
+            await Task.Delay(250);
+            RvData.Add(new Item(true));
+            await Task.Delay(250);
+            RvData.Add(new Item(true));
+            await Task.Delay(250);
+            RvData.Add(new Item(true));
+            await Task.Delay(250);
+            RvData.Add(new Item(true));
+            await Task.Delay(250);
+            RvData.Add(new BlockWithImage(false));
         }
     }
 }

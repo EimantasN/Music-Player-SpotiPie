@@ -1,11 +1,8 @@
-﻿using Mobile_Api.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Tracks
+    public class Tracks : BaseModel<Tracks>
     {
         public int Id { get; set; }
         public List<Item> Items { get; set; }

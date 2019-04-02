@@ -3,7 +3,10 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
+using SpotyPie.Helpers;
 using SpotyPie.Models;
+using SpotyPie.RecycleView.Models;
+using System;
 
 namespace SpotyPie.RecycleView
 {
@@ -22,22 +25,37 @@ namespace SpotyPie.RecycleView
 
         public override int GetItemViewType(int position)
         {
-            if (Dataset[position] == null)
+            if (typeof(T) != typeof(object))
             {
-                return Resource.Layout.Loading;
+                if (Dataset[position] == null)
+                {
+                    return Resource.Layout.Loading;
+                }
+                else if (typeof(T) == typeof(BlockWithImage))
+                {
+                    return Resource.Layout.big_rv_list;
+                }
+                else if (typeof(T) == typeof(TwoBlockWithImage))
+                {
+                    return Resource.Layout.boxed_rv_list_two;
+                }
+                else if (typeof(T) == typeof(SongItem))
+                {
+                    return Resource.Layout.song_list_rv;
+                }
             }
-            else if (typeof(T) == typeof(BlockWithImage))
+            else
             {
-                return Resource.Layout.big_rv_list;
+                if (Dataset[position].GetType().Name == "Item")
+                {
+                    return Resource.Layout.song_list_rv;
+                }
+                else if (Dataset[position].GetType().Name == "BlockWithImage")
+                {
+                    return Resource.Layout.big_rv_list;
+                }
             }
-            else if (typeof(T) == typeof(TwoBlockWithImage))
-            {
-                return Resource.Layout.boxed_rv_list_two;
-            }
-            else if (typeof(T) == typeof(Item))
-            {
-                return Resource.Layout.song_list_rv;
-            }
+
             throw new System.Exception("No view found");
         }
 

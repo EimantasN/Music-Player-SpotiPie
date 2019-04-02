@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Album : IRvModel
+    public class Album : BaseModel<Album>, IRvModel
     {
         public int Id { get; set; }
 
@@ -39,6 +39,11 @@ namespace Mobile_Api.Models
         public DateTime LastActiveTime { get; set; }
 
         public Album()
+        {
+
+        }
+
+        public Album(bool fake)
         {
 
         }

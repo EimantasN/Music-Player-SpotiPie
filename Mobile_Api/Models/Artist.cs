@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Artist
+    public class Artist : BaseModel<Artist>
     {
         public int Id { get; set; }
 

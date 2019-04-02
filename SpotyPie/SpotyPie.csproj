@@ -94,6 +94,7 @@
     <Compile Include="RecycleView\Models\BlockImage.cs" />
     <Compile Include="RecycleView\Models\BlockImageTwo.cs" />
     <Compile Include="RecycleView\Models\Loading.cs" />
+    <Compile Include="RecycleView\Models\RvBaseModel.cs" />
     <Compile Include="RecycleView\Models\SongItem.cs" />
     <Compile Include="RecycleView\RvList.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
