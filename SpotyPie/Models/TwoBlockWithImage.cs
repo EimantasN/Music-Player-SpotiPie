@@ -1,4 +1,6 @@
-﻿namespace SpotyPie.Models
+﻿using Mobile_Api.Models.Rv;
+
+namespace SpotyPie.Models
 {
     public class TwoBlockWithImage
     {

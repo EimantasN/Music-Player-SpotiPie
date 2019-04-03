@@ -7,6 +7,8 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api;
+using Mobile_Api.Models;
+using Mobile_Api.Models.Enums;
 using SpotyPie.Helpers;
 using SpotyPie.Player;
 using System;
@@ -19,8 +21,6 @@ namespace SpotyPie
     [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
     public class MainActivity : AppCompatActivity
     {
-        public SharedService Service = new SharedService();
-
         SupportFragment Home;
         SupportFragment Browse;
         SupportFragment Search;
@@ -211,6 +211,35 @@ namespace SpotyPie
             adapter.AddFragment(new LibraryFragment(), "Library");
 
             viewPager.Adapter = adapter;
+        }
+
+        public SongService SongAPI { get; set; }
+        public AlbumService AlbumAPI { get; set; }
+
+        private Object ServiceLock { get; set; } = new Object();
+
+        public dynamic GetService(ApiServices service)
+        {
+            lock (ServiceLock)
+            {
+                switch (service)
+                {
+                    case ApiServices.Songs:
+                        {
+                            if (SongAPI == null)
+                                return SongAPI = new SongService();
+                            return SongAPI;
+                        }
+                    case ApiServices.Albums:
+                        {
+                            if (AlbumAPI == null)
+                                return AlbumAPI = new AlbumService();
+                            return AlbumAPI;
+                        }
+                    default:
+                        return null;
+                }
+            }
         }
 
         void LoadFragment(int id)

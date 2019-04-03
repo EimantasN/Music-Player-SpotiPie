@@ -1,7 +1,9 @@
 ﻿using Android.Content;
 using Android.Support.V7.Widget;
+using Mobile_Api;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
+using Mobile_Api.Models.Rv;
 using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Models;
@@ -16,23 +18,18 @@ namespace SpotyPie
     public class Browse : FragmentBase
     {
         //Recent albums
-        public List<Album> RecentAlbumsData;
         public RvList<BlockWithImage> RecentAlbums;
 
         //Best albums
-        public List<Album> BestAlbumsData;
         public RvList<BlockWithImage> BestAlbums;
 
         //Best artists
-        public List<Artist> BestArtistData;
         public RvList<BlockWithImage> BestArtists;
 
         //Jump back albums
-        public List<Album> JumpBackData;
         public RvList<BlockWithImage> JumpBack;
 
         //Top playlist
-        public List<Playlist> TopPlaylistData;
         public RvList<BlockWithImage> TopPlaylist;
 
         public override int GetLayout()
@@ -43,10 +40,10 @@ namespace SpotyPie
         protected override void InitView()
         {
             base.InitView();
-            RecentAlbums = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.recent_rv, RecentAlbumsData).Setup(LinearLayoutManager.Horizontal);
-            BestAlbums = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.best_albums_rv, BestAlbumsData).Setup(LinearLayoutManager.Horizontal);
+            RecentAlbums = new BaseRecycleView<BlockWithImage>(this, Resource.Id.recent_rv).Setup(LinearLayoutManager.Horizontal);
+            BestAlbums = new BaseRecycleView<BlockWithImage>(this, Resource.Id.best_albums_rv).Setup(LinearLayoutManager.Horizontal);
             //BestArtists = new BaseRecycleView<Album>(this, Resource.Id.best_artists_rv, BestArtistData).Setup();
-            JumpBack = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.albums_old_rv, JumpBackData).Setup(LinearLayoutManager.Horizontal);
+            JumpBack = new BaseRecycleView<BlockWithImage>(this, Resource.Id.albums_old_rv).Setup(LinearLayoutManager.Horizontal);
             //TopPlaylist = new BaseRecycleView<Album>(this, Resource.Id.playlist_rv, TopPlaylistData).Setup();
         }
 
@@ -68,14 +65,11 @@ namespace SpotyPie
         {
             try
             {
-                var albums = await GetService().GetListAsync<Album>(AlbumType.Recent);
+                var api = (AlbumService)GetService(ApiServices.Albums);
+                var albums = await api.GetRecent();
                 InvokeOnMainThread(() =>
                 {
-                    RecentAlbumsData = albums;
-                    foreach (var x in albums)
-                    {
-                        RecentAlbums.Add(new BlockWithImage(x.Id, RvType.Album, x.Name, JsonConvert.DeserializeObject<List<Artist>>(x.Artists).First().Name, x.Images.First().Url));
-                    }
+                    albums.ForEach(x => RecentAlbums.Add(x));
                 });
             }
             catch (Exception e)
@@ -88,14 +82,11 @@ namespace SpotyPie
         {
             try
             {
-                var albums = await GetService().GetListAsync<Album>(AlbumType.Popular);
+                var api = (AlbumService)GetService(ApiServices.Albums);
+                var albums = await api.GetPopular();
                 InvokeOnMainThread(() =>
                 {
-                    BestAlbumsData = albums;
-                    foreach (var x in albums)
-                    {
-                        BestAlbums.Add(new BlockWithImage(x.Id, RvType.Album, x.Name, JsonConvert.DeserializeObject<List<Artist>>(x.Artists).First().Name, x.Images.First().Url));
-                    }
+                    albums.ForEach(x => BestAlbums.Add(x));
                 });
             }
             catch (Exception e)
@@ -111,7 +102,7 @@ namespace SpotyPie
                 var artists = await GetService().GetListAsync<Artist>(ArtistType.Popular);
                 InvokeOnMainThread(() =>
                 {
-                    BestArtistData = artists;
+                    //BestArtistData = artists;
                     foreach (var x in artists)
                     {
                         string DisplayGenre;
@@ -137,7 +128,7 @@ namespace SpotyPie
                         if (x.Images.FirstOrDefault() != null)
                             img = x.Images.First().Url;
 
-                        BestArtists.Add(new BlockWithImage(x.Id, RvType.Artist, x.Name, DisplayGenre, img));
+                        //BestArtists.Add(new BlockWithImage(x.Id, RvType.Artist, x.Name, DisplayGenre, img));
                     }
                 });
             }
@@ -151,14 +142,12 @@ namespace SpotyPie
         {
             try
             {
-                var albums = await GetService().GetListAsync<Album>(AlbumType.Popular);
+                var api = (AlbumService)GetService(ApiServices.Albums);
+                var albums = await api.GetOld();
+
                 InvokeOnMainThread(() =>
                 {
-                    JumpBackData = albums;
-                    foreach (var x in albums)
-                    {
-                        JumpBack.Add(new BlockWithImage(x.Id, RvType.Album, x.Name, JsonConvert.DeserializeObject<List<Artist>>(x.Artists).First().Name, x.Images.First().Url));
-                    }
+                    albums.ForEach(x => JumpBack.Add(x));
                 });
             }
             catch (Exception e)
@@ -174,11 +163,11 @@ namespace SpotyPie
                 var playlists = await GetService().GetListAsync<Playlist>(PlaylistType.Playlists);
                 InvokeOnMainThread(() =>
                 {
-                    TopPlaylistData = playlists;
-                    foreach (var x in playlists)
-                    {
-                        TopPlaylist.Add(new BlockWithImage(x.Id, RvType.Playlist, x.Name, x.Created.ToString("yyyy-MM-dd"), x.ImageUrl));
-                    }
+                    //TopPlaylistData = playlists;
+                    //foreach (var x in playlists)
+                    //{
+                    //    TopPlaylist.Add(new BlockWithImage(x.Id, RvType.Playlist, x.Name, x.Created.ToString("yyyy-MM-dd"), x.ImageUrl));
+                    //}
                 });
             }
             catch (Exception e)

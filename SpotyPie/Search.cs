@@ -304,31 +304,31 @@ namespace SpotyPie
                             if (Albums.Count - i == 1)
                             {
                                 var x = Albumsx[i];
-                                Albums.Add(new TwoBlockWithImage(
-                                new BlockWithImage(
-                                    x.Id,
-                                    RvType.Album,
-                                    x.Name,
-                                    x.Label,
-                                    x.Images.First().Url)));
+                                //Albums.Add(new TwoBlockWithImage(
+                                //new BlockWithImage(
+                                //    x.Id,
+                                //    RvType.Album,
+                                //    x.Name,
+                                //    x.Label,
+                                //    x.Images.First().Url)));
                             }
                             else
                             {
                                 var x = Albumsx[i];
                                 var y = Albumsx[i + 1];
-                                Albums.Add(new TwoBlockWithImage(
-                                    new BlockWithImage(
-                                        x.Id,
-                                        RvType.Album,
-                                        x.Name,
-                                        x.Label,
-                                        x.Images.First().Url),
-                                        new BlockWithImage(
-                                        y.Id,
-                                        RvType.Album,
-                                        y.Name,
-                                        x.Label,
-                                        y.Images.First().Url)));
+                                //Albums.Add(new TwoBlockWithImage(
+                                //    new BlockWithImage(
+                                //        x.Id,
+                                //        RvType.Album,
+                                //        x.Name,
+                                //        x.Label,
+                                //        x.Images.First().Url),
+                                //        new BlockWithImage(
+                                //        y.Id,
+                                //        RvType.Album,
+                                //        y.Name,
+                                //        x.Label,
+                                //        y.Images.First().Url)));
                             }
                         }
                     }

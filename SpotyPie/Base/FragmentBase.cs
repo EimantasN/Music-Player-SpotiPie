@@ -2,6 +2,8 @@
 using Android.OS;
 using Android.Views;
 using Mobile_Api;
+using Mobile_Api.Models;
+using Mobile_Api.Models.Enums;
 using System;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
@@ -33,9 +35,9 @@ namespace SpotyPie.Base
             return RootView;
         }
 
-        public SharedService GetService()
+        public dynamic GetService(ApiServices service = ApiServices.Shared)
         {
-            return ParentActivity.Service;
+            return ParentActivity.GetService(service);
         }
 
         public void InvokeOnMainThread(Action action)

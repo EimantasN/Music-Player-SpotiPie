@@ -179,65 +179,65 @@ namespace SpotyPie
 
         public async Task GetArtistAlbums(int id)
         {
-            try
-            {
-                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/artist/" + id + "/Albums");
-                var request = new RestRequest(Method.GET);
-                IRestResponse response = await Client.ExecuteGetTaskAsync(request);
-                if (response.IsSuccessful)
-                {
-                    Artist ArtistWithAlbums = JsonConvert.DeserializeObject<Artist>(response.Content);
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        AlbumsData = ArtistWithAlbums.Albums;
-                        for (int i = 0; i < ArtistWithAlbums.Albums.Count; i = i + 2)
-                        {
-                            if (ArtistWithAlbums.Albums.Count - i == 1)
-                            {
-                                var x = ArtistWithAlbums.Albums[i];
-                                Albums.Add(new TwoBlockWithImage(
-                                new BlockWithImage(
-                                    x.Id,
-                                    RvType.Album,
-                                    x.Name,
-                                    x.Label,
-                                    x.Images.First().Url)));
-                            }
-                            else
-                            {
-                                var x = ArtistWithAlbums.Albums[i];
-                                var y = ArtistWithAlbums.Albums[i + 1];
-                                Albums.Add(new TwoBlockWithImage(
-                                    new BlockWithImage(
-                                        x.Id,
-                                        RvType.Album,
-                                        x.Name,
-                                        x.Label,
-                                        x.Images.First().Url),
-                                        new BlockWithImage(
-                                        y.Id,
-                                        RvType.Album,
-                                        y.Name,
-                                        x.Label,
-                                        y.Images.First().Url)));
-                            }
-                        }
-                        List<string> Genres = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist.Genres);
-                        Copyrights.Text = string.Join("\n", Genres);
-                    }, null);
-                }
-                else
-                {
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        Toast.MakeText(this.Context, "GetArtistAlbums API call error", ToastLength.Short).Show();
-                    }, null);
-                }
-            }
-            catch (Exception)
-            {
+            //try
+            //{
+            //    RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/artist/" + id + "/Albums");
+            //    var request = new RestRequest(Method.GET);
+            //    IRestResponse response = await Client.ExecuteGetTaskAsync(request);
+            //    if (response.IsSuccessful)
+            //    {
+            //        Artist ArtistWithAlbums = JsonConvert.DeserializeObject<Artist>(response.Content);
+            //        Application.SynchronizationContext.Post(_ =>
+            //        {
+            //            AlbumsData = ArtistWithAlbums.Albums;
+            //            for (int i = 0; i < ArtistWithAlbums.Albums.Count; i = i + 2)
+            //            {
+            //                if (ArtistWithAlbums.Albums.Count - i == 1)
+            //                {
+            //                    var x = ArtistWithAlbums.Albums[i];
+            //                    Albums.Add(new TwoBlockWithImage(
+            //                    new BlockWithImage(
+            //                        x.Id,
+            //                        RvType.Album,
+            //                        x.Name,
+            //                        x.Label,
+            //                        x.Images.First().Url)));
+            //                }
+            //                else
+            //                {
+            //                    var x = ArtistWithAlbums.Albums[i];
+            //                    var y = ArtistWithAlbums.Albums[i + 1];
+            //                    Albums.Add(new TwoBlockWithImage(
+            //                        new BlockWithImage(
+            //                            x.Id,
+            //                            RvType.Album,
+            //                            x.Name,
+            //                            x.Label,
+            //                            x.Images.First().Url),
+            //                            new BlockWithImage(
+            //                            y.Id,
+            //                            RvType.Album,
+            //                            y.Name,
+            //                            x.Label,
+            //                            y.Images.First().Url)));
+            //                }
+            //            }
+            //            List<string> Genres = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist.Genres);
+            //            Copyrights.Text = string.Join("\n", Genres);
+            //        }, null);
+            //    }
+            //    else
+            //    {
+            //        Application.SynchronizationContext.Post(_ =>
+            //        {
+            //            Toast.MakeText(this.Context, "GetArtistAlbums API call error", ToastLength.Short).Show();
+            //        }, null);
+            //    }
+            //}
+            //catch (Exception)
+            //{
 
-            }
+            //}
         }
 
         private void Scroll_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)

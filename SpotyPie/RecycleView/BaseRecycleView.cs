@@ -1,16 +1,12 @@
 ﻿using Android.Support.V7.Widget;
-using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
-using SpotyPie.Models;
-using System.Collections.Generic;
 
 namespace SpotyPie.RecycleView
 {
-    public class BaseRecycleView<T, U>
+    public class BaseRecycleView<T>
     {
-        private List<T> Dataset;
-        private RvList<U> RvDataset;
+        private RvList<T> RvDataset;
         private RecyclerView.LayoutManager LayoutManager;
         private RecyclerView.Adapter RvAdapter;
         private RecyclerView RecyclerView;
@@ -18,21 +14,20 @@ namespace SpotyPie.RecycleView
         private FragmentBase Activity { get; set; }
         private int Id { get; set; }
 
-        public BaseRecycleView(FragmentBase Activity, int RvId, List<T> data)
+        public BaseRecycleView(FragmentBase Activity, int RvId)
         {
-            Dataset = data;
-            RvDataset = new RvList<U>();
+            RvDataset = new RvList<T>();
 
             this.Activity = Activity;
             this.Id = RvId;
         }
 
-        public RvList<U> Setup(int layoutPosition)
+        public RvList<T> Setup(int layoutPosition)
         {
             LayoutManager = new LinearLayoutManager(Activity.Activity, layoutPosition, false);
             RecyclerView = Activity.GetView().FindViewById<RecyclerView>(Id);
             RecyclerView.SetLayoutManager(LayoutManager);
-            RvAdapter = new BaseRv<U>(RvDataset, RecyclerView, Activity.Context);
+            RvAdapter = new BaseRv<T>(RvDataset, RecyclerView, Activity.Context);
             RvDataset.Adapter = RvAdapter;
             RecyclerView.SetAdapter(RvAdapter);
             SetOnClick();

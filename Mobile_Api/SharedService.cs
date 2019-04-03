@@ -1,6 +1,4 @@
 ﻿using Mobile_Api.Models;
-using Mobile_Api.Models.Enums;
-using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -8,25 +6,20 @@ using System.Threading.Tasks;
 
 namespace Mobile_Api
 {
-    public class SharedService : BaseService
+    public abstract class SharedService : BaseService
     {
+        public abstract string Controller { get; set; }
 
-        ///api/album/Recent
-        public async Task<List<T>> GetListAsync<T>(AlbumType type)
+        public async Task<T> Get<T>(int id)
         {
-            CustomRestClient Client = GetClient("api/album/" + type);
-            return await GetList<T>(Client);
+            CustomRestClient Client = GetClient($"api/{Controller}/" + id);
+            return await GetData<T>(Client);
         }
 
-        public async Task<List<T>> GetListAsync<T>(ArtistType type)
+        /// PVZ api/album/Recent
+        public async Task<List<T>> GetListAsync<T>(string type)
         {
-            CustomRestClient Client = GetClient("api/artist/" + type);
-            return await GetList<T>(Client);
-        }
-
-        public async Task<List<T>> GetListAsync<T>(PlaylistType type)
-        {
-            CustomRestClient Client = GetClient("api/playlist/" + type);
+            CustomRestClient Client = GetClient($"api/{Controller}/" + type);
             return await GetList<T>(Client);
         }
 
@@ -34,11 +27,27 @@ namespace Mobile_Api
         {
             try
             {
-                return await client.CustomExecuteTaskAsync<T>(Method.GET);
+                return await client.CustomGetList<T>(Method.GET);
             }
             catch (Exception e)
             {
                 return new List<T>();
+            }
+            finally
+            {
+                Release(client);
+            }
+        }
+
+        private async Task<T> GetData<T>(CustomRestClient client)
+        {
+            try
+            {
+                return await client.CustomGetObject<T>(Method.GET);
+            }
+            catch (Exception e)
+            {
+                return default(T);
             }
             finally
             {

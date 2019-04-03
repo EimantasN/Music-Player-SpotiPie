@@ -3,6 +3,7 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
+using Mobile_Api.Models.Rv;
 using SpotyPie.Helpers;
 using SpotyPie.Models;
 using SpotyPie.RecycleView.Models;
@@ -46,7 +47,7 @@ namespace SpotyPie.RecycleView
             }
             else
             {
-                if (Dataset[position].GetType().Name == "Item")
+                if (Dataset[position].GetType().Name == "Song")
                 {
                     return Resource.Layout.song_list_rv;
                 }
@@ -124,18 +125,23 @@ namespace SpotyPie.RecycleView
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            if (holder is Models.Loading)
+            if (holder is Loading)
             {
                 ;
             }
-            else if (holder is Models.BlockImage)
+            else if (holder is BlockImage)
             {
-                Models.BlockImage view = holder as Models.BlockImage;
+                BlockImage view = holder as BlockImage;
                 view.PrepareView(Dataset[position], Context);
             }
-            else if (holder is Models.BlockImageTwo)
+            else if (holder is BlockImageTwo)
             {
-                Models.BlockImageTwo view = holder as Models.BlockImageTwo;
+                BlockImageTwo view = holder as BlockImageTwo;
+                view.PrepareView(Dataset[position], Context);
+            }
+            else if (holder is SongItem)
+            {
+                SongItem view = holder as SongItem;
                 view.PrepareView(Dataset[position], Context);
             }
         }

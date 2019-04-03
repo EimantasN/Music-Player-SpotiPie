@@ -45,7 +45,7 @@ namespace Mobile_Api.Models
             throw new Exception("Must choose request type");
         }
 
-        public async Task<List<T>> CustomExecuteTaskAsync<T>(Method method)
+        public async Task<List<T>> CustomGetList<T>(Method method)
         {
             try
             {
@@ -62,6 +62,31 @@ namespace Mobile_Api.Models
                 else
                 {
                     return new List<T>();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<T> CustomGetObject<T>(Method method)
+        {
+            try
+            {
+                IRestResponse response;
+                if (method == Method.GET)
+                    response = await base.ExecuteGetTaskAsync(GET);
+                else
+                    response = await base.ExecuteTaskAsync(POST);
+
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<T>(response.Content);
+                }
+                else
+                {
+                    return default(T);
                 }
             }
             catch (Exception e)

@@ -1,9 +1,13 @@
 ﻿using Android.Support.V7.Widget;
+using Mobile_Api;
 using Mobile_Api.Models;
+using Mobile_Api.Models.Enums;
+using Mobile_Api.Models.Rv;
 using SpotyPie.Base;
 using SpotyPie.Models;
 using SpotyPie.RecycleView;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie
@@ -23,23 +27,24 @@ namespace SpotyPie
         protected override void InitView()
         {
             base.InitView();
-            RvData = new BaseRecycleView<dynamic, dynamic>(this, Resource.Id.main_rv, Data).Setup(LinearLayoutManager.Vertical);
+            RvData = new BaseRecycleView<dynamic>(this, Resource.Id.main_rv).Setup(LinearLayoutManager.Vertical);
             Task.Run(() => PopulateData());
         }
 
         public async Task PopulateData()
         {
-            RvData.Add(new Item(true));
-            await Task.Delay(250);
-            RvData.Add(new Item(true));
-            await Task.Delay(250);
-            RvData.Add(new Item(true));
-            await Task.Delay(250);
-            RvData.Add(new Item(true));
-            await Task.Delay(250);
-            RvData.Add(new Item(true));
-            await Task.Delay(250);
-            RvData.Add(new BlockWithImage(false));
+            await Task.Run(() => LoadSongs());
+        }
+
+        public async Task LoadSongs()
+        {
+            var api = (SongService)GetService(ApiServices.Songs);
+
+            var data = await api.GetRecent();
+            data.Take(2).ToList().ForEach(x => RvData.Add(x));
+
+            data = await api.GetPopular();
+            data.Take(2).ToList().ForEach(x => RvData.Add(x));
         }
     }
 }
