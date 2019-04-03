@@ -8,7 +8,6 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Helpers;
-using SpotyPie.Models;
 using SpotyPie.RecycleView;
 using Square.Picasso;
 using System.Collections.Generic;

@@ -27,9 +27,9 @@ namespace SpotyPie.RecycleView
             this.Id = RvId;
         }
 
-        public RvList<U> Setup()
+        public RvList<U> Setup(int layoutPosition)
         {
-            LayoutManager = new LinearLayoutManager(Activity.Activity, LinearLayoutManager.Horizontal, false);
+            LayoutManager = new LinearLayoutManager(Activity.Activity, layoutPosition, false);
             RecyclerView = Activity.GetView().FindViewById<RecyclerView>(Id);
             RecyclerView.SetLayoutManager(LayoutManager);
             RvAdapter = new BaseRv<U>(RvDataset, RecyclerView, Activity.Context);
@@ -38,6 +38,7 @@ namespace SpotyPie.RecycleView
             SetOnClick();
             return RvDataset;
         }
+
 
         public void SetOnClick()
         {

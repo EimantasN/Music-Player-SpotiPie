@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Android.Support.V7.Widget;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using Newtonsoft.Json;
@@ -42,10 +43,10 @@ namespace SpotyPie
         protected override void InitView()
         {
             base.InitView();
-            RecentAlbums = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.recent_rv, RecentAlbumsData).Setup();
-            BestAlbums = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.best_albums_rv, BestAlbumsData).Setup();
+            RecentAlbums = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.recent_rv, RecentAlbumsData).Setup(LinearLayoutManager.Horizontal);
+            BestAlbums = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.best_albums_rv, BestAlbumsData).Setup(LinearLayoutManager.Horizontal);
             //BestArtists = new BaseRecycleView<Album>(this, Resource.Id.best_artists_rv, BestArtistData).Setup();
-            JumpBack = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.albums_old_rv, JumpBackData).Setup();
+            JumpBack = new BaseRecycleView<Album, BlockWithImage>(this, Resource.Id.albums_old_rv, JumpBackData).Setup(LinearLayoutManager.Horizontal);
             //TopPlaylist = new BaseRecycleView<Album>(this, Resource.Id.playlist_rv, TopPlaylistData).Setup();
         }
 

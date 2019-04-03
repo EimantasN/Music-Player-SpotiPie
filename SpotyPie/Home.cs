@@ -1,4 +1,5 @@
-﻿using Mobile_Api.Models;
+﻿using Android.Support.V7.Widget;
+using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.Models;
 using SpotyPie.RecycleView;
@@ -22,7 +23,7 @@ namespace SpotyPie
         protected override void InitView()
         {
             base.InitView();
-            RvData = new BaseRecycleView<dynamic, dynamic>(this, Resource.Id.main_rv, Data).Setup();
+            RvData = new BaseRecycleView<dynamic, dynamic>(this, Resource.Id.main_rv, Data).Setup(LinearLayoutManager.Vertical);
             Task.Run(() => PopulateData());
         }
 
