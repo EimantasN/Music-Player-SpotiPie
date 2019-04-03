@@ -26,37 +26,22 @@ namespace SpotyPie.RecycleView
 
         public override int GetItemViewType(int position)
         {
-            if (typeof(T) != typeof(object))
+            if (Dataset[position] == null)
             {
-                if (Dataset[position] == null)
-                {
-                    return Resource.Layout.Loading;
-                }
-                else if (typeof(T) == typeof(BlockWithImage))
-                {
-                    return Resource.Layout.big_rv_list;
-                }
-                else if (typeof(T) == typeof(TwoBlockWithImage))
-                {
-                    return Resource.Layout.boxed_rv_list_two;
-                }
-                else if (typeof(T) == typeof(SongItem))
-                {
-                    return Resource.Layout.song_list_rv;
-                }
+                return Resource.Layout.Loading;
             }
-            else
+            else if (typeof(T) == typeof(BlockWithImage) || Dataset[position].GetType().Name == "BlockWithImage")
             {
-                if (Dataset[position].GetType().Name == "Song")
-                {
-                    return Resource.Layout.song_list_rv;
-                }
-                else if (Dataset[position].GetType().Name == "BlockWithImage")
-                {
-                    return Resource.Layout.big_rv_list;
-                }
+                return Resource.Layout.big_rv_list;
             }
-
+            else if (typeof(T) == typeof(TwoBlockWithImage))
+            {
+                return Resource.Layout.boxed_rv_list_two;
+            }
+            else if (typeof(T) == typeof(SongItem) || Dataset[position].GetType().Name == "Song")
+            {
+                return Resource.Layout.song_list_rv;
+            }
             throw new System.Exception("No view found");
         }
 

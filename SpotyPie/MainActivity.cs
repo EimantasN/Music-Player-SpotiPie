@@ -251,11 +251,11 @@ namespace SpotyPie
             switch (id)
             {
                 case Resource.Id.home:
-                    fragment = Home;
+                    fragment = Browse;
                     ActionName.Text = "Home";
                     break;
                 case Resource.Id.browse:
-                    fragment = Browse;
+                    fragment = Home;
                     ActionName.Text = "Browse";
                     break;
                 case Resource.Id.search:

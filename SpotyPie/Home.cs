@@ -38,6 +38,7 @@ namespace SpotyPie
 
         public async Task LoadSongs()
         {
+            RvData.Add(null);
             var api = (SongService)GetService(ApiServices.Songs);
 
             var data = await api.GetRecent();
@@ -45,6 +46,7 @@ namespace SpotyPie
 
             data = await api.GetPopular();
             data.Take(2).ToList().ForEach(x => RvData.Add(x));
+            RvData.RemoveLoading();
         }
     }
 }
