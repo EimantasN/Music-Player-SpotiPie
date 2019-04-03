@@ -13,14 +13,10 @@ namespace Services
     public class SongService : ISongService
     {
         private readonly SpotyPieIDbContext _ctx;
-        private ISettings settings;
 
         public SongService(SpotyPieIDbContext ctx)
         {
             _ctx = ctx;
-            settings = new ConfigurationBuilder<ISettings>()
-                .UseJsonFile(Environment.CurrentDirectory + @"/settings.json")
-                .Build();
         }
 
         public async Task<Song> GetAsync(int id)

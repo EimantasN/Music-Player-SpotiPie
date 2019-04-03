@@ -16,17 +16,11 @@ namespace API.Controllers
     [ApiController]
     public class AlbumController : ControllerBase
     {
-        private readonly IDb _ctd;
-        private readonly SpotyPieIDbContext _ctx;
-        private readonly CancellationTokenSource cts;
-        private CancellationToken ct;
+        private readonly IAlbumService _album;
 
-        public AlbumController(IDb ctdd, SpotyPieIDbContext ctx)
+        public AlbumController(IAlbumService ctx)
         {
-            _ctd = ctdd;
-            _ctx = ctx;
-            cts = new CancellationTokenSource();
-            ct = cts.Token;
+            _album = ctx;
         }
 
         [HttpGet]
@@ -46,16 +40,7 @@ namespace API.Controllers
                 if (string.IsNullOrWhiteSpace(query))
                     return BadRequest("Bad search query");
 
-                var albums = await Task.Factory.StartNew(() =>
-                {
-                    return _ctx.Albums
-                    .AsNoTracking()
-                    .Include(x => x.Images)
-                    .Include(x => x.Songs)
-                    .Where(x => x.Name.Contains(query));
-                });
-
-                return Ok(albums);
+                return Ok(await _album.Search(query));
             }
             catch (Exception e)
             {
@@ -73,18 +58,7 @@ namespace API.Controllers
                 if (id <= 0)
                     return BadRequest("Id can't be " + id);
 
-                //Need includes
-                var album = await _ctx.Albums
-                    .AsNoTracking()
-                    .Include(x => x.Images)
-                    .FirstOrDefaultAsync(x => x.Id == id);
-
-                _ctx.Update(album);
-                album.Popularity++;
-                album.LastActiveTime = DateTime.Now;
-                _ctx.SaveChanges();
-
-                return Ok(album);
+                return Ok(await _album.GetAlbumAsync(id));
             }
             catch (Exception e)
             {
@@ -95,66 +69,15 @@ namespace API.Controllers
         //Returns album list
         [HttpGet("Albums")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetAlbums()
+        public async Task<IActionResult> GetAlbums([FromBody] int count = 10)
         {
             try
             {
-                var albums = await _ctx.Albums
-                    .AsNoTracking()
-                    .Include(x => x.Images)
-                    .ToListAsync();
-
-                return Ok(albums);
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        //Updated albums used time and popularity
-        [Route("Update/{id}")]
-        [HttpGet]
-        public void IncreaseAlbumPopularity(int id)
-        {
-            try
-            {
-                var album = _ctx.Albums.First(x => x.Id == id);
-
-                album.Popularity++;
-
-                album.LastActiveTime = DateTime.Now;
-                _ctx.Entry(album).State = EntityState.Modified;
-                _ctx.SaveChanges();
+                return Ok(await _album.GetAlbumsAsync(count));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        //Return album with songs
-        [Route("{id}/tracks")]
-        [HttpGet]
-        [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetAlbumTracks(int id)
-        {
-            try
-            {
-                var data = await _ctx.Albums
-                    .Include(x => x.Songs).Include(x => x.Images)
-                    .FirstOrDefaultAsync(x => x.Id == id);
-
-                _ctx.Update(data);
-                data.Popularity++;
-                data.LastActiveTime = DateTime.Now;
-                _ctx.SaveChanges();
-
-                return Ok(data);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -166,16 +89,11 @@ namespace API.Controllers
         {
             try
             {
-                var data = await _ctx.Albums
-                    .Include(x => x.Images)
-                    .OrderByDescending(x => x.LastActiveTime)
-                    .Take(6).ToListAsync();
-
-                return Ok(data);
+                return Ok(await _album.GetRecentAlbumsAsync());
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -187,16 +105,11 @@ namespace API.Controllers
         {
             try
             {
-                var data = await _ctx.Albums
-                    .Include(x => x.Images)
-                    .OrderByDescending(x => x.Popularity)
-                    .Take(6).ToListAsync();
-
-                return Ok(data);
+                return Ok(await _album.GetPopularAlbumsAsync());
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -208,13 +121,7 @@ namespace API.Controllers
         {
             try
             {
-                var data = await _ctx.Albums
-                    .Include(x => x.Images)
-                    .Where(x => x.Popularity >= 1)
-                    .OrderByDescending(x => x.LastActiveTime)
-                    .Take(6).ToListAsync();
-
-                return Ok(data);
+                return Ok(await _album.GetOldAlbumsAsync());
             }
             catch (Exception e)
             {
@@ -222,31 +129,17 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("artist/{id}")]
+        [HttpGet("artist/{artistId}")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetAlbumsByArtist(int id)
+        public async Task<IActionResult> GetAlbumsByArtist(int artistId)
         {
             try
             {
-                //Need includes
-                var album = await _ctx.Albums
-                    .Include(x => x.Images)
-                    .Include(x => x.Songs)
-                    .FirstOrDefaultAsync(x => x.Id == id);
-
-                return new JsonResult(new
-                {
-                    Artist = JsonConvert.DeserializeObject<List<Artist>>(album.Artists)[0].Name,
-                    album.Name,
-                    album.Images,
-                    album.ReleaseDate,
-                    album.TotalTracks,
-                    album.Songs
-                });
+                return Ok(await _album.GetAlbumsByArtistAsync(artistId));
             }
-            catch (System.Exception ex)
+            catch (Exception e)
             {
-                return BadRequest(ex);
+                return BadRequest(e);
             }
         }
     }

@@ -51,6 +51,8 @@ namespace API
 
             services.AddScoped<IDb, Services.Service>();
             services.AddScoped<ISongService, Services.SongService>();
+            services.AddScoped<IAlbumService, Services.AlbumService>();
+
             services.AddDbContext<SpotyPieIDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
