@@ -16,17 +16,32 @@ namespace API.Controllers
     [ApiController]
     public class SongsController : ControllerBase
     {
-        private readonly SpotyPieIDbContext _ctx;
         private readonly CancellationTokenSource cts;
         private CancellationToken ct;
-        private readonly IDb _ctd;
+        private readonly ISongService _songs;
 
-        public SongsController(SpotyPieIDbContext ctx, IDb ctd)
+        public SongsController(ISongService ctd)
         {
-            _ctx = ctx;
-            _ctd = ctd;
+            _songs = ctd;
             cts = new CancellationTokenSource();
             ct = cts.Token;
+        }
+
+        [HttpGet("{id}")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                var data = _songs.GetAsync(id);
+                
+
+                return Ok(song);
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         //Search for songs with specified name
@@ -39,14 +54,7 @@ namespace API.Controllers
                 if (string.IsNullOrWhiteSpace(query))
                     return BadRequest("Bad search query");
 
-                var songs = await Task.Factory.StartNew(() =>
-                {
-                    return _ctx.Items
-                    .AsNoTracking()
-                    .Where(x => x.Name.Contains(query));
-                });
-
-                return Ok(songs);
+                return Ok(await _songs.Search(query));
             }
             catch (System.Exception ex)
             {
@@ -60,33 +68,12 @@ namespace API.Controllers
         {
             try
             {
-                var songs = await _ctx.Items.AsNoTracking().ToListAsync();
+                var songs = await _songs.GetAllAsync();
                 return Ok(songs);
             }
             catch (System.Exception ex)
             {
                 return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("{id}")]
-        [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> Get(int id)
-        {
-            try
-            {
-                var song = await _ctx.Items.AsNoTracking()  ///.Select(x => new { x.Id, x.Artists, x.DurationMs, x.IsPlayable, x.Name })
-                    .FirstOrDefaultAsync(x => x.Id == id);
-                _ctx.Update(song);
-                song.Popularity++;
-                song.LastActiveTime = DateTime.Now;
-                _ctx.SaveChanges();
-
-                return Ok(song);
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(ex);
             }
         }
 
@@ -96,7 +83,7 @@ namespace API.Controllers
         {
             try
             {
-                if (await _ctd.RemoveAudio(id))
+                if (await _songs.RemoveAudio(id))
                     return Ok();
                 else
                     return StatusCode(404);
@@ -243,21 +230,6 @@ namespace API.Controllers
             }
             catch (System.Exception ex)
             {
-            }
-        }
-
-        [HttpGet]
-        [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetAllSongs()
-        {
-            try
-            {
-                var songs = await _ctd.GetSongList();
-                return Ok(songs);
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(ex);
             }
         }
     }
