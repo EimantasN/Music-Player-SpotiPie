@@ -211,7 +211,7 @@ namespace Services
                             x.Name.Contains(Path.GetFileNameWithoutExtension(name), StringComparison.InvariantCultureIgnoreCase));
                         }
 
-                        if(audioDb == null)
+                        if (audioDb == null)
                         {
                             audioDb = await _ctx.Items
                             .FirstOrDefaultAsync(x => x.DurationMs == (audio.TotalSeconds / 1000));
@@ -259,9 +259,9 @@ namespace Services
                 }
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return false;
+                throw e;
             }
         }
 
@@ -440,7 +440,7 @@ namespace Services
         {
             var output = @"cat /sys/class/thermal/thermal_zone0/temp | awk '{print $1/1000}'"
                   .Bash();
-            return (int) (double.TryParse(output, out double dPercent) ? dPercent : -1);
+            return (int)(double.TryParse(output, out double dPercent) ? dPercent : -1);
         }
 
         public int GetUsedStorage()

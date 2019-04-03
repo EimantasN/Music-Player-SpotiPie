@@ -57,9 +57,9 @@ namespace API.Controllers
 
                 return Ok(albums);
             }
-            catch (System.Exception ex)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return BadRequest(e);
             }
         }
 
@@ -86,9 +86,9 @@ namespace API.Controllers
 
                 return Ok(album);
             }
-            catch (System.Exception ex)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return BadRequest(e);
             }
         }
 

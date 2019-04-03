@@ -51,9 +51,9 @@ namespace API.Controllers
 
                 return Ok(artists);
             }
-            catch (System.Exception ex)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return BadRequest(e);
             }
         }
 
@@ -86,9 +86,9 @@ namespace API.Controllers
 
                 return Ok(artist);
             }
-            catch (System.Exception ex)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return BadRequest(e);
             }
         }
 
@@ -108,9 +108,9 @@ namespace API.Controllers
 
                 return Ok(artist.Songs);
             }
-            catch (System.Exception ex)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return BadRequest(e);
             }
         }
 

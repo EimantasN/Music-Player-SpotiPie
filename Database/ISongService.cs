@@ -6,17 +6,19 @@ namespace Database
 {
     public interface ISongService
     {
-        Task<List<Song>> Search(string query);
+        Task<List<Song>> SearchAsync(string query);
 
-        Task<List<Song>> GetAllAsync();
+        Task<List<Song>> GetAllAsync(int count = 30);
 
         Task<Song> GetAsync(int id);
 
-        Task Remove(int id);
+        Task RemoveAsync(int id);
 
-        Task GetRecent(int count = 10);
+        Task<List<Song>> GetRecentAsync(int count = 10);
 
-        Task GetSongsByAlbum(int albumId);
+        Task<List<Song>> GetPopularAsync(int count = 10);
+
+        Task<List<Song>> GetSongsByAlbumAsync(int albumId);
 
         Task UpdateAsync(int id);
     }
