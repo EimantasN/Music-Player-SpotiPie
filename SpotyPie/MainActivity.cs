@@ -1,5 +1,8 @@
 ﻿using Android.App;
+using Android.Bluetooth;
+using Android.Content;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
@@ -13,15 +16,19 @@ using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.Player;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using SupportFragment = Android.Support.V4.App.Fragment;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie
 {
     [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
-    public class MainActivity : AppCompatActivity
+    public class MainActivity : AppCompatActivity, IBluetoothProfileServiceListener
     {
+        private BluetoothHelper _bluetoothHelper;
+
         FragmentBase Home;
         FragmentBase Browse;
         FragmentBase Search;
@@ -57,10 +64,22 @@ namespace SpotyPie
 
         public static Android.Support.V4.App.Fragment CurrentFragment;
 
+        public ICommand MyCommand { get; }
+
+        private void MyCommandExecute()
+        {
+            var deviceName = "MDR";
+            if (!_bluetoothHelper.IsConnected)
+                _bluetoothHelper.Connect(deviceName);
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+
+            _bluetoothHelper = new BluetoothHelper(Application.ApplicationContext);
+            MyCommandExecute();
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
 
@@ -112,6 +131,7 @@ namespace SpotyPie
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragment(Resource.Id.home);
             MiniPlayer.Visibility = ViewStates.Gone;
+            BlueTooh();
         }
 
         public override void OnBackPressed()
@@ -301,6 +321,52 @@ namespace SpotyPie
                 CurrentFragment = null;
                 MainActivity.Fragment.TranslationX = widthInDp;
             }
+        }
+
+        BluetoothHeadset Headset;
+        BluetoothDevice Device;
+
+        public void BlueTooh()
+        {
+            //try
+            //{
+            //    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+            //    var pairedDevices = mBluetoothAdapter.BondedDevices;
+            //    List<String> s = new List<string>();
+            //    foreach (BluetoothDevice bt in pairedDevices)
+            //    {
+            //        if (bt.Name.Contains("MDR"))
+            //        {
+            //            var a = Java.Util.UUID.FromString("00001108-0000-1000-8000-00805F9B34FB");
+            //            bt.CreateRfcommSocketToServiceRecord(a);
+            //        }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //}
+        }
+
+        public void OnServiceConnected(ProfileType profile, IBluetoothProfile proxy)
+        {
+            if (profile == ProfileType.Headset)
+            {
+                Headset = (BluetoothHeadset)proxy;
+                if (Headset == null)
+                    return;
+
+                var method = Headset.Class.GetDeclaredMethod("connect", Java.Lang.Class.FromType(typeof(BluetoothDevice))); // here BluetoothDevice is the object of the device which you want to connect to...
+
+                if (method != null && Device != null)
+                {
+                    method.Invoke(Headset, Device);
+                }
+            }
+        }
+
+        public void OnServiceDisconnected([GeneratedEnum] ProfileType profile)
+        {
+            //throw new NotImplementedException();
         }
     }
 }

@@ -65,6 +65,7 @@
     <Compile Include="Base\FragmentBase.cs" />
     <Compile Include="Browse.cs" />
     <Compile Include="Current_state.cs" />
+    <Compile Include="Helpers\BluetoothHelper.cs" />
     <Compile Include="Helpers\Caster.cs" />
     <Compile Include="Models\BlockWithImage.cs" />
     <Compile Include="Models\Enum\RvType.cs" />
