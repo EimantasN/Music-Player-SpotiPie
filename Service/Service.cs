@@ -192,7 +192,7 @@ namespace Services
             try
             {
                 Item audioDb = await _ctx.Items
-                    .FirstOrDefaultAsync(x => 
+                    .FirstOrDefaultAsync(x =>
                     x.Id.ToString().Equals(Path.GetFileNameWithoutExtension(name),
                     StringComparison.InvariantCultureIgnoreCase));
 
@@ -275,7 +275,7 @@ namespace Services
                     SongId = id,
                     Name = song.Name,
                     DurationMs = song.DurationMs,
-                    ImageUrl = song.ImageUrl,
+                    Image = song.ImageUrl,
                     LocalUrl = song.LocalUrl,
                     CurrentMs = 0,
                     ArtistId = artId,

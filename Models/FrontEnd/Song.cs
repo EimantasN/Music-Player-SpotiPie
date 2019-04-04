@@ -16,7 +16,7 @@ namespace Models.FrontEnd
         {
             Id = id;
             Title = title;
-            Artists = JsonConvert.DeserializeObject<List<Artist>>(artistJson)[0].Name;
+            Artists = JsonConvert.DeserializeObject<List<string>>(artistJson)[0];
         }
 
         public static List<Song> ConvertList(List<Item> data)

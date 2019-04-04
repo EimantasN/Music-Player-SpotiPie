@@ -31,6 +31,10 @@ namespace Models.BackEnd
 
         public long Popularity { get; set; }
 
+        public string Image { get; set; }
+
+        public string Genres { get; set; }
+
         //public decimal Bitrate { get; set; }
 
         //public int Frequency { get; set; }
