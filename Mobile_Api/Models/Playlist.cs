@@ -5,13 +5,13 @@ using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Playlist : BaseModel<Playlist>
+    public class Playlist : BaseModel
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string Name { get; set; }
 
-        public List<Item> Items { get; set; }
+        public List<Song> Items { get; set; }
 
         public DateTime Created { get; set; }
 

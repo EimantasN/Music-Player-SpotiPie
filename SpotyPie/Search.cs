@@ -26,8 +26,8 @@ namespace SpotyPie
         View RootView;
 
         //List Songs
-        public List<Item> SearchSongs;
-        public RvList<Item> Songs;
+        public List<Song> SearchSongs;
+        public RvList<Song> Songs;
         private RecyclerView.LayoutManager SongsLayoutManager;
         private RecyclerView.Adapter SongsAdapter;
         private RecyclerView SongsRecyclerView;
@@ -84,8 +84,8 @@ namespace SpotyPie
             search.FocusChange += Search_FocusChange;
 
             // song list
-            SearchSongs = new List<Item>();
-            Songs = new RvList<Item>();
+            SearchSongs = new List<Song>();
+            Songs = new RvList<Song>();
             SongsLayoutManager = new LinearLayoutManager(this.Activity);
             SongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_rv);
             SongsRecyclerView.SetLayoutManager(SongsLayoutManager);
@@ -233,7 +233,7 @@ namespace SpotyPie
                 if (response.IsSuccessful)
                 {
                     Songs.Clear();
-                    var Songsx = JsonConvert.DeserializeObject<List<Item>>(response.Content);
+                    var Songsx = JsonConvert.DeserializeObject<List<Song>>(response.Content);
                     if (Songsx != null && Songsx.Count != 0)
                     {
                         Application.SynchronizationContext.Post(_ =>

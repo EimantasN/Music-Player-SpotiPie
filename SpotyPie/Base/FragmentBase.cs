@@ -35,6 +35,18 @@ namespace SpotyPie.Base
             return RootView;
         }
 
+        public void Hide()
+        {
+            RootView.Alpha = 0.0f;
+            RootView.TranslationX = 10000;
+        }
+
+        public void Show()
+        {
+            RootView.Alpha = 1f;
+            RootView.TranslationX = 0;
+        }
+
         public dynamic GetService(ApiServices service = ApiServices.Shared)
         {
             return ParentActivity.GetService(service);

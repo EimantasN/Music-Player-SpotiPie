@@ -1,13 +1,9 @@
 ﻿using Android.Support.V7.Widget;
 using Mobile_Api;
-using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
-using Mobile_Api.Models.Rv;
 using SpotyPie.Base;
-using SpotyPie.Models;
 using SpotyPie.RecycleView;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie
@@ -15,9 +11,7 @@ namespace SpotyPie
     public class Home : FragmentBase
     {
         //main_rv
-
-        public List<dynamic> Data;
-        public RvList<dynamic> RvData;
+        private static RvList<dynamic> RvData;
 
         public override int GetLayout()
         {
@@ -27,7 +21,8 @@ namespace SpotyPie
         protected override void InitView()
         {
             base.InitView();
-            RvData = new BaseRecycleView<dynamic>(this, Resource.Id.main_rv).Setup(LinearLayoutManager.Vertical);
+            if(RvData == null)
+                RvData = new BaseRecycleView<dynamic>(this, Resource.Id.main_rv).Setup(LinearLayoutManager.Vertical);
             Task.Run(() => PopulateData());
         }
 
@@ -38,15 +33,16 @@ namespace SpotyPie
 
         public async Task LoadSongs()
         {
-            RvData.Add(null);
+            List<dynamic> data = new List<dynamic>() { null };
+            RvData.AddList(data);
             var api = (SongService)GetService(ApiServices.Songs);
 
-            var data = await api.GetRecent();
-            data.Take(2).ToList().ForEach(x => RvData.Add(x));
+            data.AddRange(await api.GetRecent());
+            RvData.AddList(data);
 
-            data = await api.GetPopular();
-            data.Take(2).ToList().ForEach(x => RvData.Add(x));
-            RvData.RemoveLoading();
+            data.AddRange(await api.GetPopular());
+            RvData.AddList(data);
+            RvData.RemoveLoading(data);
         }
     }
 }

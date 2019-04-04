@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Image
+    public class Image : BaseModel
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string Url { get; set; }
 

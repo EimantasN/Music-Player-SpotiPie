@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Item : BaseModel<Item>
+    public class Song : BaseModel
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         // JSON string
         public string Artists { get; set; }
@@ -40,7 +40,7 @@ namespace Mobile_Api.Models
 
         //public int Channels { get; set; }
 
-        public Item(bool fake)
+        public Song(bool fake)
         {
             Id = 10;
             Artists = "";

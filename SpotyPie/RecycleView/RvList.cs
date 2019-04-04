@@ -2,32 +2,50 @@
 using System.Collections.Generic;
 using System.Linq;
 using Android.App;
+using Android.Support.V7.Util;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using Mobile_Api.Interfaces;
+using SpotyPie.RecycleView.Helpers;
 
 namespace SpotyPie.RecycleView
 {
     public class RvList<T>
     {
-        private List<T> mItems;
+        private List<dynamic> mItems;
         private RecyclerView.Adapter mAdapter;
 
         private int LoadingIndex { get; set; } = -1;
 
         public void Erase()
         {
-            mItems = new List<T>();
+            mItems = new List<dynamic>();
         }
 
         public RvList()
         {
-            mItems = new List<T>();
+            mItems = new List<dynamic>();
         }
 
         public RecyclerView.Adapter Adapter
         {
             get { return mAdapter; }
             set { mAdapter = value; }
+        }
+
+        public void AddList(List<dynamic> newData)
+        {
+            DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, newData), true);
+
+            // Overwrite the old data
+            Erase();
+            mItems.AddRange(newData);
+
+            Application.SynchronizationContext.Post(_ =>
+            {
+                result.DispatchUpdatesTo(Adapter);
+            }, null);
+            // Despatch the updates to your RecyclerAdapter
         }
 
         public void Add(T item)
@@ -67,10 +85,34 @@ namespace SpotyPie.RecycleView
             get { return mItems.Count; }
         }
 
+        internal void RemoveLoading(List<dynamic> data)
+        {
+            try
+            {
+                if (mItems[mItems.Count - 1] == null)
+                {
+                    Application.SynchronizationContext.Post(_ =>
+                    {
+                        mItems.RemoveAt(mItems.Count - 1);
+                        Adapter.NotifyItemRemoved(LoadingIndex);
+                    }, null);
+                }
+                else
+                {
+                    data.RemoveAll(x => x == null);
+                    AddList(data);
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
         internal void RemoveLoading()
         {
             try
             {
+
                 if (LoadingIndex > -1)
                 {
                     Application.SynchronizationContext.Post(_ =>

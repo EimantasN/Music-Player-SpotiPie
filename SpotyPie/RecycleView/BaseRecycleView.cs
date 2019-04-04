@@ -1,6 +1,9 @@
 ﻿using Android.Support.V7.Widget;
+using Mobile_Api.Models;
+using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
+using System;
 
 namespace SpotyPie.RecycleView
 {
@@ -41,12 +44,19 @@ namespace SpotyPie.RecycleView
             {
                 if (RecyclerView != null && RecyclerView.ChildCount != 0)
                 {
-                    MainActivity.Fragment.TranslationX = 0;
-                    MainActivity.CurrentFragment = new AlbumFragment();
-                    //Current_state.SetAlbum(Dataset[position]);
-                    MainActivity.mSupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
-                        .Commit();
+                    if (RvDataset[position].GetType().Name == "BlockWithImage")
+                    {
+                        MainActivity.Fragment.TranslationX = 0;
+                        MainActivity.CurrentFragment = new AlbumFragment();
+                        //Current_state.SetAlbum(Dataset[position]);
+                        MainActivity.mSupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
+                            .Commit();
+                    }
+                    else if (RvDataset[position].GetType().Name == "Song")
+                    {
+                        Current_state.SetSong(JsonConvert.DeserializeObject<Song>(JsonConvert.SerializeObject(RvDataset[position])));
+                    }
                 }
             });
         }

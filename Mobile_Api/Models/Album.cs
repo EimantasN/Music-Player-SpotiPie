@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Album : BaseModel<Album>, IRvModel
+    public class Album : BaseModel, IRvModel
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string AlbumType { get; set; }
 
@@ -32,7 +32,7 @@ namespace Mobile_Api.Models
 
         public long TotalTracks { get; set; }
 
-        public List<Item> Songs { get; set; }
+        public List<Song> Songs { get; set; }
 
         public DateTime Created { get; set; }
 

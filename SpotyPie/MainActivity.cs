@@ -9,6 +9,7 @@ using Android.Widget;
 using Mobile_Api;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
+using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.Player;
 using System;
@@ -21,10 +22,10 @@ namespace SpotyPie
     [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
     public class MainActivity : AppCompatActivity
     {
-        SupportFragment Home;
-        SupportFragment Browse;
-        SupportFragment Search;
-        SupportFragment Library;
+        FragmentBase Home;
+        FragmentBase Browse;
+        FragmentBase Search;
+        FragmentBase Library;
         SupportFragment Player;
         public static SupportFragment Album;
         public static SupportFragment Artist;
@@ -75,8 +76,8 @@ namespace SpotyPie
 
             Home = new Home();
             Browse = new Browse();
-            Search = new Search();
-            Library = new LibraryFragment();
+            //Search = new Search();
+            //Library = new LibraryFragment();
             Player = new Player.Player();
             Album = new AlbumFragment();
             Artist = new ArtistFragment();
@@ -205,10 +206,10 @@ namespace SpotyPie
         private void SetUpViewPager(ViewPager viewPager)
         {
             TabAdapter adapter = new TabAdapter(SupportFragmentManager);
-            adapter.AddFragment(new Home(), "Home");
-            adapter.AddFragment(new Browse(), "Browse");
-            adapter.AddFragment(new Search(), "Search");
-            adapter.AddFragment(new LibraryFragment(), "Library");
+            //adapter.AddFragment(new Home(), "Home");
+            //adapter.AddFragment(new Browse(), "Browse");
+            //adapter.AddFragment(new Search(), "Search");
+            //adapter.AddFragment(new LibraryFragment(), "Library");
 
             viewPager.Adapter = adapter;
         }
@@ -247,7 +248,12 @@ namespace SpotyPie
             if (HeaderContainer.Visibility == ViewStates.Gone)
                 HeaderContainer.Visibility = ViewStates.Visible;
 
-            Android.Support.V4.App.Fragment fragment = null;
+            if (Current_state.BackFragment != null)
+            {
+                Current_state.BackFragment.Hide();
+            }
+
+            FragmentBase fragment = null;
             switch (id)
             {
                 case Resource.Id.home:
@@ -272,10 +278,16 @@ namespace SpotyPie
                 return;
 
             Current_state.BackFragment = fragment;
-
-            SupportFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.content_frame, fragment)
-                .Commit();
+            if (!fragment.IsAdded)
+            {
+                SupportFragmentManager.BeginTransaction()
+                    .Add(Resource.Id.content_frame, fragment)
+                    .Commit();
+            }
+            else
+            {
+                Current_state.BackFragment.Show();
+            }
         }
 
         public void RemoveCurrentFragment()

@@ -191,7 +191,22 @@ namespace Services
         {
             try
             {
-                Item audioDb = null;
+                Item audioDb = await _ctx.Items
+                    .FirstOrDefaultAsync(x => 
+                    x.Id.ToString().Equals(Path.GetFileNameWithoutExtension(name),
+                    StringComparison.InvariantCultureIgnoreCase));
+
+                if (audioDb != null)
+                {
+                    _ctx.Update(audioDb);
+                    audioDb.LocalUrl = path;
+
+                    await _ctx.SaveChangesAsync();
+
+                    return true;
+                }
+                return false;
+
                 IAudioFile audio = AudioFile.Create(path, false);
 
                 if (audio != null && audio.FileType == AudioFileType.Flac)
@@ -239,25 +254,6 @@ namespace Services
                         }
                     }
                 }
-                else
-                    audioDb = await _ctx.Items.FirstOrDefaultAsync(x => x.Name.Equals(Path.GetFileNameWithoutExtension(name), StringComparison.InvariantCultureIgnoreCase));
-
-                if (audioDb != null)
-                {
-                    _ctx.Update(audioDb);
-                    audioDb.LocalUrl = path;
-
-                    if (audio != null)
-                    {
-                        audioDb.DurationMs = (long)audio.TotalSeconds * 1000;
-                    }
-
-                    _ctx.SaveChanges();
-                    audio = null;
-
-                    return true;
-                }
-                return false;
             }
             catch (Exception e)
             {

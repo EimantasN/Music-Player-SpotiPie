@@ -1,10 +1,14 @@
-﻿namespace Mobile_Api.Models
+﻿using Mobile_Api.Interfaces;
+
+namespace Mobile_Api
 {
-    public class BaseModel<T>
+    public abstract class BaseModel : IBaseInterface
     {
-        public string GetCurrentType()
+        public abstract int Id { get; set; }
+
+        public int GetId()
         {
-            return typeof(T).ToString();
+            return Id;
         }
     }
 }

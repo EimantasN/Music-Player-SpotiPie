@@ -2,10 +2,10 @@
 
 namespace Mobile_Api.Models
 {
-    public class Tracks : BaseModel<Tracks>
+    public class Tracks : BaseModel
     {
-        public int Id { get; set; }
-        public List<Item> Items { get; set; }
+        public override int Id { get; set; }
+        public List<Song> Items { get; set; }
 
         public long Total { get; set; }
     }

@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Artist : BaseModel<Artist>
+    public class Artist : BaseModel
     {
-        public int Id { get; set; }
+        public  override int Id { get; set; }
 
         public string Name { get; set; }
 
@@ -16,7 +16,7 @@ namespace Mobile_Api.Models
 
         public List<Image> Images { get; set; }
 
-        public List<Item> Songs { get; set; }
+        public List<Song> Songs { get; set; }
 
         public List<Album> Albums { get; set; }
 

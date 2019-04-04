@@ -38,8 +38,8 @@ namespace SpotyPie
         TextView ButtonBackGround2;
 
         //Artist Songs
-        public List<Item> ArtistTopSongsData;
-        public RvList<Item> ArtistTopSongs;
+        public List<Song> ArtistTopSongsData;
+        public RvList<Song> ArtistTopSongs;
         private RecyclerView.LayoutManager ArtistSongsLayoutManager;
         private RecyclerView.Adapter ArtistSongsAdapter;
         private RecyclerView ArtistSongsRecyclerView;
@@ -65,7 +65,7 @@ namespace SpotyPie
         {
             RootView = inflater.Inflate(Resource.Layout.Artist_layout, container, false);
 
-            MainActivity.ActionName.Text = Current_state.Current_Artist.Name;
+            MainActivity.ActionName.Text = Current_state.Current_Artist;
 
             //Background binding
             Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
@@ -83,10 +83,10 @@ namespace SpotyPie
             else
                 Photo.SetImageResource(Resource.Drawable.noimg);
 
-            AlbumTitle.Text = Current_state.Current_Artist.Name;
+            AlbumTitle.Text = Current_state.Current_Artist;
 
             //TODO error if genres is null
-            AlbumByText.Text = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist.Genres)[0];
+            //AlbumByText.Text = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist)[0];
 
             Current_state.ShowHeaderNavigationButtons();
 
@@ -105,8 +105,8 @@ namespace SpotyPie
 
             //Artist song list
 
-            ArtistTopSongsData = new List<Item>();
-            ArtistTopSongs = new RvList<Item>();
+            ArtistTopSongsData = new List<Song>();
+            ArtistTopSongs = new RvList<Song>();
             ArtistSongsLayoutManager = new LinearLayoutManager(this.Activity);
             ArtistSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
             ArtistSongsRecyclerView.SetLayoutManager(ArtistSongsLayoutManager);
@@ -136,8 +136,8 @@ namespace SpotyPie
 
         public override void OnResume()
         {
-            Task.Run(() => GetSongsAsync(Current_state.Current_Artist.Id));
-            Task.Run(() => GetArtistAlbums(Current_state.Current_Artist.Id));
+            //Task.Run(() => GetSongsAsync(Current_state.Current_Artist.Id));
+            //Task.Run(() => GetArtistAlbums(Current_state.Current_Artist.Id));
 
             base.OnResume();
         }
@@ -151,7 +151,7 @@ namespace SpotyPie
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)
                 {
-                    List<Item> songs = JsonConvert.DeserializeObject<List<Item>>(response.Content);
+                    List<Song> songs = JsonConvert.DeserializeObject<List<Song>>(response.Content);
                     foreach (var x in songs.OrderByDescending(x => x.LastActiveTime).Take(6))
                     {
                         ArtistTopSongs.Add(x);
@@ -159,8 +159,8 @@ namespace SpotyPie
                     ArtistTopSongsData = songs;
                     Application.SynchronizationContext.Post(_ =>
                     {
-                        List<string> Genres = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist.Genres);
-                        Copyrights.Text = string.Join("\n", Genres);
+                        //List<string> Genres = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist.Genres);
+                        //Copyrights.Text = string.Join("\n", Genres);
                     }, null);
                 }
                 else

@@ -36,8 +36,8 @@ namespace SpotyPie
         TextView ButtonBackGround2;
 
         //Album Songs
-        public List<Item> AlbumSongsItem;
-        public RvList<Item> AlbumSongs;
+        public List<Song> AlbumSongsItem;
+        public RvList<Song> AlbumSongs;
         private RecyclerView.LayoutManager AlbumSongsLayoutManager;
         private RecyclerView.Adapter AlbumSongsAdapter;
         private RecyclerView AlbumSongsRecyclerView;
@@ -62,7 +62,7 @@ namespace SpotyPie
         {
             RootView = inflater.Inflate(Resource.Layout.Album_layout, container, false);
 
-            MainActivity.ActionName.Text = Current_state.Current_Album.Name;
+            MainActivity.ActionName.Text = Current_state.Current_Album?.Name;
             isPlayable = false;
             IsMeniuActive = false;
             scrolled = 0;
@@ -105,8 +105,8 @@ namespace SpotyPie
             ScrollFather.ScrollChange += Scroll_ScrollChange;
 
             //ALBUM song list
-            AlbumSongs = new RvList<Item>();
-            AlbumSongsItem = new List<Item>();
+            AlbumSongs = new RvList<Song>();
+            AlbumSongsItem = new List<Song>();
             AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
             AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
             AlbumSongsRecyclerView.SetLayoutManager(AlbumSongsLayoutManager);

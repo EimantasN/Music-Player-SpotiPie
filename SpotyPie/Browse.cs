@@ -6,11 +6,9 @@ using Mobile_Api.Models.Enums;
 using Mobile_Api.Models.Rv;
 using Newtonsoft.Json;
 using SpotyPie.Base;
-using SpotyPie.Models;
 using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie

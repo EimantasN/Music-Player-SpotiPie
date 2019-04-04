@@ -23,6 +23,11 @@ namespace Mobile_Api
             return await GetListAsync<Song>("Recent");
         }
 
+        public async Task<List<dynamic>> GetRecentDynamic()
+        {
+            return await GetListAsync<dynamic>("Recent");
+        }
+
         public async Task<List<Song>> GetPopular()
         {
             return await GetListAsync<Song>("Popular");

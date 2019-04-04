@@ -4,6 +4,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
+using SpotyPie.Base;
 using SpotyPie.Models;
 using Square.Picasso;
 using System.Collections.Generic;
@@ -24,31 +25,31 @@ namespace SpotyPie
 
         public static float Progress { get; set; }
 
-        public static Android.Support.V4.App.Fragment BackFragment { get; set; }
+        public static FragmentBase BackFragment { get; set; }
 
         private static string Current_Player_Image { get; set; }
 
         public static Album Current_Album { get; set; } = null;
 
-        public static Artist Current_Artist { get; set; } = null;
+        public static string Current_Artist { get; set; } = null;
 
-        public static Item Current_Song { get; set; } = null;
+        public static Song Current_Song { get; set; } = null;
 
         public static Playlist Current_Playlist { get; set; } = null;
 
-        public static List<Item> Current_Song_List { get; set; } = null;
+        public static List<Song> Current_Song_List { get; set; } = null;
 
         public static RestClient client = new RestClient();
 
-        public static void SetSong(Item song, bool refresh = false)
+        public static void SetSong(Song song, bool refresh = false)
         {
             if (song.LocalUrl != null)
             {
                 Current_Song = song;
                 Player.Player.StartPlayMusic();
-                Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Song.Artists).First();
+                Current_Artist = song.Artists;
                 Current_Song.Playing = true;
-                Current_Song_List.First(x => x.Id == Current_Song.Id).Playing = true;
+                //Current_Song_List.First(x => x.Id == Current_Song.Id).Playing = true;
                 Start_music = true;
                 PlayerIsVisible = true;
                 UpdateCurrentInfo();
@@ -80,30 +81,30 @@ namespace SpotyPie
                     if (Current_Player_Image != Current_Song.ImageUrl)
                     {
                         Current_Player_Image = Current_Song.ImageUrl;
-                        Picasso.With(Player.Player.contextStatic).Load(Current_Song.ImageUrl).Resize(900, 900).CenterCrop().Into(Player.Player.Player_Image);
+                        //Picasso.With(Player.Player.contextStatic).Load(Current_Song.ImageUrl).Resize(900, 900).CenterCrop().Into(Player.Player.Player_Image);
                     }
                     MainActivity.PlayerContainer.TranslationX = 0;
                     Player.Player.CurretSongTimeText.Text = "0.00";
                     Player.Player.Player_song_name.Text = Current_Song.Name;
                     MainActivity.SongTitle.Text = Current_Song.Name;
                     MainActivity.ArtistName.Text = Current_Song.Name;
-                    Player.Player.Player_artist_name.Text = Current_Artist.Name;
+                    Player.Player.Player_artist_name.Text = Current_Artist;
                 }, null);
             });
         }
 
         public static void SetArtist(Artist art)
         {
-            Current_Artist = art;
+            //Current_Artist = art;
         }
 
         public static void SetAlbum(Album album)
         {
             Current_Album = album;
-            Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Album.Artists).First();
+            //Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Album.Artists).First();
             Application.SynchronizationContext.Post(_ =>
             {
-                Player.Player.Player_playlist_name.Text = Current_Artist.Name + " - " + Current_Album.Name;
+                Player.Player.Player_playlist_name.Text = Current_Artist + " - " + Current_Album.Name;
             }, null);
 
             Task.Run(() => Update());
@@ -165,6 +166,8 @@ namespace SpotyPie
 
         public static void ChangeSong(bool Foward)
         {
+            if (Current_Song_List == null) return;
+
             for (int i = 0; i < Current_Song_List.Count; i++)
             {
                 if (Current_Song_List[i].Playing)
@@ -212,8 +215,8 @@ namespace SpotyPie
 
         public static string GetArtistPhoto()
         {
-            if (Current_Artist != null && Current_Artist.Images != null && Current_Artist.Images.Count != 0)
-                return Current_Artist.Images.First().Url;
+            //if (Current_Artist != null && Current_Artist.Images != null && Current_Artist.Images.Count != 0)
+            //    return Current_Artist.Images.First().Url;
             return null;
         }
 

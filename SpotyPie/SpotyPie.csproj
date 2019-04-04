@@ -92,6 +92,7 @@
     <Compile Include="PlaylistSongList.cs" />
     <Compile Include="Playlist_view.cs" />
     <Compile Include="RecycleView\BaseRecycleView.cs" />
+    <Compile Include="RecycleView\Helpers\RecycleUpdate.cs" />
     <Compile Include="RecycleView\Models\BlockImage.cs" />
     <Compile Include="RecycleView\Models\BlockImageTwo.cs" />
     <Compile Include="RecycleView\Models\Loading.cs" />
@@ -362,6 +363,7 @@
     <AndroidResource Include="Resources\drawable\marquee.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Interfaces\" />
     <Folder Include="Resources\animation\" />
   </ItemGroup>
   <ItemGroup>
