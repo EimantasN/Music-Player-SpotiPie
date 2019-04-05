@@ -21,11 +21,9 @@ namespace Services
         {
             try
             {
-                var song = await _ctx.Songs.AsNoTracking()
+                var song = await _ctx.Songs
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id);
-
-                //TODO
-                //Task.Run(() => _ctx.UpdateAsync(id));
                 return song;
             }
             catch (Exception e)
@@ -38,7 +36,8 @@ namespace Services
         {
             try
             {
-                return await _ctx.Songs.AsNoTracking()
+                return await _ctx.Songs
+                    .AsNoTracking()
                     .Take(count)
                     .ToListAsync();
             }
@@ -52,8 +51,9 @@ namespace Services
         {
             try
             {
-                return await _ctx.Songs.AsNoTracking()
-                     .OrderBy(x => x.LastActiveTime)
+                return await _ctx.Songs
+                    .AsNoTracking()
+                    .OrderBy(x => x.LastActiveTime)
                     .Take(count)
                     .ToListAsync();
             }
@@ -67,7 +67,8 @@ namespace Services
         {
             try
             {
-                return await _ctx.Songs.AsNoTracking()
+                return await _ctx.Songs
+                    .AsNoTracking()
                     .OrderBy(x => x.Popularity)
                     .Take(count)
                     .ToListAsync();
@@ -82,7 +83,11 @@ namespace Services
         {
             try
             {
-                var Album = await _ctx.Albums.Include(x => x.Songs).AsNoTracking().Select(x => new { x.Id, x.Songs }).FirstAsync(x => x.Id == albumId);
+                var Album = await _ctx.Albums
+                    .AsNoTracking()
+                    .Include(x => x.Songs)
+                    .Select(x => new { x.Id, x.Songs }).
+                    FirstAsync(x => x.Id == albumId);
                 if (Album == null)
                     throw new Exception("Cant find album");
 
@@ -98,7 +103,8 @@ namespace Services
         {
             try
             {
-                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
+                var song = await _ctx.Songs.
+                    FirstOrDefaultAsync(x => x.Id == id);
                 if (song == null)
                     throw new Exception("Cant remove song");
 
@@ -115,7 +121,8 @@ namespace Services
         {
             try
             {
-                return await _ctx.Songs.AsNoTracking()
+                return await _ctx.Songs
+                    .AsNoTracking()
                     .Where(x => x.Name.Contains(query))
                     .Take(10)
                     .ToListAsync();
@@ -130,7 +137,8 @@ namespace Services
         {
             try
             {
-                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
+                var song = await _ctx.Songs
+                    .FirstOrDefaultAsync(x => x.Id == id);
                 if (song != null)
                 {
                     song.LastActiveTime = DateTime.Now.ToUniversalTime();

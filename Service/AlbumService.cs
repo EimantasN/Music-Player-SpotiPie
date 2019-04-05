@@ -45,6 +45,7 @@ namespace Services
                 return await _ctx.Albums
                     .AsNoTracking()
                     .Take(count)
+                    .Where(x => x.IsPlayable == true)
                     .ToListAsync();
             }
             catch (Exception e)
@@ -80,8 +81,7 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    
-                    .Where(x => x.Popularity >= 1)
+                    .OrderByDescending(x => x.LastActiveTime).ThenBy(x => x.Popularity)
                     .OrderByDescending(x => x.LastActiveTime)
                     .Take(6)
                     .ToListAsync();
@@ -131,7 +131,6 @@ namespace Services
                 return await _ctx.Albums
                     .AsNoTracking()
                     .Where(x => x.Name.Contains(query))
-                    .Take(6)
                     .ToListAsync();
             }
             catch (Exception e)
