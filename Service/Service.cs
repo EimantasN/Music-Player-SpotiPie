@@ -142,6 +142,12 @@ namespace Services
                                 item.UploadTime = DateTime.Now;
                                 item.Size = new System.IO.FileInfo(path).Length;
                                 _ctx.Entry(item).State = EntityState.Modified;
+
+                                if (!album.IsPlayable)
+                                {
+                                    album.IsPlayable = true;
+                                    _ctx.Entry(album).State = EntityState.Modified;
+                                }
                                 await _ctx.SaveChangesAsync();
                             }
                             count++;
