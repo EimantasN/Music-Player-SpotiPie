@@ -1,9 +1,9 @@
-﻿namespace Models.FrontEnd
-{
-    public enum RvType
-    {
-        Artist,
-        Album,
-        Playlist
-    }
-}
+﻿//namespace Models.FrontEnd
+//{
+//    public enum RvType
+//    {
+//        Artist,
+//        Album,
+//        Playlist
+//    }
+//}

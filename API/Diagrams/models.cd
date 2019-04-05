@@ -39,12 +39,12 @@
     <Position X="8.75" Y="2.5" Width="2.25" />
     <TypeIdentifier />
     <ShowAsAssociation>
-      <Property Name="Items" />
+      <Property Name="Songs" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Models.BackEnd.Tracks">
     <Position X="8" Y="0.5" Width="1.5" />
-    <AssociationLine Name="Items" Type="Models.BackEnd.Item" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="Songs" Type="Models.BackEnd.Item" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="8.75" Y="0.5" />
         <Point X="8.75" Y="0.125" />
@@ -54,7 +54,7 @@
     </AssociationLine>
     <TypeIdentifier />
     <ShowAsCollectionAssociation>
-      <Property Name="Items" />
+      <Property Name="Songs" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Models.BackEnd.User">

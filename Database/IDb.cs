@@ -10,7 +10,7 @@ namespace Database
         void Start();
         bool OpenFile(string path, out FileStream fs);
         Task<string> GetAudioPathById(int id);
-        Task<bool> AddAudioToLibrary(string path, string name, Item file);
+        Task<bool> AddAudioToLibrary(string path, string name, Song file);
         Task<bool> RemoveAudio(int id);
         Task<string> BindAudioFiles();
         Task<bool> SetAudioPlaying(int id, int artId, int albId, int plId);

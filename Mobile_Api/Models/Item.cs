@@ -28,7 +28,7 @@ namespace Mobile_Api.Models
 
         public string LocalUrl { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string LargeImage { get; set; }
 
         public DateTime LastActiveTime { get; set; }
 
@@ -46,7 +46,7 @@ namespace Mobile_Api.Models
             Artists = "";
             Name = "Testas";
             LocalUrl = "";
-            ImageUrl = "";
+            LargeImage = "";
         }
     }
 }

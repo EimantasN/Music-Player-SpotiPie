@@ -121,7 +121,7 @@
       "total_tracks": 14,
       "tracks": {
         "href": "https://api.spotify.com/v1/albums/3W9NClLDhTHyRmy8ZLfoJf/tracks?offset=0&limit=50",
-        "items": [
+        "Songs": [
           {
             "artists": [
               {
@@ -1583,7 +1583,7 @@
       "total_tracks": 11,
       "tracks": {
         "href": "https://api.spotify.com/v1/albums/6yd9yk8nFcHalXzy7mgaDx/tracks?offset=0&limit=50",
-        "items": [
+        "Songs": [
           {
             "artists": [
               {
@@ -2760,7 +2760,7 @@
       "total_tracks": 17,
       "tracks": {
         "href": "https://api.spotify.com/v1/albums/7JOCOjZTcLysDMkZGWlcIj/tracks?offset=0&limit=50",
-        "items": [
+        "Songs": [
           {
             "artists": [
               {
@@ -4517,7 +4517,7 @@
       "total_tracks": 10,
       "tracks": {
         "href": "https://api.spotify.com/v1/albums/5rtaHEtZdWQSrKJmuqPTB0/tracks?offset=0&limit=50",
-        "items": [
+        "Songs": [
           {
             "artists": [
               {
@@ -5599,7 +5599,7 @@
       "total_tracks": 11,
       "tracks": {
         "href": "https://api.spotify.com/v1/albums/7Lv2e6qweacdWjqrQy7UNo/tracks?offset=0&limit=50",
-        "items": [
+        "Songs": [
           {
             "artists": [
               {

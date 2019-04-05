@@ -42,7 +42,7 @@ namespace API.Controllers
                 {
                     return _ctx.Playlist
                     .AsNoTracking()
-                    .Include(x => x.Items)
+                    .Include(x => x.Songs)
                     .Where(x => x.Name.Contains(query));
                 });
 
@@ -67,16 +67,16 @@ namespace API.Controllers
                 //Need includes
                 var playlist = await _ctx.Playlist
                     .AsNoTracking()
-                    .Include(x => x.Items)
+                    .Include(x => x.Songs)
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 _ctx.Update(playlist);
-                playlist.Image = playlist.Items[new Random((int)DateTime.Now.Ticks).Next(0, playlist.Items.Count)].ImageUrl;
+                playlist.Image = playlist.Songs[new Random((int)DateTime.Now.Ticks).Next(0, playlist.Songs.Count)].LargeImage;
                 playlist.LastActiveTime = DateTime.Now;
                 playlist.Popularity++;
                 _ctx.SaveChanges();
 
-                playlist.Items = null;
+                playlist.Songs = null;
 
                 return Ok(playlist);
             }
@@ -99,11 +99,11 @@ namespace API.Controllers
                 //Need includes
                 var playlist = await _ctx.Playlist
                     .AsNoTracking()
-                    .Include(x => x.Items)
+                    .Include(x => x.Songs)
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 _ctx.Update(playlist);
-                playlist.Image = playlist.Items[new Random((int)DateTime.Now.Ticks).Next(0, playlist.Items.Count)].ImageUrl;
+                playlist.Image = playlist.Songs[new Random((int)DateTime.Now.Ticks).Next(0, playlist.Songs.Count)].LargeImage;
                 playlist.LastActiveTime = DateTime.Now;
                 playlist.Popularity++;
                 _ctx.SaveChanges();
@@ -142,7 +142,7 @@ namespace API.Controllers
         //Create playlist with songs
         //        {
         //          "name": "Testas"
-        //          "items": [{"id": "<Song ID>"}]
+        //          "Songs": [{"id": "<Song ID>"}]
         //        }
         [HttpPost()]
         [EnableCors("AllowSpecificOrigin")]
@@ -157,16 +157,16 @@ namespace API.Controllers
                 playlist.Created = DateTime.Now;
                 playlist.LastActiveTime = DateTime.Now;
 
-                if (playlist.Items.Count > 0)
+                if (playlist.Songs.Count > 0)
                 {
-                    for (int i = 0; i < playlist.Items.Count; i++)
+                    for (int i = 0; i < playlist.Songs.Count; i++)
                     {
-                        var sg = await _ctx.Items.FirstOrDefaultAsync(x => x.Id == playlist.Items[i].Id);
-                        playlist.Items[i] = sg;
+                        var sg = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == playlist.Songs[i].Id);
+                        playlist.Songs[i] = sg;
                         playlist.Total++;
                     }
 
-                    playlist.Image = playlist.Items[0].ImageUrl;
+                    playlist.Image = playlist.Songs[0].LargeImage;
                 }
 
                 _ctx.Playlist.Add(playlist);
@@ -190,20 +190,20 @@ namespace API.Controllers
 
             try
             {
-                var playlist = await _ctx.Playlist.Include(x => x.Items).FirstOrDefaultAsync(x => x.Id == id);
+                var playlist = await _ctx.Playlist.Include(x => x.Songs).FirstOrDefaultAsync(x => x.Id == id);
                 if (playlist != null)
                 {
-                    var track = await _ctx.Items.FirstOrDefaultAsync(x => x.Id == trackID);
+                    var track = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == trackID);
                     if (track != null)
                     {
-                        if (!playlist.Items.Exists(x => x.Id == trackID))
+                        if (!playlist.Songs.Exists(x => x.Id == trackID))
                         {
                             _ctx.Update(playlist);
 
                             if (playlist.Image == null)
-                                playlist.Image = track.ImageUrl;
+                                playlist.Image = track.LargeImage;
 
-                            playlist.Items.Add(track);
+                            playlist.Songs.Add(track);
                             playlist.Total++;
                             _ctx.SaveChanges();
 
@@ -257,14 +257,14 @@ namespace API.Controllers
 
             try
             {
-                var playlist = await _ctx.Playlist.Include(x => x.Items).FirstOrDefaultAsync(x => x.Id == id);
+                var playlist = await _ctx.Playlist.Include(x => x.Songs).FirstOrDefaultAsync(x => x.Id == id);
                 if (playlist != null)
                 {
-                    var track = await _ctx.Items.FirstOrDefaultAsync(x => x.Id == id);
+                    var track = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
                     if (track != null)
                     {
                         _ctx.Update(playlist);
-                        playlist.Items.Remove(track);
+                        playlist.Songs.Remove(track);
                         playlist.Total--;
                         _ctx.SaveChanges();
 

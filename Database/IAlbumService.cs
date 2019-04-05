@@ -1,4 +1,4 @@
-﻿using Models.FrontEnd;
+﻿using Models.BackEnd;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,18 +6,18 @@ namespace Database
 {
     public interface IAlbumService
     {
-        Task<List<BlockWithImage>> Search(string query);
+        Task<List<Album>> Search(string query);
 
-        Task<BlockWithImage> GetAlbumAsync(int id);
+        Task<Album> GetAlbumAsync(int id);
 
-        Task<List<BlockWithImage>> GetAlbumsAsync(int count = 10);
+        Task<List<Album>> GetAlbumsAsync(int count = 10);
 
-        Task<List<BlockWithImage>> GetRecentAlbumsAsync();
+        Task<List<Album>> GetRecentAlbumsAsync();
 
-        Task<List<BlockWithImage>> GetPopularAlbumsAsync();
+        Task<List<Album>> GetPopularAlbumsAsync();
 
-        Task<List<BlockWithImage>> GetOldAlbumsAsync();
+        Task<List<Album>> GetOldAlbumsAsync();
 
-        Task<List<BlockWithImage>> GetAlbumsByArtistAsync(int id);
+        Task<List<Album>> GetAlbumsByArtistAsync(int id);
     }
 }

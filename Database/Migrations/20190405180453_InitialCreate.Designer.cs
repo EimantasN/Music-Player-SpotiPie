@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(SpotyPieIDbContext))]
-    [Migration("20181129121003_Spotypie2_PlaylistImage")]
-    partial class Spotypie2_PlaylistImage
+    [Migration("20190405180453_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -27,37 +27,29 @@ namespace Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AlbumType");
-
                     b.Property<int?>("ArtistId");
 
-                    b.Property<string>("Artists");
+                    b.Property<bool>("IsPlayable");
 
-                    b.Property<int?>("CopyrightId");
-
-                    b.Property<string>("Copyrights");
-
-                    b.Property<DateTime>("Created");
-
-                    b.Property<string>("Genres");
-
-                    b.Property<string>("Label");
+                    b.Property<string>("LargeImage");
 
                     b.Property<DateTime>("LastActiveTime");
 
+                    b.Property<string>("MediumImage");
+
                     b.Property<string>("Name");
 
-                    b.Property<long>("Popularity");
+                    b.Property<int>("Popularity");
 
-                    b.Property<DateTimeOffset>("ReleaseDate");
+                    b.Property<string>("ReleaseDate");
 
-                    b.Property<long>("TotalTracks");
+                    b.Property<string>("SmallImage");
+
+                    b.Property<string>("SpotifyId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ArtistId");
-
-                    b.HasIndex("CopyrightId");
 
                     b.ToTable("Albums");
                 });
@@ -70,28 +62,52 @@ namespace Database.Migrations
 
                     b.Property<string>("Genres");
 
+                    b.Property<string>("LargeImage");
+
+                    b.Property<DateTime>("LastActiveTime");
+
+                    b.Property<string>("MediumImage");
+
                     b.Property<string>("Name");
 
                     b.Property<long>("Popularity");
+
+                    b.Property<string>("SmallImage");
+
+                    b.Property<string>("SpotifyId");
 
                     b.HasKey("Id");
 
                     b.ToTable("Artists");
                 });
 
-            modelBuilder.Entity("Models.BackEnd.Copyright", b =>
+            modelBuilder.Entity("Models.BackEnd.CurrentSong", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Text");
+                    b.Property<int>("AlbumId");
 
-                    b.Property<string>("Type");
+                    b.Property<int>("ArtistId");
+
+                    b.Property<int>("CurrentMs");
+
+                    b.Property<long>("DurationMs");
+
+                    b.Property<string>("Image");
+
+                    b.Property<string>("LocalUrl");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("PlaylistId");
+
+                    b.Property<int>("SongId");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Copyrights");
+                    b.ToTable("CurrentSong");
                 });
 
             modelBuilder.Entity("Models.BackEnd.Image", b =>
@@ -99,10 +115,6 @@ namespace Database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("AlbumId");
-
-                    b.Property<int?>("ArtistId");
 
                     b.Property<long>("Height");
 
@@ -112,60 +124,7 @@ namespace Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlbumId");
-
-                    b.HasIndex("ArtistId");
-
                     b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("Models.BackEnd.Item", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("AlbumId");
-
-                    b.Property<int?>("ArtistId");
-
-                    b.Property<string>("Artists");
-
-                    b.Property<long>("DiscNumber");
-
-                    b.Property<long>("DurationMs");
-
-                    b.Property<bool>("Explicit");
-
-                    b.Property<string>("ImageUrl");
-
-                    b.Property<bool>("IsLocal");
-
-                    b.Property<bool>("IsPlayable");
-
-                    b.Property<DateTime>("LastActiveTime");
-
-                    b.Property<string>("LocalUrl");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int?>("PlaylistId");
-
-                    b.Property<long>("TrackNumber");
-
-                    b.Property<int?>("TracksId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AlbumId");
-
-                    b.HasIndex("ArtistId");
-
-                    b.HasIndex("PlaylistId");
-
-                    b.HasIndex("TracksId");
-
-                    b.ToTable("Item");
                 });
 
             modelBuilder.Entity("Models.BackEnd.Playlist", b =>
@@ -174,9 +133,13 @@ namespace Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Artists");
+
                     b.Property<DateTime>("Created");
 
-                    b.Property<string>("ImageUrl");
+                    b.Property<string>("Gendres");
+
+                    b.Property<string>("Image");
 
                     b.Property<DateTime>("LastActiveTime");
 
@@ -193,17 +156,51 @@ namespace Database.Migrations
                     b.ToTable("Playlist");
                 });
 
-            modelBuilder.Entity("Models.BackEnd.Tracks", b =>
+            modelBuilder.Entity("Models.BackEnd.Song", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("Total");
+                    b.Property<int?>("AlbumId");
+
+                    b.Property<long>("DiscNumber");
+
+                    b.Property<long>("DurationMs");
+
+                    b.Property<bool>("Explicit");
+
+                    b.Property<bool>("IsLocal");
+
+                    b.Property<bool>("IsPlayable");
+
+                    b.Property<string>("LargeImage");
+
+                    b.Property<DateTime>("LastActiveTime");
+
+                    b.Property<string>("LocalUrl");
+
+                    b.Property<string>("MediumImage");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int?>("PlaylistId");
+
+                    b.Property<int>("Popularity");
+
+                    b.Property<string>("SmallImage");
+
+                    b.Property<string>("SpotifyId");
+
+                    b.Property<long>("TrackNumber");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tracks");
+                    b.HasIndex("AlbumId");
+
+                    b.HasIndex("PlaylistId");
+
+                    b.ToTable("Song");
                 });
 
             modelBuilder.Entity("Models.BackEnd.User", b =>
@@ -232,40 +229,17 @@ namespace Database.Migrations
                     b.HasOne("Models.BackEnd.Artist")
                         .WithMany("Albums")
                         .HasForeignKey("ArtistId");
-
-                    b.HasOne("Models.BackEnd.Copyright")
-                        .WithMany("Albums")
-                        .HasForeignKey("CopyrightId");
                 });
 
-            modelBuilder.Entity("Models.BackEnd.Image", b =>
-                {
-                    b.HasOne("Models.BackEnd.Album")
-                        .WithMany("Images")
-                        .HasForeignKey("AlbumId");
-
-                    b.HasOne("Models.BackEnd.Artist")
-                        .WithMany("Images")
-                        .HasForeignKey("ArtistId");
-                });
-
-            modelBuilder.Entity("Models.BackEnd.Item", b =>
+            modelBuilder.Entity("Models.BackEnd.Song", b =>
                 {
                     b.HasOne("Models.BackEnd.Album")
                         .WithMany("Songs")
                         .HasForeignKey("AlbumId");
-
-                    b.HasOne("Models.BackEnd.Artist")
-                        .WithMany("Songs")
-                        .HasForeignKey("ArtistId");
 
                     b.HasOne("Models.BackEnd.Playlist")
-                        .WithMany("Items")
+                        .WithMany("Songs")
                         .HasForeignKey("PlaylistId");
-
-                    b.HasOne("Models.BackEnd.Tracks")
-                        .WithMany("Items")
-                        .HasForeignKey("TracksId");
                 });
 #pragma warning restore 612, 618
         }

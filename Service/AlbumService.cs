@@ -1,6 +1,6 @@
 ﻿using Database;
 using Microsoft.EntityFrameworkCore;
-using Models.FrontEnd;
+using Models.BackEnd;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +17,11 @@ namespace Services
             _ctx = ctx;
         }
 
-        public async Task<BlockWithImage> GetAlbumAsync(int id)
+        public async Task<Album> GetAlbumAsync(int id)
         {
             try
             {
-                var album = await _ctx.Albums.Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == id);
+                var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Id == id);
                 if (album == null)
                     throw new Exception("album with id " + id + " not found");
 
@@ -30,7 +30,7 @@ namespace Services
                 _ctx.Entry(album).State = EntityState.Modified;
                 await _ctx.SaveChangesAsync();
 
-                return new BlockWithImage(album.Id, RvType.Album, album.Name, album.Label, album.Images?.First().Url);
+                return album;
             }
             catch (Exception e)
             {
@@ -38,14 +38,12 @@ namespace Services
             }
         }
 
-        public async Task<List<BlockWithImage>> GetAlbumsAsync(int count = 10)
+        public async Task<List<Album>> GetAlbumsAsync(int count = 10)
         {
             try
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Images)
-                    .Select(x => new BlockWithImage(x.Id, RvType.Album, x.Name, x.Label, x.Images[0].Url))
                     .Take(count)
                     .ToListAsync();
             }
@@ -55,27 +53,20 @@ namespace Services
             }
         }
 
-        public async Task<List<BlockWithImage>> GetAlbumsByArtistAsync(int id)
+        public async Task<List<Album>> GetAlbumsByArtistAsync(int id)
         {
             try
             {
                 var artist = await _ctx.Artists
                     .AsNoTracking()
                     .Include(x => x.Albums)
-                    .ThenInclude(x => x.Images)
                     .Select(x => new { x.Id, x.Albums })
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (artist == null)
                     throw new Exception("Cant find artist with id - " + id);
 
-                List<BlockWithImage> Albums = new List<BlockWithImage>();
-                artist.Albums.ForEach(x =>
-                {
-                    Albums.Add(new BlockWithImage(x.Id, RvType.Album, x.Name, x.Label, x.Images?[0].Url));
-                });
-
-                return Albums;
+                return artist.Albums;
             }
             catch (Exception e)
             {
@@ -83,16 +74,15 @@ namespace Services
             }
         }
 
-        public async Task<List<BlockWithImage>> GetOldAlbumsAsync()
+        public async Task<List<Album>> GetOldAlbumsAsync()
         {
             try
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Images)
+                    
                     .Where(x => x.Popularity >= 1)
                     .OrderByDescending(x => x.LastActiveTime)
-                    .Select(x => new BlockWithImage(x.Id, RvType.Album, x.Name, x.Label, x.Images[0].Url))
                     .Take(6)
                     .ToListAsync();
             }
@@ -102,15 +92,13 @@ namespace Services
             }
         }
 
-        public async Task<List<BlockWithImage>> GetPopularAlbumsAsync()
+        public async Task<List<Album>> GetPopularAlbumsAsync()
         {
             try
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Images)
                     .OrderByDescending(x => x.Popularity)
-                    .Select(x => new BlockWithImage(x.Id, RvType.Album, x.Name, x.Label, x.Images[0].Url))
                     .Take(6)
                     .ToListAsync();
             }
@@ -120,15 +108,13 @@ namespace Services
             }
         }
 
-        public async Task<List<BlockWithImage>> GetRecentAlbumsAsync()
+        public async Task<List<Album>> GetRecentAlbumsAsync()
         {
             try
             {
                 return await _ctx.Albums
                         .AsNoTracking()
-                        .Include(x => x.Images)
                         .OrderByDescending(x => x.LastActiveTime)
-                        .Select(x => new BlockWithImage(x.Id, RvType.Album, x.Name, x.Label, x.Images[0].Url))
                         .Take(6)
                         .ToListAsync();
             }
@@ -138,16 +124,14 @@ namespace Services
             }
         }
 
-        public async Task<List<BlockWithImage>> Search(string query)
+        public async Task<List<Album>> Search(string query)
         {
             try
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Images)
                     .Where(x => x.Name.Contains(query))
                     .Take(6)
-                    .Select(x => new BlockWithImage(x.Id, RvType.Album, x.Name, x.Label, x.Images[0].Url))
                     .ToListAsync();
             }
             catch (Exception e)

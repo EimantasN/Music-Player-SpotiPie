@@ -44,8 +44,7 @@ namespace API.Controllers
                 {
                     return _ctx.Artists
                     .AsNoTracking()
-                    .Include(x => x.Images)
-                    .Include(x => x.Songs)
+                    .Include(x => x.Albums)
                     .Where(x => x.Name.Contains(query));
                 });
 
@@ -64,7 +63,7 @@ namespace API.Controllers
         {
             try
             {
-                var artists = await _ctx.Artists.Include(x => x.Images).ToListAsync();
+                var artists = await _ctx.Artists.ToListAsync();
 
                 return Ok(artists);
             }
@@ -81,7 +80,7 @@ namespace API.Controllers
         {
             try
             {
-                var artist = await _ctx.Artists.Include(x => x.Images)
+                var artist = await _ctx.Artists
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 return Ok(artist);
@@ -101,12 +100,12 @@ namespace API.Controllers
             try
             {
                 //TODO add popularity option and order by that
-                var artist = await _ctx.Artists.Include(x => x.Images).Include(x => x.Songs)
-                    .Select(x => new { x.Id, x.Songs, x.Popularity })
+                var artist = await _ctx.Artists.Include(x => x.Albums)
+                    .Select(x => new { x.Id, x.Albums, x.Popularity })
                     .OrderByDescending(x => x.Popularity)
                     .FirstOrDefaultAsync(x => x.Id == id);
 
-                return Ok(artist.Songs);
+                return Ok(artist.Albums);
             }
             catch (Exception e)
             {
@@ -126,7 +125,7 @@ namespace API.Controllers
                 List<Artist> RelatedArtist = new List<Artist>();
                 foreach (var a in GenresList)
                 {
-                    var artists = await _ctx.Artists.AsNoTracking().Include(x => x.Images).Where(x => x.Id != id && x.Genres.Contains(a)).ToListAsync();
+                    var artists = await _ctx.Artists.AsNoTracking().Where(x => x.Id != id && x.Genres.Contains(a)).ToListAsync();
                     RelatedArtist.AddRange(artists);
 
                     if (RelatedArtist.Count >= 6)
@@ -162,13 +161,12 @@ namespace API.Controllers
         {
             try
             {
-                var data = await _ctx.Artists.Include(x => x.Images).Select(x => new
+                var data = await _ctx.Artists.Select(x => new
                 {
                     x.Id,
                     x.Popularity,
                     x.Name,
-                    x.Genres,
-                    x.Images
+                    x.Genres
                 }).
                 OrderByDescending(x => x.Popularity).Take(6).ToListAsync();
                 return Ok(data);
@@ -186,7 +184,7 @@ namespace API.Controllers
         {
             try
             {
-                var data = await _ctx.Artists.Include(x => x.Images).Include(x => x.Albums).ThenInclude(x => x.Images).FirstOrDefaultAsync(x => x.Id == id);
+                var data = await _ctx.Artists.Include(x => x.Albums).FirstOrDefaultAsync(x => x.Id == id);
                 return Ok(data);
             }
             catch (Exception e)

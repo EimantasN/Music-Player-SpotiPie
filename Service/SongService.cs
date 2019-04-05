@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Config.Net;
 using Database;
 using Microsoft.EntityFrameworkCore;
-using Models.FrontEnd;
-using Service.Settings;
+using Models.BackEnd;
 
 namespace Services
 {
@@ -23,8 +21,7 @@ namespace Services
         {
             try
             {
-                var song = await _ctx.Items.AsNoTracking()
-                    .Select(x => new Song(x.Id, x.Name, x.Artists))
+                var song = await _ctx.Songs.AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 //TODO
@@ -41,8 +38,7 @@ namespace Services
         {
             try
             {
-                return await _ctx.Items.AsNoTracking()
-                    .Select(x => new Song(x.Id, x.Name, x.Artists))
+                return await _ctx.Songs.AsNoTracking()
                     .Take(count)
                     .ToListAsync();
             }
@@ -56,9 +52,8 @@ namespace Services
         {
             try
             {
-                return await _ctx.Items.AsNoTracking()
+                return await _ctx.Songs.AsNoTracking()
                      .OrderBy(x => x.LastActiveTime)
-                    .Select(x => new Song(x.Id, x.Name, x.Artists))
                     .Take(count)
                     .ToListAsync();
             }
@@ -72,9 +67,8 @@ namespace Services
         {
             try
             {
-                return await _ctx.Items.AsNoTracking()
+                return await _ctx.Songs.AsNoTracking()
                     .OrderBy(x => x.Popularity)
-                    .Select(x => new Song(x.Id, x.Name, x.Artists))
                     .Take(count)
                     .ToListAsync();
             }
@@ -92,7 +86,7 @@ namespace Services
                 if (Album == null)
                     throw new Exception("Cant find album");
 
-                return Song.ConvertList(Album.Songs);
+                return Album.Songs;
             }
             catch (Exception e)
             {
@@ -104,11 +98,11 @@ namespace Services
         {
             try
             {
-                var song = await _ctx.Items.FirstOrDefaultAsync(x => x.Id == id);
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
                 if (song == null)
                     throw new Exception("Cant remove song");
 
-                _ctx.Items.Remove(song);
+                _ctx.Songs.Remove(song);
                 await _ctx.SaveChangesAsync();
             }
             catch (Exception e)
@@ -121,9 +115,8 @@ namespace Services
         {
             try
             {
-                return await _ctx.Items.AsNoTracking()
-                    .Select(x => new Song(x.Id, x.Name, x.Artists))
-                    .Where(x => x.Title.Contains(query))
+                return await _ctx.Songs.AsNoTracking()
+                    .Where(x => x.Name.Contains(query))
                     .Take(10)
                     .ToListAsync();
             }
@@ -137,7 +130,7 @@ namespace Services
         {
             try
             {
-                var song = await _ctx.Items.FirstOrDefaultAsync(x => x.Id == id);
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
                 if (song != null)
                 {
                     song.LastActiveTime = DateTime.Now.ToUniversalTime();

@@ -11,7 +11,7 @@ namespace Mobile_Api.Models
 
         public string Name { get; set; }
 
-        public List<Song> Items { get; set; }
+        public List<Song> Songs { get; set; }
 
         public DateTime Created { get; set; }
 
@@ -23,6 +23,6 @@ namespace Mobile_Api.Models
 
         public int Popularity { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string LargeImage { get; set; }
     }
 }

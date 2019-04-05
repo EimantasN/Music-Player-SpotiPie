@@ -7,7 +7,7 @@
       <FileName>BackEnd\Track.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Items" />
+      <Property Name="Songs" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Models.BackEnd.Item">

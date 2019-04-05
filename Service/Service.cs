@@ -89,7 +89,7 @@ namespace Services
         {
             try
             {
-                var file = await _ctx.Items.FirstOrDefaultAsync(x => x.Id == id);
+                var file = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
                 return file.IsPlayable ? file.LocalUrl : string.Empty;
             }
             catch (Exception)
@@ -118,7 +118,7 @@ namespace Services
                 int count = 0;
                 string Failed = "";
                 int Ex = 0;
-                Item item;
+                Song item;
                 VorbisComment flacTag;
                 Album album;
                 foreach (var path in Directory.EnumerateFiles(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Music"))
@@ -157,7 +157,7 @@ namespace Services
                 {
                     foreach (var file in Directory.EnumerateFiles(settings.AudioStoragePath))
                     {
-                        Item audioDb = null;
+                        Song audioDb = null;
                         IAudioFile audio = AudioFile.Create(file, false);
                         Console.WriteLine(file);
 
@@ -167,35 +167,35 @@ namespace Services
 
                             if (string.IsNullOrWhiteSpace(flacTag.Title) || string.IsNullOrWhiteSpace(flacTag.Artist))
                             {
-                                audioDb = await _ctx.Items
+                                audioDb = await _ctx.Songs
                                     .FirstOrDefaultAsync(x =>
                                     x.Name == Path.GetFileNameWithoutExtension(file));
 
                                 if (audioDb == null)
                                 {
-                                    audioDb = await _ctx.Items
+                                    audioDb = await _ctx.Songs
                                     .FirstOrDefaultAsync(x =>
                                     x.Name.Contains(Path.GetFileNameWithoutExtension(file)));
                                 }
                             }
                             else
                             {
-                                var replaced = flacTag.Title.Replace("'", "’");
-                                var replacedArtist = flacTag.Artist.Replace("'", "’");
-                                audioDb = await _ctx.Items
-                                    .FirstOrDefaultAsync(x => x.Name.Contains(replaced)
-                                    && x.Artists.Contains(replacedArtist));
+                                //var replaced = flacTag.Title.Replace("'", "’");
+                                //var replacedArtist = flacTag.Artist.Replace("'", "’");
+                                //audioDb = await _ctx.Songs
+                                //    .FirstOrDefaultAsync(x => x.Name.Contains(replaced)
+                                //    && x.Artists.Contains(replacedArtist));
 
-                                if (audioDb == null)
-                                {
-                                    audioDb = await _ctx.Items
-                                    .FirstOrDefaultAsync(x => x.Name.Contains(replaced)
-                                    && x.Artists.Contains(replacedArtist));
-                                }
+                                //if (audioDb == null)
+                                //{
+                                //    audioDb = await _ctx.Songs
+                                //    .FirstOrDefaultAsync(x => x.Name.Contains(replaced)
+                                //    && x.Artists.Contains(replacedArtist));
+                                //}
                             }
                         }
                         else
-                            audioDb = await _ctx.Items.FirstOrDefaultAsync(x => x.Name == Path.GetFileNameWithoutExtension(file));
+                            audioDb = await _ctx.Songs.FirstOrDefaultAsync(x => x.Name == Path.GetFileNameWithoutExtension(file));
 
                         if (audioDb != null)
                         {
@@ -223,7 +223,7 @@ namespace Services
             }
         }
 
-        public async Task<bool> AddAudioToLibrary(string path, string name, Item file = null)
+        public async Task<bool> AddAudioToLibrary(string path, string name, Song file = null)
         {
             try
             {
@@ -252,23 +252,23 @@ namespace Services
         {
             try
             {
-                var song = await _ctx.Items.FirstOrDefaultAsync(x => x.Id == id);
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
 
-                song.Popularity++;
-                song.LastActiveTime = DateTime.Now;
+                //song.Popularity++;
+                //song.LastActiveTime = DateTime.Now;
 
-                _ctx.CurrentSong.Add(new CurrentSong
-                {
-                    SongId = id,
-                    Name = song.Name,
-                    DurationMs = song.DurationMs,
-                    Image = song.ImageUrl,
-                    LocalUrl = song.LocalUrl,
-                    CurrentMs = 0,
-                    ArtistId = artId,
-                    AlbumId = albId,
-                    PlaylistId = plId
-                });
+                //_ctx.CurrentSong.Add(new CurrentSong
+                //{
+                //    SongId = id,
+                //    Name = song.Name,
+                //    DurationMs = song.DurationMs,
+                //    Image = song.LargeImage,
+                //    LocalUrl = song.LocalUrl,
+                //    CurrentMs = 0,
+                //    ArtistId = artId,
+                //    AlbumId = albId,
+                //    PlaylistId = plId
+                //});
 
                 _ctx.Entry(song).State = EntityState.Modified;
                 _ctx.SaveChanges();
@@ -284,12 +284,11 @@ namespace Services
         {
             try
             {
-                var list = await _ctx.Items
+                var list = await _ctx.Songs
                     .Where(x => x.IsPlayable)
                     .Select(x =>
                     new
                     {
-                        Artist = JsonConvert.DeserializeObject<List<Artist>>(x.Artists)[0].Name,
                         x.DurationMs,
                         x.IsPlayable,
                         x.Name
@@ -437,7 +436,7 @@ namespace Services
         {
             try
             {
-                var l = await _ctx.Items.SumAsync(x => x.DurationMs);
+                var l = await _ctx.Songs.SumAsync(x => x.DurationMs);
                 return l / 1000;
             }
             catch (Exception)
@@ -450,7 +449,7 @@ namespace Services
         {
             try
             {
-                var songCount = await _ctx.Items.CountAsync(x => !string.IsNullOrWhiteSpace(x.LocalUrl));
+                var songCount = await _ctx.Songs.CountAsync(x => !string.IsNullOrWhiteSpace(x.LocalUrl));
                 var artistCount = await _ctx.Artists.CountAsync();
                 var albumCount = await _ctx.Albums.CountAsync();
                 var playlistCount = await _ctx.Playlist.CountAsync();
@@ -496,25 +495,25 @@ namespace Services
 
         private void UpdateArtisthFullData(Spotify.ArtistRoot artist)
         {
-            foreach (var art in artist.Artists)
-            {
-                if (art == null)
-                    continue;
+            //foreach (var art in artist.Artists)
+            //{
+            //    if (art == null)
+            //        continue;
 
-                var DbArt = _ctx.Artists.Include(x => x.Images).FirstOrDefault(x => x.Name == art.Name);
-                if (DbArt != null)
-                {
-                    DbArt.Genres = JsonConvert.SerializeObject(art.Genres.ToList());
-                    if (DbArt.Images == null)
-                        DbArt.Images = new List<Image>();
+            //    var DbArt = _ctx.Artists.FirstOrDefault(x => x.Name == art.Name);
+            //    if (DbArt != null)
+            //    {
+            //        DbArt.Genres = JsonConvert.SerializeObject(art.Genres.ToList());
+            //        if (DbArt.Images == null)
+            //            DbArt.Images = new List<Image>();
 
-                    if (DbArt.Images.Count == 0)
-                        DbArt.Images.AddRange(Helpers.GetImages(art.Images));
+            //        if (DbArt.Images.Count == 0)
+            //            DbArt.Images.AddRange(Helpers.GetImages(art.Images));
 
-                    _ctx.Entry(DbArt).State = EntityState.Modified;
-                    _ctx.SaveChanges();
-                }
-            }
+            //        _ctx.Entry(DbArt).State = EntityState.Modified;
+            //        _ctx.SaveChanges();
+            //    }
+            //}
         }
 
         public void InsertArtist(Spotify.AlbumRoot album)
@@ -540,59 +539,55 @@ namespace Services
 
         public void InsertCopyrights(Spotify.AlbumRoot album)
         {
-            List<Models.BackEnd.Copyright> DistintArtist = _ctx.Copyrights.ToList();
 
-            if (DistintArtist == null)
-                DistintArtist = new List<Models.BackEnd.Copyright>();
-
-            foreach (var x in album.Albums)
-            {
-                foreach (var a in Helpers.GetCopyrights(x.Copyrights))
-                {
-                    if (!DistintArtist.Any(z => z.Text == a.Text && z.Type == a.Type))
-                    {
-                        DistintArtist.Add(a);
-                        _ctx.Copyrights.Add(a);
-                    }
-                }
-            }
-            _ctx.SaveChanges();
+            //foreach (var x in album.Albums)
+            //{
+            //    foreach (var a in Helpers.GetCopyrights(x.Copyrights))
+            //    {
+            //        if (!DistintArtist.Any(z => z.Text == a.Text && z.Type == a.Type))
+            //        {
+            //            DistintArtist.Add(a);
+            //            _ctx.Copyrights.Add(a);
+            //        }
+            //    }
+            //}
+            //_ctx.SaveChanges();
         }
 
         public void InsertAlbums(Spotify.AlbumRoot album)
         {
-            List<Models.BackEnd.Artist> DistintArtist = _ctx.Artists.ToList();
-            List<Models.BackEnd.Copyright> DistintCopyrights = _ctx.Copyrights.ToList();
+            //List<Models.BackEnd.Artist> DistintArtist = _ctx.Artists.ToList();
+            ////List<Models.BackEnd.Copyright> DistintCopyrights = _ctx.Copyrights.ToList();
 
-            List<Models.BackEnd.Album> DistintAlbum = _ctx.Albums.ToList();
+            //List<Models.BackEnd.Album> DistintAlbum = _ctx.Albums.ToList();
 
-            if (DistintAlbum == null)
-                DistintAlbum = new List<Models.BackEnd.Album>();
+            //if (DistintAlbum == null)
+            //    DistintAlbum = new List<Models.BackEnd.Album>();
 
-            foreach (var x in album.Albums)
-            {
-                var albumGood = new Models.BackEnd.Album(x);
-                albumGood.Songs = null;
+            //foreach (var x in album.Albums)
+            //{
+            //    var albumGood = new Models.BackEnd.Album(x);
+            //    albumGood.Songs = null;
 
-                if (!DistintAlbum.Any(z => z.Name == x.Name))
-                {
-                    DistintAlbum.Add(albumGood);
+            //    if (!DistintAlbum.Any(z => z.Name == x.Name))
+            //    {
+            //        DistintAlbum.Add(albumGood);
 
-                    _ctx.Albums.Add(albumGood);
-                    _ctx.SaveChanges();
-                }
-                BindArtistToAlbum(x);
-                BindCoryrightsToAlbum(x);
-                InsertTracks(x);
+            //        _ctx.Albums.Add(albumGood);
+            //        _ctx.SaveChanges();
+            //    }
+            //    BindArtistToAlbum(x);
+            //    BindCoryrightsToAlbum(x);
+            //    InsertTracks(x);
 
-            }
-            _ctx.SaveChanges();
+            //}
+            //_ctx.SaveChanges();
         }
 
         private void InsertTracks(Spotify.Album x)
         {
             //Einu per albumo dainas
-            foreach (var song in Helpers.GetItems(x.Tracks.Items))
+            foreach (var song in Helpers.GetSongs(x.Tracks.Songs))
             {
                 //Albumas su dainomis
                 var dbSong = _ctx.Albums.Include(y => y.Songs)
@@ -601,13 +596,13 @@ namespace Services
                 if (dbSong != null)
                 {
                     if (dbSong.Songs == null)
-                        dbSong.Songs = new List<Models.BackEnd.Item>();
+                        dbSong.Songs = new List<Models.BackEnd.Song>();
 
                     if (!dbSong.Songs.Any(y => y.Name == song.Name))
                     {
                         //ADDING SONG TO ALBUM
-                        song.Artists = JsonConvert.SerializeObject(Helpers.GetArtist(x.Artists));
-                        song.ImageUrl = Helpers.GetImages(x.Images)[0].Url;
+                        //song.Artists = JsonConvert.SerializeObject(Helpers.GetArtist(x.Artists));
+                        //song.LargeImage = Helpers.GetImages(x.Images)[0].Url;
                         dbSong.Songs.Add(song);
                         _ctx.Entry(dbSong).State = EntityState.Modified;
                         _ctx.SaveChanges();
@@ -616,24 +611,24 @@ namespace Services
                 }
             }
 
-            void addSongToArtist(Models.BackEnd.Item song)
+            void addSongToArtist(Models.BackEnd.Song song)
             {
                 //ADDING SONG TO ARTIST
-                foreach (var AlbumArtist in x.Artists)
-                {
-                    var artist = _ctx.Artists.Include(y => y.Songs).FirstOrDefault(y => y.Name == AlbumArtist.Name);
-                    if (artist != null)
-                    {
-                        if (artist.Songs == null)
-                            artist.Songs = new List<Models.BackEnd.Item>();
-                        if (!artist.Songs.Any(y => y.Name == song.Name))
-                        {
-                            artist.Songs.Add(_ctx.Items.First(y => y.Name == song.Name));
-                            _ctx.Entry(artist).State = EntityState.Modified;
-                            _ctx.SaveChanges();
-                        }
-                    }
-                }
+                //foreach (var AlbumArtist in x.Artists)
+                //{
+                //    var artist = _ctx.Artists.Include(y => y.Songs).FirstOrDefault(y => y.Name == AlbumArtist.Name);
+                //    if (artist != null)
+                //    {
+                //        if (artist.Songs == null)
+                //            artist.Songs = new List<Models.BackEnd.Song>();
+                //        if (!artist.Songs.Any(y => y.Name == song.Name))
+                //        {
+                //            artist.Songs.Add(_ctx.Songs.First(y => y.Name == song.Name));
+                //            _ctx.Entry(artist).State = EntityState.Modified;
+                //            _ctx.SaveChanges();
+                //        }
+                //    }
+                //}
             }
         }
 
@@ -661,24 +656,24 @@ namespace Services
 
         public void BindCoryrightsToAlbum(Spotify.Album x)
         {
-            foreach (var copyrigth in Helpers.GetCopyrights(x.Copyrights))
-            {
-                var AlbumCopyRight = _ctx.Copyrights.Include(y => y.Albums)
-                    .FirstOrDefault(ar => ar.Text == copyrigth.Text && ar.Type == copyrigth.Type);
+            //foreach (var copyrigth in Helpers.GetCopyrights(x.Copyrights))
+            //{
+            //    var AlbumCopyRight = _ctx.Copyrights.Include(y => y.Albums)
+            //        .FirstOrDefault(ar => ar.Text == copyrigth.Text && ar.Type == copyrigth.Type);
 
-                if (AlbumCopyRight != null)
-                {
-                    if (AlbumCopyRight.Albums == null)
-                        AlbumCopyRight.Albums = new List<Models.BackEnd.Album>();
+            //    if (AlbumCopyRight != null)
+            //    {
+            //        if (AlbumCopyRight.Albums == null)
+            //            AlbumCopyRight.Albums = new List<Models.BackEnd.Album>();
 
-                    if (!AlbumCopyRight.Albums.Any(y => y.Name == x.Name))
-                    {
-                        AlbumCopyRight.Albums.Add(_ctx.Albums.First(xx => xx.Name == x.Name));
-                        _ctx.Entry(AlbumCopyRight).State = EntityState.Modified;
-                        _ctx.SaveChanges();
-                    }
-                }
-            }
+            //        if (!AlbumCopyRight.Albums.Any(y => y.Name == x.Name))
+            //        {
+            //            AlbumCopyRight.Albums.Add(_ctx.Albums.First(xx => xx.Name == x.Name));
+            //            _ctx.Entry(AlbumCopyRight).State = EntityState.Modified;
+            //            _ctx.SaveChanges();
+            //        }
+            //    }
+            //}
         }
 
         public void InsertTrack(Spotify.AlbumRoot album)

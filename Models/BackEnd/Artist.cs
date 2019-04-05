@@ -7,19 +7,22 @@ namespace Models.BackEnd
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string SpotifyId { get; set; }
 
-        //[Json] List<string>
         public string Genres { get; set; }
 
-        public List<Image> Images { get; set; }
-
-        public List<Item> Songs { get; set; }
-
-        public List<Album> Albums { get; set; }
+        public string Name { get; set; }
 
         public long Popularity { get; set; }
 
-        //public DateTime LastActiveTime { get; set; }
+        public string LargeImage { get; set; }
+        public string MediumImage { get; set; }
+        public string SmallImage { get; set; }
+
+        public List<Album> Albums { get; set; }
+
+        public DateTime LastActiveTime { get; set; }
+
+
     }
 }

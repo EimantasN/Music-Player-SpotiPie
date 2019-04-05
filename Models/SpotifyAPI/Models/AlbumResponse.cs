@@ -1,23 +1,24 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Models.Spotify
+namespace Models.SpotifyAPI
 {
-    public class Tracks
+    public partial class AlbumResponse
     {
         [JsonProperty("href")]
         public Uri Href { get; set; }
 
-        [JsonProperty("Songs")]
-        public List<Item> Songs { get; set; }
+        [JsonProperty("items")]
+        public List<Album> Albums { get; set; }
 
         [JsonProperty("limit")]
         public long Limit { get; set; }
 
         [JsonProperty("next")]
-        public object Next { get; set; }
+        public Uri Next { get; set; }
 
         [JsonProperty("offset")]
         public long Offset { get; set; }

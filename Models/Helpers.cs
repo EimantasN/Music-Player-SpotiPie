@@ -37,17 +37,17 @@ namespace Models
             {
                 Id = 0,
                 Total = old.Total,
-                Items = old.Items != null ? Helpers.GetItems(old.Items) : null
+                Songs = old.Songs != null ? Helpers.GetSongs(old.Songs) : null
             };
             return model;
         }
 
-        public static List<Item> GetItems(List<Models.Spotify.Item> old)
+        public static List<Song> GetSongs(List<Models.Spotify.Item> old)
         {
-            List<Item> list = new List<Item>();
+            List<Song> list = new List<Song>();
             foreach (var x in old)
             {
-                var model = new Item
+                var model = new Song
                 {
                     Id = 0,
                     //Artists = x.Artists != null ? GetArtist(x.Artists) : null,
@@ -89,7 +89,6 @@ namespace Models
                 {
                     Id = 0,
                     Genres = a.Genres != null ? JsonConvert.SerializeObject(a.Genres.ToList()) : null,
-                    Images = a.Images != null ? Helpers.GetImages(a.Images) : null,
                     Name = a.Name,
                     Popularity = 0
                 };

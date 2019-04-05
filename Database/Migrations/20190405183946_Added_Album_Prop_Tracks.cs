@@ -2,21 +2,22 @@
 
 namespace Database.Migrations
 {
-    public partial class Spotypie2_PlaylistImage : Migration
+    public partial class Added_Album_Prop_Tracks : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "ImageUrl",
-                table: "Playlist",
-                nullable: true);
+            migrationBuilder.AddColumn<int>(
+                name: "Tracks",
+                table: "Albums",
+                nullable: false,
+                defaultValue: 0);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ImageUrl",
-                table: "Playlist");
+                name: "Tracks",
+                table: "Albums");
         }
     }
 }

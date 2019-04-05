@@ -13,7 +13,7 @@ namespace Models.BackEnd
 
         public string Gendres { get; set; }
 
-        public List<Item> Items { get; set; }
+        public List<Song> Songs { get; set; }
 
         public DateTime Created { get; set; }
 
