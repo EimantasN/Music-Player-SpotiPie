@@ -21,7 +21,7 @@ namespace Services
         {
             try
             {
-                var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Id == id);
+                var album = await _ctx.Albums.Include(x => x.Songs).FirstOrDefaultAsync(x => x.Id == id);
                 if (album == null)
                     throw new Exception("album with id " + id + " not found");
 
