@@ -31,16 +31,6 @@ namespace Models
 
     public static class Helpers
     {
-        public static Tracks GetTrack(Models.Spotify.Tracks old)
-        {
-            var model = new Tracks
-            {
-                Id = 0,
-                Total = old.Total,
-                Songs = old.Songs != null ? Helpers.GetSongs(old.Songs) : null
-            };
-            return model;
-        }
 
         public static List<Song> GetSongs(List<Models.Spotify.Item> old)
         {
