@@ -13,6 +13,7 @@ namespace SpotyPie.Player
     public class Player : SupportFragment
     {
         View RootView;
+
         SupportFragment PlayerSongList;
 
         TimeSpan CurrentTime = new TimeSpan(0, 0, 0, 0);
@@ -22,23 +23,23 @@ namespace SpotyPie.Player
         public bool Updating = false;
 
         ImageButton HidePlayerButton;
-        public static ImageButton PlayToggle;
-        public static MediaPlayer player;
+        public ImageButton PlayToggle;
+        public MediaPlayer player;
 
         ImageButton NextSong;
         ImageButton PreviewSong;
 
-        public static TextView CurretSongTimeText;
+        public TextView CurretSongTimeText;
         TextView TotalSongTimeText;
 
-        public static Android.Content.Context contextStatic;
+        public Android.Content.Context contextStatic;
 
         public ProgressBar SongProgress;
 
-        public static ImageView Player_Image;
-        public static TextView Player_song_name;
-        public static TextView Player_artist_name;
-        public static TextView Player_playlist_name; //July talk - Touch
+        public ImageView Player_Image;
+        public TextView Player_song_name;
+        public TextView Player_artist_name;
+        public TextView Player_playlist_name; //July talk - Touch
 
         ImageButton SongListButton;
 
@@ -48,13 +49,23 @@ namespace SpotyPie.Player
         ImageButton Shuffle;
         bool Shuffle_state = false;
 
+        MainActivity ParentActivity;
+
         ImageView Save_to_songs;
+
+        public Current_state GetState()
+        {
+            return ParentActivity.GetState();
+        }
 
         public static FrameLayout PlayerSongListContainer;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             RootView = inflater.Inflate(Resource.Layout.player, container, false);
+
+            ParentActivity = (MainActivity)Activity;
+
             contextStatic = this.Context;
             PlayerSongList = new player_song_list();
             PlayerSongListContainer = RootView.FindViewById<FrameLayout>(Resource.Id.player_frame);
@@ -94,7 +105,7 @@ namespace SpotyPie.Player
             HidePlayerButton = RootView.FindViewById<ImageButton>(Resource.Id.back_button);
             PlayToggle = RootView.FindViewById<ImageButton>(Resource.Id.play_stop);
 
-            if (Current_state.IsPlaying)
+            if (GetState().IsPlaying)
                 PlayToggle.SetImageResource(Resource.Drawable.pause);
             else
                 PlayToggle.SetImageResource(Resource.Drawable.play_button);
@@ -125,29 +136,29 @@ namespace SpotyPie.Player
             var c = SongProgress.Width;
 
             float Procent = (e.Event.GetX() * 100) / SongProgress.Width;
-            int Second = (int)(Current_state.Current_Song.DurationMs * Procent / 100);
-            Player.player.SeekTo(Second);
+            int Second = (int)(GetState().Current_Song.DurationMs * Procent / 100);
+            player.SeekTo(Second);
         }
 
         private void PreviewSong_Click(object sender, EventArgs e)
         {
             RepetedOnce = false;
-            Current_state.ChangeSong(false);
+            GetState().ChangeSong(false);
         }
 
         private void NextSong_Click(object sender, EventArgs e)
         {
             RepetedOnce = false;
-            Current_state.ChangeSong(true);
+            GetState().ChangeSong(true);
         }
 
-        public static void StartPlayMusic()
+        public void StartPlayMusic()
         {
             Task.Run(() =>
             {
                 try
                 {
-                    if (Current_state.Start_music)
+                    if (GetState().Start_music)
                     {
                         Application.SynchronizationContext.Post(_ =>
                             {
@@ -155,12 +166,12 @@ namespace SpotyPie.Player
                                 {
                                     player.Reset();
                                     player.SetAudioStreamType(Stream.Music);
-                                    player.SetDataSource("http://pie.pertrauktiestaskas.lt/api/stream/play/" + Current_state.Current_Song.Id);
+                                    player.SetDataSource("http://pie.pertrauktiestaskas.lt/api/stream/play/" + GetState().Current_Song.Id);
                                     player.Prepare();
                                 }
                                 catch (Exception e)
                                 {
-                                    Toast.MakeText(contextStatic, "Can't play " + Current_state.Current_Song.Id.ToString(), ToastLength.Short).Show();
+                                    Toast.MakeText(contextStatic, "Can't play " + GetState().Current_Song.Id.ToString(), ToastLength.Short).Show();
                                 }
                             }, null);
                     }
@@ -169,7 +180,7 @@ namespace SpotyPie.Player
                 {
                     Application.SynchronizationContext.Post(_ =>
                     {
-                        Toast.MakeText(contextStatic, "Can't play " + Current_state.Current_Song.Id.ToString(), ToastLength.Short).Show();
+                        Toast.MakeText(contextStatic, "Can't play " + GetState().Current_Song.Id.ToString(), ToastLength.Short).Show();
                     }, null);
                 }
             });
@@ -177,22 +188,23 @@ namespace SpotyPie.Player
 
         private void PlayToggle_Click(object sender, EventArgs e)
         {
-            Current_state.Music_play_toggle();
+            GetState().Music_play_toggle();
         }
 
         private void HidePlayerButton_Click(object sender, EventArgs e)
         {
-            Current_state.Player_visiblibity_toggle();
+            GetState().Player_visiblibity_toggle();
         }
 
         #region Player events
+
         private void Player_Prepared(object sender, EventArgs e)
         {
             TotalSongTimeText.Visibility = ViewStates.Visible;
             TotalSongTime = new TimeSpan(0, 0, (int)player.Duration / 1000);
             TotalSongTimeText.Text = TotalSongTime.Minutes + ":" + (TotalSongTime.Seconds > 9 ? TotalSongTime.Seconds.ToString() : "0" + TotalSongTime.Seconds);
 
-            if (Current_state.Start_music)
+            if (GetState().Start_music)
             {
                 PlayToggle.SetImageResource(Resource.Drawable.pause);
                 player.Start();
@@ -247,9 +259,7 @@ namespace SpotyPie.Player
                         }
                     }
                     Thread.Sleep(250);
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     Task.Run(() => UpdateLoop());
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     Application.SynchronizationContext.Post(_ => { Updating = false; }, null);
                 }
             }
@@ -259,7 +269,7 @@ namespace SpotyPie.Player
             }
             finally
             {
-                Application.SynchronizationContext.Post(_ => { Current_state.Music_play_toggle(); }, null);
+                Application.SynchronizationContext.Post(_ => { GetState().Music_play_toggle(); }, null);
             }
         }
 
@@ -285,8 +295,8 @@ namespace SpotyPie.Player
             CurretSongTimeText.Text = "0:00";
             SongProgress.Progress = 0;
         }
-        #endregion
 
+        #endregion
 
         private void Repeat_Click(object sender, EventArgs e)
         {

@@ -20,8 +20,8 @@ namespace SpotyPie.RecycleView.Models
 
         internal void PrepareView(dynamic t, Context context)
         {
-            Title.Text = t.Title;
-            SubTitile.Text = t.Artists;
+            Title.Text = t.Name;
+            SubTitile.Text = "Coming soon";
         }
     }
 }

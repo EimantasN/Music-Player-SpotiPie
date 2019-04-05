@@ -8,6 +8,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
+using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.Library.Fragments;
 using SpotyPie.Models;
@@ -21,9 +22,9 @@ using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie
 {
-    public class Search : SupportFragment
+    public class Search : FragmentBase
     {
-        View RootView;
+        public override int LayoutId { get; set; } = Resource.Layout.search_layout;
 
         //List Songs
         public List<Song> SearchSongs;
@@ -32,11 +33,11 @@ namespace SpotyPie
         private RecyclerView.Adapter SongsAdapter;
         private RecyclerView SongsRecyclerView;
 
-        public List<Album> AlbumsData;
-        public RvList<TwoBlockWithImage> Albums = new RvList<TwoBlockWithImage>();
-        private RecyclerView.LayoutManager AlbumsLayoutManager;
-        private RecyclerView.Adapter AlbumsAdapter;
-        private RecyclerView AlbumsRecyclerView;
+        //public List<Album> AlbumsData;
+        //public RvList<TwoBlockWithImage> Albums = new RvList<TwoBlockWithImage>();
+        //private RecyclerView.LayoutManager AlbumsLayoutManager;
+        //private RecyclerView.Adapter AlbumsAdapter;
+        //private RecyclerView AlbumsRecyclerView;
 
         public List<Artist> ArtistsData;
         public RvList<Artist> Artists;
@@ -64,10 +65,8 @@ namespace SpotyPie
 
         public static float Action;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override void InitView()
         {
-            RootView = inflater.Inflate(Resource.Layout.search_layout, container, false);
-
             SongsContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.constraintLayoutSongs);
             AlbumsContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.constraintLayoutAlbums);
             ArtistContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.ConstrainLayoutArtist);
@@ -98,42 +97,42 @@ namespace SpotyPie
             {
                 if (SongsRecyclerView != null && SongsRecyclerView.ChildCount != 0)
                 {
-                    Current_state.Current_Song_List = SearchSongs;
-                    Current_state.SetSong(Current_state.Current_Song_List[position]);
+                    GetState().Current_Song_List = SearchSongs;
+                    GetState().SetSong(GetState().Current_Song_List[position]);
                 }
             });
 
 
-            AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
-            AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums_rv);
-            AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);
-            AlbumsAdapter = new BaseRv<TwoBlockWithImage>(Albums, AlbumsRecyclerView, this.Context);
-            Albums.Adapter = AlbumsAdapter;
-            AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
-            AlbumsRecyclerView.NestedScrollingEnabled = false;
+            //AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
+            //AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums_rv);
+            //AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);
+            //AlbumsAdapter = new BaseRv<TwoBlockWithImage>(Albums, AlbumsRecyclerView, this.Context);
+            //Albums.Adapter = AlbumsAdapter;
+            //AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
+            //AlbumsRecyclerView.NestedScrollingEnabled = false;
 
-            AlbumsRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (SongsRecyclerView != null && SongsRecyclerView.ChildCount != 0)
-                {
-                    var c = SongsRecyclerView.Width;
-                    float Procent = (Action * 100) / AlbumsRecyclerView.Width;
-                    if (Procent <= 50)
-                    {
-                        Current_state.SetAlbum(AlbumsData[position]);
-                        FragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.content_frame, MainActivity.Album)
-                        .Commit();
-                    }
-                    else
-                    {
-                        Current_state.SetAlbum(AlbumsData[position + 1]);
-                        FragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.content_frame, MainActivity.Album)
-                        .Commit();
-                    }
-                }
-            });
+            //AlbumsRecyclerView.SetItemClickListener((rv, position, view) =>
+            //{
+            //    if (SongsRecyclerView != null && SongsRecyclerView.ChildCount != 0)
+            //    {
+            //        var c = SongsRecyclerView.Width;
+            //        float Procent = (Action * 100) / AlbumsRecyclerView.Width;
+            //        if (Procent <= 50)
+            //        {
+            //            Current_state.SetAlbum(AlbumsData[position]);
+            //            FragmentManager.BeginTransaction()
+            //            .Replace(Resource.Id.content_frame, MainActivity.Album)
+            //            .Commit();
+            //        }
+            //        else
+            //        {
+            //            Current_state.SetAlbum(AlbumsData[position + 1]);
+            //            FragmentManager.BeginTransaction()
+            //            .Replace(Resource.Id.content_frame, MainActivity.Album)
+            //            .Commit();
+            //        }
+            //    }
+            //});
 
             //ARTIST RV
             ArtistsData = new List<Artist>();
@@ -153,7 +152,6 @@ namespace SpotyPie
                     //Current_state.SetSong(Current_state.Current_Song_List[position]);
                 }
             });
-            return RootView;
         }
 
         public override void OnResume()
@@ -288,59 +286,59 @@ namespace SpotyPie
                 IRestResponse response = await Client.ExecuteTaskAsync(request);
                 if (response.IsSuccessful)
                 {
-                    var Albumsx = JsonConvert.DeserializeObject<List<Album>>(response.Content);
-                    if (Albumsx != null && Albumsx.Count != 0)
-                    {
-                        Albums.Clear();
-                        Application.SynchronizationContext.Post(_ =>
-                        {
-                            AlbumsData = Albumsx;
-                            AlbumFinded = true;
-                            if (AlbumsContainer.Visibility == ViewStates.Gone)
-                                AlbumsContainer.Visibility = ViewStates.Visible;
-                        }, null);
-                        for (int i = 0; i < Albumsx.Count && i <= 8; i = i + 2)
-                        {
-                            if (Albums.Count - i == 1)
-                            {
-                                var x = Albumsx[i];
-                                //Albums.Add(new TwoBlockWithImage(
-                                //new BlockWithImage(
-                                //    x.Id,
-                                //    RvType.Album,
-                                //    x.Name,
-                                //    x.Label,
-                                //    x.Images.First().Url)));
-                            }
-                            else
-                            {
-                                var x = Albumsx[i];
-                                var y = Albumsx[i + 1];
-                                //Albums.Add(new TwoBlockWithImage(
-                                //    new BlockWithImage(
-                                //        x.Id,
-                                //        RvType.Album,
-                                //        x.Name,
-                                //        x.Label,
-                                //        x.Images.First().Url),
-                                //        new BlockWithImage(
-                                //        y.Id,
-                                //        RvType.Album,
-                                //        y.Name,
-                                //        x.Label,
-                                //        y.Images.First().Url)));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Application.SynchronizationContext.Post(_ =>
-                        {
-                            AlbumFinded = false;
-                            if (AlbumsContainer.Visibility == ViewStates.Visible)
-                                AlbumsContainer.Visibility = ViewStates.Gone;
-                        }, null);
-                    }
+                    //var Albumsx = JsonConvert.DeserializeObject<List<Album>>(response.Content);
+                    //if (Albumsx != null && Albumsx.Count != 0)
+                    //{
+                    //    Albums.Clear();
+                    //    Application.SynchronizationContext.Post(_ =>
+                    //    {
+                    //        AlbumsData = Albumsx;
+                    //        AlbumFinded = true;
+                    //        if (AlbumsContainer.Visibility == ViewStates.Gone)
+                    //            AlbumsContainer.Visibility = ViewStates.Visible;
+                    //    }, null);
+                    //    for (int i = 0; i < Albumsx.Count && i <= 8; i = i + 2)
+                    //    {
+                    //        if (Albums.Count - i == 1)
+                    //        {
+                    //            var x = Albumsx[i];
+                    //            //Albums.Add(new TwoBlockWithImage(
+                    //            //new BlockWithImage(
+                    //            //    x.Id,
+                    //            //    RvType.Album,
+                    //            //    x.Name,
+                    //            //    x.Label,
+                    //            //    x.Images.First().Url)));
+                    //        }
+                    //        else
+                    //        {
+                    //            var x = Albumsx[i];
+                    //            var y = Albumsx[i + 1];
+                    //            //Albums.Add(new TwoBlockWithImage(
+                    //            //    new BlockWithImage(
+                    //            //        x.Id,
+                    //            //        RvType.Album,
+                    //            //        x.Name,
+                    //            //        x.Label,
+                    //            //        x.Images.First().Url),
+                    //            //        new BlockWithImage(
+                    //            //        y.Id,
+                    //            //        RvType.Album,
+                    //            //        y.Name,
+                    //            //        x.Label,
+                    //            //        y.Images.First().Url)));
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    Application.SynchronizationContext.Post(_ =>
+                    //    {
+                    //        AlbumFinded = false;
+                    //        if (AlbumsContainer.Visibility == ViewStates.Visible)
+                    //            AlbumsContainer.Visibility = ViewStates.Gone;
+                    //    }, null);
+                    //}
                 }
                 else
                 {

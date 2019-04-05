@@ -102,7 +102,7 @@ namespace SpotyPie.Helpers
             {
                 SongItem view = holder as SongItem;
                 view.Title.Text = Dataset[position].Name;
-                view.SubTitile.Text = JsonConvert.DeserializeObject<List<Artist>>(Dataset[position].Artists).First().Name;
+                //view.SubTitile.Text = GetState().Current_Artist.Name;
                 view.Options.Click += Options_Click;
                 MainActivity.Add_to_playlist_id = Dataset[position].Id;
             }

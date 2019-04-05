@@ -1,5 +1,4 @@
 ﻿using Android.App;
-using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
@@ -8,23 +7,19 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
-using SpotyPie.Helpers;
-using SpotyPie.Models;
+using SpotyPie.Base;
 using SpotyPie.RecycleView;
-using Square.Picasso;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Android.Views.View;
 using static Android.Views.ViewGroup;
-using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie
 {
-    public class ArtistFragment : SupportFragment
+    public class ArtistFragment : FragmentBase
     {
-        View RootView;
+        public override int LayoutId { get; set; } = Resource.Layout.Artist_layout;
 
         //Background info
 
@@ -44,12 +39,12 @@ namespace SpotyPie
         private RecyclerView.Adapter ArtistSongsAdapter;
         private RecyclerView ArtistSongsRecyclerView;
 
-        //Artist Albums
-        List<Album> AlbumsData;
-        public RvList<TwoBlockWithImage> Albums;
-        private RecyclerView.LayoutManager AlbumsLayoutManager;
-        private RecyclerView.Adapter AlbumsAdapter;
-        private RecyclerView AlbumsRecyclerView;
+        ////Artist Albums
+        //List<Album> AlbumsData;
+        //public RvList<TwoBlockWithImage> Albums;
+        //private RecyclerView.LayoutManager AlbumsLayoutManager;
+        //private RecyclerView.Adapter AlbumsAdapter;
+        //private RecyclerView AlbumsRecyclerView;
 
         private TextView download;
         private TextView Copyrights;
@@ -60,87 +55,6 @@ namespace SpotyPie
         RelativeLayout relative;
         private NestedScrollView ScrollFather;
         int scrolled = 0;
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-        {
-            RootView = inflater.Inflate(Resource.Layout.Artist_layout, container, false);
-
-            MainActivity.ActionName.Text = Current_state.Current_Artist;
-
-            //Background binding
-            Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
-            AlbumTitle = RootView.FindViewById<TextView>(Resource.Id.album_title);
-            PlayableButton = RootView.FindViewById<Button>(Resource.Id.playable_button);
-            AlbumByText = RootView.FindViewById<TextView>(Resource.Id.album_by_title);
-            Background = RootView.FindViewById<TextView>(Resource.Id.view);
-            Background.Alpha = 0.0f;
-
-            ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
-            ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
-
-            if (Current_state.GetArtistPhoto() != null)
-                Picasso.With(Context).Load(Current_state.GetArtistPhoto()).Resize(300, 300).CenterCrop().Into(Photo);
-            else
-                Photo.SetImageResource(Resource.Drawable.noimg);
-
-            AlbumTitle.Text = Current_state.Current_Artist;
-
-            //TODO error if genres is null
-            //AlbumByText.Text = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist)[0];
-
-            Current_state.ShowHeaderNavigationButtons();
-
-            download = RootView.FindViewById<TextView>(Resource.Id.download_text);
-            Copyrights = RootView.FindViewById<TextView>(Resource.Id.copyrights);
-            MarginParrams = (MarginLayoutParams)download.LayoutParameters;
-
-            relative = RootView.FindViewById<RelativeLayout>(Resource.Id.hide);
-
-            ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
-            //ScrollFather.SetOnTouchListener(this);
-            backViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.backViewContainer);
-            Height = backViewContainer.LayoutParameters.Height;
-            ScrollFather.ScrollChange += Scroll_ScrollChange;
-
-
-            //Artist song list
-
-            ArtistTopSongsData = new List<Song>();
-            ArtistTopSongs = new RvList<Song>();
-            ArtistSongsLayoutManager = new LinearLayoutManager(this.Activity);
-            ArtistSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
-            ArtistSongsRecyclerView.SetLayoutManager(ArtistSongsLayoutManager);
-            ArtistSongsAdapter = new VerticalRV(ArtistTopSongs, this.Context);
-            ArtistTopSongs.Adapter = ArtistSongsAdapter;
-            ArtistSongsRecyclerView.SetAdapter(ArtistSongsAdapter);
-            ArtistSongsRecyclerView.NestedScrollingEnabled = false;
-
-            //Artist song list
-            AlbumsData = new List<Album>();
-            Albums = new RvList<TwoBlockWithImage>();
-            AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
-            AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artist_albums_list);
-            AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);
-            AlbumsAdapter = new BaseRv<TwoBlockWithImage>(Albums, AlbumsRecyclerView, this.Context);
-            Albums.Adapter = AlbumsAdapter;
-            AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
-            AlbumsRecyclerView.NestedScrollingEnabled = false;
-
-            return RootView;
-        }
-
-        public override void OnDestroyView()
-        {
-            base.OnDestroyView();
-        }
-
-        public override void OnResume()
-        {
-            //Task.Run(() => GetSongsAsync(Current_state.Current_Artist.Id));
-            //Task.Run(() => GetArtistAlbums(Current_state.Current_Artist.Id));
-
-            base.OnResume();
-        }
 
         public async Task GetSongsAsync(int id)
         {
@@ -255,6 +169,67 @@ namespace SpotyPie
             {
                 relative.Visibility = ViewStates.Visible;
             }
+        }
+
+        protected override void InitView()
+        {
+            //MainActivity.ActionName.Text = GetState().Current_Artist.Name;
+
+            ////Background binding
+            //Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
+            //AlbumTitle = RootView.FindViewById<TextView>(Resource.Id.album_title);
+            //PlayableButton = RootView.FindViewById<Button>(Resource.Id.playable_button);
+            //AlbumByText = RootView.FindViewById<TextView>(Resource.Id.album_by_title);
+            //Background = RootView.FindViewById<TextView>(Resource.Id.view);
+            //Background.Alpha = 0.0f;
+
+            //ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
+            //ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
+
+            //Picasso.With(Context).Load(GetState().Current_Artist.LargeImage).Resize(300, 300).CenterCrop().Into(Photo);
+
+            //AlbumTitle.Text = GetState().Current_Artist.Name;
+
+            ////TODO error if genres is null
+            ////AlbumByText.Text = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist)[0];
+
+            //GetState().ShowHeaderNavigationButtons();
+
+            //download = RootView.FindViewById<TextView>(Resource.Id.download_text);
+            //Copyrights = RootView.FindViewById<TextView>(Resource.Id.copyrights);
+            //MarginParrams = (MarginLayoutParams)download.LayoutParameters;
+
+            //relative = RootView.FindViewById<RelativeLayout>(Resource.Id.hide);
+
+            //ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
+            ////ScrollFather.SetOnTouchListener(this);
+            //backViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.backViewContainer);
+            //Height = backViewContainer.LayoutParameters.Height;
+            //ScrollFather.ScrollChange += Scroll_ScrollChange;
+
+
+            ////Artist song list
+
+            //ArtistTopSongsData = new List<Song>();
+            //ArtistTopSongs = new RvList<Song>();
+            //ArtistSongsLayoutManager = new LinearLayoutManager(this.Activity);
+            //ArtistSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
+            //ArtistSongsRecyclerView.SetLayoutManager(ArtistSongsLayoutManager);
+            //ArtistSongsAdapter = new VerticalRV(ArtistTopSongs, this.Context);
+            //ArtistTopSongs.Adapter = ArtistSongsAdapter;
+            //ArtistSongsRecyclerView.SetAdapter(ArtistSongsAdapter);
+            //ArtistSongsRecyclerView.NestedScrollingEnabled = false;
+
+            //Artist song list
+            //AlbumsData = new List<Album>();
+            //Albums = new RvList<TwoBlockWithImage>();
+            //AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
+            //AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artist_albums_list);
+            //AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);
+            //AlbumsAdapter = new BaseRv<TwoBlockWithImage>(Albums, AlbumsRecyclerView, this.Context);
+            //Albums.Adapter = AlbumsAdapter;
+            //AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
+            //AlbumsRecyclerView.NestedScrollingEnabled = false;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Mobile_Api.Models.Rv;
+﻿using Mobile_Api.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,29 +8,29 @@ namespace Mobile_Api
     {
         public override string Controller { get; set; } = "Album";
 
-        public async Task<BlockWithImage> GetSong(int id)
+        public async Task<Album> GetSong(int id)
         {
-            return await Get<BlockWithImage>(id);
+            return await Get<Album>(id);
         }
 
-        public async Task<List<BlockWithImage>> GetSongs()
+        public async Task<List<Album>> GetSongs()
         {
-            return await GetListAsync<BlockWithImage>("Albums");
+            return await GetListAsync<Album>("Albums");
         }
 
-        public async Task<List<BlockWithImage>> GetRecent()
+        public async Task<List<Album>> GetRecent()
         {
-            return await GetListAsync<BlockWithImage>("Recent");
+            return await GetListAsync<Album>("Recent");
         }
 
-        public async Task<List<BlockWithImage>> GetPopular()
+        public async Task<List<Album>> GetPopular()
         {
-            return await GetListAsync<BlockWithImage>("Popular");
+            return await GetListAsync<Album>("Popular");
         }
 
-        public async Task<List<BlockWithImage>> GetOld()
+        public async Task<List<Album>> GetOld()
         {
-            return await GetListAsync<BlockWithImage>("Old");
+            return await GetListAsync<Album>("Old");
         }
     }
 }

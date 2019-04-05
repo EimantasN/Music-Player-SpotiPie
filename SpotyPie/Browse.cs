@@ -3,7 +3,6 @@ using Android.Support.V7.Widget;
 using Mobile_Api;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
-using Mobile_Api.Models.Rv;
 using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
@@ -16,32 +15,28 @@ namespace SpotyPie
     public class Browse : FragmentBase
     {
         //Recent albums
-        public RvList<BlockWithImage> RecentAlbums;
+        public RvList<Album> RecentAlbums;
 
         //Best albums
-        public RvList<BlockWithImage> BestAlbums;
+        public RvList<Album> BestAlbums;
 
         //Best artists
-        public RvList<BlockWithImage> BestArtists;
+        public RvList<Album> BestArtists;
 
         //Jump back albums
-        public RvList<BlockWithImage> JumpBack;
+        public RvList<Album> JumpBack;
 
         //Top playlist
-        public RvList<BlockWithImage> TopPlaylist;
+        public RvList<Album> TopPlaylist;
 
-        public override int GetLayout()
-        {
-            return Resource.Layout.home_layout;
-        }
+        public override int LayoutId { get; set; } = Resource.Layout.home_layout;
 
         protected override void InitView()
         {
-            base.InitView();
-            RecentAlbums = new BaseRecycleView<BlockWithImage>(this, Resource.Id.recent_rv).Setup(LinearLayoutManager.Horizontal);
-            BestAlbums = new BaseRecycleView<BlockWithImage>(this, Resource.Id.best_albums_rv).Setup(LinearLayoutManager.Horizontal);
+            RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv).Setup(LinearLayoutManager.Horizontal);
+            BestAlbums = new BaseRecycleView<Album>(this, Resource.Id.best_albums_rv).Setup(LinearLayoutManager.Horizontal);
             //BestArtists = new BaseRecycleView<Album>(this, Resource.Id.best_artists_rv, BestArtistData).Setup();
-            JumpBack = new BaseRecycleView<BlockWithImage>(this, Resource.Id.albums_old_rv).Setup(LinearLayoutManager.Horizontal);
+            JumpBack = new BaseRecycleView<Album>(this, Resource.Id.albums_old_rv).Setup(LinearLayoutManager.Horizontal);
             //TopPlaylist = new BaseRecycleView<Album>(this, Resource.Id.playlist_rv, TopPlaylistData).Setup();
         }
 

@@ -4,46 +4,54 @@ using Android.Widget;
 using Mobile_Api.Models;
 using RestSharp;
 using SpotyPie.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie
 {
-    public static class Current_state
+    public class Current_state
     {
-        public static bool IsPlaying = false;
+        public bool IsPlaying = false;
 
-        public static bool Start_music { get; set; } = false;
+        public bool Start_music { get; set; } = false;
 
-        public static bool IsPlayerLoaded { get; set; } = false;
+        public bool IsPlayerLoaded { get; set; } = false;
 
-        public static bool PlayerIsVisible { get; set; } = false;
+        public bool PlayerIsVisible { get; set; } = false;
 
-        public static float Progress { get; set; }
+        public float Progress { get; set; }
 
-        public static FragmentBase BackFragment { get; set; }
+        public FragmentBase BackFragment { get; set; }
 
-        private static string Current_Player_Image { get; set; }
+        private string Current_Player_Image { get; set; }
 
-        public static Album Current_Album { get; set; } = null;
+        public Album Current_Album { get; set; } = null;
 
-        public static string Current_Artist { get; set; } = null;
+        public Artist Current_Artist { get; set; } = null;
 
-        public static Song Current_Song { get; set; } = null;
+        public Song Current_Song { get; set; } = null;
 
-        public static Playlist Current_Playlist { get; set; } = null;
+        public Playlist Current_Playlist { get; set; } = null;
 
-        public static List<Song> Current_Song_List { get; set; } = null;
+        public List<Song> Current_Song_List { get; set; } = new List<Song>();
 
-        public static RestClient client = new RestClient();
+        public RestClient client = new RestClient();
 
-        public static void SetSong(Song song, bool refresh = false)
+        Player.Player Player { get; set; }
+
+        public Current_state(Player.Player player)
+        {
+            this.Player = player;
+        }
+
+        public void SetSong(Song song, bool refresh = false)
         {
             if (song.LocalUrl != null)
             {
                 SetCurrentSong(song);
-                Player.Player.StartPlayMusic();
+                Player.StartPlayMusic();
                 //Current_Song_List.First(x => x.Id == Current_Song.Id).Playing = true;
                 Start_music = true;
                 PlayerIsVisible = true;
@@ -54,65 +62,64 @@ namespace SpotyPie
             }
             else
             {
-                Toast.MakeText(Player.Player.contextStatic, "Please upload song", ToastLength.Short).Show();
+                //Toast.MakeText(context, "Please upload song", ToastLength.Short).Show();
             }
         }
 
-        public static void SetCurrentSong(Song song)
+        public void SetCurrentSong(Song song)
         {
             Current_Song = song;
-            Current_Artist = song.Artists;
-            Current_Song.Playing = true;
+            Current_Song.SetIsPlaying(true);
             Current_Song_List.Add(song);
         }
 
-        public static void SetCurrentSongList(List<Song> songs)
+        public void SetCurrentSongList(List<Song> songs)
         {
             if (songs != null && songs.Count > 0)
             {
-                songs.First().Playing = true;
+                songs.First().SetIsPlaying(true);
                 Current_Song_List.AddRange(songs);
             }
         }
 
-        public static void UpdateSongList(Song song)
+        public void UpdateSongList(Song song)
         {
-            Current_Song_List.First(x => x.Id == Current_Song.Id).Playing = true;
+            Current_Song_List.First(x => x.Id == Current_Song.Id).SetIsPlaying(true);
         }
 
-        public static void UpdateCurrentInfo()
+        public void UpdateCurrentInfo()
         {
             Task.Run(() =>
             {
                 Application.SynchronizationContext.Post(_ =>
-                {
-                    if (Current_Player_Image != Current_Song.ImageUrl)
-                    {
-                        Current_Player_Image = Current_Song.ImageUrl;
-                        //Picasso.With(Player.Player.contextStatic).Load(Current_Song.ImageUrl).Resize(900, 900).CenterCrop().Into(Player.Player.Player_Image);
-                    }
-                    MainActivity.PlayerContainer.TranslationX = 0;
-                    Player.Player.CurretSongTimeText.Text = "0.00";
-                    Player.Player.Player_song_name.Text = Current_Song.Name;
-                    MainActivity.SongTitle.Text = Current_Song.Name;
-                    MainActivity.ArtistName.Text = Current_Song.Name;
-                    Player.Player.Player_artist_name.Text = Current_Artist;
-                }, null);
+          {
+              if (Current_Player_Image != Current_Song.LargeImage)
+              {
+                  Current_Player_Image = Current_Song.LargeImage;
+                  //Picasso.With(Player.Player.context).Load(Current_Song.ImageUrl).Resize(900, 900).CenterCrop().Into(Player.Player.Player_Image);
+              }
+              MainActivity.PlayerContainer.TranslationX = 0;
+              Player.CurretSongTimeText.Text = "0.00";
+              Player.Player_song_name.Text = Current_Song.Name;
+              MainActivity.SongTitle.Text = Current_Song.Name;
+              MainActivity.ArtistName.Text = Current_Song.Name;
+              Player.Player_artist_name.Text = Current_Artist.Name;
+          }, null);
             });
         }
 
-        public static void SetArtist(Artist art)
+        public void SetArtist(Artist art)
         {
             //Current_Artist = art;
         }
 
-        public static void SetAlbum(Album album)
+        public void SetAlbum(Album album)
         {
             Current_Album = album;
             //Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Album.Artists).First();
             Application.SynchronizationContext.Post(_ =>
             {
-                Player.Player.Player_playlist_name.Text = Current_Artist + " - " + Current_Album.Name;
+                Player.Player_playlist_name.Text = Current_Artist + " - " + Current_Album.Name;
             }, null);
 
             Task.Run(() => Update());
@@ -125,26 +132,26 @@ namespace SpotyPie
             }
         }
 
-        public static void Music_play_toggle()
+        public void Music_play_toggle()
         {
-            Current_state.IsPlaying = !Current_state.IsPlaying;
+            IsPlaying = !IsPlaying;
 
-            if (Current_state.IsPlaying)
+            if (IsPlaying)
             {
                 MainActivity.PlayToggle.SetImageResource(Resource.Drawable.pause);
-                Player.Player.PlayToggle.SetImageResource(Resource.Drawable.pause);
-                Player.Player.player.Start();
+                Player.PlayToggle.SetImageResource(Resource.Drawable.pause);
+                Player.player.Start();
             }
             else
             {
                 MainActivity.PlayToggle.SetImageResource(Resource.Drawable.play_button);
-                Player.Player.PlayToggle.SetImageResource(Resource.Drawable.play_button);
-                if (Player.Player.player.IsPlaying)
-                    Player.Player.player.Pause();
+                Player.PlayToggle.SetImageResource(Resource.Drawable.play_button);
+                if (Player.player.IsPlaying)
+                    Player.player.Pause();
             }
         }
 
-        public static void Player_visiblibity_toggle()
+        public void Player_visiblibity_toggle()
         {
             if (PlayerIsVisible)
             {
@@ -158,79 +165,63 @@ namespace SpotyPie
             }
         }
 
-        public static void ShowHeaderNavigationButtons()
+        internal void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowHeaderNavigationButtons()
         {
             MainActivity.BackHeaderButton.Visibility = ViewStates.Visible;
             MainActivity.OptionsHeaderButton.Visibility = ViewStates.Visible;
         }
 
-        public static void HideHeaderNavigationButtons()
+        public void HideHeaderNavigationButtons()
         {
             MainActivity.BackHeaderButton.Visibility = ViewStates.Gone;
             MainActivity.OptionsHeaderButton.Visibility = ViewStates.Gone;
         }
 
-        public static void ChangeSong(bool Foward)
+        public void ChangeSong(bool Foward)
         {
             if (Current_Song_List == null) return;
 
             for (int i = 0; i < Current_Song_List.Count; i++)
             {
-                if (Current_Song_List[i].Playing)
+                if (Current_Song_List[i].IsPlayingNow())
                 {
                     if (Foward)
                     {
-                        Current_Song_List[i].Playing = false;
+                        Current_Song_List[i].SetIsPlaying(false);
                         if ((i + 1) == Current_Song_List.Count)
                         {
-                            Current_Song_List[0].Playing = true;
+                            Current_Song_List[0].SetIsPlaying(true);
                             SetSong(Current_Song_List[0]);
                         }
                         else
                         {
-                            Current_Song_List[i + 1].Playing = true;
+                            Current_Song_List[i + 1].SetIsPlaying(true);
                             SetSong(Current_Song_List[i + 1]);
                         }
                     }
                     else
                     {
-                        Current_Song_List[i].Playing = false;
+                        Current_Song_List[i].SetIsPlaying(false);
                         if (i == 0)
                         {
-                            Current_Song_List[0].Playing = true;
+                            Current_Song_List[0].SetIsPlaying(true);
                             SetSong(Current_Song_List[0]);
                         }
                         else
                         {
 
-                            Current_Song_List[i - 1].Playing = true;
+                            Current_Song_List[i - 1].SetIsPlaying(true);
                             SetSong(Current_Song_List[i - 1]);
                         }
                     }
                     break;
                 }
             }
-        }
-
-        public static string GetAlbumPhoto()
-        {
-            if (Current_Album != null && Current_Album.Images != null && Current_Album.Images.Count != 0)
-                return Current_Album.Images.First().Url;
-            return null;
-        }
-
-        public static string GetArtistPhoto()
-        {
-            //if (Current_Artist != null && Current_Artist.Images != null && Current_Artist.Images.Count != 0)
-            //    return Current_Artist.Images.First().Url;
-            return null;
-        }
-
-        public static string GetSongPhoto()
-        {
-            if (Current_Song != null && Current_Song.ImageUrl != null)
-                return Current_Song.ImageUrl;
-            return null;
         }
     }
 }

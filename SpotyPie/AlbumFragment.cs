@@ -8,6 +8,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
+using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
 using Square.Picasso;
@@ -21,10 +22,8 @@ using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie
 {
-    public class AlbumFragment : SupportFragment
+    public class AlbumFragment : FragmentBase
     {
-        View RootView;
-
         //Background info
 
         ImageView AlbumPhoto;
@@ -58,11 +57,11 @@ namespace SpotyPie
         public bool IsMeniuActive = false;
         FrameLayout containerx;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-        {
-            RootView = inflater.Inflate(Resource.Layout.Album_layout, container, false);
+        public override int LayoutId { get; set; } = Resource.Layout.Album_layout;
 
-            MainActivity.ActionName.Text = Current_state.Current_Album?.Name;
+        protected override void InitView()
+        {
+            MainActivity.ActionName.Text = GetState().Current_Album?.Name;
             isPlayable = false;
             IsMeniuActive = false;
             scrolled = 0;
@@ -81,15 +80,12 @@ namespace SpotyPie
             ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
             ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
 
-            if (Current_state.GetAlbumPhoto() != null)
-                Picasso.With(Context).Load(Current_state.GetAlbumPhoto()).Resize(600, 600).CenterCrop().Into(AlbumPhoto);
-            else
-                AlbumPhoto.SetImageResource(Resource.Drawable.noimg);
+            Picasso.With(Context).Load(GetState().Current_Album.LargeImage).Resize(600, 600).CenterCrop().Into(AlbumPhoto);
 
-            AlbumTitle.Text = Current_state.Current_Album.Name;
-            AlbumByText.Text = Current_state.Current_Album.Label;
+            AlbumTitle.Text = GetState().Current_Album.Name;
+            AlbumByText.Text = GetState().Current_Artist.Name;
 
-            Current_state.ShowHeaderNavigationButtons();
+            GetState().ShowHeaderNavigationButtons();
 
             download = RootView.FindViewById<TextView>(Resource.Id.download_text);
             Copyrights = RootView.FindViewById<TextView>(Resource.Id.copyrights);
@@ -125,7 +121,7 @@ namespace SpotyPie
                         float Procent = (Search.Action * 100) / AlbumSongsRecyclerView.Width;
                         if (Procent <= 80 && AlbumSongsItem[position] != null)
                         {
-                            Current_state.SetSong(AlbumSongsItem[position]);
+                            GetState().SetSong(AlbumSongsItem[position]);
                         }
                         else
                         {
@@ -142,8 +138,6 @@ namespace SpotyPie
                 {
                 }
             });
-
-            return RootView;
         }
 
         private void Containerx_Touch(object sender, TouchEventArgs e)
@@ -159,7 +153,7 @@ namespace SpotyPie
         public override void OnResume()
         {
             base.OnResume();
-            Task.Run(() => GetSongsAsync(Current_state.Current_Album.Id));
+            Task.Run(() => GetSongsAsync(GetState().Current_Album.Id));
         }
 
         public async Task GetSongsAsync(int id)
@@ -187,9 +181,7 @@ namespace SpotyPie
 
                     Application.SynchronizationContext.Post(_ =>
                     {
-                        Current_state.Current_Song_List = album.Songs;
-                        List<Copyright> Copyright = JsonConvert.DeserializeObject<List<Copyright>>(album.Copyrights);
-                        Copyrights.Text = string.Join("\n", Copyright.Select(x => x.Text));
+                        GetState().Current_Song_List = album.Songs;
                     }, null);
 
                     AlbumSongsItem = album.Songs;

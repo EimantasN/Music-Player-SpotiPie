@@ -195,10 +195,7 @@ namespace SpotyPie.Library.Fragments
                     BlockImage view = holder as BlockImage;
                     view.Title.Text = Dataset[position].Name;
                     view.SubTitile.Text = "Atnaujinta " + Dataset[position].Created;
-                    if (!string.IsNullOrEmpty(Dataset[position].ImageUrl))
-                        Picasso.With(Context).Load(Dataset[position].ImageUrl).Resize(1200, 1200).CenterCrop().Into(view.Image);
-                    else
-                        view.Image.SetImageResource(Resource.Drawable.noimg);
+                    //Picasso.With(Context).Load(Dataset[position].).Resize(1200, 1200).CenterCrop().Into(view.Image);
                 }
             }
 

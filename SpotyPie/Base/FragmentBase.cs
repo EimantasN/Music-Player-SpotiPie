@@ -9,8 +9,10 @@ using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Base
 {
-    public class FragmentBase : SupportFragment
+    public abstract class FragmentBase : SupportFragment
     {
+        public abstract int LayoutId { get; set; }
+
         protected View RootView;
 
         private MainActivity ParentActivity;
@@ -20,9 +22,9 @@ namespace SpotyPie.Base
             return RootView;
         }
 
-        public virtual int GetLayout()
+        private int GetLayout()
         {
-            return Resource.Layout.home_layout;
+            return LayoutId;
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -47,6 +49,11 @@ namespace SpotyPie.Base
             RootView.TranslationX = 0;
         }
 
+        public Current_state GetState()
+        {
+            return ParentActivity.GetState();
+        }
+
         public dynamic GetService(ApiServices service = ApiServices.Shared)
         {
             return ParentActivity.GetService(service);
@@ -60,9 +67,7 @@ namespace SpotyPie.Base
             }, null);
         }
 
-        protected virtual void InitView()
-        {
-        }
+        protected abstract void InitView();
 
         public override void OnResume()
         {

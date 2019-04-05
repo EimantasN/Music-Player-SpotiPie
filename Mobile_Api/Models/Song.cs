@@ -2,9 +2,9 @@
 
 namespace Mobile_Api.Models
 {
-    public class Song
+    public class Song : BaseModel
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string SpotifyId { get; set; }
 
@@ -34,5 +34,21 @@ namespace Mobile_Api.Models
 
         public DateTime LastActiveTime { get; set; }
 
+        public DateTime UploadTime { get; set; }
+
+        public long Size { get; set; }
+
+        protected bool IsPlaying { get; set; }
+
+        public bool IsPlayingNow() { return IsPlaying; }
+        public void SetIsPlaying(bool state) { IsPlaying = state; }
+
+        public Song(bool fake)
+        {
+            Id = 10;
+            Name = "Testas";
+            LocalUrl = "";
+            LargeImage = "";
+        }
     }
 }

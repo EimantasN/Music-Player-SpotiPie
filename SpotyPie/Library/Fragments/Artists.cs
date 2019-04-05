@@ -47,7 +47,7 @@ namespace SpotyPie.Library.Fragments
             {
                 if (ArtistsSongsRecyclerView != null && ArtistsSongsRecyclerView.ChildCount != 0)
                 {
-                    Current_state.SetArtist(ArtistsLocal[position]);
+                    //GetState().SetArtist(ArtistsLocal[position]);
                     FragmentManager.BeginTransaction()
                     .Replace(Resource.Id.content_frame, MainActivity.Artist)
                     .Commit();
@@ -198,10 +198,7 @@ namespace SpotyPie.Library.Fragments
                     if (GenresData != null && GenresData.Count != 0)
                         view.SubTitile.Text = GenresData.First();
                 }
-                if (Dataset[position].Images != null && Dataset[position].Images.Count != 0)
-                    Picasso.With(Context).Load(Dataset[position].Images.First().Url).Resize(1200, 1200).CenterCrop().Into(view.Image);
-                else
-                    view.Image.SetImageResource(Resource.Drawable.noimg);
+                Picasso.With(Context).Load(Dataset[position].LargeImage).Resize(1200, 1200).CenterCrop().Into(view.Image);
             }
         }
 

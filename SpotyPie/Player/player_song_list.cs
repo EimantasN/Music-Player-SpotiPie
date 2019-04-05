@@ -44,7 +44,7 @@ namespace SpotyPie.Player
             {
                 if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0)
                 {
-                    Current_state.SetSong(Current_state.Current_Song_List[position]);
+                    //GetState().SetSong(GetState().Current_Song_List[position]);
                     Player.PlayerSongListContainer.TranslationX = MainActivity.widthInDp;
                 }
             });
@@ -54,7 +54,7 @@ namespace SpotyPie.Player
 
         public override void OnResume()
         {
-            Task.Run(() => GetSongsAsync(Current_state.Current_Album.Id));
+            //Task.Run(() => GetSongsAsync(GetState().Current_Album.Id));
             base.OnResume();
         }
 
@@ -71,12 +71,11 @@ namespace SpotyPie.Player
                     AlbumSongs.Clear();
                     Application.SynchronizationContext.Post(_ =>
                     {
-                        Current_state.Current_Song_List = album.Songs;
+                        //GetState().Current_Song_List = album.Songs;
                         foreach (var x in album.Songs)
                         {
                             AlbumSongs.Add(x);
                         }
-                        List<Copyright> Copyright = JsonConvert.DeserializeObject<List<Copyright>>(album.Copyrights);
                     }, null);
                 }
                 else

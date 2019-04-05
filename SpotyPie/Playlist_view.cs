@@ -6,6 +6,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
+using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
 using System;
@@ -15,21 +16,19 @@ using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Player
 {
-    public class Playlist_view : SupportFragment
+    public class Playlist_view : FragmentBase
     {
-        View RootView;
+        public override int LayoutId { get; set; } = Resource.Layout.player_song_list;
 
         //Album Songs
-        public static List<Song> AlbumSongsItem = new List<Song>();
-        public static RvList<Song> AlbumSongs = new RvList<Song>();
+        public List<Song> AlbumSongsItem = new List<Song>();
+        public RvList<Song> AlbumSongs = new RvList<Song>();
         private RecyclerView.LayoutManager AlbumSongsLayoutManager;
-        private static RecyclerView.Adapter AlbumSongsAdapter;
-        private static RecyclerView AlbumSongsRecyclerView;
+        private RecyclerView.Adapter AlbumSongsAdapter;
+        private RecyclerView AlbumSongsRecyclerView;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override void InitView()
         {
-            RootView = inflater.Inflate(Resource.Layout.player_song_list, container, false);
-
             //ALBUM song list
             AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
             AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
@@ -43,16 +42,14 @@ namespace SpotyPie.Player
             {
                 if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0)
                 {
-                    Current_state.SetSong(Current_state.Current_Song_List[position]);
+                    GetState().SetSong(GetState().Current_Song_List[position]);
                 }
             });
-
-            return RootView;
         }
 
         public override void OnResume()
         {
-            Task.Run(() => GetSongsAsync(Current_state.Current_Playlist.Id));
+            Task.Run(() => GetSongsAsync(GetState().Current_Playlist.Id));
             base.OnResume();
         }
 
@@ -69,8 +66,8 @@ namespace SpotyPie.Player
                     AlbumSongs.Clear();
                     Application.SynchronizationContext.Post(_ =>
                     {
-                        Current_state.Current_Song_List = album.Items;
-                        foreach (var x in album.Items)
+                        GetState().Current_Song_List = album.Songs;
+                        foreach (var x in album.Songs)
                         {
                             AlbumSongs.Add(x);
                         }
@@ -90,5 +87,6 @@ namespace SpotyPie.Player
 
             }
         }
+
     }
 }

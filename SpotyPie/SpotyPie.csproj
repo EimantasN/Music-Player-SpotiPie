@@ -67,9 +67,7 @@
     <Compile Include="Current_state.cs" />
     <Compile Include="Helpers\BluetoothHelper.cs" />
     <Compile Include="Helpers\Caster.cs" />
-    <Compile Include="Models\BlockWithImage.cs" />
     <Compile Include="Models\Enum\RvType.cs" />
-    <Compile Include="Models\TwoBlockWithImage.cs" />
     <Compile Include="RecycleView\BaseRv.cs" />
     <Compile Include="Helpers\IFastScrollRecyclerViewAdapter.cs" />
     <Compile Include="Helpers\RecycleViewList.cs" />
@@ -83,7 +81,6 @@
     <Compile Include="Library\Fragments\Playlist.cs" />
     <Compile Include="Library\LibraryFragment.cs" />
     <Compile Include="MainActivity.cs" />
-    <Compile Include="Models\Copyright.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Player\Player.cs" />
     <Compile Include="ArtistFragment.cs" />

@@ -1,4 +1,4 @@
-﻿using Mobile_Api.Models.Rv;
+﻿using Mobile_Api.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

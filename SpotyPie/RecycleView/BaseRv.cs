@@ -3,11 +3,7 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
-using Mobile_Api.Models.Rv;
-using SpotyPie.Helpers;
-using SpotyPie.Models;
 using SpotyPie.RecycleView.Models;
-using System;
 
 namespace SpotyPie.RecycleView
 {
@@ -30,14 +26,14 @@ namespace SpotyPie.RecycleView
             {
                 return Resource.Layout.Loading;
             }
-            else if (typeof(T) == typeof(BlockWithImage) || Dataset[position].GetType().Name == "BlockWithImage")
+            else if (typeof(T) == typeof(Album) || Dataset[position].GetType().Name == "Album")
             {
                 return Resource.Layout.big_rv_list;
             }
-            else if (typeof(T) == typeof(TwoBlockWithImage))
-            {
-                return Resource.Layout.boxed_rv_list_two;
-            }
+            //else if (typeof(T) == typeof(TwoBlockWithImage))
+            //{
+            //    return Resource.Layout.boxed_rv_list_two;
+            //}
             else if (typeof(T) == typeof(SongItem) || Dataset[position].GetType().Name == "Song")
             {
                 return Resource.Layout.song_list_rv;

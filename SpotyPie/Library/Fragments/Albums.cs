@@ -7,6 +7,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
+using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
 using Square.Picasso;
@@ -17,9 +18,9 @@ using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Library.Fragments
 {
-    public class Albums : SupportFragment
+    public class Albums : FragmentBase
     {
-        View RootView;
+        public override int LayoutId { get; set; } = Resource.Layout.library_album_layout;
 
         //Album Songs
         public List<Album> AlbumsLocal = new List<Album>();
@@ -28,38 +29,6 @@ namespace SpotyPie.Library.Fragments
         private RecyclerView.Adapter AlbumSongsAdapter;
         private RecyclerView AlbumSongsRecyclerView;
         private FastScrollRecyclerViewItemDecoration decoration;
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-        {
-            RootView = inflater.Inflate(Resource.Layout.library_album_layout, container, false);
-
-            //ALBUM song list
-            AlbumsData = new RvList<Album>();
-            AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
-            AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums);
-            AlbumSongsRecyclerView.HasFixedSize = true;
-            AlbumSongsRecyclerView.SetLayoutManager(AlbumSongsLayoutManager);
-            AlbumSongsAdapter = new AlbumRV(AlbumsData, this.Context);
-            AlbumsData.Adapter = AlbumSongsAdapter;
-            AlbumSongsRecyclerView.SetAdapter(AlbumSongsAdapter);
-            decoration = new FastScrollRecyclerViewItemDecoration(this.Context);
-
-            AlbumSongsRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0 && AlbumsData != null && AlbumsData.Count != 0 && AlbumsData.Count > position)
-                {
-                    if (AlbumsLocal.Count == AlbumsData.Count)
-                    {
-                        Current_state.SetAlbum(AlbumsLocal[position]);
-                        FragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.content_frame, MainActivity.Album)
-                        .Commit();
-                    }
-                }
-            });
-
-            return RootView;
-        }
 
         public override void OnResume()
         {
@@ -121,6 +90,33 @@ namespace SpotyPie.Library.Fragments
             {
                 //AlbumsData.RemoveLoading();
             }
+        }
+
+        protected override void InitView()
+        {
+            AlbumsData = new RvList<Album>();
+            AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
+            AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums);
+            AlbumSongsRecyclerView.HasFixedSize = true;
+            AlbumSongsRecyclerView.SetLayoutManager(AlbumSongsLayoutManager);
+            AlbumSongsAdapter = new AlbumRV(AlbumsData, this.Context);
+            AlbumsData.Adapter = AlbumSongsAdapter;
+            AlbumSongsRecyclerView.SetAdapter(AlbumSongsAdapter);
+            decoration = new FastScrollRecyclerViewItemDecoration(this.Context);
+
+            AlbumSongsRecyclerView.SetItemClickListener((rv, position, view) =>
+            {
+                if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0 && AlbumsData != null && AlbumsData.Count != 0 && AlbumsData.Count > position)
+                {
+                    if (AlbumsLocal.Count == AlbumsData.Count)
+                    {
+                        GetState().SetAlbum(AlbumsLocal[position]);
+                        FragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.content_frame, MainActivity.Album)
+                        .Commit();
+                    }
+                }
+            });
         }
     }
 
@@ -209,11 +205,8 @@ namespace SpotyPie.Library.Fragments
             {
                 BlockImage view = holder as BlockImage;
                 view.Title.Text = Dataset[position].Name;
-                view.SubTitile.Text = JsonConvert.DeserializeObject<List<Artist>>(Dataset[position].Artists).First().Name;
-                if (Dataset[position].Images != null && Dataset[position].Images.Count != 0)
-                    Picasso.With(Context).Load(Dataset[position].Images.First().Url).Resize(1200, 1200).CenterCrop().Into(view.Image);
-                else
-                    view.Image.SetImageResource(Resource.Drawable.noimg);
+                //view.SubTitile.Text = GetState().Current_Artist.Name;
+                Picasso.With(Context).Load(Dataset[position].LargeImage).Resize(1200, 1200).CenterCrop().Into(view.Image);
             }
         }
 

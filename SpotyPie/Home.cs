@@ -13,15 +13,11 @@ namespace SpotyPie
         //main_rv
         private static RvList<dynamic> RvData;
 
-        public override int GetLayout()
-        {
-            return Resource.Layout.browse_layout;
-        }
+        public override int LayoutId { get; set; } = Resource.Layout.browse_layout;
 
         protected override void InitView()
         {
-            base.InitView();
-            if(RvData == null)
+            if (RvData == null)
                 RvData = new BaseRecycleView<dynamic>(this, Resource.Id.main_rv).Setup(LinearLayoutManager.Vertical);
             Task.Run(() => PopulateData());
         }

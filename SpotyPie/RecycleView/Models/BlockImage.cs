@@ -26,12 +26,9 @@ namespace SpotyPie.RecycleView.Models
 
         public void PrepareView(dynamic data, Context Context)
         {
-            Title.Text = data.Title;
-            SubTitile.Text = data.SubTitle;
-            if (!string.IsNullOrEmpty(data.Image))
-                Picasso.With(Context).Load(data.Image).Resize(300, 300).CenterCrop().Into(Image);
-            else
-                Image.SetImageResource(Resource.Drawable.noimg);
+            Title.Text = data.Name;
+            SubTitile.Text = "Coming soon";
+            Picasso.With(Context).Load(data.LargeImage).Resize(300, 300).CenterCrop().Into(Image);
         }
     }
 }

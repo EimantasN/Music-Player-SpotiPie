@@ -29,6 +29,8 @@ namespace SpotyPie
     {
         private BluetoothHelper _bluetoothHelper;
 
+        private Current_state APPSTATE;
+
         FragmentBase Home;
         FragmentBase Browse;
         FragmentBase Search;
@@ -77,9 +79,11 @@ namespace SpotyPie
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+            Player = new Player.Player();
+            APPSTATE = new Current_state((Player.Player)Player);
 
-            _bluetoothHelper = new BluetoothHelper(Application.ApplicationContext);
-            MyCommandExecute();
+            //_bluetoothHelper = new BluetoothHelper(Application.ApplicationContext);
+            //MyCommandExecute();
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
 
@@ -97,7 +101,6 @@ namespace SpotyPie
             Browse = new Browse();
             //Search = new Search();
             //Library = new LibraryFragment();
-            Player = new Player.Player();
             Album = new AlbumFragment();
             Artist = new ArtistFragment();
 
@@ -118,7 +121,7 @@ namespace SpotyPie
             BackHeaderButton = FindViewById<ImageButton>(Resource.Id.back);
             OptionsHeaderButton = FindViewById<ImageButton>(Resource.Id.options);
 
-            if (Current_state.IsPlaying)
+            if (GetState().IsPlaying)
                 PlayToggle.SetImageResource(Resource.Drawable.pause);
             else
                 PlayToggle.SetImageResource(Resource.Drawable.play_button);
@@ -134,9 +137,20 @@ namespace SpotyPie
             BlueTooh();
         }
 
+        protected override void OnDestroy()
+        {
+            APPSTATE.Dispose();
+            base.OnDestroy();
+        }
+
+        public Current_state GetState()
+        {
+            return APPSTATE;
+        }
+
         public override void OnBackPressed()
         {
-            if (Current_state.PlayerIsVisible)
+            if (GetState().PlayerIsVisible)
             {
                 PlayerContainer.TranslationX = widthInDp;
                 return;
@@ -170,9 +184,9 @@ namespace SpotyPie
         {
             try
             {
-                Current_state.HideHeaderNavigationButtons();
+                GetState().HideHeaderNavigationButtons();
                 SupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.content_frame, Current_state.BackFragment)
+                    .Replace(Resource.Id.content_frame, GetState().BackFragment)
                     .Commit();
             }
             catch (System.Exception)
@@ -187,7 +201,7 @@ namespace SpotyPie
         protected override void OnResume()
         {
             base.OnResume();
-            if (!Current_state.IsPlayerLoaded)
+            if (!GetState().IsPlayerLoaded)
             {
                 SupportFragmentManager.BeginTransaction()
                     .Replace(Resource.Id.player_frame, Player)
@@ -199,12 +213,12 @@ namespace SpotyPie
 
         private void PlayToggle_Click(object sender, EventArgs e)
         {
-            Current_state.Music_play_toggle();
+            GetState().Music_play_toggle();
         }
 
         private void MiniPlayer_Click(object sender, EventArgs e)
         {
-            Current_state.Player_visiblibity_toggle();
+            GetState().Player_visiblibity_toggle();
         }
 
         private void BottomNavigation_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
@@ -268,9 +282,9 @@ namespace SpotyPie
             if (HeaderContainer.Visibility == ViewStates.Gone)
                 HeaderContainer.Visibility = ViewStates.Visible;
 
-            if (Current_state.BackFragment != null)
+            if (GetState().BackFragment != null)
             {
-                Current_state.BackFragment.Hide();
+                GetState().BackFragment.Hide();
             }
 
             FragmentBase fragment = null;
@@ -297,7 +311,7 @@ namespace SpotyPie
             if (fragment == null)
                 return;
 
-            Current_state.BackFragment = fragment;
+            GetState().BackFragment = fragment;
             if (!fragment.IsAdded)
             {
                 SupportFragmentManager.BeginTransaction()
@@ -306,7 +320,7 @@ namespace SpotyPie
             }
             else
             {
-                Current_state.BackFragment.Show();
+                GetState().BackFragment.Show();
             }
         }
 
