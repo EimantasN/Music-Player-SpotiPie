@@ -224,7 +224,7 @@ namespace Services
                     SongId = id,
                     Name = song.Name,
                     DurationMs = song.DurationMs,
-                    ImageUrl = song.ImageUrl,
+                    Image = song.ImageUrl,
                     LocalUrl = song.LocalUrl,
                     CurrentMs = 0,
                     ArtistId = artId,
