@@ -115,6 +115,42 @@ namespace Services
         {
             try
             {
+                int count = 0;
+                string Failed = "";
+                int Ex = 0;
+                Item item;
+                VorbisComment flacTag;
+                Album album;
+                foreach (var path in Directory.EnumerateFiles(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Music"))
+                {
+                    try
+                    {
+                        flacTag = new VorbisComment(path);
+                        if (!string.IsNullOrEmpty(flacTag.Album) && !string.IsNullOrEmpty(flacTag.Title) && !string.IsNullOrEmpty(flacTag.Artist))
+                        {
+                            album = _ctx.Albums.Include(x => x.Songs).First(x => x.Name == flacTag.Album);
+                            item = album.Songs.First(x => x.Name.ToLower().Trim().Contains(flacTag.Title.ToLower().Trim()));
+                            if (item.LocalUrl == null || item.LocalUrl != path)
+                            {
+                                item.LocalUrl = path;
+                                _ctx.Entry(item).State = EntityState.Modified;
+                                await _ctx.SaveChangesAsync();
+                            }
+                            count++;
+                        }
+                        else
+                        {
+                            Failed += "\n" + flacTag.Album + flacTag.Title + flacTag.Artist;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Ex++;
+                    }
+                }
+
+                return "Binded - " + count + " Ex - " +Ex + Failed;
+
                 //await Task.Factory.StartNew(async () =>
                 //{
                 if (Directory.Exists(settings.AudioStoragePath))
@@ -127,7 +163,7 @@ namespace Services
 
                         if (audio != null && audio.FileType == AudioFileType.Flac)
                         {
-                            VorbisComment flacTag = new VorbisComment(file);
+                            flacTag = new VorbisComment(file);
 
                             if (string.IsNullOrWhiteSpace(flacTag.Title) || string.IsNullOrWhiteSpace(flacTag.Artist))
                             {
@@ -191,6 +227,7 @@ namespace Services
         {
             try
             {
+                await BindAudioFiles();
                 IAudioFile audio = AudioFile.Create(path, false);
                 VorbisComment flacTag = new VorbisComment(path);
 
