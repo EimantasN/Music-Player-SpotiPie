@@ -191,69 +191,18 @@ namespace Services
         {
             try
             {
-                Item audioDb = await _ctx.Items
-                    .FirstOrDefaultAsync(x => 
-                    x.Id.ToString().Equals(Path.GetFileNameWithoutExtension(name),
-                    StringComparison.InvariantCultureIgnoreCase));
+                IAudioFile audio = AudioFile.Create(path, false);
+                VorbisComment flacTag = new VorbisComment(path);
 
-                if (audioDb != null)
+                if (!string.IsNullOrEmpty(flacTag.Album) && !string.IsNullOrEmpty(flacTag.Title) && !string.IsNullOrEmpty(flacTag.Artist))
                 {
-                    _ctx.Update(audioDb);
-                    audioDb.LocalUrl = path;
-
+                    var album = _ctx.Albums.Include(x => x.Songs).First(x => x.Name == flacTag.Album);
+                    var item = album.Songs.First(x => x.Name.ToLower().Contains(flacTag.Title.ToLower()));
+                    item.LocalUrl = path;
+                    _ctx.Entry(item).State = EntityState.Modified;
                     await _ctx.SaveChangesAsync();
-
-                    return true;
                 }
                 return false;
-
-                IAudioFile audio = AudioFile.Create(path, false);
-
-                if (audio != null && audio.FileType == AudioFileType.Flac)
-                {
-                    VorbisComment flacTag = new VorbisComment(path);
-
-                    if (string.IsNullOrWhiteSpace(flacTag.Title) || string.IsNullOrWhiteSpace(flacTag.Artist))
-                    {
-                        audioDb = await _ctx.Items
-                            .FirstOrDefaultAsync(x =>
-                            x.Name.Equals(Path.GetFileNameWithoutExtension(name), StringComparison.InvariantCultureIgnoreCase));
-
-                        if (audioDb == null)
-                        {
-                            audioDb = await _ctx.Items
-                            .FirstOrDefaultAsync(x =>
-                            x.Name.Contains(Path.GetFileNameWithoutExtension(name), StringComparison.InvariantCultureIgnoreCase));
-                        }
-
-                        if (audioDb == null)
-                        {
-                            audioDb = await _ctx.Items
-                            .FirstOrDefaultAsync(x => x.DurationMs == (audio.TotalSeconds / 1000));
-                        }
-                    }
-                    else
-                    {
-                        var replaced = flacTag.Title.Replace("'", "’");
-                        var replacedArtist = flacTag.Artist.Replace("'", "’");
-                        audioDb = await _ctx.Items
-                            .FirstOrDefaultAsync(x => x.Name.Equals(replaced, StringComparison.InvariantCultureIgnoreCase)
-                            && x.Artists.Contains(replacedArtist));
-
-                        if (audioDb == null)
-                        {
-                            audioDb = await _ctx.Items
-                            .FirstOrDefaultAsync(x => x.Name.Contains(replaced, StringComparison.InvariantCultureIgnoreCase)
-                            && x.Artists.Contains(replacedArtist));
-                        }
-
-                        if (audioDb == null)
-                        {
-                            audioDb = await _ctx.Items
-                            .FirstOrDefaultAsync(x => x.DurationMs == (audio.TotalSeconds / 1000));
-                        }
-                    }
-                }
             }
             catch (Exception e)
             {
