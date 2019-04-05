@@ -201,6 +201,7 @@ namespace Services
                     item.LocalUrl = path;
                     _ctx.Entry(item).State = EntityState.Modified;
                     await _ctx.SaveChangesAsync();
+                    return true;
                 }
                 return false;
             }
