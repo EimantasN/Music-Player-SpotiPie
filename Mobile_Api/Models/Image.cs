@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Mobile_Api.Models
+﻿namespace Mobile_Api.Models
 {
-    public class Image : BaseModel
+    public class Image
     {
-        public override int Id { get; set; }
+        public int Id { get; set; }
 
         public string Url { get; set; }
 

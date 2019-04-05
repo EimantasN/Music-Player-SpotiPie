@@ -1,6 +1,6 @@
 ﻿using Mobile_Api.Interfaces;
 
-namespace Mobile_Api
+namespace Mobile_Api.Models
 {
     public abstract class BaseModel : IBaseInterface
     {

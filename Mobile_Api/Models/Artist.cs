@@ -1,25 +1,28 @@
-﻿using Mobile_Api.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Artist : BaseModel
+    public class Artist
     {
-        public  override int Id { get; set; }
+        public int Id { get; set; }
+
+        public string SpotifyId { get; set; }
+
+        public string Genres { get; set; }
 
         public string Name { get; set; }
 
-        //[Json] List<string>
-        public string Genres { get; set; }
+        public long Popularity { get; set; }
 
-        public List<Image> Images { get; set; }
-
-        public List<Song> Songs { get; set; }
+        public string LargeImage { get; set; }
+        public string MediumImage { get; set; }
+        public string SmallImage { get; set; }
 
         public List<Album> Albums { get; set; }
 
-        public long Popularity { get; set; }
+        public DateTime LastActiveTime { get; set; }
+
+
     }
 }

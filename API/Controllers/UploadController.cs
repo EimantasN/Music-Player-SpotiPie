@@ -48,7 +48,11 @@ namespace API.Controllers
 
                     foreach (var formFile in form.Files)
                     {
-                        string filePath = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Music" + Path.DirectorySeparatorChar + formFile.FileName;
+                        string filePath =
+                            Path.DirectorySeparatorChar + "root" +
+                            Path.DirectorySeparatorChar + "Content" +
+                            Path.DirectorySeparatorChar + "Flac" +
+                            Path.DirectorySeparatorChar + formFile.FileName;
 
                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {

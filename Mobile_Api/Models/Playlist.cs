@@ -1,15 +1,17 @@
-﻿using Mobile_Api.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Mobile_Api.Models
 {
-    public class Playlist : BaseModel
+    public class Playlist
     {
-        public override int Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
+
+        public string Artists { get; set; }
+
+        public string Gendres { get; set; }
 
         public List<Song> Songs { get; set; }
 
@@ -21,8 +23,8 @@ namespace Mobile_Api.Models
 
         public long Total { get; set; }
 
-        public int Popularity { get; set; }
+        public long Popularity { get; set; }
 
-        public string LargeImage { get; set; }
+        public string Image { get; set; }
     }
 }

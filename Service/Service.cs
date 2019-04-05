@@ -121,7 +121,11 @@ namespace Services
                 Song item;
                 VorbisComment flacTag;
                 Album album;
-                foreach (var path in Directory.EnumerateFiles(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Music"))
+                string filePath =
+                            Path.DirectorySeparatorChar + "root" +
+                            Path.DirectorySeparatorChar + "Content" +
+                            Path.DirectorySeparatorChar + "Flac";
+                foreach (var path in Directory.EnumerateFiles(filePath))
                 {
                     try
                     {
@@ -149,7 +153,7 @@ namespace Services
                     }
                 }
 
-                return "Binded - " + count + " Ex - " +Ex + Failed;
+                return "Binded - " + count + " Ex - " + Ex + Failed;
 
                 //await Task.Factory.StartNew(async () =>
                 //{
