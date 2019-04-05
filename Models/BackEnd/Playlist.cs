@@ -9,6 +9,10 @@ namespace Models.BackEnd
 
         public string Name { get; set; }
 
+        public string Artists { get; set; }
+
+        public string Gendres { get; set; }
+
         public List<Item> Items { get; set; }
 
         public DateTime Created { get; set; }
@@ -21,6 +25,6 @@ namespace Models.BackEnd
 
         public long Popularity { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string Image { get; set; }
     }
 }

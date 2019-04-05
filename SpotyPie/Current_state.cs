@@ -2,11 +2,8 @@
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
-using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Base;
-using SpotyPie.Models;
-using Square.Picasso;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,23 +42,12 @@ namespace SpotyPie
         {
             if (song.LocalUrl != null)
             {
-                Current_Song = song;
+                SetCurrentSong(song);
                 Player.Player.StartPlayMusic();
-                Current_Artist = song.Artists;
-                Current_Song.Playing = true;
                 //Current_Song_List.First(x => x.Id == Current_Song.Id).Playing = true;
                 Start_music = true;
                 PlayerIsVisible = true;
                 UpdateCurrentInfo();
-                Task.Run(() => Update());
-
-                async Task Update()
-                {
-                    var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/songs/1/update");
-                    var request = new RestRequest(Method.GET);
-                    request.AddHeader("cache-control", "no-cache");
-                    IRestResponse response = await client.ExecuteTaskAsync(request);
-                }
 
                 if (MainActivity.MiniPlayer.Visibility == ViewStates.Gone)
                     MainActivity.MiniPlayer.Visibility = ViewStates.Visible;
@@ -70,6 +56,28 @@ namespace SpotyPie
             {
                 Toast.MakeText(Player.Player.contextStatic, "Please upload song", ToastLength.Short).Show();
             }
+        }
+
+        public static void SetCurrentSong(Song song)
+        {
+            Current_Song = song;
+            Current_Artist = song.Artists;
+            Current_Song.Playing = true;
+            Current_Song_List.Add(song);
+        }
+
+        public static void SetCurrentSongList(List<Song> songs)
+        {
+            if (songs != null && songs.Count > 0)
+            {
+                songs.First().Playing = true;
+                Current_Song_List.AddRange(songs);
+            }
+        }
+
+        public static void UpdateSongList(Song song)
+        {
+            Current_Song_List.First(x => x.Id == Current_Song.Id).Playing = true;
         }
 
         public static void UpdateCurrentInfo()
@@ -148,8 +156,6 @@ namespace SpotyPie
                 PlayerIsVisible = true;
                 MainActivity.PlayerContainer.TranslationX = 0;
             }
-
-
         }
 
         public static void ShowHeaderNavigationButtons()
