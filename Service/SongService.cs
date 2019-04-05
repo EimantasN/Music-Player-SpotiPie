@@ -22,13 +22,28 @@ namespace Services
             try
             {
                 var song = await _ctx.Songs
-                    .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id);
+                Update(song);
                 return song;
             }
             catch (Exception e)
             {
                 throw e;
+            }
+        }
+
+        public void Update(Song song)
+        {
+            try
+            {
+                song.Popularity++;
+                song.LastActiveTime = DateTime.Now.ToUniversalTime();
+                _ctx.Entry(song).State = EntityState.Modified;
+                _ctx.SaveChanges();
+            }
+            catch (Exception e)
+            {
+
             }
         }
 

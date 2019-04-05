@@ -21,20 +21,31 @@ namespace Services
         {
             try
             {
-                var album = await _ctx.Albums.Include(x => x.Songs).FirstOrDefaultAsync(x => x.Id == id);
+                //Task.Run(() => Update(id));
+                var album = await _ctx.Albums.Include(x => x.Songs).FirstAsync(x => x.Id == id);
+                Update(album);
                 if (album == null)
                     throw new Exception("album with id " + id + " not found");
-
-                album.Popularity++;
-                album.LastActiveTime = DateTime.Now.ToUniversalTime();
-                _ctx.Entry(album).State = EntityState.Modified;
-                await _ctx.SaveChangesAsync();
-
                 return album;
             }
             catch (Exception e)
             {
                 throw e;
+            }
+        }
+
+        public void Update(Album album)
+        {
+            try
+            {
+                album.Popularity++;
+                album.LastActiveTime = DateTime.Now.ToUniversalTime();
+                _ctx.Entry(album).State = EntityState.Modified;
+                _ctx.SaveChanges();
+            }
+            catch (Exception e)
+            {
+
             }
         }
 
