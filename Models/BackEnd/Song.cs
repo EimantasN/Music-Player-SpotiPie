@@ -34,5 +34,9 @@ namespace Models.BackEnd
 
         public DateTime LastActiveTime { get; set; }
 
+        public DateTime UploadTime { get; set; }
+
+        public long Size { get; set; }
+
     }
 }

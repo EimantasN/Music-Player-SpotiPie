@@ -137,6 +137,10 @@ namespace Services
                             if (item.LocalUrl == null || item.LocalUrl != path)
                             {
                                 item.LocalUrl = path;
+                                item.IsLocal = true;
+                                item.IsPlayable = true;
+                                item.UploadTime = DateTime.Now;
+                                item.Size = new System.IO.FileInfo(path).Length;
                                 _ctx.Entry(item).State = EntityState.Modified;
                                 await _ctx.SaveChangesAsync();
                             }
@@ -152,74 +156,7 @@ namespace Services
                         Ex++;
                     }
                 }
-
                 return "Binded - " + count + " Ex - " + Ex + Failed;
-
-                //await Task.Factory.StartNew(async () =>
-                //{
-                if (Directory.Exists(settings.AudioStoragePath))
-                {
-                    foreach (var file in Directory.EnumerateFiles(settings.AudioStoragePath))
-                    {
-                        Song audioDb = null;
-                        IAudioFile audio = AudioFile.Create(file, false);
-                        Console.WriteLine(file);
-
-                        if (audio != null && audio.FileType == AudioFileType.Flac)
-                        {
-                            flacTag = new VorbisComment(file);
-
-                            if (string.IsNullOrWhiteSpace(flacTag.Title) || string.IsNullOrWhiteSpace(flacTag.Artist))
-                            {
-                                audioDb = await _ctx.Songs
-                                    .FirstOrDefaultAsync(x =>
-                                    x.Name == Path.GetFileNameWithoutExtension(file));
-
-                                if (audioDb == null)
-                                {
-                                    audioDb = await _ctx.Songs
-                                    .FirstOrDefaultAsync(x =>
-                                    x.Name.Contains(Path.GetFileNameWithoutExtension(file)));
-                                }
-                            }
-                            else
-                            {
-                                //var replaced = flacTag.Title.Replace("'", "’");
-                                //var replacedArtist = flacTag.Artist.Replace("'", "’");
-                                //audioDb = await _ctx.Songs
-                                //    .FirstOrDefaultAsync(x => x.Name.Contains(replaced)
-                                //    && x.Artists.Contains(replacedArtist));
-
-                                //if (audioDb == null)
-                                //{
-                                //    audioDb = await _ctx.Songs
-                                //    .FirstOrDefaultAsync(x => x.Name.Contains(replaced)
-                                //    && x.Artists.Contains(replacedArtist));
-                                //}
-                            }
-                        }
-                        else
-                            audioDb = await _ctx.Songs.FirstOrDefaultAsync(x => x.Name == Path.GetFileNameWithoutExtension(file));
-
-                        if (audioDb != null)
-                        {
-                            Console.WriteLine("found file " + file);
-                            _ctx.Update(audioDb);
-                            audioDb.LocalUrl = file;
-
-                            if (audio != null)
-                            {
-                                audioDb.DurationMs = (long)audio.TotalSeconds * 1000;
-                            }
-
-                            _ctx.SaveChanges();
-                            audio = null;
-                        }
-                    }
-                    return "true";
-                }
-                //});
-                return "false";
             }
             catch (Exception ex)
             {
