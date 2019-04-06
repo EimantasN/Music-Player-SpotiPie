@@ -37,6 +37,8 @@ namespace SpotyPie.Base
             return RootView;
         }
 
+        public abstract void ForceUpdate();
+
         public void Hide()
         {
             RootView.Alpha = 0.0f;
@@ -81,6 +83,7 @@ namespace SpotyPie.Base
 
         public override void OnResume()
         {
+            ForceUpdate();
             base.OnResume();
         }
 

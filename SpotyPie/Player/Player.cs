@@ -3,6 +3,7 @@ using Android.Media;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using SpotyPie.Base;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,11 +11,20 @@ using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Player
 {
-    public class Player : SupportFragment
+    public class Player : SupportFragment, View.IOnTouchListener
     {
         View RootView;
 
-        SupportFragment PlayerSongList;
+        protected float mLastPosY;
+        protected static int newsId = 0;
+        protected const int OffsetContainer = 250;
+        protected int FragmentWidth = 0;
+
+        private const string BaseUrl = "http://pie.pertrauktiestaskas.lt/api/stream/play/";
+
+        private int CurrentState { get; set; } = 1;
+
+        PlaylistSongList PlayerSongList;
 
         TimeSpan CurrentTime = new TimeSpan(0, 0, 0, 0);
         TimeSpan TotalSongTime = new TimeSpan(0, 0, 0, 0);
@@ -24,15 +34,13 @@ namespace SpotyPie.Player
 
         ImageButton HidePlayerButton;
         public ImageButton PlayToggle;
-        public MediaPlayer player;
+        public MediaPlayer MusicPlayer;
 
         ImageButton NextSong;
         ImageButton PreviewSong;
 
         public TextView CurretSongTimeText;
         TextView TotalSongTimeText;
-
-        public Android.Content.Context contextStatic;
 
         public ProgressBar SongProgress;
 
@@ -58,7 +66,7 @@ namespace SpotyPie.Player
             return ParentActivity.GetState();
         }
 
-        public static FrameLayout PlayerSongListContainer;
+        public FrameLayout PlayerSongListContainer;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -66,10 +74,9 @@ namespace SpotyPie.Player
 
             ParentActivity = (MainActivity)Activity;
 
-            contextStatic = this.Context;
-            PlayerSongList = new player_song_list();
+            PlayerSongList = new PlaylistSongList();
+
             PlayerSongListContainer = RootView.FindViewById<FrameLayout>(Resource.Id.player_frame);
-            PlayerSongListContainer.TranslationX = MainActivity.widthInDp;
             SongListButton = RootView.FindViewById<ImageButton>(Resource.Id.song_list);
             SongListButton.Click += SongListButton_Click;
 
@@ -96,10 +103,10 @@ namespace SpotyPie.Player
             TotalSongTimeText = RootView.FindViewById<TextView>(Resource.Id.total_song_time);
             TotalSongTimeText.Visibility = ViewStates.Invisible;
 
-            player = new MediaPlayer();
-            player.Prepared += Player_Prepared;
-            player.BufferingUpdate += Player_BufferingUpdate;
-            player.Completion += Player_Completion;
+            MusicPlayer = new MediaPlayer();
+            MusicPlayer.Prepared += Player_Prepared;
+            MusicPlayer.BufferingUpdate += Player_BufferingUpdate;
+            MusicPlayer.Completion += Player_Completion;
             StartPlayMusic();
 
             HidePlayerButton = RootView.FindViewById<ImageButton>(Resource.Id.back_button);
@@ -114,17 +121,103 @@ namespace SpotyPie.Player
             PlayToggle.Click += PlayToggle_Click;
             Repeat_Click(null, null);
             Shuffle_Click(null, null);
+
+            FragmentWidth = Resources.DisplayMetrics.WidthPixels;
+
             return RootView;
+        }
+
+        public override void OnResume()
+        {
+            Player_Image.SetOnTouchListener(this);
+            base.OnResume();
+        }
+
+        public override void OnDestroy()
+        {
+            Player_Image.SetOnTouchListener(null);
+            base.OnDestroy();
+        }
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                    mLastPosY = e.GetX();
+                    return true;
+
+                case MotionEventActions.Up:
+                    var metrics = Resources.DisplayMetrics;
+                    var widthInDp = metrics.HeightPixels;
+
+                    var transXExit = v.TranslationX;
+                    if (v.TranslationX > 0)
+                    {
+                        if (transXExit < (FragmentWidth / 2))
+                        {
+                            v.Animate().TranslationX(0);
+                            return true;
+                        }
+                        else
+                        {
+                            v.Animate().TranslationX(FragmentWidth);
+                            NextSong_Click(null, null);
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        if (Math.Abs(transXExit) < (FragmentWidth / 2))
+                        {
+                            v.Animate().TranslationX(0);
+                            return true;
+                        }
+                        else
+                        {
+                            v.Animate().TranslationX(FragmentWidth);
+                            PreviewSong_Click(null, null);
+                            return true;
+                        }
+                    }
+
+                case MotionEventActions.Move:
+                    var proc = 90 * v.TranslationX / (FragmentWidth - OffsetContainer);
+                    //Debug.Print(proc.ToString());
+                    if (proc > 90) proc = 90;
+                    var currentPosition = e.GetX();
+                    var deltX = mLastPosY - currentPosition;
+
+                    var transX = v.TranslationX;
+                    transX -= deltX;
+
+                    v.TranslationX = transX;
+                    //v.Animate().TranslationY(transY);
+                    return true;
+
+                default:
+                    v.Animate().TranslationX(0);
+                    return v.OnTouchEvent(e);
+            }
         }
 
         private void SongListButton_Click(object sender, EventArgs e)
         {
             try
             {
-                ChildFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.player_frame, PlayerSongList)
-                    .Commit();
-                PlayerSongListContainer.TranslationX = 0;
+                if (!PlayerSongList.IsAdded)
+                {
+                    ChildFragmentManager.BeginTransaction()
+                        .Add(Resource.Id.player_frame, PlayerSongList)
+                        .Commit();
+                }
+                else
+                {
+                    PlayerSongList.Update();
+                }
+                CurrentState = 2;
+                PlayerSongListContainer.Visibility = ViewStates.Visible;
+                PlayerSongListContainer.BringToFront();
             }
             catch (Exception)
             {
@@ -137,19 +230,23 @@ namespace SpotyPie.Player
 
             float Procent = (e.Event.GetX() * 100) / SongProgress.Width;
             int Second = (int)(GetState().Current_Song.DurationMs * Procent / 100);
-            player.SeekTo(Second);
+            MusicPlayer.SeekTo(Second);
         }
 
         private void PreviewSong_Click(object sender, EventArgs e)
         {
             RepetedOnce = false;
             GetState().ChangeSong(false);
+            Player_Image.TranslationX = FragmentWidth;
+            Player_Image.Animate().TranslationX(0);
         }
 
         private void NextSong_Click(object sender, EventArgs e)
         {
             RepetedOnce = false;
             GetState().ChangeSong(true);
+            Player_Image.TranslationX = FragmentWidth * -1;
+            Player_Image.Animate().TranslationX(0);
         }
 
         public void StartPlayMusic()
@@ -160,27 +257,32 @@ namespace SpotyPie.Player
                 {
                     if (GetState().Start_music)
                     {
-                        Application.SynchronizationContext.Post(_ =>
+                        try
+                        {
+                            MusicPlayer.Reset();
+                            MusicPlayer.SetAudioStreamType(Stream.Music);
+                            MusicPlayer.SetDataSource(BaseUrl + GetState().Current_Song.Id);
+                            MusicPlayer.Prepare();
+                        }
+                        catch (Exception e)
+                        {
+                            //Toast.MakeText(ParentActivity.ApplicationContext, "Can't play " + GetState().Current_Song.Id.ToString(), ToastLength.Short).Show();
+                        }
+                        finally
+                        {
+                            Application.SynchronizationContext.Post(_ =>
                             {
-                                try
-                                {
-                                    player.Reset();
-                                    player.SetAudioStreamType(Stream.Music);
-                                    player.SetDataSource("http://pie.pertrauktiestaskas.lt/api/stream/play/" + GetState().Current_Song.Id);
-                                    player.Prepare();
-                                }
-                                catch (Exception e)
-                                {
-                                    Toast.MakeText(contextStatic, "Can't play " + GetState().Current_Song.Id.ToString(), ToastLength.Short).Show();
-                                }
+                                PlayToggle.SetImageResource(Resource.Drawable.pause);
+                                PlayToggle.SetImageResource(Resource.Drawable.pause);
                             }, null);
+                        }
                     }
                 }
                 catch (Exception)
                 {
                     Application.SynchronizationContext.Post(_ =>
                     {
-                        Toast.MakeText(contextStatic, "Can't play " + GetState().Current_Song.Id.ToString(), ToastLength.Short).Show();
+                        Toast.MakeText(ParentActivity.ApplicationContext, "Can't play " + GetState().Current_Song.Id.ToString(), ToastLength.Short).Show();
                     }, null);
                 }
             });
@@ -201,13 +303,13 @@ namespace SpotyPie.Player
         private void Player_Prepared(object sender, EventArgs e)
         {
             TotalSongTimeText.Visibility = ViewStates.Visible;
-            TotalSongTime = new TimeSpan(0, 0, (int)player.Duration / 1000);
+            TotalSongTime = new TimeSpan(0, 0, (int)MusicPlayer.Duration / 1000);
             TotalSongTimeText.Text = TotalSongTime.Minutes + ":" + (TotalSongTime.Seconds > 9 ? TotalSongTime.Seconds.ToString() : "0" + TotalSongTime.Seconds);
 
             if (GetState().Start_music)
             {
                 PlayToggle.SetImageResource(Resource.Drawable.pause);
-                player.Start();
+                MusicPlayer.Start();
                 CurrentTime = new TimeSpan(0, 0, 0, 0);
                 Task.Run(() => UpdateLoop());
             }
@@ -221,19 +323,19 @@ namespace SpotyPie.Player
         {
             try
             {
-                if (player != null && player.IsPlaying && !Updating)
+                if (MusicPlayer != null && MusicPlayer.IsPlaying && !Updating)
                 {
                     Application.SynchronizationContext.Post(_ => { Updating = true; }, null);
                     int Progress = 0;
                     int Position = 0;
-                    while (player.IsPlaying)
+                    while (MusicPlayer.IsPlaying)
                     {
                         try
                         {
                             //Toast.MakeText(this.Context, "Pasotion -" + player.CurrentPosition + " - " + player.Duration, ToastLength.Short).Show();
-                            Progress = (int)(player.CurrentPosition * 100) / player.Duration;
+                            Progress = (int)(MusicPlayer.CurrentPosition * 100) / MusicPlayer.Duration;
                             Application.SynchronizationContext.Post(_ => { SongProgress.Progress = Progress; }, null);
-                            Position = (int)player.CurrentPosition / 1000;
+                            Position = (int)MusicPlayer.CurrentPosition / 1000;
                             if (CurrentTime.Seconds < Position)
                             {
                                 CurrentTime = new TimeSpan(0, 0, Position);
@@ -241,7 +343,7 @@ namespace SpotyPie.Player
                                 Application.SynchronizationContext.Post(_ => { CurretSongTimeText.Text = text; }, null);
                             }
 
-                            if (player.Looping == true && CurrentTime.TotalSeconds == TotalSongTime.TotalSeconds)
+                            if (MusicPlayer.Looping == true && CurrentTime.TotalSeconds == TotalSongTime.TotalSeconds)
                             {
                                 Application.SynchronizationContext.Post(_ =>
                                 {
@@ -269,7 +371,7 @@ namespace SpotyPie.Player
             }
             finally
             {
-                Application.SynchronizationContext.Post(_ => { GetState().Music_play_toggle(); }, null);
+                //Application.SynchronizationContext.Post(_ => { GetState().Music_play_toggle(); }, null);
             }
         }
 
@@ -287,8 +389,8 @@ namespace SpotyPie.Player
                 if (Repeat_state == 2)
                 {
                     RepetedOnce = true;
-                    player.SeekTo(0);
-                    player.Start();
+                    MusicPlayer.SeekTo(0);
+                    MusicPlayer.Start();
                 }
             }
             CurrentTime = new TimeSpan(0, 0, 0, 0);
@@ -307,7 +409,7 @@ namespace SpotyPie.Player
                     {
                         Repeat.SetImageResource(Resource.Drawable.repeat);
                         Repeat_state = 1;
-                        player.Looping = true;
+                        MusicPlayer.Looping = true;
                         break;
                     }
                 case 1:
@@ -347,5 +449,18 @@ namespace SpotyPie.Player
             saved_to_songs = !saved_to_songs;
         }
 
+        public bool CheckChildFragments()
+        {
+            if (CurrentState == 1)
+            {
+            }
+            else if (CurrentState == 2)
+            {
+                PlayerSongListContainer.Visibility = ViewStates.Gone;
+                CurrentState = 1;
+                return false;
+            }
+            return true;
+        }
     }
 }

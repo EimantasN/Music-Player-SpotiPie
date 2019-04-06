@@ -17,14 +17,14 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:singleLine="true"
         android:text="Picturing Love"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textColor="@android:color/white"
         android:textSize="16dp"
-        android:singleLine="true"
         app:layout_constraintEnd_toStartOf="@+id/option"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/small_img"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -39,13 +39,14 @@
         android:layout_marginBottom="8dp"
         android:singleLine="true"
         android:text="July Talk"
-		        android:textColor="@android:color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/option"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Title" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/small_img"
+        app:layout_constraintTop_toBottomOf="@+id/Title"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
         android:id="@+id/option"
@@ -60,4 +61,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/Title"
         app:srcCompat="@drawable/dots_small" />
+
+    <ImageView
+        android:id="@+id/small_img"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/music_pause_small" />
+
 </android.support.constraint.ConstraintLayout>

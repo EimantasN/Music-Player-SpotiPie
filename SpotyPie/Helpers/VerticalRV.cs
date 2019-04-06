@@ -104,13 +104,13 @@ namespace SpotyPie.Helpers
                 view.Title.Text = Dataset[position].Name;
                 //view.SubTitile.Text = GetState().Current_Artist.Name;
                 view.Options.Click += Options_Click;
-                MainActivity.Add_to_playlist_id = Dataset[position].Id;
+                //MainActivity.Add_to_playlist_id = Dataset[position].Id;
             }
         }
 
         private void Options_Click(object sender, EventArgs e)
         {
-            MainActivity.LoadOptionsMeniu();
+            //MainActivity.LoadOptionsMeniu();
         }
 
         public override int ItemCount

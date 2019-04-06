@@ -13,7 +13,7 @@ namespace Mobile_Api
             return await Get<Album>(id);
         }
 
-        public async Task<List<Album>> GetSongs()
+        public async Task<List<Album>> GetAll()
         {
             return await GetListAsync<Album>("Albums");
         }

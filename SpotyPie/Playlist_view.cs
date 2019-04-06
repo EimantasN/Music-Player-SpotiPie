@@ -1,7 +1,5 @@
 ﻿using Android.App;
-using Android.OS;
 using Android.Support.V7.Widget;
-using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
@@ -12,7 +10,6 @@ using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Player
 {
@@ -42,14 +39,13 @@ namespace SpotyPie.Player
             {
                 if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0)
                 {
-                    GetState().SetSong(GetState().Current_Song_List[position]);
+                    GetState().SetSong(GetState().Current_Song_List, position);
                 }
             });
         }
 
         public override void OnResume()
         {
-            Task.Run(() => GetSongsAsync(GetState().Current_Playlist.Id));
             base.OnResume();
         }
 
@@ -88,5 +84,9 @@ namespace SpotyPie.Player
             }
         }
 
+        public override void ForceUpdate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

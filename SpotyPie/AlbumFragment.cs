@@ -24,6 +24,10 @@ namespace SpotyPie
 {
     public class AlbumFragment : FragmentBase
     {
+        public Album CurrentALbum { get; set; }
+
+        private RvList<dynamic> RvData;
+
         ImageView AlbumPhoto;
         TextView AlbumTitle;
         Button PlayableButton;
@@ -32,12 +36,6 @@ namespace SpotyPie
         TextView ButtonBackGround;
         TextView ButtonBackGround2;
 
-        //Album Songs
-        public List<Song> AlbumSongsItem;
-        public RvList<Song> AlbumSongs;
-        private RecyclerView.LayoutManager AlbumSongsLayoutManager;
-        private RecyclerView.Adapter AlbumSongsAdapter;
-        private RecyclerView AlbumSongsRecyclerView;
         private Button ShufflePlay;//button_text
 
         private TextView download;
@@ -85,47 +83,27 @@ namespace SpotyPie
             //InnerViewContainer.Visibility = ViewStates.Gone;
             ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
             backViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.backViewContainer);
+            var parameters = backViewContainer.LayoutParameters;
+            parameters.Height = Resources.DisplayMetrics.WidthPixels;
+
+            backViewContainer.LayoutParameters = parameters;
+
             Height = backViewContainer.LayoutParameters.Height;
+
             ScrollFather.ScrollChange += Scroll_ScrollChange;
 
-            ////ALBUM song list
-            //AlbumSongs = new RvList<Song>();
-            //AlbumSongsItem = new List<Song>();
-            //AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
-            //AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
-            //AlbumSongsRecyclerView.SetLayoutManager(AlbumSongsLayoutManager);
-            //AlbumSongsAdapter = new VerticalRV(AlbumSongs, this.Context);
-            //AlbumSongs.Adapter = AlbumSongsAdapter;
-            //AlbumSongsRecyclerView.SetAdapter(AlbumSongsAdapter);
-            //AlbumSongsRecyclerView.NestedScrollingEnabled = false;
+            if (RvData == null)
+            {
+                var rvBase = new BaseRecycleView<dynamic>(this, Resource.Id.song_list);
+                RvData = rvBase.Setup(LinearLayoutManager.Vertical);
+                rvBase.DisableScroolNested();
+            }
+            SetAlbum(CurrentALbum);
+        }
 
-            //AlbumSongsRecyclerView.SetItemClickListener((rv, position, view) =>
-            //{
-            //    try
-            //    {
-            //        if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0)
-            //        {
-            //            var c = AlbumSongsRecyclerView.Width;
-            //            float Procent = (Search.Action * 100) / AlbumSongsRecyclerView.Width;
-            //            if (Procent <= 80 && AlbumSongsItem[position] != null)
-            //            {
-            //                GetState().SetSong(AlbumSongsItem[position]);
-            //            }
-            //            else
-            //            {
-            //                if (!IsMeniuActive)
-            //                {
-            //                    IsMeniuActive = true;
-            //                    MainActivity activity = (MainActivity)this.Activity;
-            //                    //activity.LoadOptionsMeniu();
-            //                }
-            //            }
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //    }
-            //});
+        public override void OnResume()
+        {
+            base.OnResume();
         }
 
         private void Containerx_Touch(object sender, TouchEventArgs e)
@@ -138,7 +116,7 @@ namespace SpotyPie
             Scrolled = ScrollFather.ScrollY;
             if (Scrolled < Height) //761 mazdaug
             {
-                MainActivity.ActionName.Alpha = (float)((Scrolled * 100) / Height) / 100;
+                GetState().Activity.ActionName.Alpha = (float)((Scrolled * 100) / Height) / 100;
                 ButtonBackGround.Alpha = (float)((Scrolled * 100) / Height) / 100;
                 relative.Visibility = ViewStates.Invisible;
             }
@@ -149,23 +127,39 @@ namespace SpotyPie
             }
         }
 
-        public void SetAlbum(Album album)
+        public void SetAlbum(Album album = null)
         {
             try
             {
-                MainActivity.ActionName.Text = album.Name;
-                isPlayable = true;
-                IsMeniuActive = false;
-                Scrolled = 0;
+                CurrentALbum = album;
+                if (Context != null)
+                {
+                    GetState().Activity.ActionName.Text = CurrentALbum.Name;
+                    isPlayable = true;
+                    IsMeniuActive = false;
+                    Scrolled = 0;
 
-                Picasso.With(Context).Load(album.LargeImage).Resize(600, 600).CenterCrop().Into(AlbumPhoto);
+                    Picasso.With(Context).Load(CurrentALbum.LargeImage).Resize(1200, 1200).CenterCrop().Into(AlbumPhoto);
 
-                AlbumTitle.Text = album.Name;
-                AlbumByText.Text = "Muse";
+                    AlbumTitle.Text = CurrentALbum.Name;
+                    AlbumByText.Text = "Muse";
+                    List<dynamic> songs = new List<dynamic>();
+                    CurrentALbum.Songs.ForEach(x => songs.Add((dynamic)x));
+                    RvData.AddList(songs);
+                }
             }
             catch (Exception e)
             {
+            }
+        }
 
+        public override void ForceUpdate()
+        {
+            if (RvData != null)
+            {
+                List<dynamic> songs = new List<dynamic>();
+                CurrentALbum.Songs.ForEach(x => songs.Add((dynamic)x));
+                RvData.AddList(songs);
             }
         }
     }

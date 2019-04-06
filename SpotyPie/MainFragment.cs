@@ -75,9 +75,8 @@ namespace SpotyPie
             }
         }
 
-        public override void OnResume()
+        public void LoadData()
         {
-            base.OnResume();
             Task.Run(() => GetRecentAlbumsAsync(this.Context));
 
             Task.Run(() => GetPolularAlbumsAsync(this.Context));
@@ -85,8 +84,6 @@ namespace SpotyPie
             //Task.Run(() => GetPolularArtistsAsync(this.Context));
 
             Task.Run(() => GetOldAlbumsAsync(this.Context));
-
-            //Task.Run(() => GetPlaylists(this.Context));
         }
 
         public async Task GetRecentAlbumsAsync(Context cnt)
@@ -162,6 +159,11 @@ namespace SpotyPie
             {
                 throw e;
             }
+        }
+
+        public override void ForceUpdate()
+        {
+            LoadData();
         }
     }
 }

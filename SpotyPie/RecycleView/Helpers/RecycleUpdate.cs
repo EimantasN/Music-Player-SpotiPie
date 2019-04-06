@@ -29,8 +29,9 @@ namespace SpotyPie.RecycleView.Helpers
 
         public override bool AreContentsTheSame(int oldItemPosition, int newItemPosition)
         {
-            // Using JsonConvert is an easy way to compare the full contents of a data model however, you can check individual components as well
-            return JsonConvert.SerializeObject(oldList[oldItemPosition]).Equals(JsonConvert.SerializeObject(newList[newItemPosition]));
+            if (newList[newItemPosition].Id == Current_state.Id || newList[newItemPosition].Id == Current_state.PrevId)
+                return false;
+            return true;
         }
     }
 }

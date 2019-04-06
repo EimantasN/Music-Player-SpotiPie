@@ -69,7 +69,7 @@ namespace API.Controllers
         //Returns album list
         [HttpGet("Albums")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetAlbums([FromBody] int count = 10)
+        public async Task<IActionResult> GetAlbums([FromHeader] int count = int.MaxValue)
         {
             try
             {

@@ -62,46 +62,46 @@ namespace SpotyPie.Player
         {
             try
             {
-                Application.SynchronizationContext.Post(_ =>
-                {
-                    Snackbar = Snackbar.Make(RootView, "Adding...", Snackbar.LengthIndefinite);
-                    Snackbar.Show();
-                }, null);
-                var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Playlist/" + id + "/tracks");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("Postman-Token", "76285a40-ead5-4f55-8863-1ccbcb6d61d8");
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("Content-Type", "application/json");
-                request.AddParameter("undefined", MainActivity.Add_to_playlist_id, ParameterType.RequestBody);
-                IRestResponse response = await client.ExecuteTaskAsync(request);
-                if (response.IsSuccessful)
-                {
-                    await Task.Delay(800);
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        Snackbar = Snackbar.Make(RootView, "Succesfuly added", Snackbar.LengthIndefinite);
-                        Snackbar.Show();
-                        Snackbar.SetAction("Ok", (e) =>
-                        {
-                            //MainActivity.firstLayer.TranslationX = 10000;
-                            Snackbar.Dismiss();
-                            Snackbar.Dispose();
-                        });
-                    }, null);
-                }
-                else
-                {
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        Snackbar = Snackbar.Make(RootView, "Song alredy added", Snackbar.LengthIndefinite);
-                        Snackbar.Show();
-                        Snackbar.SetAction("Ok", (e) =>
-                        {
-                            Snackbar.Dismiss();
-                            Snackbar.Dispose();
-                        });
-                    }, null);
-                }
+                //Application.SynchronizationContext.Post(_ =>
+                //{
+                //    Snackbar = Snackbar.Make(RootView, "Adding...", Snackbar.LengthIndefinite);
+                //    Snackbar.Show();
+                //}, null);
+                //var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Playlist/" + id + "/tracks");
+                //var request = new RestRequest(Method.POST);
+                //request.AddHeader("Postman-Token", "76285a40-ead5-4f55-8863-1ccbcb6d61d8");
+                //request.AddHeader("cache-control", "no-cache");
+                //request.AddHeader("Content-Type", "application/json");
+                //request.AddParameter("undefined", MainActivity.Add_to_playlist_id, ParameterType.RequestBody);
+                //IRestResponse response = await client.ExecuteTaskAsync(request);
+                //if (response.IsSuccessful)
+                //{
+                //    await Task.Delay(800);
+                //    Application.SynchronizationContext.Post(_ =>
+                //    {
+                //        Snackbar = Snackbar.Make(RootView, "Succesfuly added", Snackbar.LengthIndefinite);
+                //        Snackbar.Show();
+                //        Snackbar.SetAction("Ok", (e) =>
+                //        {
+                //            //MainActivity.firstLayer.TranslationX = 10000;
+                //            Snackbar.Dismiss();
+                //            Snackbar.Dispose();
+                //        });
+                //    }, null);
+                //}
+                //else
+                //{
+                //    Application.SynchronizationContext.Post(_ =>
+                //    {
+                //        Snackbar = Snackbar.Make(RootView, "Song alredy added", Snackbar.LengthIndefinite);
+                //        Snackbar.Show();
+                //        Snackbar.SetAction("Ok", (e) =>
+                //        {
+                //            Snackbar.Dismiss();
+                //            Snackbar.Dispose();
+                //        });
+                //    }, null);
+                //}
             }
             catch (Exception ex)
             {

@@ -159,7 +159,7 @@ namespace SpotyPie
             scrolled = ScrollFather.ScrollY;
             if (scrolled < Height) //761 mazdaug
             {
-                MainActivity.ActionName.Alpha = (float)((scrolled * 100) / Height) / 100;
+                //MainActivity.ActionName.Alpha = (float)((scrolled * 100) / Height) / 100;
                 Background.Alpha = (float)((scrolled * 100) / Height) / 100;
                 ButtonBackGround.Alpha = (float)((scrolled * 100) / Height) / 100;
                 ButtonBackGround2.Alpha = (float)((scrolled * 100) / Height) / 100;
@@ -230,6 +230,11 @@ namespace SpotyPie
             //Albums.Adapter = AlbumsAdapter;
             //AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
             //AlbumsRecyclerView.NestedScrollingEnabled = false;
+        }
+
+        public override void ForceUpdate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

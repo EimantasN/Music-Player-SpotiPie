@@ -4,7 +4,7 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
-using System;
+using System.Collections.Generic;
 
 namespace SpotyPie.RecycleView
 {
@@ -44,7 +44,6 @@ namespace SpotyPie.RecycleView
             ViewCompat.SetNestedScrollingEnabled(RecyclerView, false);
         }
 
-
         public void SetOnClick()
         {
             RecyclerView.SetItemClickListener((rv, position, view) =>
@@ -57,7 +56,7 @@ namespace SpotyPie.RecycleView
                     }
                     else if (RvDataset[position].GetType().Name == "Song")
                     {
-                        //GetState().SetSong(JsonConvert.DeserializeObject<Song>(JsonConvert.SerializeObject(RvDataset[position])));
+                        Activity.GetState().SetSong(JsonConvert.DeserializeObject<List<Song>>(JsonConvert.SerializeObject(RvDataset.GetList())), position);
                     }
                 }
             });

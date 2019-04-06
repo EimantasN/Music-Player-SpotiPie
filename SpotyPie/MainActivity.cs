@@ -22,9 +22,13 @@ namespace SpotyPie
     [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
     public class MainActivity : AppCompatActivity
     {
+        private int LastViewLayer = 0;
+        private int CurrentViewLayer = 1;
         private BluetoothHelper _bluetoothHelper;
 
         private Current_state APPSTATE;
+
+        FragmentBase CurrentFragment;
 
         FragmentBase Home;
         FragmentBase Browse;
@@ -34,20 +38,20 @@ namespace SpotyPie
         public SupportFragment ArtistFragment;
 
         BottomNavigationView bottomNavigation;
-        public static ImageButton PlayToggle;
+        public ImageButton PlayToggle;
 
-        public static TextView ArtistName;
-        public static TextView SongTitle;
-        public static ImageButton BackHeaderButton;
-        public static ImageButton OptionsHeaderButton;
+        public TextView ArtistName;
+        public TextView SongTitle;
+        public ImageButton BackHeaderButton;
+        public ImageButton OptionsHeaderButton;
 
-        public static int widthInDp = 0;
-        public static int HeightInDp = 0;
-        public static bool PlayerVisible = false;
+        public int widthInDp = 0;
+        public int HeightInDp = 0;
+        public bool PlayerVisible = false;
         public ImageButton ShowPlayler;
 
-        public static TextView ActionName;
-        public static ConstraintLayout MiniPlayer;
+        public TextView ActionName;
+        public ConstraintLayout MiniPlayer;
 
         public FrameLayout Content;
         public FrameLayout FirstLayer;
@@ -56,13 +60,13 @@ namespace SpotyPie
 
         public FragmentBase FirstLayerFragment;
         public FragmentBase SecondLayerFragment;
-        public SupportFragment Player;
+        public Player.Player Player;
 
-        public static int Add_to_playlist_id = 0;
+        public int Add_to_playlist_id = 0;
 
         ConstraintLayout HeaderContainer;
 
-        public static SupportFragmentManager mSupportFragmentManager;
+        public SupportFragmentManager mSupportFragmentManager;
 
         public ICommand MyCommand { get; }
 
@@ -78,7 +82,7 @@ namespace SpotyPie
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             Player = new Player.Player();
-            APPSTATE = new Current_state((Player.Player)Player);
+            APPSTATE = new Current_state((Player.Player)Player, this);
 
             //_bluetoothHelper = new BluetoothHelper(Application.ApplicationContext);
             //MyCommandExecute();
@@ -95,19 +99,16 @@ namespace SpotyPie
             widthInDp = Resources.DisplayMetrics.WidthPixels;
             HeightInDp = Resources.DisplayMetrics.HeightPixels;
             PlayerContainer.Visibility = ViewStates.Gone;
-
-            ToogleSecondLayer(false);
+            SecondLayer.Visibility = ViewStates.Gone;
             FirstLayer.Visibility = ViewStates.Gone;
 
             Home = new Browse();
             Browse = new MainFragment();
-            AlbumFragment = new AlbumFragment();
+            Library = new LibraryFragment();
 
             SupportFragmentManager.BeginTransaction()
                 .Replace(Resource.Id.player_frame, Player)
                 .Commit();
-
-            //Content.BringToFront();
 
             PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
@@ -150,44 +151,61 @@ namespace SpotyPie
 
         public override void OnBackPressed()
         {
-            if (GetState().PlayerIsVisible)
+            if (Player.CheckChildFragments())
             {
-                PlayerContainer.TranslationX = widthInDp;
-                return;
-            }
-            if (FirstLayer.TranslationX == 0)
-            {
-                FirstLayer.TranslationX = widthInDp;
-                return;
-            }
 
-            if (FirstLayerFragment != null)
-            {
-                RemoveCurrentFragment();
-                SupportFragmentManager.BeginTransaction()
-                   .Replace(Resource.Id.content_frame, Home)
-                   .Commit();
-                return;
+                switch (CurrentViewLayer)
+                {
+                    case 1:
+                        base.OnBackPressed();
+                        break;
+                    case 2:
+                        {
+                            ToogleSecondLayer(false);
+                            break;
+                        }
+                    case 3:
+                        {
+                            ToogleThirdLayer(false);
+                            if (LastViewLayer != 1)
+                            {
+                                ToogleSecondLayer(true);
+                            }
+                            break;
+                        }
+                    case 4:
+                        {
+                            TogglePlayer(false);
+                            switch (LastViewLayer)
+                            {
+                                case 1:
+                                    break;
+                                case 2:
+                                    {
+                                        ToogleSecondLayer(true);
+                                        break;
+                                    }
+                                case 3:
+                                    {
+                                        ToogleThirdLayer(true);
+                                        break;
+                                    }
+                            }
+                            break;
+                        }
+                }
             }
-            base.OnBackPressed();
         }
 
         public static void LoadOptionsMeniu()
         {
-            //mSupportFragmentManager.BeginTransaction()
-            //    .Replace(Resource.Id.song_options, new PlaylistFragment())
-            //    .Commit();
-            //MainActivity.firstLayer.TranslationX = 0;
         }
 
         private void BackHeaderButton_Click(object sender, EventArgs e)
         {
             try
             {
-                GetState().HideHeaderNavigationButtons();
-                SupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.content_frame, GetState().BackFragment)
-                    .Commit();
+                OnBackPressed();
             }
             catch (System.Exception)
             {
@@ -201,14 +219,6 @@ namespace SpotyPie
         protected override void OnResume()
         {
             base.OnResume();
-            if (!GetState().IsPlayerLoaded)
-            {
-                SupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.player_frame, Player)
-                    .Commit();
-                PlayerContainer.TranslationX = widthInDp;
-            }
-            Task.Run(() => API_data.GetSong());
         }
 
         private void PlayToggle_Click(object sender, EventArgs e)
@@ -282,9 +292,9 @@ namespace SpotyPie
             if (HeaderContainer.Visibility == ViewStates.Gone)
                 HeaderContainer.Visibility = ViewStates.Visible;
 
-            if (GetState().BackFragment != null)
+            if (CurrentFragment != null)
             {
-                GetState().BackFragment.Hide();
+                CurrentFragment.Hide();
             }
 
             FragmentBase fragment = null;
@@ -311,16 +321,16 @@ namespace SpotyPie
             if (fragment == null)
                 return;
 
-            GetState().BackFragment = fragment;
+            CurrentFragment = fragment;
             if (!fragment.IsAdded)
             {
                 SupportFragmentManager.BeginTransaction()
-                    .Add(Resource.Id.content_frame, fragment)
+                    .Add(Resource.Id.content_frame, CurrentFragment)
                     .Commit();
             }
             else
             {
-                GetState().BackFragment.Show();
+                CurrentFragment.Show();
             }
         }
 
@@ -342,10 +352,10 @@ namespace SpotyPie
             if (AlbumFragment == null)
             {
                 AlbumFragment = new AlbumFragment();
-                AlbumFragment.SetAlbum(album);
             }
             //Current_state.SetAlbum(Dataset[position]);
-            MainActivity.mSupportFragmentManager.BeginTransaction().Replace(Resource.Id.second_layer, AlbumFragment).Commit();
+            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.first_layer, AlbumFragment).Commit();
+            AlbumFragment.SetAlbum(album);
             ToogleSecondLayer(true);
         }
 
@@ -354,14 +364,63 @@ namespace SpotyPie
             //SHOW
             if (show)
             {
+                LastViewLayer = CurrentViewLayer;
+                CurrentViewLayer = 2;
+                HideOthers();
+                AlbumFragment.ForceUpdate();
+                FirstLayer.Visibility = ViewStates.Visible;
+                FirstLayer.BringToFront();
+            }
+            else
+            {
+                FirstLayer.Visibility = ViewStates.Gone;
+            }
+        }
+
+        public void TogglePlayer(bool show)
+        {
+            //SHOW
+            if (show)
+            {
+                LastViewLayer = CurrentViewLayer;
+                CurrentViewLayer = 4;
+                HideOthers();
+                PlayerContainer.Visibility = ViewStates.Visible;
+                PlayerContainer.BringToFront();
+            }
+            else
+            {
+                PlayerContainer.Visibility = ViewStates.Gone;
+            }
+        }
+
+        public void ToogleThirdLayer(bool show)
+        {
+            //SHOW
+            if (show)
+            {
+                LastViewLayer = CurrentViewLayer;
+                CurrentViewLayer = 3;
+                HideOthers();
                 SecondLayer.Visibility = ViewStates.Visible;
                 SecondLayer.BringToFront();
             }
             else
             {
                 SecondLayer.Visibility = ViewStates.Gone;
-                SecondLayer.TranslationX = 0;
             }
+        }
+
+        public void HideOthers()
+        {
+            if (CurrentViewLayer != 2)
+                ToogleSecondLayer(false);
+
+            if (CurrentViewLayer != 3)
+                ToogleThirdLayer(false);
+
+            if (CurrentViewLayer != 4)
+                TogglePlayer(false);
         }
     }
 }

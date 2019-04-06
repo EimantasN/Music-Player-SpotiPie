@@ -1,10 +1,7 @@
 ﻿using Android.App;
 using Android.Views;
-using Android.Widget;
 using Mobile_Api.Models;
-using RestSharp;
-using SpotyPie.Base;
-using System;
+using Square.Picasso;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +12,10 @@ namespace SpotyPie
     {
         public bool IsPlaying = false;
 
+        public static int PrevId { get; set; }
+
+        public static int Id { get; set; }
+
         public bool Start_music { get; set; } = false;
 
         public bool IsPlayerLoaded { get; set; } = false;
@@ -23,54 +24,50 @@ namespace SpotyPie
 
         public float Progress { get; set; }
 
-        public FragmentBase BackFragment { get; set; }
+        public MainActivity Activity { get; set; }
 
         private string Current_Player_Image { get; set; }
 
         public Album Current_Album { get; set; } = null;
 
-        public Artist Current_Artist { get; set; } = null;
-
         public Song Current_Song { get; set; } = null;
-
-        public Playlist Current_Playlist { get; set; } = null;
 
         public List<Song> Current_Song_List { get; set; } = new List<Song>();
 
-        public RestClient client = new RestClient();
+        private Player.Player Player { get; set; }
 
-        Player.Player Player { get; set; }
-
-        public Current_state(Player.Player player)
+        public Current_state(Player.Player player, MainActivity activity)
         {
             this.Player = player;
+            this.Activity = activity;
         }
 
-        public void SetSong(Song song, bool refresh = false)
+        public void SetSong(List<Song> song, int position = 0, bool refresh = false)
         {
-            if (song.LocalUrl != null)
+            Activity.TogglePlayer(true);
+            SetCurrentSong(song, position);
+            UpdateCurrentInfo();
+
+            if (Activity.MiniPlayer.Visibility == ViewStates.Gone)
+                Activity.MiniPlayer.Visibility = ViewStates.Visible;
+        }
+
+        public void SetCurrentSong(List<Song> song, int position)
+        {
+            Current_Song = song[position];
+            Current_Song.SetIsPlaying(true);
+            Current_Song_List = song;
+
+            if (Id != song[position].Id)
             {
-                SetCurrentSong(song);
-                Player.StartPlayMusic();
-                //Current_Song_List.First(x => x.Id == Current_Song.Id).Playing = true;
+                PrevId = Id;
+                Id = song[position].Id;
                 Start_music = true;
                 PlayerIsVisible = true;
-                UpdateCurrentInfo();
-
-                if (MainActivity.MiniPlayer.Visibility == ViewStates.Gone)
-                    MainActivity.MiniPlayer.Visibility = ViewStates.Visible;
+                Player.PlayToggle.SetImageResource(Resource.Drawable.play_loading);
+                Player.PlayToggle.SetImageResource(Resource.Drawable.play_loading);
+                Player.StartPlayMusic();
             }
-            else
-            {
-                //Toast.MakeText(context, "Please upload song", ToastLength.Short).Show();
-            }
-        }
-
-        public void SetCurrentSong(Song song)
-        {
-            Current_Song = song;
-            Current_Song.SetIsPlaying(true);
-            Current_Song_List.Add(song);
         }
 
         public void SetCurrentSongList(List<Song> songs)
@@ -92,19 +89,18 @@ namespace SpotyPie
             Task.Run(() =>
             {
                 Application.SynchronizationContext.Post(_ =>
-          {
-              if (Current_Player_Image != Current_Song.LargeImage)
-              {
-                  Current_Player_Image = Current_Song.LargeImage;
-                  //Picasso.With(Player.Player.context).Load(Current_Song.ImageUrl).Resize(900, 900).CenterCrop().Into(Player.Player.Player_Image);
-              }
-              //MainActivity.PlayerContainer.TranslationX = 0;
-              Player.CurretSongTimeText.Text = "0.00";
-              Player.Player_song_name.Text = Current_Song.Name;
-              MainActivity.SongTitle.Text = Current_Song.Name;
-              MainActivity.ArtistName.Text = Current_Song.Name;
-              Player.Player_artist_name.Text = Current_Artist.Name;
-          }, null);
+                {
+                    if (Current_Player_Image != Current_Song.LargeImage)
+                    {
+                        Current_Player_Image = Current_Song.LargeImage;
+                        Picasso.With(Activity.ApplicationContext).Load(Current_Song.LargeImage).Into(Player.Player_Image);
+                    }
+                    Player.CurretSongTimeText.Text = "0.00";
+                    Player.Player_song_name.Text = Current_Song.Name;
+                    Activity.SongTitle.Text = Current_Song.Name;
+                    Activity.ArtistName.Text = Current_Song.Name;
+                    Player.Player_artist_name.Text = "Muse";
+                }, null);
             });
         }
 
@@ -119,17 +115,8 @@ namespace SpotyPie
             //Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Album.Artists).First();
             Application.SynchronizationContext.Post(_ =>
             {
-                Player.Player_playlist_name.Text = Current_Artist + " - " + Current_Album.Name;
+                Player.Player_playlist_name.Text = "Muse" + " - " + Current_Album.Name;
             }, null);
-
-            Task.Run(() => Update());
-            async Task Update()
-            {
-                client.BaseUrl = new System.Uri("http://pie.pertrauktiestaskas.lt/api/album/update/" + album.Id);
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("cache-control", "no-cache");
-                IRestResponse response = await client.ExecuteTaskAsync(request);
-            }
         }
 
         public void Music_play_toggle()
@@ -138,16 +125,16 @@ namespace SpotyPie
 
             if (IsPlaying)
             {
-                MainActivity.PlayToggle.SetImageResource(Resource.Drawable.pause);
+                Activity.PlayToggle.SetImageResource(Resource.Drawable.pause);
                 Player.PlayToggle.SetImageResource(Resource.Drawable.pause);
-                Player.player.Start();
+                Player.MusicPlayer.Start();
             }
             else
             {
-                MainActivity.PlayToggle.SetImageResource(Resource.Drawable.play_button);
+                Activity.PlayToggle.SetImageResource(Resource.Drawable.play_button);
                 Player.PlayToggle.SetImageResource(Resource.Drawable.play_button);
-                if (Player.player.IsPlaying)
-                    Player.player.Pause();
+                if (Player.MusicPlayer.IsPlaying)
+                    Player.MusicPlayer.Pause();
             }
         }
 
@@ -156,30 +143,29 @@ namespace SpotyPie
             if (PlayerIsVisible)
             {
                 PlayerIsVisible = false;
-                //MainActivity.PlayerContainer.TranslationX = MainActivity.widthInDp;
+                Activity.TogglePlayer(false);
             }
             else
             {
+                Activity.TogglePlayer(true);
                 PlayerIsVisible = true;
-                //MainActivity.PlayerContainer.TranslationX = 0;
             }
         }
 
         internal void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public void ShowHeaderNavigationButtons()
         {
-            MainActivity.BackHeaderButton.Visibility = ViewStates.Visible;
-            MainActivity.OptionsHeaderButton.Visibility = ViewStates.Visible;
+            Activity.BackHeaderButton.Visibility = ViewStates.Visible;
+            Activity.OptionsHeaderButton.Visibility = ViewStates.Visible;
         }
 
         public void HideHeaderNavigationButtons()
         {
-            MainActivity.BackHeaderButton.Visibility = ViewStates.Gone;
-            MainActivity.OptionsHeaderButton.Visibility = ViewStates.Gone;
+            Activity.BackHeaderButton.Visibility = ViewStates.Gone;
+            Activity.OptionsHeaderButton.Visibility = ViewStates.Gone;
         }
 
         public void ChangeSong(bool Foward)
@@ -196,12 +182,12 @@ namespace SpotyPie
                         if ((i + 1) == Current_Song_List.Count)
                         {
                             Current_Song_List[0].SetIsPlaying(true);
-                            SetSong(Current_Song_List[0]);
+                            SetSong(Current_Song_List, 0);
                         }
                         else
                         {
                             Current_Song_List[i + 1].SetIsPlaying(true);
-                            SetSong(Current_Song_List[i + 1]);
+                            SetSong(Current_Song_List, i + 1);
                         }
                     }
                     else
@@ -210,13 +196,13 @@ namespace SpotyPie
                         if (i == 0)
                         {
                             Current_Song_List[0].SetIsPlaying(true);
-                            SetSong(Current_Song_List[0]);
+                            SetSong(Current_Song_List, 0);
                         }
                         else
                         {
 
                             Current_Song_List[i - 1].SetIsPlaying(true);
-                            SetSong(Current_Song_List[i - 1]);
+                            SetSong(Current_Song_List, i - 1);
                         }
                     }
                     break;

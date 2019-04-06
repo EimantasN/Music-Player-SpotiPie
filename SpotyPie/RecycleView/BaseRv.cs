@@ -28,7 +28,11 @@ namespace SpotyPie.RecycleView
             }
             else if (typeof(T) == typeof(Album) || Dataset[position].GetType().Name == "Album")
             {
-                return Resource.Layout.big_rv_list;
+                var al = Dataset[position] as Album;
+                if (al.Type == Mobile_Api.Models.Enums.RvType.Album)
+                    return Resource.Layout.big_rv_list;
+                else
+                    return Resource.Layout.big_rv_list_one;
             }
             //else if (typeof(T) == typeof(TwoBlockWithImage))
             //{
@@ -54,6 +58,10 @@ namespace SpotyPie.RecycleView
             else if (viewType == Resource.Layout.big_rv_list)
             {
                 return new Models.BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list, parent, false), parent);
+            }
+            else if (viewType == Resource.Layout.big_rv_list_one)
+            {
+                return new Models.BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list_one, parent, false), parent);
             }
             else if (viewType == Resource.Layout.boxed_rv_list_two)
             {
@@ -83,15 +91,12 @@ namespace SpotyPie.RecycleView
             {
                 View EmptyTime = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_rv, parent, false);
 
-                TextView mTitle = EmptyTime.FindViewById<TextView>(Resource.Id.Title);
-                TextView mSubTitle = EmptyTime.FindViewById<TextView>(Resource.Id.subtitle);
-                ImageButton mImage = EmptyTime.FindViewById<ImageButton>(Resource.Id.option);
-
-                Models.SongItem view = new Models.SongItem(EmptyTime)
+                SongItem view = new SongItem(EmptyTime)
                 {
-                    Title = mTitle,
-                    SubTitile = mSubTitle,
-                    Options = mImage
+                    Title = EmptyTime.FindViewById<TextView>(Resource.Id.Title),
+                    SubTitile = EmptyTime.FindViewById<TextView>(Resource.Id.subtitle),
+                    Options = EmptyTime.FindViewById<ImageButton>(Resource.Id.option),
+                    SmallIcon = EmptyTime.FindViewById<ImageView>(Resource.Id.small_img)
                 };
 
                 return view;

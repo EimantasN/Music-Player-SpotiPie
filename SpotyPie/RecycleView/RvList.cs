@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Android.App;
 using Android.Support.V7.Util;
 using Android.Support.V7.Widget;
 using Android.Widget;
-using Mobile_Api.Interfaces;
 using SpotyPie.RecycleView.Helpers;
 
 namespace SpotyPie.RecycleView
@@ -14,6 +12,11 @@ namespace SpotyPie.RecycleView
     {
         private List<dynamic> mItems;
         private RecyclerView.Adapter mAdapter;
+
+        public List<dynamic> GetList()
+        {
+            return mItems;
+        }
 
         private int LoadingIndex { get; set; } = -1;
 
@@ -33,16 +36,22 @@ namespace SpotyPie.RecycleView
             set { mAdapter = value; }
         }
 
+        public void AddList(List<T> newData)
+        {
+            List<dynamic> newList = new List<dynamic>();
+            newData.ForEach(x => newList.Add((dynamic)x));
+            AddList(newList);
+        }
+
         public void AddList(List<dynamic> newData)
         {
-            DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, newData), true);
-
-            // Overwrite the old data
-            Erase();
-            mItems.AddRange(newData);
-
             Application.SynchronizationContext.Post(_ =>
             {
+                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, newData), true);
+
+                // Overwrite the old data
+                Erase();
+                mItems.AddRange(newData);
                 result.DispatchUpdatesTo(Adapter);
             }, null);
             // Despatch the updates to your RecyclerAdapter

@@ -11,7 +11,7 @@ namespace SpotyPie
     public class Browse : FragmentBase
     {
         //main_rv
-        private static RvList<dynamic> RvData;
+        private RvList<dynamic> RvData { get; set; }
 
         public override int LayoutId { get; set; } = Resource.Layout.browse_layout;
 
@@ -43,6 +43,11 @@ namespace SpotyPie
             data.AddRange(await api.GetPopular());
             RvData.AddList(data);
             RvData.RemoveLoading(data);
+        }
+
+        public override void ForceUpdate()
+        {
+            Task.Run(() => PopulateData());
         }
     }
 }

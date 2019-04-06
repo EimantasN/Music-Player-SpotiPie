@@ -3,6 +3,7 @@ using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Views;
+using SpotyPie.Base;
 using SpotyPie.Library.Fragments;
 using System.Collections.Generic;
 using SupportFragment = Android.Support.V4.App.Fragment;
@@ -11,32 +12,32 @@ using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie
 {
-    public class LibraryFragment : SupportFragment
+    public class LibraryFragment : FragmentBase
     {
-        View RootView;
+        public override int LayoutId { get; set; } = Resource.Layout.library_layout;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override void ForceUpdate()
         {
-            RootView = inflater.Inflate(Resource.Layout.library_layout, container, false);
 
-            MainActivity.ActionName.Text = "Library";
-            MainActivity.ActionName.Alpha = 1.0f;
+        }
+
+        protected override void InitView()
+        {
+            GetState().Activity.ActionName.Text = "Library";
+            GetState().Activity.ActionName.Alpha = 1.0f;
 
             TabLayout tabs = RootView.FindViewById<TabLayout>(Resource.Id.tabs);
             ViewPager viewPager = RootView.FindViewById<ViewPager>(Resource.Id.viewpager);
 
             SetUpViewPager(viewPager);
             tabs.SetupWithViewPager(viewPager);
-
-            return RootView;
         }
+
         private void SetUpViewPager(ViewPager viewPager)
         {
-            TabAdapter adapter = new TabAdapter(MainActivity.mSupportFragmentManager);
-            adapter.AddFragment(new Library.Fragments.PlaylistFragment(), "Playlists");
-            adapter.AddFragment(new Artists(), "Artists");
+            TabAdapter adapter = new TabAdapter(GetState().Activity.SupportFragmentManager);
             adapter.AddFragment(new Albums(), "Albums");
-
+            adapter.AddFragment(new PlaylistFragment(), "Playlists");
             viewPager.Adapter = adapter;
         }
 

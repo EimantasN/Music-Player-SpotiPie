@@ -21,14 +21,13 @@ namespace SpotyPie.RecycleView.Models
             Image = view.FindViewById<ImageView>(Resource.Id.imageView5);
             SubTitile = view.FindViewById<TextView>(Resource.Id.textView11);
             Title = view.FindViewById<TextView>(Resource.Id.textView10);
-            IsRecyclable = false;
         }
 
         public void PrepareView(dynamic data, Context Context)
         {
             Title.Text = data.Name;
             SubTitile.Text = "Coming soon";
-            Picasso.With(Context).Load(data.LargeImage).Resize(300, 300).CenterCrop().Into(Image);
+            Picasso.With(Context).Load(data.MediumImage).Into(Image);
         }
     }
 }

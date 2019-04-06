@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mobile_Api.Models.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Mobile_Api.Models
@@ -29,6 +30,8 @@ namespace Mobile_Api.Models
         public DateTime LastActiveTime { get; set; }
 
         public int Tracks { get; set; }
+
+        public RvType Type { get; set; } = RvType.Album;
 
         public Album()
         {

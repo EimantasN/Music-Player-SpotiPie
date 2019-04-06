@@ -49,7 +49,7 @@ namespace Services
             }
         }
 
-        public async Task<List<Album>> GetAlbumsAsync(int count = 10)
+        public async Task<List<Album>> GetAlbumsAsync(int count = int.MaxValue)
         {
             try
             {
@@ -58,7 +58,6 @@ namespace Services
                     .Include(x => x.Songs)
                     .Where(x => x.IsPlayable == true)
                     .Take(count)
-                    .Where(x => x.IsPlayable == true)
                     .ToListAsync();
             }
             catch (Exception e)

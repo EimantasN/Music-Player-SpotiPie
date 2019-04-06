@@ -259,8 +259,8 @@
 
 	<FrameLayout
         android:id="@+id/player_frame"
-        android:translationX="1000dp"
         android:background="@color/greylight"
+		android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

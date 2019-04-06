@@ -1,10 +1,11 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api;
 using Mobile_Api.Models;
+using Mobile_Api.Models.Enums;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Base;
@@ -14,7 +15,6 @@ using Square.Picasso;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Library.Fragments
 {
@@ -22,101 +22,37 @@ namespace SpotyPie.Library.Fragments
     {
         public override int LayoutId { get; set; } = Resource.Layout.library_album_layout;
 
-        //Album Songs
-        public List<Album> AlbumsLocal = new List<Album>();
-        public RvList<Album> AlbumsData = new RvList<Album>();
-        private RecyclerView.LayoutManager AlbumSongsLayoutManager;
-        private RecyclerView.Adapter AlbumSongsAdapter;
-        private RecyclerView AlbumSongsRecyclerView;
-        private FastScrollRecyclerViewItemDecoration decoration;
-
-        public override void OnResume()
-        {
-            base.OnResume();
-            Task.Run(() => LoadAlbumsAsync());
-        }
-
-        public override void OnStop()
-        {
-            base.OnStop();
-            //AlbumsData.Clear();
-        }
-
-        public async Task LoadAlbumsAsync()
-        {
-            try
-            {
-                AlbumsData.Clear();
-                AlbumsData.Add(null);
-
-                var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/Albums");
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("cache-control", "no-cache");
-                IRestResponse response = await client.ExecuteTaskAsync(request);
-                if (response.IsSuccessful)
-                {
-                    var albums = JsonConvert.DeserializeObject<List<Album>>(response.Content);
-                    if (albums != null && albums.Count > 0)
-                    {
-                        if (albums.Count != AlbumsData.Count)
-                        {
-
-                            albums = albums.OrderByDescending(x => x.Name).ToList();
-                            Application.SynchronizationContext.Post(_ =>
-                            {
-                                AlbumsLocal = albums;
-                            }, null);
-                            foreach (var x in albums)
-                            {
-                                AlbumsData.Add(x);
-                                //if (AlbumsData.Count == 20)
-                                //AlbumsData.RemoveLoading();
-                            }
-                            while (AlbumsData.Count != albums.Count)
-                                await Task.Delay(50);
-                            Application.SynchronizationContext.Post(_ =>
-                            {
-                                //AlbumSongsRecyclerView.AddItemDecoration(decoration);
-                                //AlbumSongsRecyclerView.SetItemAnimator(new DefaultItemAnimator());
-                            }, null);
-                        }
-                    }
-                }
-            }
-            catch
-            {
-            }
-            finally
-            {
-                //AlbumsData.RemoveLoading();
-            }
-        }
+        private RvList<dynamic> RvData { get; set; }
 
         protected override void InitView()
         {
-            AlbumsData = new RvList<Album>();
-            AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
-            AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums);
-            AlbumSongsRecyclerView.HasFixedSize = true;
-            AlbumSongsRecyclerView.SetLayoutManager(AlbumSongsLayoutManager);
-            AlbumSongsAdapter = new AlbumRV(AlbumsData, this.Context);
-            AlbumsData.Adapter = AlbumSongsAdapter;
-            AlbumSongsRecyclerView.SetAdapter(AlbumSongsAdapter);
-            decoration = new FastScrollRecyclerViewItemDecoration(this.Context);
-
-            AlbumSongsRecyclerView.SetItemClickListener((rv, position, view) =>
+            if (RvData == null)
             {
-                if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0 && AlbumsData != null && AlbumsData.Count != 0 && AlbumsData.Count > position)
-                {
-                    if (AlbumsLocal.Count == AlbumsData.Count)
-                    {
-                        GetState().SetAlbum(AlbumsLocal[position]);
-                        //FragmentManager.BeginTransaction()
-                        //.Replace(Resource.Id.content_frame, MainActivity.AlbumFragment)
-                        //.Commit();
-                    }
-                }
-            });
+                var rvBase = new BaseRecycleView<dynamic>(this, Resource.Id.albums);
+                RvData = rvBase.Setup(LinearLayoutManager.Vertical);
+                rvBase.DisableScroolNested();
+            }
+            Task.Run(() => LoadAllAlbums());
+        }
+
+        public async Task LoadAllAlbums()
+        {
+            List<dynamic> data = new List<dynamic>() { null };
+            RvData.AddList(data);
+            var api = (AlbumService)GetService(ApiServices.Albums);
+
+            data.AddRange(await api.GetAll());
+
+            for (int i = 0; i < data.Count; i++)
+                data[i].Type = RvType.AlbumBigOne;
+
+            RvData.AddList(data);
+            RvData.RemoveLoading(data);
+        }
+
+        public override void ForceUpdate()
+        {
+            Task.Run(() => LoadAllAlbums());
         }
     }
 

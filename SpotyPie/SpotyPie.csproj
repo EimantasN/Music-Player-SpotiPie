@@ -68,6 +68,8 @@
     <Compile Include="Helpers\BluetoothHelper.cs" />
     <Compile Include="Helpers\Caster.cs" />
     <Compile Include="Models\Enum\RvType.cs" />
+    <Compile Include="Models\Enum\SecondLayerTypes.cs" />
+    <Compile Include="Models\Enum\ThirdLayerTypes.cs" />
     <Compile Include="RecycleView\BaseRv.cs" />
     <Compile Include="Helpers\IFastScrollRecyclerViewAdapter.cs" />
     <Compile Include="Helpers\RecycleViewList.cs" />
@@ -84,10 +86,9 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Player\Player.cs" />
     <Compile Include="ArtistFragment.cs" />
-    <Compile Include="Player\player_song_list.cs" />
+    <Compile Include="Player\PlaylistSongList.cs" />
     <Compile Include="Player\PlaylistFragment.cs" />
     <Compile Include="Player\Playlist_choose.cs" />
-    <Compile Include="PlaylistSongList.cs" />
     <Compile Include="Playlist_view.cs" />
     <Compile Include="RecycleView\BaseRecycleView.cs" />
     <Compile Include="RecycleView\Helpers\RecycleUpdate.cs" />
@@ -477,6 +478,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\muse_4.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\music_note_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\music_pause_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\play_loading.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

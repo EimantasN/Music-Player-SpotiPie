@@ -72,7 +72,7 @@ namespace SpotyPie
             ArtistContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.ConstrainLayoutArtist);
             SearchEmpty = RootView.FindViewById<FrameLayout>(Resource.Id.searchStartx);
             var layoutParrams = SearchEmpty.LayoutParameters;
-            layoutParrams.Height = MainActivity.HeightInDp;
+            //layoutParrams.Height = MainActivity.HeightInDp;
             SearchEmpty.LayoutParameters = layoutParrams;
 
             SearchIcon = RootView.FindViewById<ImageView>(Resource.Id.imageView);
@@ -98,7 +98,7 @@ namespace SpotyPie
                 if (SongsRecyclerView != null && SongsRecyclerView.ChildCount != 0)
                 {
                     GetState().Current_Song_List = SearchSongs;
-                    GetState().SetSong(GetState().Current_Song_List[position]);
+                    GetState().SetSong(GetState().Current_Song_List, position);
                 }
             });
 
@@ -409,6 +409,11 @@ namespace SpotyPie
                         ArtistContainer.Visibility = ViewStates.Gone;
                 }, null);
             }
+        }
+
+        public override void ForceUpdate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

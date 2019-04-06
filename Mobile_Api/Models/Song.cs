@@ -38,7 +38,7 @@ namespace Mobile_Api.Models
 
         public long Size { get; set; }
 
-        protected bool IsPlaying { get; set; }
+        public bool IsPlaying { get; set; }
 
         public bool IsPlayingNow() { return IsPlaying; }
         public void SetIsPlaying(bool state) { IsPlaying = state; }
