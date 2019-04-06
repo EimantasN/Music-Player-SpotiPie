@@ -98,7 +98,7 @@ namespace SpotyPie
                   Current_Player_Image = Current_Song.LargeImage;
                   //Picasso.With(Player.Player.context).Load(Current_Song.ImageUrl).Resize(900, 900).CenterCrop().Into(Player.Player.Player_Image);
               }
-              MainActivity.PlayerContainer.TranslationX = 0;
+              //MainActivity.PlayerContainer.TranslationX = 0;
               Player.CurretSongTimeText.Text = "0.00";
               Player.Player_song_name.Text = Current_Song.Name;
               MainActivity.SongTitle.Text = Current_Song.Name;
@@ -156,12 +156,12 @@ namespace SpotyPie
             if (PlayerIsVisible)
             {
                 PlayerIsVisible = false;
-                MainActivity.PlayerContainer.TranslationX = MainActivity.widthInDp;
+                //MainActivity.PlayerContainer.TranslationX = MainActivity.widthInDp;
             }
             else
             {
                 PlayerIsVisible = true;
-                MainActivity.PlayerContainer.TranslationX = 0;
+                //MainActivity.PlayerContainer.TranslationX = 0;
             }
         }
 

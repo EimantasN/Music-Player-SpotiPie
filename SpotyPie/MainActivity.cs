@@ -1,8 +1,5 @@
 ﻿using Android.App;
-using Android.Bluetooth;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
@@ -14,9 +11,7 @@ using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
-using SpotyPie.Player;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using SupportFragment = Android.Support.V4.App.Fragment;
@@ -25,7 +20,7 @@ using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 namespace SpotyPie
 {
     [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
-    public class MainActivity : AppCompatActivity, IBluetoothProfileServiceListener
+    public class MainActivity : AppCompatActivity
     {
         private BluetoothHelper _bluetoothHelper;
 
@@ -35,9 +30,8 @@ namespace SpotyPie
         FragmentBase Browse;
         FragmentBase Search;
         FragmentBase Library;
-        SupportFragment Player;
-        public static SupportFragment Album;
-        public static SupportFragment Artist;
+        public AlbumFragment AlbumFragment;
+        public SupportFragment ArtistFragment;
 
         BottomNavigationView bottomNavigation;
         public static ImageButton PlayToggle;
@@ -54,17 +48,21 @@ namespace SpotyPie
 
         public static TextView ActionName;
         public static ConstraintLayout MiniPlayer;
-        public static FrameLayout PlayerContainer;
 
-        public static FrameLayout Fragment;
+        public FrameLayout Content;
+        public FrameLayout FirstLayer;
+        public FrameLayout SecondLayer;
+        public FrameLayout PlayerContainer;
+
+        public FragmentBase FirstLayerFragment;
+        public FragmentBase SecondLayerFragment;
+        public SupportFragment Player;
 
         public static int Add_to_playlist_id = 0;
 
         ConstraintLayout HeaderContainer;
 
         public static SupportFragmentManager mSupportFragmentManager;
-
-        public static Android.Support.V4.App.Fragment CurrentFragment;
 
         public ICommand MyCommand { get; }
 
@@ -90,23 +88,26 @@ namespace SpotyPie
             mSupportFragmentManager = SupportFragmentManager;
 
             PlayerContainer = FindViewById<FrameLayout>(Resource.Id.player_frame);
-            Fragment = FindViewById<FrameLayout>(Resource.Id.song_options);
+            FirstLayer = FindViewById<FrameLayout>(Resource.Id.first_layer);
+            SecondLayer = FindViewById<FrameLayout>(Resource.Id.second_layer);
+            Content = FindViewById<FrameLayout>(Resource.Id.content_frame);
 
             widthInDp = Resources.DisplayMetrics.WidthPixels;
             HeightInDp = Resources.DisplayMetrics.HeightPixels;
-            PlayerContainer.TranslationX = 0;
-            Fragment.TranslationX = widthInDp;
+            PlayerContainer.Visibility = ViewStates.Gone;
 
-            Home = new Home();
-            Browse = new Browse();
-            //Search = new Search();
-            //Library = new LibraryFragment();
-            Album = new AlbumFragment();
-            Artist = new ArtistFragment();
+            ToogleSecondLayer(false);
+            FirstLayer.Visibility = ViewStates.Gone;
+
+            Home = new Browse();
+            Browse = new MainFragment();
+            AlbumFragment = new AlbumFragment();
 
             SupportFragmentManager.BeginTransaction()
                 .Replace(Resource.Id.player_frame, Player)
                 .Commit();
+
+            //Content.BringToFront();
 
             PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
@@ -134,7 +135,6 @@ namespace SpotyPie
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragment(Resource.Id.home);
             MiniPlayer.Visibility = ViewStates.Gone;
-            BlueTooh();
         }
 
         protected override void OnDestroy()
@@ -155,13 +155,13 @@ namespace SpotyPie
                 PlayerContainer.TranslationX = widthInDp;
                 return;
             }
-            if (Fragment.TranslationX == 0)
+            if (FirstLayer.TranslationX == 0)
             {
-                Fragment.TranslationX = widthInDp;
+                FirstLayer.TranslationX = widthInDp;
                 return;
             }
 
-            if (CurrentFragment != null)
+            if (FirstLayerFragment != null)
             {
                 RemoveCurrentFragment();
                 SupportFragmentManager.BeginTransaction()
@@ -174,10 +174,10 @@ namespace SpotyPie
 
         public static void LoadOptionsMeniu()
         {
-            mSupportFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.song_options, new PlaylistFragment())
-                .Commit();
-            MainActivity.Fragment.TranslationX = 0;
+            //mSupportFragmentManager.BeginTransaction()
+            //    .Replace(Resource.Id.song_options, new PlaylistFragment())
+            //    .Commit();
+            //MainActivity.firstLayer.TranslationX = 0;
         }
 
         private void BackHeaderButton_Click(object sender, EventArgs e)
@@ -191,7 +191,7 @@ namespace SpotyPie
             }
             catch (System.Exception)
             {
-                Home = new Home();
+                Home = new MainFragment();
                 SupportFragmentManager.BeginTransaction()
                     .Replace(Resource.Id.content_frame, Home)
                     .Commit();
@@ -296,7 +296,7 @@ namespace SpotyPie
                     break;
                 case Resource.Id.browse:
                     fragment = Home;
-                    ActionName.Text = "Browse";
+                    ActionName.Text = "MUSE";
                     break;
                 case Resource.Id.search:
                     fragment = Search;
@@ -326,61 +326,42 @@ namespace SpotyPie
 
         public void RemoveCurrentFragment()
         {
-            if (CurrentFragment != null)
+            if (FirstLayerFragment != null)
             {
                 var transaction = mSupportFragmentManager.BeginTransaction();
-                transaction.Remove(CurrentFragment);
+                transaction.Remove(FirstLayerFragment);
                 transaction.Commit();
                 transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitFragmentClose);
-                CurrentFragment = null;
-                MainActivity.Fragment.TranslationX = widthInDp;
+                FirstLayerFragment = null;
+                FirstLayer.TranslationX = widthInDp;
             }
         }
 
-        BluetoothHeadset Headset;
-        BluetoothDevice Device;
-
-        public void BlueTooh()
+        public void LoadAlbum(Album album)
         {
-            //try
-            //{
-            //    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.DefaultAdapter;
-            //    var pairedDevices = mBluetoothAdapter.BondedDevices;
-            //    List<String> s = new List<string>();
-            //    foreach (BluetoothDevice bt in pairedDevices)
-            //    {
-            //        if (bt.Name.Contains("MDR"))
-            //        {
-            //            var a = Java.Util.UUID.FromString("00001108-0000-1000-8000-00805F9B34FB");
-            //            bt.CreateRfcommSocketToServiceRecord(a);
-            //        }
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //}
-        }
-
-        public void OnServiceConnected(ProfileType profile, IBluetoothProfile proxy)
-        {
-            if (profile == ProfileType.Headset)
+            if (AlbumFragment == null)
             {
-                Headset = (BluetoothHeadset)proxy;
-                if (Headset == null)
-                    return;
-
-                var method = Headset.Class.GetDeclaredMethod("connect", Java.Lang.Class.FromType(typeof(BluetoothDevice))); // here BluetoothDevice is the object of the device which you want to connect to...
-
-                if (method != null && Device != null)
-                {
-                    method.Invoke(Headset, Device);
-                }
+                AlbumFragment = new AlbumFragment();
+                AlbumFragment.SetAlbum(album);
             }
+            //Current_state.SetAlbum(Dataset[position]);
+            MainActivity.mSupportFragmentManager.BeginTransaction().Replace(Resource.Id.second_layer, AlbumFragment).Commit();
+            ToogleSecondLayer(true);
         }
 
-        public void OnServiceDisconnected([GeneratedEnum] ProfileType profile)
+        public void ToogleSecondLayer(bool show)
         {
-            //throw new NotImplementedException();
+            //SHOW
+            if (show)
+            {
+                SecondLayer.Visibility = ViewStates.Visible;
+                SecondLayer.BringToFront();
+            }
+            else
+            {
+                SecondLayer.Visibility = ViewStates.Gone;
+                SecondLayer.TranslationX = 0;
+            }
         }
     }
 }

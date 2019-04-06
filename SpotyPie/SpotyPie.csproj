@@ -63,7 +63,7 @@
     <Compile Include="AlbumFragment.cs" />
     <Compile Include="API_data.cs" />
     <Compile Include="Base\FragmentBase.cs" />
-    <Compile Include="Browse.cs" />
+    <Compile Include="MainFragment.cs" />
     <Compile Include="Current_state.cs" />
     <Compile Include="Helpers\BluetoothHelper.cs" />
     <Compile Include="Helpers\Caster.cs" />
@@ -75,7 +75,7 @@
     <Compile Include="Helpers\Rv_OnTouch.cs" />
     <Compile Include="Helpers\TabAdapter.cs" />
     <Compile Include="Helpers\VerticalRV.cs" />
-    <Compile Include="Home.cs" />
+    <Compile Include="Browse.cs" />
     <Compile Include="Library\Fragments\Albums.cs" />
     <Compile Include="Library\Fragments\Artists.cs" />
     <Compile Include="Library\Fragments\Playlist.cs" />
@@ -462,6 +462,21 @@
     <AndroidResource Include="Resources\layout\home_content.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\muse_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\muse_1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\muse_2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\muse_3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\muse_4.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

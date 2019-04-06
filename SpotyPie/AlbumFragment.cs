@@ -24,8 +24,6 @@ namespace SpotyPie
 {
     public class AlbumFragment : FragmentBase
     {
-        //Background info
-
         ImageView AlbumPhoto;
         TextView AlbumTitle;
         Button PlayableButton;
@@ -40,35 +38,30 @@ namespace SpotyPie
         private RecyclerView.LayoutManager AlbumSongsLayoutManager;
         private RecyclerView.Adapter AlbumSongsAdapter;
         private RecyclerView AlbumSongsRecyclerView;
-
         private Button ShufflePlay;//button_text
 
         private TextView download;
         private TextView Copyrights;
         private ConstraintLayout backViewContainer;
         private ConstraintLayout InnerViewContainer;
-        int Height = 0;
 
-        MarginLayoutParams MarginParrams;
-        RelativeLayout relative;
+        private MarginLayoutParams MarginParrams;
+        private RelativeLayout relative;
         private NestedScrollView ScrollFather;
-        int scrolled;
-        public bool isPlayable;
-        public bool IsMeniuActive = false;
-        FrameLayout containerx;
+        private FrameLayout Holder;
+
+        private int Height = 0;
+        private int Scrolled;
+        private bool isPlayable;
+        private bool IsMeniuActive = false;
 
         public override int LayoutId { get; set; } = Resource.Layout.Album_layout;
 
         protected override void InitView()
         {
-            MainActivity.ActionName.Text = GetState().Current_Album?.Name;
-            isPlayable = false;
-            IsMeniuActive = false;
-            scrolled = 0;
             //Background binding
-
-            containerx = RootView.FindViewById<FrameLayout>(Resource.Id.frameLayout);
-            containerx.Touch += Containerx_Touch;
+            Holder = RootView.FindViewById<FrameLayout>(Resource.Id.frameLayout);
+            Holder.Touch += Containerx_Touch;
             ShufflePlay = RootView.FindViewById<Button>(Resource.Id.button_text);
             ShufflePlay.Visibility = ViewStates.Gone;
 
@@ -79,11 +72,6 @@ namespace SpotyPie
 
             ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
             ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
-
-            Picasso.With(Context).Load(GetState().Current_Album.LargeImage).Resize(600, 600).CenterCrop().Into(AlbumPhoto);
-
-            AlbumTitle.Text = GetState().Current_Album.Name;
-            AlbumByText.Text = GetState().Current_Artist.Name;
 
             GetState().ShowHeaderNavigationButtons();
 
@@ -100,44 +88,44 @@ namespace SpotyPie
             Height = backViewContainer.LayoutParameters.Height;
             ScrollFather.ScrollChange += Scroll_ScrollChange;
 
-            //ALBUM song list
-            AlbumSongs = new RvList<Song>();
-            AlbumSongsItem = new List<Song>();
-            AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
-            AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
-            AlbumSongsRecyclerView.SetLayoutManager(AlbumSongsLayoutManager);
-            AlbumSongsAdapter = new VerticalRV(AlbumSongs, this.Context);
-            AlbumSongs.Adapter = AlbumSongsAdapter;
-            AlbumSongsRecyclerView.SetAdapter(AlbumSongsAdapter);
-            AlbumSongsRecyclerView.NestedScrollingEnabled = false;
+            ////ALBUM song list
+            //AlbumSongs = new RvList<Song>();
+            //AlbumSongsItem = new List<Song>();
+            //AlbumSongsLayoutManager = new LinearLayoutManager(this.Activity);
+            //AlbumSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
+            //AlbumSongsRecyclerView.SetLayoutManager(AlbumSongsLayoutManager);
+            //AlbumSongsAdapter = new VerticalRV(AlbumSongs, this.Context);
+            //AlbumSongs.Adapter = AlbumSongsAdapter;
+            //AlbumSongsRecyclerView.SetAdapter(AlbumSongsAdapter);
+            //AlbumSongsRecyclerView.NestedScrollingEnabled = false;
 
-            AlbumSongsRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                try
-                {
-                    if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0)
-                    {
-                        var c = AlbumSongsRecyclerView.Width;
-                        float Procent = (Search.Action * 100) / AlbumSongsRecyclerView.Width;
-                        if (Procent <= 80 && AlbumSongsItem[position] != null)
-                        {
-                            GetState().SetSong(AlbumSongsItem[position]);
-                        }
-                        else
-                        {
-                            if (!IsMeniuActive)
-                            {
-                                IsMeniuActive = true;
-                                MainActivity activity = (MainActivity)this.Activity;
-                                //activity.LoadOptionsMeniu();
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                }
-            });
+            //AlbumSongsRecyclerView.SetItemClickListener((rv, position, view) =>
+            //{
+            //    try
+            //    {
+            //        if (AlbumSongsRecyclerView != null && AlbumSongsRecyclerView.ChildCount != 0)
+            //        {
+            //            var c = AlbumSongsRecyclerView.Width;
+            //            float Procent = (Search.Action * 100) / AlbumSongsRecyclerView.Width;
+            //            if (Procent <= 80 && AlbumSongsItem[position] != null)
+            //            {
+            //                GetState().SetSong(AlbumSongsItem[position]);
+            //            }
+            //            else
+            //            {
+            //                if (!IsMeniuActive)
+            //                {
+            //                    IsMeniuActive = true;
+            //                    MainActivity activity = (MainActivity)this.Activity;
+            //                    //activity.LoadOptionsMeniu();
+            //                }
+            //            }
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //    }
+            //});
         }
 
         private void Containerx_Touch(object sender, TouchEventArgs e)
@@ -145,80 +133,39 @@ namespace SpotyPie
             Search.Action = e.Event.GetX();
         }
 
-        public override void OnDestroyView()
-        {
-            base.OnDestroyView();
-        }
-
-        public override void OnResume()
-        {
-            base.OnResume();
-            Task.Run(() => GetSongsAsync(GetState().Current_Album.Id));
-        }
-
-        public async Task GetSongsAsync(int id)
-        {
-            try
-            {
-                AlbumSongs.Clear();
-                AlbumSongs.Add(null);
-
-                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/album/" + id + "/tracks");
-                var request = new RestRequest(Method.GET);
-                IRestResponse response = await Client.ExecuteGetTaskAsync(request);
-                if (response.IsSuccessful)
-                {
-                    Album album = JsonConvert.DeserializeObject<Album>(response.Content);
-
-                    if (album.Songs.Any(x => x.LocalUrl != null))
-                        Application.SynchronizationContext.Post(_ =>
-                        {
-                            isPlayable = true;
-                            PlayableButton.Text = "Playable";
-                            PlayableButton.SetBackgroundResource(Resource.Drawable.playable_button);
-                            ShufflePlay.Visibility = ViewStates.Visible;
-                        }, null);
-
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        GetState().Current_Song_List = album.Songs;
-                    }, null);
-
-                    AlbumSongsItem = album.Songs;
-                    foreach (var x in album.Songs)
-                    {
-                        AlbumSongs.Add(x);
-                        await Task.Delay(200);
-                    }
-                    //AlbumSongs.RemoveLoading();
-                }
-                else
-                {
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        Toast.MakeText(this.Context, "GetSongsAsync API call error", ToastLength.Short).Show();
-                    }, null);
-                }
-            }
-            catch (Exception)
-            {
-
-            }
-        }
-
         private void Scroll_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)
         {
-            scrolled = ScrollFather.ScrollY;
-            if (scrolled < Height) //761 mazdaug
+            Scrolled = ScrollFather.ScrollY;
+            if (Scrolled < Height) //761 mazdaug
             {
-                MainActivity.ActionName.Alpha = (float)((scrolled * 100) / Height) / 100;
-                ButtonBackGround.Alpha = (float)((scrolled * 100) / Height) / 100;
+                MainActivity.ActionName.Alpha = (float)((Scrolled * 100) / Height) / 100;
+                ButtonBackGround.Alpha = (float)((Scrolled * 100) / Height) / 100;
                 relative.Visibility = ViewStates.Invisible;
             }
             else
             {
                 if (isPlayable)
                     relative.Visibility = ViewStates.Visible;
+            }
+        }
+
+        public void SetAlbum(Album album)
+        {
+            try
+            {
+                MainActivity.ActionName.Text = album.Name;
+                isPlayable = true;
+                IsMeniuActive = false;
+                Scrolled = 0;
+
+                Picasso.With(Context).Load(album.LargeImage).Resize(600, 600).CenterCrop().Into(AlbumPhoto);
+
+                AlbumTitle.Text = album.Name;
+                AlbumByText.Text = "Muse";
+            }
+            catch (Exception e)
+            {
+
             }
         }
     }

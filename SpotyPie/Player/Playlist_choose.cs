@@ -83,7 +83,7 @@ namespace SpotyPie.Player
                         Snackbar.Show();
                         Snackbar.SetAction("Ok", (e) =>
                         {
-                            MainActivity.Fragment.TranslationX = 10000;
+                            //MainActivity.firstLayer.TranslationX = 10000;
                             Snackbar.Dismiss();
                             Snackbar.Dispose();
                         });
@@ -111,7 +111,7 @@ namespace SpotyPie.Player
                     Snackbar.Show();
                     Snackbar.SetAction("Ok", (e) =>
                     {
-                        MainActivity.Fragment.TranslationX = 10000;
+                        //MainActivity.firstLayer.TranslationX = 10000;
                         Snackbar.Dismiss();
                         Snackbar.Dispose();
                     });

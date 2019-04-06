@@ -1,4 +1,5 @@
-﻿using Android.Support.V7.Widget;
+﻿using Android.Support.V4.View;
+using Android.Support.V7.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
@@ -37,6 +38,12 @@ namespace SpotyPie.RecycleView
             return RvDataset;
         }
 
+        public void DisableScroolNested()
+        {
+            RecyclerView.NestedScrollingEnabled = false;
+            ViewCompat.SetNestedScrollingEnabled(RecyclerView, false);
+        }
+
 
         public void SetOnClick()
         {
@@ -44,14 +51,9 @@ namespace SpotyPie.RecycleView
             {
                 if (RecyclerView != null && RecyclerView.ChildCount != 0)
                 {
-                    if (RvDataset[position].GetType().Name == "BlockWithImage")
+                    if (RvDataset[position].GetType().Name == "Album")
                     {
-                        MainActivity.Fragment.TranslationX = 0;
-                        MainActivity.CurrentFragment = new AlbumFragment();
-                        //Current_state.SetAlbum(Dataset[position]);
-                        MainActivity.mSupportFragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.song_options, MainActivity.CurrentFragment)
-                            .Commit();
+                        Activity.LoadAlbum(RvDataset[position] as Album);
                     }
                     else if (RvDataset[position].GetType().Name == "Song")
                     {

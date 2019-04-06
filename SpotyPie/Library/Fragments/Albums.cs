@@ -111,9 +111,9 @@ namespace SpotyPie.Library.Fragments
                     if (AlbumsLocal.Count == AlbumsData.Count)
                     {
                         GetState().SetAlbum(AlbumsLocal[position]);
-                        FragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.content_frame, MainActivity.Album)
-                        .Commit();
+                        //FragmentManager.BeginTransaction()
+                        //.Replace(Resource.Id.content_frame, MainActivity.AlbumFragment)
+                        //.Commit();
                     }
                 }
             });

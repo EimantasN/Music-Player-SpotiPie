@@ -8,17 +8,17 @@
       android:icon="@drawable/home"/>
 
   <item
+    android:id="@+id/search"
+    android:title=""
+    android:icon="@drawable/search"/>
+
+  <item
+    android:id="@+id/library"
+    android:title=""
+    android:icon="@drawable/library"/>
+
+  <item
       android:id="@+id/browse"
       android:title=""
-      android:icon="@drawable/browse"/>
-
-  <item
-      android:id="@+id/search"
-      android:title=""
-      android:icon="@drawable/search"/>
-
-  <item
-      android:id="@+id/library"
-      android:title=""
-      android:icon="@drawable/library"/>
+      android:icon="@drawable/muse_logo"/>
 </menu>

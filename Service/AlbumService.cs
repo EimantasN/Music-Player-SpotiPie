@@ -55,6 +55,7 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
+                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable == true)
                     .Take(count)
                     .Where(x => x.IsPlayable == true)
@@ -93,6 +94,7 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
+                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable)
                     .OrderByDescending(x => x.LastActiveTime).ThenBy(x => x.Popularity)
                     .OrderByDescending(x => x.LastActiveTime)
@@ -111,6 +113,7 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
+                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable)
                     .OrderByDescending(x => x.Popularity)
                     .Take(6)
@@ -128,6 +131,7 @@ namespace Services
             {
                 return await _ctx.Albums
                         .AsNoTracking()
+                        .Include(x => x.Songs)
                         .Where(x => x.IsPlayable)
                         .OrderByDescending(x => x.LastActiveTime)
                         .Take(6)

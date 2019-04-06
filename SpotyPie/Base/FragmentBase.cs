@@ -54,6 +54,11 @@ namespace SpotyPie.Base
             return ParentActivity.GetState();
         }
 
+        public Android.Support.V4.App.Fragment GetCurrentFragment()
+        {
+            return ParentActivity.FirstLayerFragment;
+        }
+
         public dynamic GetService(ApiServices service = ApiServices.Shared)
         {
             return ParentActivity.GetService(service);
@@ -68,6 +73,11 @@ namespace SpotyPie.Base
         }
 
         protected abstract void InitView();
+
+        public void LoadAlbum(Album album)
+        {
+            ParentActivity.LoadAlbum(album);
+        }
 
         public override void OnResume()
         {

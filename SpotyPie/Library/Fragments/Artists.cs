@@ -48,9 +48,9 @@ namespace SpotyPie.Library.Fragments
                 if (ArtistsSongsRecyclerView != null && ArtistsSongsRecyclerView.ChildCount != 0)
                 {
                     //GetState().SetArtist(ArtistsLocal[position]);
-                    FragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.content_frame, MainActivity.Artist)
-                    .Commit();
+                    //FragmentManager.BeginTransaction()
+                    //.Replace(Resource.Id.content_frame, MainActivity.ArtistFragment)
+                    //.Commit();
                 }
             });
 

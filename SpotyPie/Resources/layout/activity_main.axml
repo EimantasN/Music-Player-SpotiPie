@@ -174,18 +174,20 @@
 
     </android.support.constraint.ConstraintLayout>
 
-
-
-				<FrameLayout
-        android:id="@+id/song_options"
-        android:translationX="500dp"
-        android:background="@color/greylight"
+	<FrameLayout
+        android:id="@+id/second_layer"
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-	    <FrameLayout
+	<FrameLayout
         android:id="@+id/player_frame"
-        android:translationX="500dp"
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+	<FrameLayout
+        android:id="@+id/first_layer"
         android:background="@color/greylight"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
