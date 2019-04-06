@@ -15,7 +15,7 @@ namespace SpotyPie.Base
 
         protected View RootView;
 
-        private MainActivity ParentActivity;
+        protected MainActivity ParentActivity;
 
         public View GetView()
         {

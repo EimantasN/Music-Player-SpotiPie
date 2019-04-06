@@ -12,14 +12,13 @@ using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
 using System;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using SupportFragment = Android.Support.V4.App.Fragment;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie
 {
-    [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
+    [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
     public class MainActivity : AppCompatActivity
     {
         private int LastViewLayer = 0;
@@ -81,6 +80,7 @@ namespace SpotyPie
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+
             Player = new Player.Player();
             APPSTATE = new Current_state((Player.Player)Player, this);
 
@@ -345,6 +345,11 @@ namespace SpotyPie
                 FirstLayerFragment = null;
                 FirstLayer.TranslationX = widthInDp;
             }
+        }
+
+        public void RemoveSplash(FragmentBase fr)
+        {
+            SupportFragmentManager.BeginTransaction().Remove(fr).CommitAllowingStateLoss();
         }
 
         public void LoadAlbum(Album album)

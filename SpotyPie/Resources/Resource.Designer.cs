@@ -4280,8 +4280,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f090044
 			public const int bottom = 2131296324;
 			
-			// aapt resource value: 0x7f09017a
-			public const int browse = 2131296634;
+			// aapt resource value: 0x7f090181
+			public const int browse = 2131296641;
 			
 			// aapt resource value: 0x7f09007f
 			public const int buttonPanel = 2131296383;
@@ -4484,6 +4484,12 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0900dc
 			public const int guideline4 = 2131296476;
 			
+			// aapt resource value: 0x7f090179
+			public const int guideline5 = 2131296633;
+			
+			// aapt resource value: 0x7f090178
+			public const int guideline6 = 2131296632;
+			
 			// aapt resource value: 0x7f0900c8
 			public const int hide = 2131296456;
 			
@@ -4510,6 +4516,9 @@ namespace SpotyPie
 			
 			// aapt resource value: 0x7f09016e
 			public const int imageView2 = 2131296622;
+			
+			// aapt resource value: 0x7f090176
+			public const int imageView3 = 2131296630;
 			
 			// aapt resource value: 0x7f0900e0
 			public const int imageView4 = 2131296480;
@@ -4553,8 +4562,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0900d9
 			public const int left_subtitle = 2131296473;
 			
-			// aapt resource value: 0x7f090179
-			public const int library = 2131296633;
+			// aapt resource value: 0x7f090180
+			public const int library = 2131296640;
 			
 			// aapt resource value: 0x7f09001c
 			public const int line1 = 2131296284;
@@ -4577,14 +4586,17 @@ namespace SpotyPie
 			// aapt resource value: 0x7f09015c
 			public const int list_rv = 2131296604;
 			
+			// aapt resource value: 0x7f09017b
+			public const int loading = 2131296635;
+			
 			// aapt resource value: 0x7f0900e2
 			public const int main_rv = 2131296482;
 			
 			// aapt resource value: 0x7f09015a
 			public const int mark_song = 2131296602;
 			
-			// aapt resource value: 0x7f090177
-			public const int masked = 2131296631;
+			// aapt resource value: 0x7f09017e
+			public const int masked = 2131296638;
 			
 			// aapt resource value: 0x7f09013d
 			public const int media_actions = 2131296573;
@@ -4844,6 +4856,9 @@ namespace SpotyPie
 			// aapt resource value: 0x7f090007
 			public const int progress_horizontal = 2131296263;
 			
+			// aapt resource value: 0x7f090177
+			public const int quote = 2131296631;
+			
 			// aapt resource value: 0x7f090094
 			public const int radio = 2131296404;
 			
@@ -4907,8 +4922,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f09005d
 			public const int scrollable = 2131296349;
 			
-			// aapt resource value: 0x7f090178
-			public const int search = 2131296632;
+			// aapt resource value: 0x7f09017f
+			public const int search = 2131296639;
 			
 			// aapt resource value: 0x7f09016b
 			public const int searchEmptyxxx = 2131296619;
@@ -4975,6 +4990,9 @@ namespace SpotyPie
 			
 			// aapt resource value: 0x7f09014e
 			public const int shuffle = 2131296590;
+			
+			// aapt resource value: 0x7f09017a
+			public const int skip = 2131296634;
 			
 			// aapt resource value: 0x7f0900e4
 			public const int smallLabel = 2131296484;
@@ -5099,6 +5117,9 @@ namespace SpotyPie
 			// aapt resource value: 0x7f090154
 			public const int textView6 = 2131296596;
 			
+			// aapt resource value: 0x7f09017c
+			public const int textView7 = 2131296636;
+			
 			// aapt resource value: 0x7f0900ef
 			public const int text_input_password_toggle = 2131296495;
 			
@@ -5177,8 +5198,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f090105
 			public const int viewpager = 2131296517;
 			
-			// aapt resource value: 0x7f090176
-			public const int visible = 2131296630;
+			// aapt resource value: 0x7f09017d
+			public const int visible = 2131296637;
 			
 			// aapt resource value: 0x7f09012a
 			public const int volume_item_container = 2131296554;
@@ -5622,7 +5643,10 @@ namespace SpotyPie
 			public const int song_list_rv = 2130968679;
 			
 			// aapt resource value: 0x7f040068
-			public const int support_simple_spinner_dropdown_item = 2130968680;
+			public const int splash = 2130968680;
+			
+			// aapt resource value: 0x7f040069
+			public const int support_simple_spinner_dropdown_item = 2130968681;
 			
 			static Layout()
 			{
