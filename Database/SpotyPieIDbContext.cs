@@ -24,5 +24,7 @@ namespace Database
         public DbSet<Image> Images { get; set; }
 
         public DbSet<Song> ActiveSong { get; set; }
+
+        public DbSet<Quote> Quotes { get; set; }
     }
 }

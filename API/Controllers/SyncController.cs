@@ -22,12 +22,49 @@ namespace API.Controllers
             _ctx = ctx;
         }
 
+
+        [HttpGet("GetQuote/{id}")]
+        public Quote AddedQuote(int id)
+        {
+            try
+            {
+                return _ctx.Quotes.First(x => x.Id == id);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
+        [HttpPost("AddQuote")]
+        public void AddedQuote([FromForm] string quote)
+        {
+            try
+            {
+                var Quotes = _ctx.Artists.Include(x => x.Quotes).First(x => x.Id == 2);
+                if (Quotes.Quotes == null)
+                    Quotes.Quotes = new List<Quote>();
+                if (!Quotes.Quotes.Any(x => x.Text == quote))
+                {
+                    var q = new Quote(quote);
+                    Quotes.Quotes.Add(q);
+                    _ctx.Entry(Quotes).State = EntityState.Modified;
+                    _ctx.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+
         [HttpGet("GetDataFromSpotify")]
         public string GetData()
         {
             MainParser parser = new MainParser();
             var artist = parser.Bind();
-            var Artist = _ctx.Artists.Include(x =>x.Albums).ThenInclude(x => x.Songs).FirstOrDefault(x => x.SpotifyId == artist.SpotifyId);
+            var Artist = _ctx.Artists.Include(x => x.Albums).ThenInclude(x => x.Songs).FirstOrDefault(x => x.SpotifyId == artist.SpotifyId);
             if (Artist == null)
             {
                 _ctx.Artists.Add(artist);

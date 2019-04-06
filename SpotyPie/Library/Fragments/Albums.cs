@@ -1,19 +1,15 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
-using Newtonsoft.Json;
-using RestSharp;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
 using Square.Picasso;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie.Library.Fragments
@@ -32,7 +28,6 @@ namespace SpotyPie.Library.Fragments
                 RvData = rvBase.Setup(LinearLayoutManager.Vertical);
                 rvBase.DisableScroolNested();
             }
-            Task.Run(() => LoadAllAlbums());
         }
 
         public async Task LoadAllAlbums()
@@ -43,10 +38,16 @@ namespace SpotyPie.Library.Fragments
 
             data.AddRange(await api.GetAll());
 
-            for (int i = 0; i < data.Count; i++)
-                data[i].Type = RvType.AlbumBigOne;
+            List<dynamic> newlist = new List<dynamic>();
+            var Album = new Album();
+            for (int i = 1; i < data.Count; i++)
+            {
+                Album = data[i];
+                Album.Type = RvType.AlbumBigOne;
+                newlist.Add(Album);
+            }
 
-            RvData.AddList(data);
+            RvData.AddList(newlist);
             RvData.RemoveLoading(data);
         }
 

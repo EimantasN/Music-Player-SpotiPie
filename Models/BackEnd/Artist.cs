@@ -23,6 +23,8 @@ namespace Models.BackEnd
 
         public DateTime LastActiveTime { get; set; }
 
+        public List<Quote> Quotes { get; set; }
+
 
     }
 }
