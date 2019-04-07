@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using static API.Controllers.UploadController;
 
 namespace API.Controllers
 {
@@ -118,6 +121,47 @@ namespace API.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.Message);
+            }
+        }
+
+        [RequestSizeLimit(500000000)]
+        [DisableFormValueModelBinding]
+        [HttpPost]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> Post()
+        {
+            try
+            {
+                Dictionary<string, string> results = new Dictionary<string, string>();
+
+                if (Request.HasFormContentType)
+                {
+                    var form = Request.Form;
+
+                    foreach (var formFile in form.Files)
+                    {
+                        return Ok(await _songs.AddAudioToLibrary(formFile));
+                    }
+                }
+                return new JsonResult(results);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("BindFiles")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> BindFiles()
+        {
+            try
+            {
+                return Ok(await _songs.BindData());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
             }
         }
     }

@@ -23,6 +23,7 @@ namespace Services
     {
         private readonly SpotyPieIDbContext _ctx;
         private ISettings settings;
+
         public Service(SpotyPieIDbContext ctx)
         {
             _ctx = ctx;

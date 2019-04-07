@@ -48,6 +48,7 @@ namespace API.Controllers
 
                     foreach (var formFile in form.Files)
                     {
+
                         string filePath =
                             Path.DirectorySeparatorChar + "root" +
                             Path.DirectorySeparatorChar + "Content" +

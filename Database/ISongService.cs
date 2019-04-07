@@ -1,4 +1,5 @@
-﻿using Models.BackEnd;
+﻿using Microsoft.AspNetCore.Http;
+using Models.BackEnd;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -21,5 +22,8 @@ namespace Database
         Task<List<Song>> GetSongsByAlbumAsync(int albumId);
 
         Task UpdateAsync(int id);
+
+        Task<List<AudioBindError>> BindData();
+        Task<List<AudioBindError>> AddAudioToLibrary(IFormFile file);
     }
 }
