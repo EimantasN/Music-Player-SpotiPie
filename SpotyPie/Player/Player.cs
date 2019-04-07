@@ -29,10 +29,10 @@ namespace SpotyPie.Player
         TimeSpan CurrentTime = new TimeSpan(0, 0, 0, 0);
         TimeSpan TotalSongTime = new TimeSpan(0, 0, 0, 0);
         bool saved_to_songs = false;
-        public int RefreshRate = 100;
-        public bool Updating = false;
+        int RefreshRate = 100;
+        bool Updating = false;
 
-        ImageButton HidePlayerButton;
+        public ImageButton HidePlayerButton;
         public ImageButton PlayToggle;
         public MediaPlayer MusicPlayer;
 
@@ -42,7 +42,7 @@ namespace SpotyPie.Player
         public TextView CurretSongTimeText;
         TextView TotalSongTimeText;
 
-        public ProgressBar SongProgress;
+        ProgressBar SongProgress;
 
         public ImageView Player_Image;
         public TextView Player_song_name;
@@ -328,6 +328,7 @@ namespace SpotyPie.Player
                     Application.SynchronizationContext.Post(_ => { Updating = true; }, null);
                     int Progress = 0;
                     int Position = 0;
+                    string text;
                     while (MusicPlayer.IsPlaying)
                     {
                         try
@@ -339,11 +340,11 @@ namespace SpotyPie.Player
                             if (CurrentTime.Seconds < Position)
                             {
                                 CurrentTime = new TimeSpan(0, 0, Position);
-                                var text = CurrentTime.Minutes + ":" + (CurrentTime.Seconds > 9 ? CurrentTime.Seconds.ToString() : "0" + CurrentTime.Seconds);
+                                text = CurrentTime.Minutes + ":" + (CurrentTime.Seconds > 9 ? CurrentTime.Seconds.ToString() : "0" + CurrentTime.Seconds);
                                 Application.SynchronizationContext.Post(_ => { CurretSongTimeText.Text = text; }, null);
                             }
 
-                            if (MusicPlayer.Looping == true && CurrentTime.TotalSeconds == TotalSongTime.TotalSeconds)
+                            if (Repeat_state == 1 && CurrentTime.TotalSeconds == TotalSongTime.TotalSeconds)
                             {
                                 Application.SynchronizationContext.Post(_ =>
                                 {
@@ -396,6 +397,10 @@ namespace SpotyPie.Player
             CurrentTime = new TimeSpan(0, 0, 0, 0);
             CurretSongTimeText.Text = "0:00";
             SongProgress.Progress = 0;
+            if (Repeat_state == 1)
+            {
+                GetState().ChangeSong(true);
+            }
         }
 
         #endregion
