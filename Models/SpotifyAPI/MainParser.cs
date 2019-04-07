@@ -13,7 +13,7 @@ namespace API.SpotifyAPI
         //12Chz98pHFMPJEknJQMWvI   //Muse ID
 
         public string MuseId { get; set; } = "12Chz98pHFMPJEknJQMWvI";
-        public string Token { get; set; } = "BQCp3y21wpyIPZ8JJQMQIx638G76v2fcLQkqdfn_csimkytqg6ca3R-tl_n4FP1FaaWZOSDxCm6i-zz9y6MKO3MIvVVfKZnl7C4in7Y5jeah59rC9tMAlCpsZRu-jsE3tM7g2jd2pwEl9iHLSm_JspusX1ed3mlO07DXEkBhKv8Z1AEfStUAw2qSqB5WYuS8j2Ks8qSvBa9MN7TZRtRHKR_81o0Sk_4g70s7KRE3L0dyUuGVKj5Om-5Ro6Ve63png6fUpgZy1INVeAA";
+        public string Token { get; set; } = "BQDl6-p2nqgKyIeeQiig5cWb2KCJIWQOK0TDEdcBpwRU11q9N2gRDHcfXk87Uz-rsRL1Ssr2c6-zx5sS3QLc8S3ENQ1G_TTvPneRw2yx8DU-gEK6oSq8BlMvUXa__r4mba-XcQ9OX2fL7cEpuRAjuNTmpVtuTG85Idbvmouv2-FJquIwnFaaFv1dkNWzCo5NUAD1dwen6vP_WZ6AlNIUX2fqlnYyF7uPOmG2cEoO1-5Ho9xm7nSsVyKJypkv1xD0XK4RYZyUNVte6x8";
         Artist Artist;
         List<Album> Albums;
 
@@ -69,7 +69,7 @@ namespace API.SpotifyAPI
                         MediumImage = x.Images[1].Url.ToString(),
                         SmallImage = x.Images[2].Url.ToString(),
                         LastActiveTime = DateTime.Now,
-                        Name =x.Name,
+                        Name = x.Name,
                         Popularity = 0,
                         ReleaseDate = x.ReleaseDate
                     });
@@ -92,7 +92,7 @@ namespace API.SpotifyAPI
                 foreach (var album in Albumsx)
                 {
                     songs = new List<Models.BackEnd.Song>();
-                    var Spotifysongs = JsonConvert.DeserializeObject<AlbumTrackResponse>(GetData($"https://api.spotify.com/v1/albums/{album.SpotifyId}/tracks")).Songs.Where(x => !x.Name.Contains("(")).ToList();
+                    var Spotifysongs = JsonConvert.DeserializeObject<AlbumTrackResponse>(GetData($"https://api.spotify.com/v1/albums/{album.SpotifyId}/tracks")).Songs.ToList();
 
                     for (int i = 0; i < Spotifysongs.Count; i++)
                     {
@@ -117,7 +117,7 @@ namespace API.SpotifyAPI
                             Name = x.Name,
                             Popularity = 0,
                             SmallImage = x.SmallImage,
-                            TrackNumber =x.TrackNumber
+                            TrackNumber = x.TrackNumber
                         });
                     }
                     album.Tracks = songs.Count;

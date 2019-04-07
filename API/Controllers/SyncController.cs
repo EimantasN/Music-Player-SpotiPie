@@ -72,10 +72,31 @@ namespace API.Controllers
             }
             else
             {
-
+                foreach (var spotAlbum in artist.Albums)
+                {
+                    var tempAlbum = _ctx.Albums.FirstOrDefault(x => x.SpotifyId == spotAlbum.SpotifyId);
+                    if (tempAlbum == null)
+                    {
+                        Artist.Albums.Add(tempAlbum);
+                        _ctx.Entry(tempAlbum).State = EntityState.Modified;
+                        _ctx.SaveChanges();
+                    }
+                    else
+                    {
+                        var AlbumWithSongs = _ctx.Albums.Include(x => x.Songs).FirstOrDefault(x => x.SpotifyId == spotAlbum.SpotifyId);
+                        foreach (var spotSong in spotAlbum.Songs)
+                        {
+                            if (!AlbumWithSongs.Songs.Any(x => x.SpotifyId == spotSong.SpotifyId))
+                            {
+                                AlbumWithSongs.Songs.Add(spotSong);
+                                _ctx.Entry(AlbumWithSongs).State = EntityState.Modified;
+                                _ctx.SaveChanges();
+                            }
+                        }
+                    }
+                }
             }
             return null;
-
         }
 
         [HttpGet]

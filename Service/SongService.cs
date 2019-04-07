@@ -8,6 +8,7 @@ using IdSharp.Tagging.VorbisComment;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Models.BackEnd;
+using Service.Helpers;
 
 namespace Services
 {
@@ -264,52 +265,79 @@ namespace Services
             CheckForDirectory(
                 GetEnviromentPath() +
                 Path.DirectorySeparatorChar +
-                flacTag.Artist.ToLower().Trim());
+                Replacer.RemoveSpecialCharacters(flacTag.Artist.ToLower().Trim()));
 
-            if (flacTag.Album == "H.A.A.R.P")
-            {
-                flacTag.Album = "HAARP";
-            }
-
+            string AlbumName = "";
+            Replacer.CorrentAlbum(flacTag.Album);
             var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Name.ToLower().Trim().Contains(flacTag.Album.ToLower().Trim()));
             if (album == null)
-                return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Album not found in database");
+            {
+                int ID = FindSimilarName.findSimilarAlbumName(await _ctx.Albums.AsNoTracking().ToListAsync(), flacTag.Album);
+                if (ID == 0)
+                {
+                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Album not found in database");
+                }
+                else
+                {
+                    album = await _ctx.Albums.FirstAsync(x => x.Id == ID);
+                    AlbumName = album.Name.ToLower().Trim();
+                }
+            }
+            else
+            {
+                AlbumName = album.Name.ToLower().Trim();
+            }
 
             CheckForDirectory(
                 GetEnviromentPath() +
-                System.IO.Path.DirectorySeparatorChar +
+                Path.DirectorySeparatorChar +
                 flacTag.Artist.ToLower().Trim() +
-                System.IO.Path.DirectorySeparatorChar +
-                flacTag.Album.ToLower().Trim());
+                Path.DirectorySeparatorChar +
+                Replacer.RemoveSpecialCharacters(AlbumName));
 
-            var item = await _ctx.Songs.FirstOrDefaultAsync(x => x.Name.Replace("&", "and").ToLower().Trim().Contains(flacTag.Title.Replace("&", "and").ToLower().Trim()));
-
-            string destinationPath;
-            if (item == null)
-                return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Song not found in database");
-
+            string destinationPath = "";
+            string SongName = null;
+            var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Name.Replace("&", "and").ToLower().Trim().Contains(flacTag.Title.Replace("&", "and").ToLower().Trim()));
+            if (song == null)
+            {
+                int ID = FindSimilarName.findSimilarSongName(await _ctx.Songs.AsNoTracking().ToListAsync(), flacTag.Title);
+                if (ID == 0)
+                {
+                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Album not found in database");
+                }
+                else
+                {
+                    song = await _ctx.Songs.FirstAsync(x => x.Id == ID);
+                    SongName = song.Name.ToLower().Trim();
+                }
+            }
             else
             {
-                destinationPath = GetEnviromentPath() +
-                    System.IO.Path.DirectorySeparatorChar +
-                    flacTag.Artist.ToLower().Trim() +
-                    System.IO.Path.DirectorySeparatorChar +
-                    flacTag.Album.ToLower().Trim() +
-                    System.IO.Path.DirectorySeparatorChar +
-                    flacTag.Title.ToLower().Trim() + ".flac";
+                SongName = song.Name.ToLower().Trim();
+            }
 
-                System.IO.File.Copy(filePath,
+            if (!string.IsNullOrEmpty(SongName))
+            {
+                destinationPath = GetEnviromentPath() +
+                    Path.DirectorySeparatorChar +
+                    flacTag.Artist.ToLower().Trim() +
+                    Path.DirectorySeparatorChar +
+                    Replacer.RemoveSpecialCharacters(AlbumName) +
+                    Path.DirectorySeparatorChar +
+                    Replacer.RemoveSpecialCharacters(SongName) + ".flac";
+
+                File.Copy(filePath,
                     destinationPath,
                     true);
 
-                if (item.LocalUrl == null || item.LocalUrl != destinationPath)
+                if (song.LocalUrl == null || song.LocalUrl != destinationPath)
                 {
-                    item.LocalUrl = destinationPath;
-                    item.IsLocal = true;
-                    item.IsPlayable = true;
-                    item.UploadTime = DateTime.Now;
-                    item.Size = new System.IO.FileInfo(destinationPath).Length;
-                    _ctx.Entry(item).State = EntityState.Modified;
+                    song.LocalUrl = destinationPath;
+                    song.IsLocal = true;
+                    song.IsPlayable = true;
+                    song.UploadTime = DateTime.Now;
+                    song.Size = new FileInfo(destinationPath).Length;
+                    _ctx.Entry(song).State = EntityState.Modified;
 
                     if (!album.IsPlayable)
                     {
@@ -320,13 +348,13 @@ namespace Services
                 }
             }
 
-            if (!System.IO.File.Exists(destinationPath))
+            if (!string.IsNullOrEmpty(destinationPath) && !File.Exists(destinationPath))
             {
-                return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Failed to create file");
+                return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Failed to create file or get path");
             }
             else
             {
-                System.IO.File.Delete(filePath);
+                File.Delete(filePath);
             }
 
             return null;
