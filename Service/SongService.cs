@@ -266,7 +266,7 @@ namespace Services
                 Path.DirectorySeparatorChar +
                 flacTag.Artist.ToLower().Trim());
 
-            var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Name.ToLower().Trim() == flacTag.Album.ToLower().Trim());
+            var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Name.ToLower().Trim().Contains(flacTag.Album.ToLower().Trim()));
             if (album == null)
                 return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Album not found in database");
 
