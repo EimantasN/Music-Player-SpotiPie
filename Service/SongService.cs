@@ -266,6 +266,11 @@ namespace Services
                 Path.DirectorySeparatorChar +
                 flacTag.Artist.ToLower().Trim());
 
+            if (flacTag.Album == "H.A.A.R.P")
+            {
+                flacTag.Album = "HAARP";
+            }
+
             var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Name.ToLower().Trim().Contains(flacTag.Album.ToLower().Trim()));
             if (album == null)
                 return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Album not found in database");
