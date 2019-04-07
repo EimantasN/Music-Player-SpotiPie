@@ -277,7 +277,7 @@ namespace Services
                 System.IO.Path.DirectorySeparatorChar +
                 flacTag.Album.ToLower().Trim());
 
-            var item = await _ctx.Songs.FirstOrDefaultAsync(x => x.Name.ToLower().Trim().Contains(flacTag.Title.ToLower().Trim()));
+            var item = await _ctx.Songs.FirstOrDefaultAsync(x => x.Name.Replace("&", "and").ToLower().Trim().Contains(flacTag.Title.Replace("&", "and").ToLower().Trim()));
 
             string destinationPath;
             if (item == null)
