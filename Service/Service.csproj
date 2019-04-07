@@ -9,6 +9,7 @@
     <PackageReference Include="Config.Net.Json" Version="4.13.2" />
     <PackageReference Include="IdSharp.Common" Version="1.0.1" />
     <PackageReference Include="IdSharp.Tagging" Version="1.0.0-rc3" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="2.2.3" />
   </ItemGroup>
 
