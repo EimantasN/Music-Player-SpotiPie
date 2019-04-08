@@ -325,10 +325,10 @@ namespace Services
                     Replacer.RemoveSpecialCharacters(AlbumName) +
                     Path.DirectorySeparatorChar +
                     Replacer.RemoveSpecialCharacters(SongName) + ".flac";
-                var fileSize = new FileInfo(destinationPath).Length;
-                if (song.Size > fileSize)
+
+                if (File.Exists(destinationPath) && song.Size > new FileInfo(destinationPath).Length)
                 {
-                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Size is bigger current Song " + song.Size + " new song - " + fileSize);
+                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Size is bigger current Song " + song.Size + " new song - " + new FileInfo(destinationPath).Length);
                 }
                 else
                 {
