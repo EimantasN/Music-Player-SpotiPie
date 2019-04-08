@@ -325,26 +325,33 @@ namespace Services
                     Replacer.RemoveSpecialCharacters(AlbumName) +
                     Path.DirectorySeparatorChar +
                     Replacer.RemoveSpecialCharacters(SongName) + ".flac";
-
-                File.Copy(filePath,
+                var fileSize = new FileInfo(destinationPath).Length;
+                if (song.Size > fileSize)
+                {
+                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Size is bigger current Song " + song.Size + " new song - " + fileSize);
+                }
+                else
+                {
+                    File.Copy(filePath,
                     destinationPath,
                     true);
 
-                if (song.LocalUrl == null || song.LocalUrl != destinationPath)
-                {
-                    song.LocalUrl = destinationPath;
-                    song.IsLocal = true;
-                    song.IsPlayable = true;
-                    song.UploadTime = DateTime.Now;
-                    song.Size = new FileInfo(destinationPath).Length;
-                    _ctx.Entry(song).State = EntityState.Modified;
-
-                    if (!album.IsPlayable)
+                    if (song.LocalUrl == null || song.LocalUrl != destinationPath)
                     {
-                        album.IsPlayable = true;
-                        _ctx.Entry(album).State = EntityState.Modified;
+                        song.LocalUrl = destinationPath;
+                        song.IsLocal = true;
+                        song.IsPlayable = true;
+                        song.UploadTime = DateTime.Now;
+                        song.Size = new FileInfo(destinationPath).Length;
+                        _ctx.Entry(song).State = EntityState.Modified;
+
+                        if (!album.IsPlayable)
+                        {
+                            album.IsPlayable = true;
+                            _ctx.Entry(album).State = EntityState.Modified;
+                        }
+                        await _ctx.SaveChangesAsync();
                     }
-                    await _ctx.SaveChangesAsync();
                 }
             }
 

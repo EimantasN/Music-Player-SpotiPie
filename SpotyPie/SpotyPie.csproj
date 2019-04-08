@@ -25,33 +25,44 @@
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>false</DebugSymbols>
     <DebugType>portable</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
-    <AndroidLinkMode>None</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidLinkMode>Full</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
-    <MandroidI18n>CJK;Mideast;Rare;West</MandroidI18n>
+    <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
     <AndroidSupportedAbis />
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+    <EnableProguard>true</EnableProguard>
+    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <Optimize>True</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
-    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
+    <AndroidLinkMode>Full</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
+    <EnableProguard>false</EnableProguard>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <BundleAssemblies>false</BundleAssemblies>
+    <AndroidSupportedAbis />
+    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+    <MandroidI18n>CJK;Mideast;Rare;West</MandroidI18n>
+    <AndroidHttpClientHandlerType>
+    </AndroidHttpClientHandlerType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -146,13 +157,13 @@
       <Version>12.0.1</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
-      <Version>106.6.6</Version>
+      <Version>106.6.9</Version>
     </PackageReference>
     <PackageReference Include="Square.Picasso">
       <Version>2.5.2.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Compat">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Constraint.Layout">
       <Version>1.1.2</Version>
@@ -160,30 +171,30 @@
     <PackageReference Include="Xamarin.Android.Support.Constraint.Layout.Solver">
       <Version>1.1.2</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0" />
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.Fragment">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Media.Compat">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v4">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.CardView">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.MediaRouter">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Vector.Drawable">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

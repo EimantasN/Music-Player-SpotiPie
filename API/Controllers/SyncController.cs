@@ -18,10 +18,8 @@ namespace API.Controllers
 
         public SyncController(SpotyPieIDbContext ctx)
         {
-
             _ctx = ctx;
         }
-
 
         [HttpGet("GetQuote/{id}")]
         public Quote AddedQuote(int id)
@@ -35,7 +33,6 @@ namespace API.Controllers
                 return null;
             }
         }
-
 
         [HttpPost("AddQuote")]
         public void AddedQuote([FromForm] string quote)
@@ -58,11 +55,10 @@ namespace API.Controllers
             }
         }
 
-
-        [HttpGet("GetDataFromSpotify")]
-        public string GetData()
+        [HttpPost("GetDataFromSpotify")]
+        public string GetData([FromForm] string artistId, [FromForm] string token)
         {
-            MainParser parser = new MainParser();
+            MainParser parser = new MainParser(artistId, token);
             var artist = parser.Bind();
             var Artist = _ctx.Artists.Include(x => x.Albums).ThenInclude(x => x.Songs).FirstOrDefault(x => x.SpotifyId == artist.SpotifyId);
             if (Artist == null)

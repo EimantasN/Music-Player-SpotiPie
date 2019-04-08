@@ -262,7 +262,7 @@ namespace SpotyPie
 
                 }
             }
-            catch (Exception e)
+            catch
             {
                 Application.SynchronizationContext.Post(_ =>
                 {
@@ -400,7 +400,7 @@ namespace SpotyPie
 
                 }
             }
-            catch (Exception e)
+            catch
             {
                 Application.SynchronizationContext.Post(_ =>
                 {

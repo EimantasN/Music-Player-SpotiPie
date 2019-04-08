@@ -148,7 +148,7 @@ namespace SpotyPie
                     RvData.AddList(songs);
                 }
             }
-            catch (Exception e)
+            catch
             {
             }
         }

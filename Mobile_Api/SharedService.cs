@@ -1,6 +1,5 @@
 ﻿using Mobile_Api.Models;
 using RestSharp;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,7 +28,7 @@ namespace Mobile_Api
             {
                 return await client.CustomGetList<T>(Method.GET);
             }
-            catch (Exception e)
+            catch
             {
                 return new List<T>();
             }
@@ -45,7 +44,7 @@ namespace Mobile_Api
             {
                 return await client.CustomGetObject<T>(Method.GET);
             }
-            catch (Exception e)
+            catch
             {
                 return default(T);
             }

@@ -103,7 +103,7 @@ namespace SpotyPie.Player
                 //    }, null);
                 //}
             }
-            catch (Exception ex)
+            catch
             {
                 Application.SynchronizationContext.Post(_ =>
                 {

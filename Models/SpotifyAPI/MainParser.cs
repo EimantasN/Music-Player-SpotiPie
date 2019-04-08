@@ -4,18 +4,19 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.SpotifyAPI
 {
     public class MainParser
     {
-        //12Chz98pHFMPJEknJQMWvI   //Muse ID
+        public string ArtistId { get; set; }
+        public string Token { get; set; }
 
-        public string MuseId { get; set; } = "12Chz98pHFMPJEknJQMWvI";
-        public string Token { get; set; } = "BQDl6-p2nqgKyIeeQiig5cWb2KCJIWQOK0TDEdcBpwRU11q9N2gRDHcfXk87Uz-rsRL1Ssr2c6-zx5sS3QLc8S3ENQ1G_TTvPneRw2yx8DU-gEK6oSq8BlMvUXa__r4mba-XcQ9OX2fL7cEpuRAjuNTmpVtuTG85Idbvmouv2-FJquIwnFaaFv1dkNWzCo5NUAD1dwen6vP_WZ6AlNIUX2fqlnYyF7uPOmG2cEoO1-5Ho9xm7nSsVyKJypkv1xD0XK4RYZyUNVte6x8";
-        Artist Artist;
-        List<Album> Albums;
+        public MainParser(string artistId, string Token)
+        {
+            this.ArtistId = artistId;
+            this.Token = Token;
+        }
 
         public Models.BackEnd.Artist Bind()
         {
@@ -32,7 +33,7 @@ namespace API.SpotifyAPI
         {
             try
             {
-                var x = JsonConvert.DeserializeObject<Artist>(GetData("https://api.spotify.com/v1/artists/" + MuseId));
+                var x = JsonConvert.DeserializeObject<Artist>(GetData("https://api.spotify.com/v1/artists/" + ArtistId));
                 return new Models.BackEnd.Artist
                 {
                     SpotifyId = x.Id,
@@ -56,7 +57,7 @@ namespace API.SpotifyAPI
         {
             try
             {
-                var spotifyAlbums = JsonConvert.DeserializeObject<AlbumResponse>(GetData($"https://api.spotify.com/v1/artists/{MuseId}/albums")).Albums.Where(x => x.AlbumType == "album").ToList();
+                var spotifyAlbums = JsonConvert.DeserializeObject<AlbumResponse>(GetData($"https://api.spotify.com/v1/artists/{ArtistId}/albums")).Albums.Where(x => x.AlbumType == "album").ToList();
                 List<Models.BackEnd.Album> Albumsx = new List<Models.BackEnd.Album>();
                 foreach (var x in spotifyAlbums)
                 {

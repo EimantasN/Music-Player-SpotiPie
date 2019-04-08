@@ -112,7 +112,7 @@ namespace SpotyPie.RecycleView
                     AddList(data);
                 }
             }
-            catch (Exception e)
+            catch
             {
             }
         }
@@ -131,7 +131,7 @@ namespace SpotyPie.RecycleView
                     }, null);
                 }
             }
-            catch (Exception e)
+            catch
             {
             }
         }

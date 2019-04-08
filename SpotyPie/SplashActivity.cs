@@ -15,7 +15,7 @@ using RestSharp;
 
 namespace SpotyPie
 {
-    [Activity(Label = "SplashActivity", MainLauncher = true)]
+    [Activity(Label = "SplashActivity", MainLauncher = false)]
     public class SplashActivity : Activity
     {
         ProgressBar loading;

@@ -18,12 +18,12 @@ using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie
 {
-    [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
+    [Activity(Label = "SpotyPie", MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
     public class MainActivity : AppCompatActivity
     {
         private int LastViewLayer = 0;
         private int CurrentViewLayer = 1;
-        private BluetoothHelper _bluetoothHelper;
+        //private BluetoothHelper _bluetoothHelper;
 
         private Current_state APPSTATE;
 
@@ -71,9 +71,9 @@ namespace SpotyPie
 
         private void MyCommandExecute()
         {
-            var deviceName = "MDR";
-            if (!_bluetoothHelper.IsConnected)
-                _bluetoothHelper.Connect(deviceName);
+            //var deviceName = "MDR";
+            //if (!_bluetoothHelper.IsConnected)
+            //    _bluetoothHelper.Connect(deviceName);
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
