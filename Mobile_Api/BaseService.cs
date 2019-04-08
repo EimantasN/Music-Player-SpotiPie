@@ -4,7 +4,7 @@ namespace Mobile_Api
 {
     public class BaseService
     {
-        private string BaseUrl { get; set; } = "http://pie.pertrauktiestaskas.lt/";
+        private string BaseUrl { get; set; } = "https://pie.pertrauktiestaskas.lt/";
 
         private ClientGetter Clients { get; set; } = new ClientGetter();
 

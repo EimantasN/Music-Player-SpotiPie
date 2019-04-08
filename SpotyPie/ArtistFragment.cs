@@ -60,7 +60,7 @@ namespace SpotyPie
         {
             try
             {
-                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/artist/" + id + "/top-tracks");
+                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/api/artist/" + id + "/top-tracks");
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)
@@ -95,7 +95,7 @@ namespace SpotyPie
         {
             //try
             //{
-            //    RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/artist/" + id + "/Albums");
+            //    RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/api/artist/" + id + "/Albums");
             //    var request = new RestRequest(Method.GET);
             //    IRestResponse response = await Client.ExecuteGetTaskAsync(request);
             //    if (response.IsSuccessful)

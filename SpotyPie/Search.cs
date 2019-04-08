@@ -222,7 +222,7 @@ namespace SpotyPie
         {
             try
             {
-                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/api/songs/search");
+                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/api/songs/search");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
@@ -278,7 +278,7 @@ namespace SpotyPie
 
             try
             {
-                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/Api/Album/Search");
+                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/Api/Album/Search");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
@@ -360,7 +360,7 @@ namespace SpotyPie
         {
             try
             {
-                RestClient Client = new RestClient("http://pie.pertrauktiestaskas.lt/Api/artist/Search");
+                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/Api/artist/Search");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");

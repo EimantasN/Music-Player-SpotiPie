@@ -74,7 +74,7 @@ namespace SpotyPie.Library.Fragments
             {
                 ArtistsData.Clear();
                 ArtistsData.Add(null);
-                var client = new RestClient("http://pie.pertrauktiestaskas.lt/api/Artist/Artists");
+                var client = new RestClient("https://pie.pertrauktiestaskas.lt/api/Artist/Artists");
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
                 IRestResponse response = await client.ExecuteTaskAsync(request);

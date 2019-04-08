@@ -20,7 +20,7 @@ namespace SpotyPie.Player
         protected const int OffsetContainer = 250;
         protected int FragmentWidth = 0;
 
-        private const string BaseUrl = "http://pie.pertrauktiestaskas.lt/api/stream/play/";
+        private const string BaseUrl = "https://pie.pertrauktiestaskas.lt/api/stream/play/";
 
         private int CurrentState { get; set; } = 1;
 
