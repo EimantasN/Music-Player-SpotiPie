@@ -198,11 +198,16 @@ namespace Services
             List<AudioBindError> Errors = new List<AudioBindError>();
             try
             {
+                string fileName;
+                string newPath;
                 foreach (var path in System.IO.Directory.EnumerateFiles(GetEnviromentPath()))
                 {
                     try
                     {
-                        var data = await SaveFileAsync(path);
+                        fileName = Path.GetFileName(path);
+                        newPath = path.Replace(fileName, Replacer.RemoveSpecialCharacters(fileName));
+                        File.Move(path, newPath);
+                        var data = await SaveFileAsync(newPath);
                         if (data != null)
                             Errors.Add(data);
                     }
@@ -225,7 +230,7 @@ namespace Services
             List<AudioBindError> Errors = new List<AudioBindError>();
             try
             {
-                using (var fileStream = new FileStream(GetEnviromentPath() + Path.DirectorySeparatorChar + file.FileName, FileMode.Create))
+                using (var fileStream = new FileStream(GetEnviromentPath() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName), FileMode.Create))
                 {
                     await file.CopyToAsync(fileStream);
                 }

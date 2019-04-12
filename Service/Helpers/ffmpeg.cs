@@ -20,7 +20,7 @@ namespace Service.Helpers
             if (File.Exists(newFile.Replace(".flac", "-C_16.flac")))
             {
                 File.Copy(newFile.Replace(".flac", "-C_16.flac"), newFile, true);
-                //File.Delete(newFile.Replace(".flac", "-C_16.flac"));
+                File.Delete(newFile.Replace(".flac", "-C_16.flac"));
             }
             else
             {
