@@ -328,6 +328,7 @@ namespace Services
 
                 if (File.Exists(destinationPath) && song.Size > new FileInfo(destinationPath).Length)
                 {
+                    File.Delete(destinationPath);
                     return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Size is bigger current Song " + song.Size + " new song - " + new FileInfo(destinationPath).Length);
                 }
                 else

@@ -1,5 +1,6 @@
 ﻿using Config.Net;
 using Database;
+using IdSharp.Tagging.VorbisComment;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -34,10 +35,72 @@ namespace API.Controllers
 
         [RequestSizeLimit(500000000)]
         [DisableFormValueModelBinding]
+        [HttpPost("Stat")]
+        public async Task<ActionResult> GetStatsAsync()
+        {
+            try
+            {
+
+                string filePath =
+                    Environment.CurrentDirectory +
+                    Path.DirectorySeparatorChar + "Music" +
+                    Path.DirectorySeparatorChar + "algorithm.flac";
+
+                FileInfo info = new FileInfo(filePath);
+                FileAttributes attributes = info.Attributes;
+
+                var flacTag = new VorbisComment(filePath);
+
+
+                return Ok("Stat");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [RequestSizeLimit(500000000)]
+        [DisableFormValueModelBinding]
         [HttpPost]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> Post()
         {
+            //try
+            //{
+            //    if (Request.HasFormContentType)
+            //    {
+            //        var form = Request.Form;
+            //        foreach (var formFile in form.Files)
+            //        {
+
+            //            string filePath =
+            //                Path.DirectorySeparatorChar + "root" +
+            //                Path.DirectorySeparatorChar + "Content" +
+            //                Path.DirectorySeparatorChar + "Temp" +
+            //                Path.DirectorySeparatorChar + formFile.FileName;
+
+            //            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            //            {
+            //                await formFile.CopyToAsync(fileStream);
+            //            }
+
+            //            FileInfo info = new FileInfo(filePath);
+            //            FileAttributes attributes = info.Attributes;
+
+            //            var flacTag = new VorbisComment(filePath);
+
+            //        }
+            //    }
+
+
+            //    return Ok("Stat");
+            //}
+            //catch (Exception e)
+            //{
+            //    return BadRequest(e);
+            //}
+
             try
             {
                 Dictionary<string, string> results = new Dictionary<string, string>();
