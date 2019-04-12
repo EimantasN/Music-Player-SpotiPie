@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.BackEnd;
 using Newtonsoft.Json;
+using Service.Helpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace API.Controllers
@@ -19,6 +21,26 @@ namespace API.Controllers
         public SyncController(SpotyPieIDbContext ctx)
         {
             _ctx = ctx;
+        }
+
+        [HttpGet("FFpeg")]
+        public ActionResult FFpeg()
+        {
+            try
+            {
+                string path =
+                    System.IO.Path.DirectorySeparatorChar + "root" +
+                    System.IO.Path.DirectorySeparatorChar + "Content" +
+                    System.IO.Path.DirectorySeparatorChar + "Flac";
+
+                Ffmpeg.ConvertFile(path + Path.DirectorySeparatorChar + "unintended.flac");
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
 
         [HttpGet("GetQuote/{id}")]

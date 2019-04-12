@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Service.Helpers
 {
@@ -12,24 +13,32 @@ namespace Service.Helpers
 
         private static string ExecuteBashCommand(string command)
         {
-            command = command.Replace("\"", "\"\"");
-
-            var proc = new Process
+            try
             {
-                StartInfo = new ProcessStartInfo
+                command = command.Replace("\"", "\"\"");
+
+                var proc = new Process
                 {
-                    FileName = "/bin/bash",
-                    Arguments = "-c \"" + command + "\"",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }
-            };
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "/bin/bash",
+                        Arguments = "-c \"" + command + "\"",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
 
-            proc.Start();
-            proc.WaitForExit();
+                proc.Start();
+                proc.WaitForExit();
 
-            return proc.StandardOutput.ReadToEnd();
+                return proc.StandardOutput.ReadToEnd();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
         }
     }
 }
