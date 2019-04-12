@@ -207,7 +207,7 @@ namespace Services
                         fileName = Path.GetFileName(path);
                         newPath = path.Replace(fileName, Replacer.RemoveSpecialCharacters(fileName));
                         File.Move(path, newPath);
-                        var data = await SaveFileAsync(newPath);
+                        var data = await SaveFileAsync(newPath.Replace("_flac", ".flac"));
                         if (data != null)
                             Errors.Add(data);
                     }
