@@ -33,7 +33,7 @@ namespace API.Controllers
                     System.IO.Path.DirectorySeparatorChar + "Content" +
                     System.IO.Path.DirectorySeparatorChar + "Flac";
 
-                Ffmpeg.ConvertFile(path + Path.DirectorySeparatorChar + "unintended.flac");
+                Ffmpeg.ConvertFile(path + Path.DirectorySeparatorChar, "unintended.flac", "unintended2.flac");
 
                 return Ok();
             }

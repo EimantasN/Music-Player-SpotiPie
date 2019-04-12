@@ -5,6 +5,12 @@ namespace Service.Helpers
 {
     public static class Ffmpeg
     {
+        public static void ConvertFile(string path, string oldName, string name)
+        {
+            string command = $"ffmpeg -i {path + oldName } -sample_fmt s16 -ar 48000 {path + name}";
+            ExecuteBashCommand(command);
+        }
+
         public static void ConvertFile(string newFile)
         {
             string command = $"ffmpeg - i {newFile} - sample_fmt s16 - ar 48000 {newFile + "Converted"}";
