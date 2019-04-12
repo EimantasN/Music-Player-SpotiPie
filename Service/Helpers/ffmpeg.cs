@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Service.Helpers
 {
@@ -13,8 +14,18 @@ namespace Service.Helpers
 
         public static void ConvertFile(string newFile)
         {
-            string command = $"ffmpeg - i {newFile} - sample_fmt s16 - ar 48000 {newFile + "Converted"}";
+            string command = $"ffmpeg -i {newFile} -sample_fmt s16 -ar 48000 {newFile.Replace(".flac", "-C_16.flac")}";
             ExecuteBashCommand(command);
+
+            if (File.Exists(newFile.Replace(".flac", "-C_16.flac")))
+            {
+                File.Copy(newFile.Replace(".flac", "-C_16.flac"), newFile, true);
+                //File.Delete(newFile.Replace(".flac", "-C_16.flac"));
+            }
+            else
+            {
+                throw new Exception("FFpeg failed");
+            }
         }
 
         private static string ExecuteBashCommand(string command)
