@@ -5,7 +5,7 @@ namespace Service.Helpers
 {
     public static class Replacer
     {
-        private static char[] specialCharacters = new char[] { '*', '?', '*', '(', ')', '/', ':', '.', ',' };
+        private static char[] specialCharacters = new char[] { '*', '?', '*', '(', ')', '/', ':', '.', ',', ' ', '\'' };
 
         public static string CorrentAlbum(string title)
         {

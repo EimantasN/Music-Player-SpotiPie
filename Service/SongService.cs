@@ -326,6 +326,15 @@ namespace Services
                     Path.DirectorySeparatorChar +
                     Replacer.RemoveSpecialCharacters(SongName) + ".flac";
 
+                long before = new FileInfo(filePath).Length;
+                Ffmpeg.ConvertFile(filePath);
+
+                if (File.Exists(filePath + "Converted"))
+                {
+                    long after = new FileInfo(filePath).Length;
+                    return new AudioBindError(destinationPath, flacTag.Artist, flacTag.Album, flacTag.Title, $"{after} -> {before} CONVERTAVOSI ===========================================================================");
+                }
+
                 if (File.Exists(destinationPath) && song.Size > new FileInfo(filePath).Length)
                 {
                     File.Delete(filePath);
