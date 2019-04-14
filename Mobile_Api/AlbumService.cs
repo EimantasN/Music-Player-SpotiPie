@@ -32,5 +32,10 @@ namespace Mobile_Api
         {
             return await GetListAsync<Album>("Old");
         }
+
+        public async Task Update(int id)
+        {
+            await Update<Album>(id);
+        }
     }
 }

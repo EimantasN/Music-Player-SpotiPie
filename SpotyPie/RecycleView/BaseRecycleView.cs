@@ -1,11 +1,13 @@
 ﻿using Android.Support.V4.View;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using Mobile_Api;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SpotyPie.RecycleView
 {
@@ -53,7 +55,10 @@ namespace SpotyPie.RecycleView
                 {
                     if (RvDataset[position].GetType().Name == "Album")
                     {
-                        Activity.LoadAlbum(RvDataset[position] as Album);
+                        var Api = (AlbumService)Activity.GetService(Mobile_Api.Models.Enums.ApiServices.Albums);
+                        var al = RvDataset[position] as Album;
+                        Task.Run(() => Api.Update(al.Id));
+                        Activity.LoadAlbum(al);
                     }
                     else if (RvDataset[position].GetType().Name == "Song")
                     {

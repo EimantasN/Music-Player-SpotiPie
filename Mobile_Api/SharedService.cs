@@ -21,6 +21,12 @@ namespace Mobile_Api
             return await GetData<T>(Client);
         }
 
+        public async Task Update<T>(int id)
+        {
+            CustomRestClient Client = GetClient($"api/{Controller}/Update/" + id);
+            await PostData<T>(Client);
+        }
+
         /// PVZ api/album/Recent
         public async Task<List<T>> GetListAsync<T>(string type)
         {
@@ -37,6 +43,21 @@ namespace Mobile_Api
             catch
             {
                 return new List<T>();
+            }
+            finally
+            {
+                Release(client);
+            }
+        }
+
+        private async Task PostData<T>(CustomRestClient client)
+        {
+            try
+            {
+                await client.CustomGetObject<T>(Method.POST);
+            }
+            catch
+            {
             }
             finally
             {
