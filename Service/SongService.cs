@@ -273,7 +273,7 @@ namespace Services
             CheckForDirectory(
                 GetEnviromentPath() +
                 Path.DirectorySeparatorChar +
-                Replacer.RemoveSpecialCharacters(flacTag.Artist.ToLower().Trim());
+                Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()));
 
             string AlbumName = "";
             Replacer.CorrentAlbum(flacTag.Album);
@@ -299,7 +299,7 @@ namespace Services
             CheckForDirectory(
                 GetEnviromentPath() +
                 Path.DirectorySeparatorChar +
-                Replacer.RemoveSpecialCharacters(flacTag.Artist.ToLower().Trim()) +
+                Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()) +
                 Path.DirectorySeparatorChar +
                 Replacer.RemoveSpecialCharacters(AlbumName));
 
@@ -328,7 +328,7 @@ namespace Services
             {
                 destinationPath = GetEnviromentPath() +
                     Path.DirectorySeparatorChar +
-                    Replacer.RemoveSpecialCharacters(flacTag.Artist.ToLower().Trim()) +
+                    Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()) +
                     Path.DirectorySeparatorChar +
                     Replacer.RemoveSpecialCharacters(AlbumName) +
                     Path.DirectorySeparatorChar +
