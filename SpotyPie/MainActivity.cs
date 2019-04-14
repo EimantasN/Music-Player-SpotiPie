@@ -258,8 +258,10 @@ namespace SpotyPie
             viewPager.Adapter = adapter;
         }
 
-        public SongService SongAPI { get; set; }
-        public AlbumService AlbumAPI { get; set; }
+        private SongService SongAPI { get; set; }
+        private AlbumService AlbumAPI { get; set; }
+
+        private ArtistService ArtistAPI { get; set; }
 
         private Object ServiceLock { get; set; } = new Object();
 
@@ -280,6 +282,12 @@ namespace SpotyPie
                             if (AlbumAPI == null)
                                 return AlbumAPI = new AlbumService();
                             return AlbumAPI;
+                        }
+                    case ApiServices.Artist:
+                        {
+                            if (ArtistAPI == null)
+                                return ArtistAPI = new ArtistService();
+                            return ArtistAPI;
                         }
                     default:
                         return null;
@@ -426,6 +434,15 @@ namespace SpotyPie
 
             if (CurrentViewLayer != 4)
                 TogglePlayer(false);
+
+            if (CurrentViewLayer == 2)
+            {
+                bottomNavigation.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                bottomNavigation.Visibility = ViewStates.Gone;
+            }
         }
     }
 }

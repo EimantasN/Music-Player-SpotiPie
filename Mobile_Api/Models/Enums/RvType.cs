@@ -5,6 +5,8 @@
         Artist,
         Album,
         Playlist,
-        AlbumBigOne
+        AlbumBigOne,
+        ArtistList,
+        AlbumList
     }
 }

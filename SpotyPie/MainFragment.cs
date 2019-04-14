@@ -95,7 +95,7 @@ namespace SpotyPie
                 InvokeOnMainThread(() =>
                 {
                     Toggle(true, RecentHolder);
-                    albums.ForEach(x => RecentAlbums.Add(x));
+                    RecentAlbums.AddList(albums);
                 });
             }
             catch (Exception e)
@@ -113,7 +113,7 @@ namespace SpotyPie
                 InvokeOnMainThread(() =>
                 {
                     Toggle(true, BestHolder);
-                    albums.ForEach(x => BestAlbums.Add(x));
+                    BestAlbums.AddList(albums);
                 });
             }
             catch (Exception e)
@@ -132,7 +132,7 @@ namespace SpotyPie
                 InvokeOnMainThread(() =>
                 {
                     Toggle(true, JumpBackHolder);
-                    albums.ForEach(x => JumpBack.Add(x));
+                    JumpBack.AddList(albums);
                 });
             }
             catch (Exception e)

@@ -43,7 +43,7 @@ namespace SpotyPie.Library.Fragments
             for (int i = 1; i < data.Count; i++)
             {
                 Album = data[i];
-                Album.Type = RvType.AlbumBigOne;
+                Album.SetModelType(RvType.AlbumList);
                 newlist.Add(Album);
             }
 
@@ -54,123 +54,6 @@ namespace SpotyPie.Library.Fragments
         public override void ForceUpdate()
         {
             Task.Run(() => LoadAllAlbums());
-        }
-    }
-
-    public class AlbumRV : RecyclerView.Adapter, IFastScrollRecyclerViewAdapter
-    {
-        private RvList<Album> Dataset;
-        Dictionary<string, int> MapIndex;
-        private Context Context;
-
-        public AlbumRV(RvList<Album> data, Context context)
-        {
-            Dataset = data;
-            MapIndex = GetMapIndex(data);
-            Context = context;
-        }
-
-        public class Loading : RecyclerView.ViewHolder
-        {
-            public View LoadingView { get; set; }
-
-            public Loading(View view) : base(view)
-            { }
-        }
-
-        public class BlockImage : RecyclerView.ViewHolder
-        {
-            public View EmptyTimeView { get; set; }
-
-            public TextView Title { get; set; }
-
-            public TextView SubTitile { get; set; }
-
-            public ImageView Image { get; set; }
-
-            public BlockImage(View view) : base(view) { }
-        }
-
-        public override int GetItemViewType(int position)
-        {
-            if (Dataset[position] == null)
-            {
-                return Resource.Layout.Loading;
-            }
-            else
-            {
-                return Resource.Layout.song_list_rv;
-            }
-        }
-
-        public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
-        {
-            if (viewType == Resource.Layout.Loading)
-            {
-                View Loading = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.Loading, parent, false);
-
-                Loading view = new Loading(Loading) { };
-
-                return view;
-            }
-            else
-            {
-                View BoxView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list_one, parent, false);
-                TextView mTitle = BoxView.FindViewById<TextView>(Resource.Id.textView10);
-                TextView mSubTitle = BoxView.FindViewById<TextView>(Resource.Id.textView11);
-                ImageView mImage = BoxView.FindViewById<ImageView>(Resource.Id.imageView5);
-
-                BlockImage view = new BlockImage(BoxView)
-                {
-                    Image = mImage,
-                    SubTitile = mSubTitle,
-                    Title = mTitle,
-                    IsRecyclable = false
-                };
-
-                return view;
-            }
-        }
-
-        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
-        {
-            if (holder is Loading)
-            {
-                ;
-            }
-            else if (holder is BlockImage)
-            {
-                BlockImage view = holder as BlockImage;
-                view.Title.Text = Dataset[position].Name;
-                //view.SubTitile.Text = GetState().Current_Artist.Name;
-                Picasso.With(Context).Load(Dataset[position].LargeImage).Resize(1200, 1200).CenterCrop().Into(view.Image);
-            }
-        }
-
-        public Dictionary<string, int> GetMapIndex(RvList<Album> data)
-        {
-            for (int i = 0; i < data.Count; i++)
-            {
-                string name = data[i].Name;
-                string index = name.Substring(0, 1);
-                index = index.ToUpper();
-
-                if (!MapIndex.ContainsKey(index))
-                {
-                    MapIndex.Add(index, i);
-                }
-            }
-            return MapIndex;
-        }
-
-        public Dictionary<string, int> GetMapIndex()
-        {
-            return this.MapIndex;
-        }
-
-        public override int ItemCount
-        {
-            get { return Dataset.Count; }
         }
     }
 }

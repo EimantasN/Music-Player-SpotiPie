@@ -1,5 +1,6 @@
 ﻿using Android.Support.V4.View;
 using Android.Support.V7.Widget;
+using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
@@ -57,6 +58,10 @@ namespace SpotyPie.RecycleView
                     else if (RvDataset[position].GetType().Name == "Song")
                     {
                         Activity.GetState().SetSong(JsonConvert.DeserializeObject<List<Song>>(JsonConvert.SerializeObject(RvDataset.GetList())), position);
+                    }
+                    else
+                    {
+                        Toast.MakeText(this.Activity.Context, "Clicked -> " + RvDataset[position].GetType().Name, ToastLength.Short).Show();
                     }
                 }
             });

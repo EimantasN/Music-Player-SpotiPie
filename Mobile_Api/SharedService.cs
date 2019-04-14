@@ -15,6 +15,12 @@ namespace Mobile_Api
             return await GetData<T>(Client);
         }
 
+        public async Task<T> GetOne<T>(string endPoint)
+        {
+            CustomRestClient Client = GetClient($"api/{Controller}/" + endPoint);
+            return await GetData<T>(Client);
+        }
+
         /// PVZ api/album/Recent
         public async Task<List<T>> GetListAsync<T>(string type)
         {

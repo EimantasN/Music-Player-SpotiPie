@@ -135,23 +135,23 @@ namespace SpotyPie
             //});
 
             //ARTIST RV
-            ArtistsData = new List<Artist>();
-            Artists = new RvList<Artist>();
-            ArtistsLayoutManager = new LinearLayoutManager(this.Activity);
-            ArtistsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artists_rv);
-            ArtistsRecyclerView.SetLayoutManager(ArtistsLayoutManager);
-            ArtistsAdapter = new ArtistRV(Artists, this.Context);
-            Artists.Adapter = ArtistsAdapter;
-            ArtistsRecyclerView.SetAdapter(ArtistsAdapter);
-            ArtistsRecyclerView.NestedScrollingEnabled = false;
+            //ArtistsData = new List<Artist>();
+            //Artists = new RvList<Artist>();
+            //ArtistsLayoutManager = new LinearLayoutManager(this.Activity);
+            //ArtistsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artists_rv);
+            //ArtistsRecyclerView.SetLayoutManager(ArtistsLayoutManager);
+            //ArtistsAdapter = new ArtistRV(Artists, this.Context);
+            //Artists.Adapter = ArtistsAdapter;
+            //ArtistsRecyclerView.SetAdapter(ArtistsAdapter);
+            //ArtistsRecyclerView.NestedScrollingEnabled = false;
 
-            ArtistsRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (ArtistsRecyclerView != null && ArtistsRecyclerView.ChildCount != 0)
-                {
-                    //Current_state.SetSong(Current_state.Current_Song_List[position]);
-                }
-            });
+            //ArtistsRecyclerView.SetItemClickListener((rv, position, view) =>
+            //{
+            //    if (ArtistsRecyclerView != null && ArtistsRecyclerView.ChildCount != 0)
+            //    {
+            //        //Current_state.SetSong(Current_state.Current_Song_List[position]);
+            //    }
+            //});
         }
 
         public override void OnResume()

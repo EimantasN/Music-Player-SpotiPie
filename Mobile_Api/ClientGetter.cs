@@ -9,7 +9,8 @@ namespace Mobile_Api
         private object _GetterLock { get; set; }
         private object _ReleaseLock { get; set; }
 
-        private List<Client> _ClientList { get; set; }
+        //Temp Fix
+        private static List<Client> _ClientList { get; set; }
 
         public ClientGetter()
         {
@@ -25,6 +26,9 @@ namespace Mobile_Api
         {
             lock (_GetterLock)
             {
+                if (_ClientList == null || _ClientList.Count == 0)
+                    _ClientList = new List<Client>() { new Client() };
+
                 Client client = _ClientList.FirstOrDefault(x => x.GetState());
                 if (client != null)
                 {
@@ -48,7 +52,10 @@ namespace Mobile_Api
                 if (client == null)
                     return;
 
-                _ClientList.First(x => x.GetId() == client.GetId()).ReleaseClient();
+                if (!(_ClientList == null || _ClientList.Count == 0))
+                {
+                    _ClientList.First(x => x.GetId() == client.GetId()).ReleaseClient();
+                }
             }
         }
     }

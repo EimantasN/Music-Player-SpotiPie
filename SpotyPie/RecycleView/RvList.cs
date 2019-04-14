@@ -47,7 +47,7 @@ namespace SpotyPie.RecycleView
         {
             Application.SynchronizationContext.Post(_ =>
             {
-                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, newData), true);
+                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, newData), false);
 
                 // Overwrite the old data
                 Erase();
@@ -155,7 +155,7 @@ namespace SpotyPie.RecycleView
                 {
                     Console.WriteLine(e.Message);
                 }
-                Adapter.NotifyDataSetChanged();
+                //Adapter.NotifyDataSetChanged();
             }, null);
         }
     }

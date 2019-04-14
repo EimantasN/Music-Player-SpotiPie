@@ -81,7 +81,7 @@ namespace SpotyPie.Helpers
                 {
                     Console.WriteLine(e.Message);
                 }
-                Adapter.NotifyDataSetChanged();
+                //Adapter.NotifyDataSetChanged();
             }, null);
         }
 

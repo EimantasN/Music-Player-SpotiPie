@@ -25,22 +25,22 @@
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <AndroidLinkMode>Full</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
     <AndroidSupportedAbis />
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
-    <EnableProguard>true</EnableProguard>
-    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+    <EnableProguard>false</EnableProguard>
+    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
@@ -102,6 +102,8 @@
     <Compile Include="Playlist_view.cs" />
     <Compile Include="RecycleView\BaseRecycleView.cs" />
     <Compile Include="RecycleView\Helpers\RecycleUpdate.cs" />
+    <Compile Include="RecycleView\Models\AlbumList.cs" />
+    <Compile Include="RecycleView\Models\ArtistList.cs" />
     <Compile Include="RecycleView\Models\BlockImage.cs" />
     <Compile Include="RecycleView\Models\BlockImageTwo.cs" />
     <Compile Include="RecycleView\Models\Loading.cs" />
@@ -155,6 +157,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Refractored.Controls.CircleImageView">
+      <Version>1.0.1</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.6.9</Version>
@@ -501,6 +506,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\splash.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\artist_list.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\album_list.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

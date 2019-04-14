@@ -29,10 +29,22 @@ namespace SpotyPie.RecycleView
             else if (typeof(T) == typeof(Album) || Dataset[position].GetType().Name == "Album")
             {
                 var al = Dataset[position] as Album;
-                if (al.Type == Mobile_Api.Models.Enums.RvType.Album)
+                if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.Album)
                     return Resource.Layout.big_rv_list;
+                else if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.AlbumList)
+                    return Resource.Layout.album_list;
                 else
                     return Resource.Layout.big_rv_list_one;
+            }
+            else if (typeof(T) == typeof(Artist) || Dataset[position].GetType().Name == "Artist")
+            {
+                var al = Dataset[position] as Artist;
+                if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.Artist)
+                    return Resource.Layout.big_rv_list_one;
+                else if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.ArtistList)
+                {
+                    return Resource.Layout.artist_list;
+                }
             }
             //else if (typeof(T) == typeof(TwoBlockWithImage))
             //{
@@ -101,6 +113,14 @@ namespace SpotyPie.RecycleView
 
                 return view;
             }
+            else if (viewType == Resource.Layout.artist_list)
+            {
+                return new ArtistList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.artist_list, parent, false), parent);
+            }
+            else if (viewType == Resource.Layout.album_list)
+            {
+                return new AlbumList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.album_list, parent, false), parent);
+            }
             throw new System.Exception("View Id in RV not found");
         }
 
@@ -128,6 +148,16 @@ namespace SpotyPie.RecycleView
             else if (holder is SongItem)
             {
                 SongItem view = holder as SongItem;
+                view.PrepareView(Dataset[position], Context);
+            }
+            else if (holder is ArtistList)
+            {
+                ArtistList view = holder as ArtistList;
+                view.PrepareView(Dataset[position], Context);
+            }
+            else if (holder is AlbumList)
+            {
+                AlbumList view = holder as AlbumList;
                 view.PrepareView(Dataset[position], Context);
             }
         }

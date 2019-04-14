@@ -347,26 +347,26 @@ namespace Services
                 //}
                 //else
                 //{
-                    File.Copy(filePath,
-                    destinationPath,
-                    true);
+                File.Copy(filePath,
+                destinationPath,
+                true);
 
-                    if (song.LocalUrl == null || song.LocalUrl != destinationPath)
+                if (song.LocalUrl == null || song.LocalUrl != destinationPath)
+                {
+                    song.LocalUrl = destinationPath;
+                    song.IsLocal = true;
+                    song.IsPlayable = true;
+                    song.UploadTime = DateTime.Now;
+                    song.Size = new FileInfo(destinationPath).Length;
+                    _ctx.Entry(song).State = EntityState.Modified;
+
+                    if (!album.IsPlayable)
                     {
-                        song.LocalUrl = destinationPath;
-                        song.IsLocal = true;
-                        song.IsPlayable = true;
-                        song.UploadTime = DateTime.Now;
-                        song.Size = new FileInfo(destinationPath).Length;
-                        _ctx.Entry(song).State = EntityState.Modified;
-
-                        if (!album.IsPlayable)
-                        {
-                            album.IsPlayable = true;
-                            _ctx.Entry(album).State = EntityState.Modified;
-                        }
-                        await _ctx.SaveChangesAsync();
+                        album.IsPlayable = true;
+                        _ctx.Entry(album).State = EntityState.Modified;
                     }
+                    await _ctx.SaveChangesAsync();
+                }
                 //}
             }
 

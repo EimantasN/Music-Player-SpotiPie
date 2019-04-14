@@ -46,7 +46,7 @@ namespace SpotyPie
         private MarginLayoutParams MarginParrams;
         private RelativeLayout relative;
         private NestedScrollView ScrollFather;
-        private FrameLayout Holder;
+        //private FrameLayout Holder;
 
         private int Height = 0;
         private int Scrolled;
@@ -58,8 +58,8 @@ namespace SpotyPie
         protected override void InitView()
         {
             //Background binding
-            Holder = RootView.FindViewById<FrameLayout>(Resource.Id.frameLayout);
-            Holder.Touch += Containerx_Touch;
+            //Holder = RootView.FindViewById<FrameLayout>(Resource.Id.frameLayout);
+            //Holder.Touch += Containerx_Touch;
             ShufflePlay = RootView.FindViewById<Button>(Resource.Id.button_text);
             ShufflePlay.Visibility = ViewStates.Gone;
 
@@ -82,13 +82,13 @@ namespace SpotyPie
             InnerViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.innerWrapper);
             //InnerViewContainer.Visibility = ViewStates.Gone;
             ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
-            backViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.backViewContainer);
-            var parameters = backViewContainer.LayoutParameters;
-            parameters.Height = Resources.DisplayMetrics.WidthPixels;
+            //backViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.backViewContainer);
+            //var parameters = backViewContainer.LayoutParameters;
+            //parameters.Height = Resources.DisplayMetrics.WidthPixels;
 
-            backViewContainer.LayoutParameters = parameters;
+            //backViewContainer.LayoutParameters = parameters;
 
-            Height = backViewContainer.LayoutParameters.Height;
+            //Height = backViewContainer.LayoutParameters.Height;
 
             ScrollFather.ScrollChange += Scroll_ScrollChange;
 
