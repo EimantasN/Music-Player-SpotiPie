@@ -34,6 +34,23 @@ namespace Services
             }
         }
 
+        public async Task<Album> UpdateAlbum(int id)
+        {
+            try
+            {
+                //Task.Run(() => Update(id));
+                var album = await _ctx.Albums.FirstAsync(x => x.Id == id);
+                Update(album);
+                if (album == null)
+                    throw new Exception("album with id " + id + " not found");
+                return album;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public void Update(Album album)
         {
             try
@@ -45,7 +62,6 @@ namespace Services
             }
             catch (Exception e)
             {
-
             }
         }
 

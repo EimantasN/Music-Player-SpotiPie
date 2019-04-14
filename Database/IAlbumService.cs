@@ -10,6 +10,8 @@ namespace Database
 
         Task<Album> GetAlbumAsync(int id);
 
+        Task<Album> UpdateAlbum(int id);
+
         Task<List<Album>> GetAlbumsAsync(int count = int.MaxValue);
 
         Task<List<Album>> GetRecentAlbumsAsync();

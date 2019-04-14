@@ -33,7 +33,7 @@ namespace API.Controllers
         //Search for albums with specified name
         [HttpPost("search")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> Search([FromBody] string query)
+        public async Task<IActionResult> Search([FromForm] string query)
         {
             try
             {
@@ -41,6 +41,23 @@ namespace API.Controllers
                     return BadRequest("Bad search query");
 
                 return Ok(await _album.Search(query));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPost("Update/{id}")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> Update(int id)
+        {
+            try
+            {
+                if (id == 0)
+                    return BadRequest("id cant be 0");
+
+                return Ok(await _album.UpdateAlbum(id));
             }
             catch (Exception e)
             {
