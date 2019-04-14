@@ -8,23 +8,29 @@ namespace Service.Helpers
     {
         public static void ConvertFile(string path, string oldName, string name)
         {
-            string command = $"ffmpeg -i {path + oldName } -sample_fmt s16 -ar 48000 {path + name}";
-            ExecuteBashCommand(command);
+            if (!Environment.OSVersion.ToString().Contains("W"))
+            {
+                string command = $"ffmpeg -i {path + oldName } -sample_fmt s16 -ar 48000 {path + name}";
+                ExecuteBashCommand(command);
+            }
         }
 
         public static void ConvertFile(string newFile)
         {
-            string command = $"ffmpeg -i {newFile} -sample_fmt s16 -ar 48000 {newFile.Replace(".flac", "-C_16.flac")}";
-            ExecuteBashCommand(command);
+            if (!Environment.OSVersion.ToString().Contains("W"))
+            {
+                string command = $"ffmpeg -i {newFile} -sample_fmt s16 -ar 48000 {newFile.Replace(".flac", "-C_16.flac")}";
+                ExecuteBashCommand(command);
 
-            if (File.Exists(newFile.Replace(".flac", "-C_16.flac")))
-            {
-                File.Copy(newFile.Replace(".flac", "-C_16.flac"), newFile, true);
-                File.Delete(newFile.Replace(".flac", "-C_16.flac"));
-            }
-            else
-            {
-                throw new Exception("FFpeg failed");
+                if (File.Exists(newFile.Replace(".flac", "-C_16.flac")))
+                {
+                    File.Copy(newFile.Replace(".flac", "-C_16.flac"), newFile, true);
+                    File.Delete(newFile.Replace(".flac", "-C_16.flac"));
+                }
+                else
+                {
+                    throw new Exception("FFpeg failed");
+                }
             }
         }
 

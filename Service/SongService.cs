@@ -233,14 +233,15 @@ namespace Services
             List<AudioBindError> Errors = new List<AudioBindError>();
             try
             {
-                using (var fileStream = new FileStream(GetEnviromentPath() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName), FileMode.Create))
+                string FilePath = GetEnviromentPath() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName).Replace("_flac", ".flac");
+                using (var fileStream = new FileStream(FilePath, FileMode.Create))
                 {
                     await file.CopyToAsync(fileStream);
                 }
 
                 try
                 {
-                    var data = await SaveFileAsync(GetEnviromentPath() + Path.DirectorySeparatorChar + file.FileName);
+                    var data = await SaveFileAsync(FilePath);
                     if (data != null)
                         Errors.Add(data);
                 }
