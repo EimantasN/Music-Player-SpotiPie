@@ -24,6 +24,9 @@ namespace Database
         Task UpdateAsync(int id);
 
         Task<List<AudioBindError>> BindData();
+
         Task<List<AudioBindError>> AddAudioToLibrary(IFormFile file);
+
+        Task<Song> SetLenght(int id, long lenght);
     }
 }

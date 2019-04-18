@@ -399,5 +399,24 @@ namespace Services
                     System.IO.Path.DirectorySeparatorChar + "Music";
             }
         }
+
+        public async Task<Song> SetLenght(int id, long durationMs)
+        {
+            try
+            {
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
+                if (song != null)
+                {
+                    song.DurationMs = durationMs;
+                    _ctx.Entry(song).State = EntityState.Modified;
+                    await _ctx.SaveChangesAsync();
+                }
+                return song;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
