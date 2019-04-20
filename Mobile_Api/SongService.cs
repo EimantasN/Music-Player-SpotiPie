@@ -1,4 +1,6 @@
 ﻿using Mobile_Api.Models;
+using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -31,6 +33,11 @@ namespace Mobile_Api
         public async Task<List<Song>> GetPopular()
         {
             return await GetListAsync<Song>("Popular");
+        }
+
+        public async Task<Song> SetSongDuration(int id, int duration)
+        {
+            return await Post<Song>("SetSongLenght", $"id={id}&lenght={duration}");
         }
     }
 }

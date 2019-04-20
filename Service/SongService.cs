@@ -143,11 +143,9 @@ namespace Services
         {
             try
             {
+                query = $"SELECT * FROM[SpotyPie].[dbo].[Song] where IsPlayable=1 AND Name Like '%{query.Replace("'", "\"")}%'";
                 return await _ctx.Songs
-                    .AsNoTracking()
-                    .Where(x => x.IsPlayable == true)
-                    .Where(x => x.Name.Contains(query))
-                    .Take(10)
+                    .FromSql(query)
                     .ToListAsync();
             }
             catch (Exception e)

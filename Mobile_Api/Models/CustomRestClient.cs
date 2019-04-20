@@ -95,6 +95,56 @@ namespace Mobile_Api.Models
             }
         }
 
+        public async Task<T> PostCustomObject<T>(string parameters)
+        {
+            try
+            {
+                IRestResponse response;
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                request.AddParameter("application/x-www-form-urlencoded", parameters, ParameterType.RequestBody);
+                response = await base.ExecuteTaskAsync(request);
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<T>(response.Content);
+                }
+                else
+                {
+                    return default(T);
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<List<T>> PostCustomObjectList<T>(string parameters)
+        {
+            try
+            {
+                IRestResponse response;
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                request.AddParameter("application/x-www-form-urlencoded", parameters, ParameterType.RequestBody);
+                response = await base.ExecuteTaskAsync(POST);
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<List<T>>(response.Content);
+                }
+                else
+                {
+                    return new List<T>();
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         private void TimeoutCheck(IRestRequest request, IRestResponse response)
         {
             if (response.StatusCode == 0)

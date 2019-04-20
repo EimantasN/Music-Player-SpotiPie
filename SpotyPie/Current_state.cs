@@ -1,7 +1,9 @@
 ﻿using Android.App;
 using Android.Views;
+using Mobile_Api;
 using Mobile_Api.Models;
 using Square.Picasso;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -207,6 +209,22 @@ namespace SpotyPie
                     }
                     break;
                 }
+            }
+        }
+
+        internal void SetSongDuration(int Duration)
+        {
+            try
+            {
+                if (Current_Song.DurationMs != Duration)
+                {
+                    var API = (SongService)Activity.GetService(Mobile_Api.Models.Enums.ApiServices.Songs);
+                    var a = API.SetSongDuration(Current_Song.Id, Duration);
+                }
+            }
+            catch (Exception e)
+            {
+
             }
         }
     }

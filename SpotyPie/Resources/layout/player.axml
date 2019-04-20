@@ -259,9 +259,18 @@
 
 	<FrameLayout
         android:id="@+id/player_frame"
+        android:translationX="1000dp"
         android:background="@color/greylight"
-		android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/song_progress"
+        app:layout_constraintEnd_toEndOf="@+id/song_progress"
+        app:layout_constraintStart_toStartOf="@+id/song_progress" />
 
 </android.support.constraint.ConstraintLayout>

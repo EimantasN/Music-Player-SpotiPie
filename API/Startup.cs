@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Service;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace API
@@ -52,6 +53,7 @@ namespace API
             services.AddScoped<IDb, Services.Service>();
             services.AddScoped<ISongService, Services.SongService>();
             services.AddScoped<IAlbumService, Services.AlbumService>();
+            services.AddScoped<IArtistService, ArtistService>();
 
             services.AddDbContext<SpotyPieIDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));

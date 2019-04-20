@@ -141,33 +141,36 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:text="I Dare You"
-                android:gravity="right"
+                android:gravity="center"
+                android:text="I Dare you"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+				android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintHorizontal_bias="0.25"
+                app:layout_constraintEnd_toStartOf="@+id/play_stop"
                 app:layout_constraintStart_toEndOf="@+id/show_player"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/artist_name" />
 
             <TextView
                 android:id="@+id/artist_name"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="16dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="The xx"
+				android:singleLine="true"
+                android:ellipsize="marquee"
+				android:marqueeRepeatLimit="marquee_forever"
+                android:gravity="center"
+                android:text="The XX"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:textColor="@color/greylight"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/play_stop"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/song_name"
+                app:layout_constraintStart_toEndOf="@+id/show_player"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
@@ -187,12 +190,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/expand" />
 
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
         </android.support.constraint.ConstraintLayout>
 
         <View

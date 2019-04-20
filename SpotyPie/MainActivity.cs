@@ -109,33 +109,42 @@ namespace SpotyPie
             SupportFragmentManager.BeginTransaction()
                 .Replace(Resource.Id.player_frame, Player)
                 .Commit();
-
-            PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
             ActionName = FindViewById<TextView>(Resource.Id.textView);
+
+            #region MINI PLAYER
+
             MiniPlayer = FindViewById<ConstraintLayout>(Resource.Id.PlayerContainer);
-            ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
+
+            PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             ShowPlayler = FindViewById<ImageButton>(Resource.Id.show_player);
-            //Animation marquee = AnimationUtils.LoadAnimation(this, Resource.Drawable.marquee);
-            //ArtistName.StartAnimation(marquee);
 
             SongTitle = FindViewById<TextView>(Resource.Id.song_name);
-            BackHeaderButton = FindViewById<ImageButton>(Resource.Id.back);
-            OptionsHeaderButton = FindViewById<ImageButton>(Resource.Id.options);
+            SongTitle.Selected = true;
+            SongTitle.Text = "Labai ilgas tekstas kuris keičiasi jeigu tekstas netelpa";
+            ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
+            ArtistName.Selected = true;
 
             if (GetState().IsPlaying)
                 PlayToggle.SetImageResource(Resource.Drawable.pause);
             else
                 PlayToggle.SetImageResource(Resource.Drawable.play_button);
 
+            //MiniPlayer.Visibility = ViewStates.Gone;
+
+            PlayToggle.Click += PlayToggle_Click;
+            ShowPlayler.Click += MiniPlayer_Click;
+            MiniPlayer.Click += MiniPlayer_Click;
+
+            #endregion
+
+            BackHeaderButton = FindViewById<ImageButton>(Resource.Id.back);
+            OptionsHeaderButton = FindViewById<ImageButton>(Resource.Id.options);
+
             BackHeaderButton.Click += BackHeaderButton_Click;
 
-            MiniPlayer.Click += MiniPlayer_Click;
-            ShowPlayler.Click += MiniPlayer_Click;
-            PlayToggle.Click += PlayToggle_Click;
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragment(Resource.Id.home);
-            MiniPlayer.Visibility = ViewStates.Gone;
         }
 
         protected override void OnDestroy()

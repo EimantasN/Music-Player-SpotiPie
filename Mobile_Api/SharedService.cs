@@ -23,15 +23,27 @@ namespace Mobile_Api
 
         public async Task Update<T>(int id)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/Update/" + id);
+            CustomRestClient Client = GetClient($"api/{Controller}/Update/{id.ToString()}");
             await PostData<T>(Client);
         }
 
         /// PVZ api/album/Recent
         public async Task<List<T>> GetListAsync<T>(string type)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/" + type);
+            CustomRestClient Client = GetClient($"api/{Controller}/{type}");
             return await GetList<T>(Client);
+        }
+
+        public async Task<T> Post<T>(string endPoint, string paramerters)
+        {
+            CustomRestClient Client = GetClient($"api/{Controller}/{endPoint}");
+            return await Client.PostCustomObject<T>(paramerters);
+        }
+
+        public async Task<List<T>> PostList<T>(string endPoint, string paramerters)
+        {
+            CustomRestClient Client = GetClient($"api/{Controller}/{endPoint}");
+            return await Client.PostCustomObjectList<T>(paramerters);
         }
 
         private async Task<List<T>> GetList<T>(CustomRestClient client)
