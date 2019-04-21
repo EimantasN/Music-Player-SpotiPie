@@ -55,14 +55,14 @@ namespace SpotyPie.RecycleView
                 {
                     if (RvDataset[position].GetType().Name == "Album")
                     {
-                        var Api = (AlbumService)Activity.GetService(Mobile_Api.Models.Enums.ApiServices.Albums);
+                        var Api = Activity.GetService();
                         var al = RvDataset[position] as Album;
                         Task.Run(() => Api.Update(al.Id));
                         Activity.LoadAlbum(al);
                     }
-                    else if (RvDataset[position].GetType().Name == "Song")
+                    else if (RvDataset[position].GetType().Name == "Songs")
                     {
-                        Activity.GetState().SetSong(JsonConvert.DeserializeObject<List<Song>>(JsonConvert.SerializeObject(RvDataset.GetList())), position);
+                        Activity.GetState().SetSong(JsonConvert.DeserializeObject<List<Songs>>(JsonConvert.SerializeObject(RvDataset.GetList())), position);
                     }
                     else
                     {

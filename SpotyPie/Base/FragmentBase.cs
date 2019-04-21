@@ -61,9 +61,9 @@ namespace SpotyPie.Base
             return ParentActivity.FirstLayerFragment;
         }
 
-        public dynamic GetService(ApiServices service = ApiServices.Shared)
+        public dynamic GetService()
         {
-            return ParentActivity.GetService(service);
+            return ParentActivity.GetService();
         }
 
         public void InvokeOnMainThread(Action action)

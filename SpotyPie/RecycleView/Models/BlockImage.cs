@@ -3,9 +3,12 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Square.Picasso;
+using System;
 
 namespace SpotyPie.RecycleView.Models
 {
+    //Layout -> 
+
     public class BlockImage : RecyclerView.ViewHolder
     {
         public View EmptyTimeView { get; set; }
@@ -25,12 +28,19 @@ namespace SpotyPie.RecycleView.Models
 
         public void PrepareView(dynamic data, Context Context)
         {
-            if (data.Name.Length > 13) Title.Selected = true;
-            Title.Text = data.Name;
+            try
+            {
+                if (data.Name.Length > 13) Title.Selected = true;
+                Title.Text = data.Name;
 
-            //TODO ADD SUBTITLE
-            SubTitile.Text = "Coming soon";
-            Picasso.With(Context).Load(data.MediumImage).Into(Image);
+                //TODO ADD SUBTITLE
+                SubTitile.Text = "Coming soon";
+                Picasso.With(Context).Load(data.MediumImage).Into(Image);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
     }
 }

@@ -25,12 +25,10 @@ namespace SpotyPie.Helpers
 
         public void OnChildViewAttachedToWindow(View view)
         {
-            view.LongClick += View_LongClick;
         }
 
         private void View_LongClick(object sender, View.LongClickEventArgs e)
         {
-            Search.Action = 0;
         }
 
         private void View_Touch(object sender, View.TouchEventArgs e)
@@ -39,7 +37,6 @@ namespace SpotyPie.Helpers
 
         public void OnChildViewDetachedFromWindow(View view)
         {
-            view.LongClick -= View_LongClick;
         }
     }
 }

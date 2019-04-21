@@ -9,14 +9,14 @@ namespace SpotyPie.Player
     {
         public override int LayoutId { get; set; } = Resource.Layout.player_song_list;
 
-        private RvList<Song> RvData { get; set; }
+        private RvList<Songs> RvData { get; set; }
 
         protected override void InitView()
         {
             //
             if (RvData == null)
             {
-                var rvBase = new BaseRecycleView<Song>(this, Resource.Id.song_list);
+                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
                 RvData = rvBase.Setup(LinearLayoutManager.Vertical);
                 rvBase.DisableScroolNested();
                 Update();

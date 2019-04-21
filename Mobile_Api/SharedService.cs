@@ -5,44 +5,42 @@ using System.Threading.Tasks;
 
 namespace Mobile_Api
 {
-    public abstract class SharedService : BaseService
+    public abstract class SharedService : BaseClient
     {
-        public abstract string Controller { get; set; }
-
         public async Task<T> Get<T>(int id)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/" + id);
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/" + id);
             return await GetData<T>(Client);
         }
 
         public async Task<T> GetOne<T>(string endPoint)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/" + endPoint);
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/" + endPoint);
             return await GetData<T>(Client);
         }
 
         public async Task Update<T>(int id)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/Update/{id.ToString()}");
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/Update/{id.ToString()}");
             await PostData<T>(Client);
         }
 
         /// PVZ api/album/Recent
         public async Task<List<T>> GetListAsync<T>(string type)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/{type}");
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/{type}");
             return await GetList<T>(Client);
         }
 
         public async Task<T> Post<T>(string endPoint, string paramerters)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/{endPoint}");
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/{endPoint}");
             return await Client.PostCustomObject<T>(paramerters);
         }
 
         public async Task<List<T>> PostList<T>(string endPoint, string paramerters)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/{endPoint}");
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/{endPoint}");
             return await Client.PostCustomObjectList<T>(paramerters);
         }
 

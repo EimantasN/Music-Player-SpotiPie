@@ -2,6 +2,7 @@
 using Android.Support.V7.Widget;
 using Android.Widget;
 using Mobile_Api;
+using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
@@ -40,13 +41,14 @@ namespace SpotyPie
             {
                 List<dynamic> data = new List<dynamic>() { null };
                 RvData.AddList(data);
-                var api = (SongService)GetService(ApiServices.Songs);
+                var api = GetService();
 
-                data.AddRange(await api.GetRecent());
+                data.AddRange(await api.GetRecent<Songs>());
                 RvData.AddList(data);
 
-                data.AddRange(await api.GetPopular());
+                data.AddRange(await api.GetPopular<Songs>());
                 RvData.AddList(data);
+
                 RvData.RemoveLoading(data);
             }
             catch (Exception e)

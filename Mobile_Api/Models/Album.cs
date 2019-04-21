@@ -29,7 +29,7 @@ namespace Mobile_Api.Models
         public string ReleaseDate { get; set; }
 
         [JsonProperty("songs")]
-        public List<Song> Songs { get; set; }
+        public List<Songs> Songs { get; set; }
 
         [JsonProperty("popularity")]
         public int Popularity { get; set; }

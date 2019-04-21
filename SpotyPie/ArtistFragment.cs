@@ -33,8 +33,8 @@ namespace SpotyPie
         TextView ButtonBackGround2;
 
         //Artist Songs
-        public List<Song> ArtistTopSongsData;
-        public RvList<Song> ArtistTopSongs;
+        public List<Songs> ArtistTopSongsData;
+        public RvList<Songs> ArtistTopSongs;
         private RecyclerView.LayoutManager ArtistSongsLayoutManager;
         private RecyclerView.Adapter ArtistSongsAdapter;
         private RecyclerView ArtistSongsRecyclerView;
@@ -65,7 +65,7 @@ namespace SpotyPie
                 IRestResponse response = await Client.ExecuteGetTaskAsync(request);
                 if (response.IsSuccessful)
                 {
-                    List<Song> songs = JsonConvert.DeserializeObject<List<Song>>(response.Content);
+                    List<Songs> songs = JsonConvert.DeserializeObject<List<Songs>>(response.Content);
                     foreach (var x in songs.OrderByDescending(x => x.LastActiveTime).Take(6))
                     {
                         ArtistTopSongs.Add(x);
@@ -234,7 +234,6 @@ namespace SpotyPie
 
         public override void ForceUpdate()
         {
-            throw new NotImplementedException();
         }
     }
 }

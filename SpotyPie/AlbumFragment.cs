@@ -106,11 +106,6 @@ namespace SpotyPie
             base.OnResume();
         }
 
-        private void Containerx_Touch(object sender, TouchEventArgs e)
-        {
-            Search.Action = e.Event.GetX();
-        }
-
         private void Scroll_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)
         {
             Scrolled = ScrollFather.ScrollY;

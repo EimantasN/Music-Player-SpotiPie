@@ -1,24 +1,19 @@
 ﻿using Android.App;
-using Android.OS;
-using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Felipecsl.GifImageViewLib;
 using Mobile_Api.Models;
-using Newtonsoft.Json;
-using RestSharp;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.Helpers;
-using SpotyPie.Library.Fragments;
-using SpotyPie.Models;
 using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using SupportFragment = Android.Support.V4.App.Fragment;
-
 
 namespace SpotyPie
 {
@@ -26,24 +21,10 @@ namespace SpotyPie
     {
         public override int LayoutId { get; set; } = Resource.Layout.search_layout;
 
-        //List Songs
-        public List<Song> SearchSongs;
-        public RvList<Song> Songs;
-        private RecyclerView.LayoutManager SongsLayoutManager;
-        private RecyclerView.Adapter SongsAdapter;
-        private RecyclerView SongsRecyclerView;
+        public const int SongLimit = 6;
+        public const int AlbumLimit = 6;
+        public const int ArtistLimit = 6;
 
-        //public List<Album> AlbumsData;
-        //public RvList<TwoBlockWithImage> Albums = new RvList<TwoBlockWithImage>();
-        //private RecyclerView.LayoutManager AlbumsLayoutManager;
-        //private RecyclerView.Adapter AlbumsAdapter;
-        //private RecyclerView AlbumsRecyclerView;
-
-        public List<Artist> ArtistsData;
-        public RvList<Artist> Artists;
-        private RecyclerView.LayoutManager ArtistsLayoutManager;
-        private RecyclerView.Adapter ArtistsAdapter;
-        private RecyclerView ArtistsRecyclerView;
 
         private bool IsSearchResultEmpty = true;
         private bool SongFinded = false;
@@ -53,105 +34,75 @@ namespace SpotyPie
 
         public bool SearchNow = true;
 
-        ConstraintLayout SongsContainer;
-        ConstraintLayout AlbumsContainer;
-        ConstraintLayout PlaylistContainer;
-        ConstraintLayout ArtistContainer;
+        private TextView SongsContainer;
+        private TextView AlbumsContainer;
+        private TextView ArtistContainer;
 
         FrameLayout SearchEmpty;
 
         EditText search;
         ImageView SearchIcon;
+        ProgressBar SearchLoading;
 
-        public static float Action;
+        private GifImageView Searching_Gif;
+        private ImageView Search_start_image;
+
+        private RvList<Songs> RvDataSongs { get; set; }
+        private RvList<Album> RvDataAlbums { get; set; }
+        private RvList<Artist> RvDataArtist { get; set; }
 
         protected override void InitView()
         {
-            SongsContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.constraintLayoutSongs);
-            AlbumsContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.constraintLayoutAlbums);
-            ArtistContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.ConstrainLayoutArtist);
+            SetupSearchLoadingGif();
+
+            Search_start_image = RootView.FindViewById<ImageView>(Resource.Id.se_image);
+
+            SongsContainer = RootView.FindViewById<TextView>(Resource.Id.SongsTitle);
+            SongsContainer.Visibility = ViewStates.Gone;
+
+            AlbumsContainer = RootView.FindViewById<TextView>(Resource.Id.AlbumsTitle);
+            AlbumsContainer.Visibility = ViewStates.Gone;
+
+            ArtistContainer = RootView.FindViewById<TextView>(Resource.Id.artist_title);
+            ArtistContainer.Visibility = ViewStates.Gone;
+
             SearchEmpty = RootView.FindViewById<FrameLayout>(Resource.Id.searchStartx);
-            var layoutParrams = SearchEmpty.LayoutParameters;
-            //layoutParrams.Height = MainActivity.HeightInDp;
-            SearchEmpty.LayoutParameters = layoutParrams;
 
-            SearchIcon = RootView.FindViewById<ImageView>(Resource.Id.imageView);
-
-            search = RootView.FindViewById<EditText>(Resource.Id.editText);
-            search.Text = "";
-            search.BeforeTextChanged += Search_BeforeTextChanged;
+            SearchIcon = RootView.FindViewById<ImageView>(Resource.Id.seacr_icon);
+            SearchLoading = RootView.FindViewById<ProgressBar>(Resource.Id.search_loading);
+            search = RootView.FindViewById<EditText>(Resource.Id.search_text);
             search.FocusChange += Search_FocusChange;
 
-            // song list
-            SearchSongs = new List<Song>();
-            Songs = new RvList<Song>();
-            SongsLayoutManager = new LinearLayoutManager(this.Activity);
-            SongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_rv);
-            SongsRecyclerView.SetLayoutManager(SongsLayoutManager);
-            SongsAdapter = new VerticalRV(Songs, this.Context);
-            Songs.Adapter = SongsAdapter;
-            SongsRecyclerView.SetAdapter(SongsAdapter);
-            SongsRecyclerView.NestedScrollingEnabled = false;
-
-            SongsRecyclerView.SetItemClickListener((rv, position, view) =>
+            if (RvDataSongs == null)
             {
-                if (SongsRecyclerView != null && SongsRecyclerView.ChildCount != 0)
-                {
-                    GetState().Current_Song_List = SearchSongs;
-                    GetState().SetSong(GetState().Current_Song_List, position);
-                }
-            });
+                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_rv);
+                RvDataSongs = rvBase.Setup(LinearLayoutManager.Vertical);
+                rvBase.DisableScroolNested();
+            }
 
+            if (RvDataAlbums == null)
+            {
+                var rvBaseAlbum = new BaseRecycleView<Album>(this, Resource.Id.albums_rv);
+                RvDataAlbums = rvBaseAlbum.Setup(LinearLayoutManager.Vertical);
+                rvBaseAlbum.DisableScroolNested();
+            }
 
-            //AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
-            //AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.albums_rv);
-            //AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);
-            //AlbumsAdapter = new BaseRv<TwoBlockWithImage>(Albums, AlbumsRecyclerView, this.Context);
-            //Albums.Adapter = AlbumsAdapter;
-            //AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
-            //AlbumsRecyclerView.NestedScrollingEnabled = false;
+            if (RvDataArtist == null)
+            {
+                var rvBaseArtist = new BaseRecycleView<Artist>(this, Resource.Id.artists_rv);
+                RvDataArtist = rvBaseArtist.Setup(LinearLayoutManager.Vertical);
+                rvBaseArtist.DisableScroolNested();
+            }
+        }
 
-            //AlbumsRecyclerView.SetItemClickListener((rv, position, view) =>
-            //{
-            //    if (SongsRecyclerView != null && SongsRecyclerView.ChildCount != 0)
-            //    {
-            //        var c = SongsRecyclerView.Width;
-            //        float Procent = (Action * 100) / AlbumsRecyclerView.Width;
-            //        if (Procent <= 50)
-            //        {
-            //            Current_state.SetAlbum(AlbumsData[position]);
-            //            FragmentManager.BeginTransaction()
-            //            .Replace(Resource.Id.content_frame, MainActivity.Album)
-            //            .Commit();
-            //        }
-            //        else
-            //        {
-            //            Current_state.SetAlbum(AlbumsData[position + 1]);
-            //            FragmentManager.BeginTransaction()
-            //            .Replace(Resource.Id.content_frame, MainActivity.Album)
-            //            .Commit();
-            //        }
-            //    }
-            //});
+        private void SetupSearchLoadingGif()
+        {
+            Searching_Gif = RootView.FindViewById<GifImageView>(Resource.Id.seach_gif);
+            Searching_Gif.Visibility = ViewStates.Gone;
 
-            //ARTIST RV
-            //ArtistsData = new List<Artist>();
-            //Artists = new RvList<Artist>();
-            //ArtistsLayoutManager = new LinearLayoutManager(this.Activity);
-            //ArtistsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artists_rv);
-            //ArtistsRecyclerView.SetLayoutManager(ArtistsLayoutManager);
-            //ArtistsAdapter = new ArtistRV(Artists, this.Context);
-            //Artists.Adapter = ArtistsAdapter;
-            //ArtistsRecyclerView.SetAdapter(ArtistsAdapter);
-            //ArtistsRecyclerView.NestedScrollingEnabled = false;
-
-            //ArtistsRecyclerView.SetItemClickListener((rv, position, view) =>
-            //{
-            //    if (ArtistsRecyclerView != null && ArtistsRecyclerView.ChildCount != 0)
-            //    {
-            //        //Current_state.SetSong(Current_state.Current_Song_List[position]);
-            //    }
-            //});
+            Stream input = this.Activity.Resources.OpenRawResource(Resource.Drawable.seaching_image);//this.Activity.Assets.Open("seaching_image.gif");
+            byte[] bytes = ConvertFileToByteArray.Convert(input);
+            Searching_Gif.SetBytes(bytes);
         }
 
         public override void OnResume()
@@ -171,8 +122,17 @@ namespace SpotyPie
         {
             if (search.IsFocused)
             {
+                GetState().ToggleBotNav(false);
+                GetState().ToggleMiniPlayer(false);
                 if (search.Text.Contains("Search"))
                     search.Text = "";
+            }
+            else
+            {
+                GetState().ToggleBotNav(true);
+                GetState().ToggleMiniPlayer(true);
+                if (string.IsNullOrEmpty(search.Text))
+                    search.Text = "Search song, album, playlist and etc.";
             }
 
             if (!SongFinded && !AlbumFinded && !ArtistFinded && !PlaylistFinded)
@@ -181,239 +141,205 @@ namespace SpotyPie
                 IsSearchResultEmpty = false;
         }
 
-        private void Search_BeforeTextChanged(object sender, Android.Text.TextChangedEventArgs e)
-        {
-        }
-
         public async Task Checker()
         {
-            var query = "";
+            var query = string.Empty;
+            long index = 0;
             while (SearchNow)
             {
                 try
                 {
-                    if (query != search.Text)
+                    if (query != search.Text && !string.IsNullOrEmpty(search.Text) && search.Text != "Search song, album, playlist and etc.")
                     {
+                        query = search.Text;
+                        long tempIndex = ++index;
+
+                        ToggleSearchLoading(Search_status.Searching);
+
                         var a = Task.Run(() => SearchSong(search.Text));
                         var b = Task.Run(() => SearchAlbums(search.Text));
                         var c = Task.Run(() => SearchArtist(search.Text));
 
-                        while (!(a.IsCompletedSuccessfully || a.IsCanceled || a.IsCompleted || a.IsFaulted)) await Task.Delay(500);
-                        while (!(b.IsCompletedSuccessfully || b.IsCanceled || b.IsCompleted || b.IsFaulted)) await Task.Delay(500);
-                        while (!(c.IsCompletedSuccessfully || c.IsCanceled || c.IsCompleted || c.IsFaulted)) await Task.Delay(500);
+                        while (!(a.IsCompletedSuccessfully || a.IsCanceled || a.IsCompleted || a.IsFaulted)) await Task.Delay(50);
+                        while (!(b.IsCompletedSuccessfully || b.IsCanceled || b.IsCompleted || b.IsFaulted)) await Task.Delay(50);
+                        while (!(c.IsCompletedSuccessfully || c.IsCanceled || c.IsCompleted || c.IsFaulted)) await Task.Delay(50);
 
-                        if (!SongFinded && !AlbumFinded && !ArtistFinded && !PlaylistFinded)
-                            SearchEmpty.Post(() => SearchEmpty.Visibility = ViewStates.Visible);
-                        else
-                            SearchEmpty.Post(() => SearchEmpty.Visibility = ViewStates.Gone);
-
-                        query = search.Text;
+                        if (index == tempIndex)
+                        {
+                            if (RvDataSongs.Count > 0 || RvDataAlbums.Count > 0 || RvDataArtist.Count > 0)
+                                ToggleSearchLoading(Search_status.Found);
+                            else
+                                ToggleSearchLoading(Search_status.NothingFound);
+                        }
                     }
                 }
                 catch (Exception e)
                 {
-                    Snackbar.Make(this.Activity.Window.DecorView.RootView, e.Message, Snackbar.LengthShort).Show();
+                    Application.SynchronizationContext.Post(_ =>
+                    {
+                        Snackbar.Make(this.Activity.Window.DecorView.RootView, e.Message, Snackbar.LengthShort).Show();
+                    }, null);
                 }
-                await Task.Delay(500);
+                await Task.Delay(25);
+            }
+        }
+
+        private void ToggleSearchLoading(Search_status status)
+        {
+            switch (status)
+            {
+                case Search_status.Started:
+                    {
+                        ToggleSeachInfoFrame(true);
+                        ToggleSearchBarLoading(false);
+                        break;
+                    }
+                case Search_status.Searching:
+                    {
+                        if (RvDataSongs.Count == 0 && RvDataAlbums.Count == 0 && RvDataArtist.Count == 0)
+                        {
+                            ToggleSeachInfoFrame(true, true);
+                        }
+                        ToggleSearchBarLoading(true);
+                        break;
+                    }
+                case Search_status.NothingFound:
+                    {
+                        ToggleSeachInfoFrame(true);
+                        ToggleSearchBarLoading(false);
+                        break;
+                    }
+                case Search_status.Found:
+                    {
+                        ToggleSeachInfoFrame(false);
+                        ToggleSearchBarLoading(false);
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            void ToggleSeachInfoFrame(bool show, bool gif_show = false)
+            {
+                if (show)
+                {
+                    if (SearchEmpty.Visibility != ViewStates.Visible)
+                        SearchEmpty.Post(() => SearchEmpty.Visibility = ViewStates.Visible);
+
+                    if (gif_show)
+                    {
+                        if (Searching_Gif.Visibility != ViewStates.Visible)
+                        {
+                            Searching_Gif.Post(() => Searching_Gif.Visibility = ViewStates.Visible);
+                            Search_start_image.Post(() => Search_start_image.Visibility = ViewStates.Invisible);
+                            Application.SynchronizationContext.Post(_ => { Searching_Gif.StartAnimation(); }, null);
+                        }
+                    }
+                    else
+                    {
+                        if (Searching_Gif.Visibility != ViewStates.Invisible)
+                        {
+                            Searching_Gif.Post(() => Searching_Gif.Visibility = ViewStates.Invisible);
+                            Search_start_image.Post(() => Search_start_image.Visibility = ViewStates.Visible);
+                            Application.SynchronizationContext.Post(_ => { Searching_Gif.StopAnimation(); }, null);
+                        }
+                    }
+                }
+                else
+                {
+                    if (SearchEmpty.Visibility != ViewStates.Gone)
+                        SearchEmpty.Post(() => SearchEmpty.Visibility = ViewStates.Gone);
+                }
+            }
+
+            void ToggleSearchBarLoading(bool show)
+            {
+                if (show)
+                {
+                    if (SearchLoading.Visibility != ViewStates.Visible)
+                    {
+                        SearchIcon.Post(() => SearchIcon.Visibility = ViewStates.Invisible);
+                        SearchLoading.Post(() => SearchLoading.Visibility = ViewStates.Visible);
+                    }
+                }
+                else
+                {
+                    if (SearchLoading.Visibility != ViewStates.Gone)
+                    {
+                        SearchLoading.Post(() => SearchLoading.Visibility = ViewStates.Invisible);
+                        SearchIcon.Post(() => SearchIcon.Visibility = ViewStates.Visible);
+                    }
+                }
+            }
+        }
+
+        private void ToggleSearchEmptyContainer(bool show)
+        {
+            if (show)
+            {
+                if (SearchEmpty.Visibility != ViewStates.Visible)
+                {
+                    SearchEmpty.Post(() => SearchEmpty.Visibility = ViewStates.Visible);
+                }
+            }
+            else
+            {
+                if (SearchEmpty.Visibility != ViewStates.Gone)
+                {
+                    SearchEmpty.Post(() => SearchEmpty.Visibility = ViewStates.Gone);
+                }
             }
         }
 
         public async Task SearchSong(string query)
         {
-            try
-            {
-                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/api/songs/search");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", JsonConvert.SerializeObject(query), ParameterType.RequestBody);
-                IRestResponse response = await Client.ExecuteTaskAsync(request);
-                if (response.IsSuccessful)
-                {
-                    Songs.Clear();
-                    var Songsx = JsonConvert.DeserializeObject<List<Song>>(response.Content);
-                    if (Songsx != null && Songsx.Count != 0)
-                    {
-                        Application.SynchronizationContext.Post(_ =>
-                        {
-                            SearchSongs = Songsx;
-                            SongFinded = true;
-                            if (SongsContainer.Visibility == ViewStates.Gone)
-                                SongsContainer.Visibility = ViewStates.Visible;
-                        }, null);
-
-                        foreach (var x in Songsx.Take(16))
-                        {
-                            Songs.Add(x);
-                        }
-                    }
-                    else
-                    {
-                        Application.SynchronizationContext.Post(_ =>
-                        {
-                            SongFinded = false;
-                            if (SongsContainer.Visibility == ViewStates.Visible)
-                                SongsContainer.Visibility = ViewStates.Gone;
-                        }, null);
-                    }
-                }
-                else
-                {
-
-                }
-            }
-            catch
-            {
-                Application.SynchronizationContext.Post(_ =>
-                {
-                    SongFinded = false;
-                    if (SongsContainer.Visibility == ViewStates.Visible)
-                        SongsContainer.Visibility = ViewStates.Gone;
-                }, null);
-            }
+            await SearchBaseAsync<Songs>(RvDataSongs, SongsContainer, query, SongLimit);
         }
 
         public async Task SearchAlbums(string query)
         {
-
-            try
-            {
-                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/Api/Album/Search");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", JsonConvert.SerializeObject(query), ParameterType.RequestBody);
-                IRestResponse response = await Client.ExecuteTaskAsync(request);
-                if (response.IsSuccessful)
-                {
-                    //var Albumsx = JsonConvert.DeserializeObject<List<Album>>(response.Content);
-                    //if (Albumsx != null && Albumsx.Count != 0)
-                    //{
-                    //    Albums.Clear();
-                    //    Application.SynchronizationContext.Post(_ =>
-                    //    {
-                    //        AlbumsData = Albumsx;
-                    //        AlbumFinded = true;
-                    //        if (AlbumsContainer.Visibility == ViewStates.Gone)
-                    //            AlbumsContainer.Visibility = ViewStates.Visible;
-                    //    }, null);
-                    //    for (int i = 0; i < Albumsx.Count && i <= 8; i = i + 2)
-                    //    {
-                    //        if (Albums.Count - i == 1)
-                    //        {
-                    //            var x = Albumsx[i];
-                    //            //Albums.Add(new TwoBlockWithImage(
-                    //            //new BlockWithImage(
-                    //            //    x.Id,
-                    //            //    RvType.Album,
-                    //            //    x.Name,
-                    //            //    x.Label,
-                    //            //    x.Images.First().Url)));
-                    //        }
-                    //        else
-                    //        {
-                    //            var x = Albumsx[i];
-                    //            var y = Albumsx[i + 1];
-                    //            //Albums.Add(new TwoBlockWithImage(
-                    //            //    new BlockWithImage(
-                    //            //        x.Id,
-                    //            //        RvType.Album,
-                    //            //        x.Name,
-                    //            //        x.Label,
-                    //            //        x.Images.First().Url),
-                    //            //        new BlockWithImage(
-                    //            //        y.Id,
-                    //            //        RvType.Album,
-                    //            //        y.Name,
-                    //            //        x.Label,
-                    //            //        y.Images.First().Url)));
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    Application.SynchronizationContext.Post(_ =>
-                    //    {
-                    //        AlbumFinded = false;
-                    //        if (AlbumsContainer.Visibility == ViewStates.Visible)
-                    //            AlbumsContainer.Visibility = ViewStates.Gone;
-                    //    }, null);
-                    //}
-                }
-                else
-                {
-
-                }
-            }
-            catch (Exception)
-            {
-                Application.SynchronizationContext.Post(_ =>
-                {
-                    AlbumFinded = false;
-                    if (AlbumsContainer.Visibility == ViewStates.Visible)
-                        AlbumsContainer.Visibility = ViewStates.Gone;
-                }, null);
-            }
+            await SearchBaseAsync<Album>(RvDataAlbums, AlbumsContainer, query, SongLimit);
         }
 
         public async Task SearchArtist(string query)
         {
+            await SearchBaseAsync<Artist>(RvDataArtist, ArtistContainer, query, SongLimit);
+        }
+
+        public async Task SearchBaseAsync<T>(RvList<T> RvList, TextView Container, string query, int limit)
+        {
             try
             {
-                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/Api/artist/Search");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", JsonConvert.SerializeObject(query), ParameterType.RequestBody);
-                IRestResponse response = await Client.ExecuteTaskAsync(request);
-                if (response.IsSuccessful)
+                List<T> DataList = await ParentActivity.GetService().Search<T>(query);
+                if (DataList != null && DataList.Count > 0)
                 {
-                    var mArtists = JsonConvert.DeserializeObject<List<Artist>>(response.Content);
-                    if (mArtists != null && mArtists.Count != 0)
-                    {
-                        Artists.Clear();
-                        foreach (var x in mArtists)
-                        {
-                            Artists.Add(x);
-                        }
-                        Application.SynchronizationContext.Post(_ =>
-                        {
-                            ArtistsData = mArtists;
-                            ArtistFinded = true;
-                            if (ArtistContainer.Visibility == ViewStates.Gone)
-                                ArtistContainer.Visibility = ViewStates.Visible;
-                        }, null);
+                    if (Container.Visibility == ViewStates.Gone)
+                        Container.Post(() => Container.Visibility = ViewStates.Visible);
 
-                    }
-                    else
-                    {
-                        Application.SynchronizationContext.Post(_ =>
-                        {
-                            ArtistFinded = false;
-                            if (ArtistContainer.Visibility == ViewStates.Visible)
-                                ArtistContainer.Visibility = ViewStates.Gone;
-                        }, null);
-                    }
+                    RvList.AddList(DataList.Take(limit).ToList());
                 }
                 else
                 {
-
+                    if (Container.Visibility == ViewStates.Visible)
+                    {
+                        Container.Post(() => Container.Visibility = ViewStates.Gone);
+                        RvList.Clear();
+                    }
                 }
             }
-            catch
+            catch (Exception e)
             {
                 Application.SynchronizationContext.Post(_ =>
                 {
-                    ArtistFinded = false;
-                    if (ArtistContainer.Visibility == ViewStates.Visible)
-                        ArtistContainer.Visibility = ViewStates.Gone;
+                    Toast.MakeText(this.Context, e.Message, ToastLength.Short).Show();
                 }, null);
             }
         }
 
         public override void ForceUpdate()
         {
-            throw new NotImplementedException();
+            search.Text = "Search song, album, playlist and etc.";
+            ToggleSearchLoading(Search_status.Started);
         }
     }
 }

@@ -44,8 +44,6 @@ namespace SpotyPie.Player
         public TextView CurretSongTimeText;
         TextView TotalSongTimeText;
 
-        ProgressBar SongProgress;
-
         public ImageView Player_Image;
         public TextView Player_song_name;
         public TextView Player_artist_name;
@@ -53,14 +51,19 @@ namespace SpotyPie.Player
 
         ImageButton SongListButton;
 
+        SeekBar SongTimeSeekBar;
+
         ImageButton Repeat;
-        int Repeat_state = 1;
+        int Repeat_state = 2;
         ImageButton Shuffle;
         bool Shuffle_state = false;
 
         MainActivity ParentActivity;
 
         ImageView Save_to_songs;
+
+        private int CurrentSongPosition = 0;
+        private bool SeekActive = false;
 
         public Current_state GetState()
         {
@@ -98,8 +101,6 @@ namespace SpotyPie.Player
             Player_artist_name = RootView.FindViewById<TextView>(Resource.Id.artist_name);
             Player_playlist_name = RootView.FindViewById<TextView>(Resource.Id.playlist_name);
 
-            SongProgress = RootView.FindViewById<ProgressBar>(Resource.Id.song_progress);
-            SongProgress.Touch += SongProgress_Touch;
             CurretSongTimeText = RootView.FindViewById<TextView>(Resource.Id.current_song_time);
             TotalSongTimeText = RootView.FindViewById<TextView>(Resource.Id.total_song_time);
             TotalSongTimeText.Visibility = ViewStates.Invisible;
@@ -123,7 +124,29 @@ namespace SpotyPie.Player
 
             FragmentWidth = Resources.DisplayMetrics.WidthPixels;
 
+            SongTimeSeekBar = RootView.FindViewById<SeekBar>(Resource.Id.seekBar);
+
+            SongTimeSeekBar.StartTrackingTouch += SongTimeSeekBar_StartTrackingTouch;
+            SongTimeSeekBar.StopTrackingTouch += SongTimeSeekBar_StopTrackingTouch;
+            SongTimeSeekBar.ProgressChanged += SongTimeSeekBar_ProgressChanged;
+
             return RootView;
+        }
+
+        private void SongTimeSeekBar_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        {
+            CurrentSongPosition = (int)(GetState().Current_Song.DurationMs * e.Progress / 100);
+        }
+
+        private void SongTimeSeekBar_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
+        {
+            MusicPlayer.SeekTo(CurrentSongPosition);
+            SeekActive = false;
+        }
+
+        private void SongTimeSeekBar_StartTrackingTouch(object sender, SeekBar.StartTrackingTouchEventArgs e)
+        {
+            SeekActive = true;
         }
 
         public override void OnResume()
@@ -225,11 +248,6 @@ namespace SpotyPie.Player
 
         private void SongProgress_Touch(object sender, View.TouchEventArgs e)
         {
-            var c = SongProgress.Width;
-
-            float Procent = (e.Event.GetX() * 100) / SongProgress.Width;
-            int Second = (int)(GetState().Current_Song.DurationMs * Procent / 100);
-            MusicPlayer.SeekTo(Second);
         }
 
         private void PreviewSong_Click(object sender, EventArgs e)
@@ -327,10 +345,13 @@ namespace SpotyPie.Player
                             {
                                 //Toast.MakeText(this.Context, "Pasotion -" + player.CurrentPosition + " - " + player.Duration, ToastLength.Short).Show();
                                 Progress = (int)(MusicPlayer.CurrentPosition * 100) / MusicPlayer.Duration;
-                                Application.SynchronizationContext.Post(_ => { SongProgress.Progress = Progress; }, null);
                                 Position = (int)MusicPlayer.CurrentPosition / 1000;
                                 if (CurrentTime.Seconds < Position)
                                 {
+                                    if (!SeekActive)
+                                    {
+                                        Application.SynchronizationContext.Post(_ => { SongTimeSeekBar.Progress = Progress; }, null);
+                                    }
                                     CurrentTime = new TimeSpan(0, 0, Position);
                                     text = CurrentTime.Minutes + ":" + (CurrentTime.Seconds > 9 ? CurrentTime.Seconds.ToString() : "0" + CurrentTime.Seconds);
                                     Application.SynchronizationContext.Post(_ => { CurretSongTimeText.Text = text; }, null);
@@ -371,7 +392,7 @@ namespace SpotyPie.Player
                 {
                     CurrentTime = new TimeSpan(0, 0, 0, 0);
                     CurretSongTimeText.Text = "0:00";
-                    SongProgress.Progress = 0;
+                    SongTimeSeekBar.Progress = 0;
 
                     switch (Repeat_state)
                     {

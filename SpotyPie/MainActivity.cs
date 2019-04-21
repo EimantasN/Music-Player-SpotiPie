@@ -29,14 +29,14 @@ namespace SpotyPie
 
         FragmentBase CurrentFragment;
 
-        FragmentBase Home;
-        FragmentBase Browse;
-        FragmentBase Search;
-        FragmentBase Library;
+        private FragmentBase Home;
+        private FragmentBase Browse;
+        private FragmentBase Search;
+        private FragmentBase Library;
         public AlbumFragment AlbumFragment;
         public SupportFragment ArtistFragment;
 
-        BottomNavigationView bottomNavigation;
+        public BottomNavigationView bottomNavigation;
         public ImageButton PlayToggle;
 
         public TextView ArtistName;
@@ -256,51 +256,40 @@ namespace SpotyPie
             return base.OnOptionsItemSelected(item);
         }
 
-        private void SetUpViewPager(ViewPager viewPager)
-        {
-            TabAdapter adapter = new TabAdapter(SupportFragmentManager);
-            //adapter.AddFragment(new Home(), "Home");
-            //adapter.AddFragment(new Browse(), "Browse");
-            //adapter.AddFragment(new Search(), "Search");
-            //adapter.AddFragment(new LibraryFragment(), "Library");
-
-            viewPager.Adapter = adapter;
-        }
-
-        private SongService SongAPI { get; set; }
-        private AlbumService AlbumAPI { get; set; }
-
-        private ArtistService ArtistAPI { get; set; }
+        private Mobile_Api.Service API { get; set; }
 
         private Object ServiceLock { get; set; } = new Object();
 
-        public dynamic GetService(ApiServices service)
+        public dynamic GetService()
         {
             lock (ServiceLock)
             {
-                switch (service)
-                {
-                    case ApiServices.Songs:
-                        {
-                            if (SongAPI == null)
-                                return SongAPI = new SongService();
-                            return SongAPI;
-                        }
-                    case ApiServices.Albums:
-                        {
-                            if (AlbumAPI == null)
-                                return AlbumAPI = new AlbumService();
-                            return AlbumAPI;
-                        }
-                    case ApiServices.Artist:
-                        {
-                            if (ArtistAPI == null)
-                                return ArtistAPI = new ArtistService();
-                            return ArtistAPI;
-                        }
-                    default:
-                        return null;
-                }
+                if (API == null)
+                    return API = new Mobile_Api.Service();
+                return API;
+                //switch (service)
+                //{
+                //    case ApiServices.Songs:
+                //        {
+                //            if (SongAPI == null)
+                //                return SongAPI = new SongService();
+                //            return SongAPI;
+                //        }
+                //    case ApiServices.Albums:
+                //        {
+                //            if (AlbumAPI == null)
+                //                return AlbumAPI = new AlbumService();
+                //            return AlbumAPI;
+                //        }
+                //    case ApiServices.Artist:
+                //        {
+                //            if (ArtistAPI == null)
+                //                return ArtistAPI = new ArtistService();
+                //            return ArtistAPI;
+                //        }
+                //    default:
+                //        return null;
+                //}
             }
         }
 
@@ -326,6 +315,7 @@ namespace SpotyPie
                     ActionName.Text = "MUSE";
                     break;
                 case Resource.Id.search:
+                    if (Search == null) Search = new Search();
                     fragment = Search;
                     HeaderContainer.Visibility = ViewStates.Gone;
                     break;

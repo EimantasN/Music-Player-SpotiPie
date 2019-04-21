@@ -2,7 +2,7 @@
 
 namespace Mobile_Api.Models
 {
-    public class Song : BaseModel
+    public class Songs : BaseModel
     {
         public override int Id { get; set; }
 
@@ -43,7 +43,7 @@ namespace Mobile_Api.Models
         public bool IsPlayingNow() { return IsPlaying; }
         public void SetIsPlaying(bool state) { IsPlaying = state; }
 
-        public Song(bool fake)
+        public Songs(bool fake)
         {
             Id = 10;
             Name = "Testas";

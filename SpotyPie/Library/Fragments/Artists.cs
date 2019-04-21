@@ -44,9 +44,9 @@ namespace SpotyPie.Library.Fragments
         {
             List<dynamic> data = new List<dynamic>() { null };
             RvData.AddList(data);
-            var api = (ArtistService)GetService(ApiServices.Artist);
+            var api = GetService();
 
-            data.AddRange(await api.GetAll());
+            data.AddRange(await api.GetAll<Artist>());
 
             List<dynamic> newlist = new List<dynamic>();
             var Album = new Artist();

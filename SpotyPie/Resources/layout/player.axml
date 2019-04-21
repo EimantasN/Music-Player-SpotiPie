@@ -99,13 +99,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="1:55"
-        android:textColor="@android:color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        app:layout_constraintBottom_toBottomOf="@+id/song_progress"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/song_progress" />
+        app:layout_constraintTop_toTopOf="@+id/seekBar" />
 
     <TextView
         android:id="@+id/total_song_time"
@@ -116,13 +116,13 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:text="2:37"
-        android:textColor="@android:color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        app:layout_constraintBottom_toBottomOf="@+id/song_progress"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/song_progress" />
+        app:layout_constraintTop_toTopOf="@+id/seekBar" />
 
     <ImageButton
         android:id="@+id/song_list"
@@ -206,11 +206,11 @@
         android:id="@+id/artist_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="24dp"
         android:text="July Talk"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@color/greylight"
-        app:layout_constraintBottom_toTopOf="@+id/song_progress"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="@+id/song_name"
         app:layout_constraintStart_toStartOf="@+id/song_name" />
 
@@ -220,7 +220,6 @@
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/artist_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/song_name"
@@ -240,24 +239,7 @@
         app:layout_constraintTop_toTopOf="@+id/song_name"
         app:srcCompat="@drawable/playlis_add_song" />
 
-    <ProgressBar
-        android:id="@+id/song_progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="24dp"
-        android:progress="0"
-        android:progressBackgroundTint="#FFF"
-        android:progressTint="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/play_stop"
-        app:layout_constraintEnd_toStartOf="@+id/total_song_time"
-        app:layout_constraintStart_toEndOf="@+id/current_song_time" />
-
-	<FrameLayout
+    <FrameLayout
         android:id="@+id/player_frame"
         android:translationX="1000dp"
         android:background="@color/greylight"
@@ -268,9 +250,9 @@
         android:id="@+id/seekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/song_progress"
-        app:layout_constraintEnd_toEndOf="@+id/song_progress"
-        app:layout_constraintStart_toStartOf="@+id/song_progress" />
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/play_stop"
+        app:layout_constraintEnd_toStartOf="@+id/total_song_time"
+        app:layout_constraintStart_toEndOf="@+id/current_song_time" />
 
 </android.support.constraint.ConstraintLayout>

@@ -128,7 +128,7 @@ namespace Mobile_Api.Models
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("content-type", "application/x-www-form-urlencoded");
                 request.AddParameter("application/x-www-form-urlencoded", parameters, ParameterType.RequestBody);
-                response = await base.ExecuteTaskAsync(POST);
+                response = await base.ExecuteTaskAsync(request);
                 if (response.IsSuccessful)
                 {
                     return JsonConvert.DeserializeObject<List<T>>(response.Content);

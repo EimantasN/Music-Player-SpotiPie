@@ -32,9 +32,9 @@ namespace SpotyPie
 
         public Album Current_Album { get; set; } = null;
 
-        public Song Current_Song { get; set; } = null;
+        public Songs Current_Song { get; set; } = null;
 
-        public List<Song> Current_Song_List { get; set; } = new List<Song>();
+        public List<Songs> Current_Song_List { get; set; } = new List<Songs>();
 
         private Player.Player Player { get; set; }
 
@@ -44,7 +44,7 @@ namespace SpotyPie
             this.Activity = activity;
         }
 
-        public void SetSong(List<Song> song, int position = 0, bool refresh = false)
+        public void SetSong(List<Songs> song, int position = 0, bool refresh = false)
         {
             Activity.TogglePlayer(true);
             SetCurrentSong(song, position);
@@ -54,7 +54,7 @@ namespace SpotyPie
                 Activity.MiniPlayer.Visibility = ViewStates.Visible;
         }
 
-        public void SetCurrentSong(List<Song> song, int position)
+        public void SetCurrentSong(List<Songs> song, int position)
         {
             Current_Song = song[position];
             Current_Song.SetIsPlaying(true);
@@ -72,7 +72,7 @@ namespace SpotyPie
             }
         }
 
-        public void SetCurrentSongList(List<Song> songs)
+        public void SetCurrentSongList(List<Songs> songs)
         {
             if (songs != null && songs.Count > 0)
             {
@@ -81,7 +81,7 @@ namespace SpotyPie
             }
         }
 
-        public void UpdateSongList(Song song)
+        public void UpdateSongList(Songs song)
         {
             Current_Song_List.First(x => x.Id == Current_Song.Id).SetIsPlaying(true);
         }
@@ -218,13 +218,37 @@ namespace SpotyPie
             {
                 if (Current_Song.DurationMs != Duration)
                 {
-                    var API = (SongService)Activity.GetService(Mobile_Api.Models.Enums.ApiServices.Songs);
+                    var API = Activity.GetService();
                     var a = API.SetSongDuration(Current_Song.Id, Duration);
                 }
             }
             catch (Exception e)
             {
 
+            }
+        }
+
+        public void ToggleBotNav(bool show)
+        {
+            if (show)
+            {
+                this.Activity.bottomNavigation.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                this.Activity.bottomNavigation.Visibility = ViewStates.Gone;
+            }
+        }
+
+        public void ToggleMiniPlayer(bool show)
+        {
+            if (show)
+            {
+                this.Activity.MiniPlayer.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                this.Activity.MiniPlayer.Visibility = ViewStates.Gone;
             }
         }
     }

@@ -1,22 +1,14 @@
-﻿using Mobile_Api.Models;
+﻿using Mobile_Api.Enum;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Mobile_Api
 {
-    public class BaseService
+    public abstract class BaseService : SharedService
     {
-        private string BaseUrl { get; set; } = "https://pie.pertrauktiestaskas.lt/";
-
-        private ClientGetter Clients { get; set; } = new ClientGetter();
-
-        public void Release(CustomRestClient client)
+        public async Task<List<T>> Search<T>(string query)
         {
-            if (client != null)
-                Clients.ReleaseClient(client);
-        }
-
-        public CustomRestClient GetClient(string endpoint)
-        {
-            return Clients.GetClient(BaseUrl + endpoint);
+            return await PostList<T>(Endpoints.Search, $"query={query}");
         }
     }
 }

@@ -90,8 +90,8 @@ namespace SpotyPie
         {
             try
             {
-                var api = (AlbumService)GetService(ApiServices.Albums);
-                var albums = await api.GetRecent();
+                var api = GetService();
+                var albums = await api.GetRecent<Album>();
                 InvokeOnMainThread(() =>
                 {
                     Toggle(true, RecentHolder);
@@ -108,8 +108,8 @@ namespace SpotyPie
         {
             try
             {
-                var api = (AlbumService)GetService(ApiServices.Albums);
-                var albums = await api.GetPopular();
+                var api = GetService();
+                var albums = await api.GetPopular<Album>();
                 InvokeOnMainThread(() =>
                 {
                     Toggle(true, BestHolder);
@@ -126,8 +126,8 @@ namespace SpotyPie
         {
             try
             {
-                var api = (AlbumService)GetService(ApiServices.Albums);
-                var albums = await api.GetOld();
+                var api = GetService();
+                var albums = await api.GetOld<Album>();
 
                 InvokeOnMainThread(() =>
                 {

@@ -1,14 +1,9 @@
-﻿using Android.Content;
-using Android.Support.V7.Widget;
-using Android.Views;
-using Android.Widget;
+﻿using Android.Support.V7.Widget;
 using Mobile_Api;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
-using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
-using Square.Picasso;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -34,9 +29,9 @@ namespace SpotyPie.Library.Fragments
         {
             List<dynamic> data = new List<dynamic>() { null };
             RvData.AddList(data);
-            var api = (AlbumService)GetService(ApiServices.Albums);
+            var api = GetService();
 
-            data.AddRange(await api.GetAll());
+            data.AddRange(await api.GetAll<Album>());
 
             List<dynamic> newlist = new List<dynamic>();
             var Album = new Album();

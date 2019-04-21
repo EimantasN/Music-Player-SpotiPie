@@ -50,7 +50,7 @@ namespace SpotyPie.RecycleView
             //{
             //    return Resource.Layout.boxed_rv_list_two;
             //}
-            else if (typeof(T) == typeof(SongItem) || Dataset[position].GetType().Name == "Song")
+            else if (typeof(T) == typeof(SongItem) || Dataset[position].GetType().Name == "Songs")
             {
                 return Resource.Layout.song_list_rv;
             }

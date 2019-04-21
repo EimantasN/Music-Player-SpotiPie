@@ -13,7 +13,7 @@ namespace Mobile_Api.Models
 
         public string Gendres { get; set; }
 
-        public List<Song> Songs { get; set; }
+        public List<Songs> Songs { get; set; }
 
         public DateTime Created { get; set; }
 
