@@ -5,6 +5,7 @@ using Mobile_Api.Models.Enums;
 using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie
@@ -13,6 +14,17 @@ namespace SpotyPie
     {
         private Mobile_Api.Service _service;
         private MainActivity _activity;
+
+        private List<Album> _Artist { get; set; }
+        private List<Artist> _Artists { get; set; }
+        private List<Songs> _Songs { get; set; }
+
+        #region Locks
+        private Object _album_Lock { get; } = new Object();
+        private Object _artist_Lock { get; } = new Object();
+        private Object _song_Lock { get; } = new Object();
+
+        #endregion
 
         public API(Mobile_Api.Service service, MainActivity activity)
         {
@@ -113,6 +125,113 @@ namespace SpotyPie
         }
 
         #endregion
+
+        #region AlbumView
+
+        internal async Task GetSongsByAlbumAsync(Album currentALbum, RvList<Songs> rvData, Action p)
+        {
+            try
+            {
+                if (currentALbum == null)
+                    throw new Exception("Album can't be null");
+                List<Songs> songs = await GetSongsByAlbumAsync(currentALbum);
+                InvokeOnMainThread(() =>
+                {
+                    rvData.AddList(songs);
+                    if (p != null)
+                    {
+                        p.Invoke();
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        #endregion
+
+        #region Getters
+        private async Task<List<Songs>> GetSongsByAlbumAsync(Album al)
+        {
+            if (_Artist == null)
+                _Artist = new List<Album>() { al };
+
+            if (al.Songs != null && al.Songs.Count != 0)
+                return al.Songs;
+            else
+            {
+                al = await GetAlbumByIdAsync(al.Id);
+                return al.Songs;
+            }
+        }
+
+        private async Task<Album> GetAlbumByIdAsync(int id)
+        {
+            Album al = await _service.GetById<Album>(id);
+            lock (_album_Lock)
+            {
+                if (_Artist == null)
+                {
+                    _Artist = new List<Album>() { al };
+                    return al;
+                }
+                else
+                {
+                    if (!_Artist.Any(x => x.Id == al.Id))
+                    {
+                        _Artist.Add(al);
+                        return al;
+                    }
+                    else
+                    {
+                        return al;
+                    }
+                }
+            }
+        }
+
+        private async Task<List<Songs>> GetSongsByArtistAsync(Album al)
+        {
+            if (_Artist == null)
+                _Artist = new List<Album>() { al };
+
+            if (al.Songs != null && al.Songs.Count != 0)
+                return al.Songs;
+            else
+            {
+                al = await GetAlbumByIdAsync(al.Id);
+                return al.Songs;
+            }
+        }
+
+        private async Task<Artist> GetArtistByIdAsync(int id)
+        {
+            Artist ar = await _service.GetById<Artist>(id);
+            lock (_artist_Lock)
+            {
+                if (_Artists == null)
+                {
+                    _Artists = new List<Artist>() { ar };
+                    return ar;
+                }
+                else
+                {
+                    if (!_Artists.Any(x => x.Id == ar.Id))
+                    {
+                        _Artists.Add(ar);
+                        return ar;
+                    }
+                    else
+                    {
+                        return ar;
+                    }
+                }
+            }
+        }
+        #endregion
+
         private void InvokeOnMainThread(Action action)
         {
             Application.SynchronizationContext.Post(_ =>
@@ -120,6 +239,5 @@ namespace SpotyPie
                 action.Invoke();
             }, null);
         }
-
     }
 }

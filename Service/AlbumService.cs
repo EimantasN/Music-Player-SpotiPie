@@ -22,7 +22,7 @@ namespace Services
             try
             {
                 //Task.Run(() => Update(id));
-                var album = await _ctx.Albums.Include(x => x.Songs).FirstAsync(x => x.Id == id);
+                var album = await _ctx.Albums.FirstAsync(x => x.Id == id);
                 Update(album);
                 if (album == null)
                     throw new Exception("album with id " + id + " not found");
@@ -71,7 +71,6 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable == true)
                     .Take(count)
                     .ToListAsync();
@@ -109,7 +108,6 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable)
                     .OrderByDescending(x => x.LastActiveTime).ThenBy(x => x.Popularity)
                     .OrderByDescending(x => x.LastActiveTime)
@@ -128,7 +126,6 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable)
                     .OrderByDescending(x => x.Popularity)
                     .Take(6)
@@ -146,7 +143,6 @@ namespace Services
             {
                 return await _ctx.Albums
                         .AsNoTracking()
-                        .Include(x => x.Songs)
                         .Where(x => x.IsPlayable)
                         .OrderByDescending(x => x.LastActiveTime)
                         .Take(6)

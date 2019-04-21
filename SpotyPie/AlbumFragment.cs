@@ -26,7 +26,7 @@ namespace SpotyPie
     {
         public Album CurrentALbum { get; set; }
 
-        private RvList<dynamic> RvData;
+        private RvList<Songs> RvData;
 
         ImageView AlbumPhoto;
         TextView AlbumTitle;
@@ -85,7 +85,7 @@ namespace SpotyPie
 
             if (RvData == null)
             {
-                var rvBase = new BaseRecycleView<dynamic>(this, Resource.Id.song_list);
+                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
                 RvData = rvBase.Setup(LinearLayoutManager.Vertical);
                 rvBase.DisableScroolNested();
             }
@@ -125,13 +125,14 @@ namespace SpotyPie
                     IsMeniuActive = false;
                     Scrolled = 0;
 
-                    Picasso.With(Context).Load(CurrentALbum.LargeImage).Resize(1200, 1200).CenterCrop().Into(AlbumPhoto);
+                    Picasso.With(Context).Load(CurrentALbum.LargeImage).Into(AlbumPhoto);
 
                     AlbumTitle.Text = CurrentALbum.Name;
-                    AlbumByText.Text = "Muse";
-                    List<dynamic> songs = new List<dynamic>();
-                    CurrentALbum.Songs.ForEach(x => songs.Add((dynamic)x));
-                    RvData.AddList(songs);
+
+                    //TODO connect artist name
+                    AlbumByText.Text = "Coming soon";
+
+                    Task.Run(async () => await LoadSongsAsync());
                 }
             }
             catch
@@ -139,14 +140,14 @@ namespace SpotyPie
             }
         }
 
+        public async Task LoadSongsAsync()
+        {
+            await GetAPIService().GetSongsByAlbumAsync(CurrentALbum, RvData, () => { });
+        }
+
         public override void ForceUpdate()
         {
-            if (RvData != null)
-            {
-                List<dynamic> songs = new List<dynamic>();
-                CurrentALbum.Songs.ForEach(x => songs.Add((dynamic)x));
-                RvData.AddList(songs);
-            }
+            Task.Run(async () => await LoadSongsAsync());
         }
     }
 }
