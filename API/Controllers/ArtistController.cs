@@ -43,7 +43,7 @@ namespace API.Controllers
         }
 
         // Get artist list
-        [HttpGet("Artists")]
+        [HttpGet("All")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetArtists()
         {

@@ -31,7 +31,8 @@ namespace SpotyPie.Library.Fragments
             RvData.AddList(data);
             var api = GetService();
 
-            data.AddRange(await api.GetAll<Album>());
+            List<Album> Albums = await api.GetAll<Album>();
+            data.AddRange(Albums);
 
             List<dynamic> newlist = new List<dynamic>();
             var Album = new Album();
@@ -43,7 +44,6 @@ namespace SpotyPie.Library.Fragments
             }
 
             RvData.AddList(newlist);
-            RvData.RemoveLoading(data);
         }
 
         public override void ForceUpdate()

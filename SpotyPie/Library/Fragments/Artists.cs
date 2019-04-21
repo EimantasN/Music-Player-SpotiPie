@@ -58,7 +58,6 @@ namespace SpotyPie.Library.Fragments
             }
 
             RvData.AddList(newlist);
-            RvData.RemoveLoading(data);
         }
 
         public override void ForceUpdate()

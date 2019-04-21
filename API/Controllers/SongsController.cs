@@ -80,7 +80,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("Songs")]
+        [HttpGet("All")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetSongs()
         {

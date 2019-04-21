@@ -48,8 +48,6 @@ namespace SpotyPie
 
                 data.AddRange(await api.GetPopular<Songs>());
                 RvData.AddList(data);
-
-                RvData.RemoveLoading(data);
             }
             catch (Exception e)
             {

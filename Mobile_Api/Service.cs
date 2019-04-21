@@ -13,7 +13,7 @@ namespace Mobile_Api
 
         public async Task<List<T>> GetAll<T>()
         {
-            return await GetListAsync<T>("Songs");
+            return await GetListAsync<T>("All");
         }
 
         public async Task<List<T>> GetRecent<T>()
