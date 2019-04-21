@@ -43,17 +43,7 @@ namespace Mobile_Api.Models
         [JsonProperty("tracks")]
         public int Tracks { get; set; }
 
-        private RvType Type { get; set; } = RvType.Album;
-
-        public RvType GetModelType()
-        {
-            return Type;
-        }
-
-        public void SetModelType(RvType type)
-        {
-            Type = type;
-        }
+        protected override RvType Type { get; set; } = RvType.Album;
 
         public Album()
         {

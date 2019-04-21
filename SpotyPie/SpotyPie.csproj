@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlbumFragment.cs" />
+    <Compile Include="API.cs" />
     <Compile Include="Base\FragmentBase.cs" />
     <Compile Include="Helpers\Enums\Search_status.cs" />
     <Compile Include="Helpers\ConvertFileToByteArray.cs" />

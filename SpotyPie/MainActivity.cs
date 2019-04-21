@@ -258,7 +258,16 @@ namespace SpotyPie
 
         private Mobile_Api.Service API { get; set; }
 
+        private API Api_service { get; set; }
+
         private Object ServiceLock { get; set; } = new Object();
+
+        public dynamic GetAPIService()
+        {
+            if (Api_service == null)
+                return Api_service = new API(new Mobile_Api.Service(), this);
+            return Api_service;
+        }
 
         public dynamic GetService()
         {

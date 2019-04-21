@@ -61,6 +61,11 @@ namespace SpotyPie.Base
             return ParentActivity.FirstLayerFragment;
         }
 
+        public API GetAPIService()
+        {
+            return ParentActivity.GetAPIService();
+        }
+
         public dynamic GetService()
         {
             return ParentActivity.GetService();

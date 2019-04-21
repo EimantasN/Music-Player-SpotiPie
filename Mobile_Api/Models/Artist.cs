@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Artist
+    public class Artist : BaseModel
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string SpotifyId { get; set; }
 
@@ -26,17 +26,6 @@ namespace Mobile_Api.Models
 
         public DateTime LastActiveTime { get; set; }
 
-        private RvType Type { get; set; } = RvType.Artist;
-
-        public RvType GetModelType()
-        {
-            return Type;
-        }
-
-        public void SetModelType(RvType type)
-        {
-            Type = type;
-        }
-
+        protected override RvType Type { get; set; } = RvType.Artist;
     }
 }

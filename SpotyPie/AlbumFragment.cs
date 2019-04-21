@@ -40,7 +40,6 @@ namespace SpotyPie
 
         private TextView download;
         private TextView Copyrights;
-        private ConstraintLayout backViewContainer;
         private ConstraintLayout InnerViewContainer;
 
         private MarginLayoutParams MarginParrams;
@@ -80,15 +79,7 @@ namespace SpotyPie
             relative = RootView.FindViewById<RelativeLayout>(Resource.Id.hide);
 
             InnerViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.innerWrapper);
-            //InnerViewContainer.Visibility = ViewStates.Gone;
             ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
-            //backViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.backViewContainer);
-            //var parameters = backViewContainer.LayoutParameters;
-            //parameters.Height = Resources.DisplayMetrics.WidthPixels;
-
-            //backViewContainer.LayoutParameters = parameters;
-
-            //Height = backViewContainer.LayoutParameters.Height;
 
             ScrollFather.ScrollChange += Scroll_ScrollChange;
 
