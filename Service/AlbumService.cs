@@ -22,7 +22,7 @@ namespace Services
             try
             {
                 //Task.Run(() => Update(id));
-                var album = await _ctx.Albums.FirstAsync(x => x.Id == id);
+                var album = await _ctx.Albums.Include(x => x.Songs).FirstAsync(x => x.Id == id);
                 Update(album);
                 if (album == null)
                     throw new Exception("album with id " + id + " not found");

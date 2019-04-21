@@ -15,7 +15,7 @@ namespace SpotyPie
         private Mobile_Api.Service _service;
         private MainActivity _activity;
 
-        private List<Album> _Artist { get; set; }
+        private List<Album> _Albums { get; set; }
         private List<Artist> _Artists { get; set; }
         private List<Songs> _Songs { get; set; }
 
@@ -155,8 +155,8 @@ namespace SpotyPie
         #region Getters
         private async Task<List<Songs>> GetSongsByAlbumAsync(Album al)
         {
-            if (_Artist == null)
-                _Artist = new List<Album>() { al };
+            if (_Albums == null)
+                _Albums = new List<Album>() { al };
 
             if (al.Songs != null && al.Songs.Count != 0)
                 return al.Songs;
@@ -170,40 +170,22 @@ namespace SpotyPie
         private async Task<Album> GetAlbumByIdAsync(int id)
         {
             Album al = await _service.GetById<Album>(id);
-            lock (_album_Lock)
-            {
-                if (_Artist == null)
-                {
-                    _Artist = new List<Album>() { al };
-                    return al;
-                }
-                else
-                {
-                    if (!_Artist.Any(x => x.Id == al.Id))
-                    {
-                        _Artist.Add(al);
-                        return al;
-                    }
-                    else
-                    {
-                        return al;
-                    }
-                }
-            }
+            return UpdateAlbums(al);
         }
 
         private async Task<List<Songs>> GetSongsByArtistAsync(Album al)
         {
-            if (_Artist == null)
-                _Artist = new List<Album>() { al };
+            //if (_Artists == null)
+            //    _Artists = new List<Artist>() { al };
 
-            if (al.Songs != null && al.Songs.Count != 0)
-                return al.Songs;
-            else
-            {
-                al = await GetAlbumByIdAsync(al.Id);
-                return al.Songs;
-            }
+            //if (al.Songs != null && al.Songs.Count != 0)
+            //    return al.Songs;
+            //else
+            //{
+            //    al = await GetAlbumByIdAsync(al.Id);
+            //    return al.Songs;
+            //}
+            return null;
         }
 
         private async Task<Artist> GetArtistByIdAsync(int id)
@@ -226,6 +208,30 @@ namespace SpotyPie
                     else
                     {
                         return ar;
+                    }
+                }
+            }
+        }
+
+        private Album UpdateAlbums(Album al)
+        {
+            lock (_album_Lock)
+            {
+                if (_Albums == null)
+                {
+                    _Albums = new List<Album>() { al };
+                    return al;
+                }
+                else
+                {
+                    if (!_Albums.Any(x => x.Id == al.Id))
+                    {
+                        _Albums.Add(al);
+                        return al;
+                    }
+                    else
+                    {
+                        return al;
                     }
                 }
             }
