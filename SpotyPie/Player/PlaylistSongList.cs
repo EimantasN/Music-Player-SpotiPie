@@ -17,7 +17,7 @@ namespace SpotyPie.Player
             if (RvData == null)
             {
                 var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
-                RvData = rvBase.Setup(LinearLayoutManager.Vertical);
+                RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 rvBase.DisableScroolNested();
                 Update();
             }

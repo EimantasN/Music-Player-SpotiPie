@@ -6,6 +6,7 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
+using SpotyPie.RecycleView.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,9 +15,9 @@ namespace SpotyPie.RecycleView
     public class BaseRecycleView<T>
     {
         private RvList<T> RvDataset;
-        private RecyclerView.LayoutManager LayoutManager;
         private RecyclerView.Adapter RvAdapter;
         private RecyclerView RecyclerView;
+        private LayoutManagers Manager = LayoutManagers.Unseted;
 
         private FragmentBase Activity { get; set; }
         private int Id { get; set; }
@@ -29,16 +30,49 @@ namespace SpotyPie.RecycleView
             this.Id = RvId;
         }
 
-        public RvList<T> Setup(int layoutPosition)
+        public RvList<T> Setup(LayoutManagers layout)
         {
-            LayoutManager = new LinearLayoutManager(Activity.Activity, layoutPosition, false);
             RecyclerView = Activity.GetView().FindViewById<RecyclerView>(Id);
-            RecyclerView.SetLayoutManager(LayoutManager);
+            SetLayoutManager(layout);
             RvAdapter = new BaseRv<T>(RvDataset, RecyclerView, Activity.Context);
             RvDataset.Adapter = RvAdapter;
             RecyclerView.SetAdapter(RvAdapter);
             SetOnClick();
             return RvDataset;
+        }
+
+        public void SetLayoutManager(LayoutManagers layout)
+        {
+            switch (layout)
+            {
+                case LayoutManagers.Linear_vertical:
+                    {
+                        if (Manager == LayoutManagers.Unseted || Manager != LayoutManagers.Linear_vertical)
+                        {
+                            Manager = LayoutManagers.Linear_vertical;
+                            RecyclerView.SetLayoutManager(new LinearLayoutManager(this.Activity.Activity, LinearLayoutManager.Vertical, false));
+                        }
+                        break;
+                    }
+                case LayoutManagers.Linear_horizontal:
+                    {
+                        if (Manager == LayoutManagers.Unseted || Manager != LayoutManagers.Linear_horizontal)
+                        {
+                            Manager = LayoutManagers.Linear_horizontal;
+                            RecyclerView.SetLayoutManager(new LinearLayoutManager(this.Activity.Activity, LinearLayoutManager.Horizontal, false));
+                        }
+                        break;
+                    }
+                case LayoutManagers.Grind_2_col:
+                    {
+                        if (Manager == LayoutManagers.Unseted || Manager != LayoutManagers.Grind_2_col)
+                        {
+                            Manager = LayoutManagers.Grind_2_col;
+                            RecyclerView.SetLayoutManager(new GridLayoutManager(this.Activity.Activity, 2));
+                        }
+                        break;
+                    }
+            }
         }
 
         public void DisableScroolNested()

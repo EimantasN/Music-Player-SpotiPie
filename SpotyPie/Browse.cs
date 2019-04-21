@@ -24,7 +24,7 @@ namespace SpotyPie
             if (RvData == null)
             {
                 var rvBase = new BaseRecycleView<dynamic>(this, Resource.Id.main_rv);
-                RvData = rvBase.Setup(LinearLayoutManager.Vertical);
+                RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 rvBase.DisableScroolNested();
             }
             Task.Run(() => PopulateData());

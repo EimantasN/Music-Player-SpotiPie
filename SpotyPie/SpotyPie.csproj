@@ -105,6 +105,7 @@
     <Compile Include="Player\Playlist_choose.cs" />
     <Compile Include="Playlist_view.cs" />
     <Compile Include="RecycleView\BaseRecycleView.cs" />
+    <Compile Include="RecycleView\Enums\LayoutManagers.cs" />
     <Compile Include="RecycleView\Helpers\RecycleUpdate.cs" />
     <Compile Include="RecycleView\Models\AlbumList.cs" />
     <Compile Include="RecycleView\Models\ArtistList.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="RecycleView\Models\Loading.cs" />
     <Compile Include="RecycleView\Models\RvBaseModel.cs" />
     <Compile Include="RecycleView\Models\SongItem.cs" />
+    <Compile Include="RecycleView\Models\SongWithImage.cs" />
     <Compile Include="RecycleView\RvList.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -528,6 +530,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\seaching_image.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\grid_rv.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\song_list_with_image.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

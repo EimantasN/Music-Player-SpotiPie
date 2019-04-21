@@ -20,7 +20,7 @@ namespace SpotyPie.Library.Fragments
             if (RvData == null)
             {
                 var rvBase = new BaseRecycleView<Album>(this, Resource.Id.albums);
-                RvData = rvBase.Setup(LinearLayoutManager.Vertical);
+                RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 rvBase.DisableScroolNested();
             }
         }

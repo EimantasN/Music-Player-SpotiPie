@@ -176,15 +176,15 @@ namespace SpotyPie
             //MainActivity.ActionName.Text = GetState().Current_Artist.Name;
 
             ////Background binding
-            //Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
-            //AlbumTitle = RootView.FindViewById<TextView>(Resource.Id.album_title);
-            //PlayableButton = RootView.FindViewById<Button>(Resource.Id.playable_button);
-            //AlbumByText = RootView.FindViewById<TextView>(Resource.Id.album_by_title);
-            //Background = RootView.FindViewById<TextView>(Resource.Id.view);
-            //Background.Alpha = 0.0f;
+            Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
+            AlbumTitle = RootView.FindViewById<TextView>(Resource.Id.album_title);
+            PlayableButton = RootView.FindViewById<Button>(Resource.Id.playable_button);
+            AlbumByText = RootView.FindViewById<TextView>(Resource.Id.album_by_title);
+            Background = RootView.FindViewById<TextView>(Resource.Id.view);
+            Background.Alpha = 0.0f;
 
-            //ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
-            //ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
+            ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
+            ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
 
             //Picasso.With(Context).Load(GetState().Current_Artist.LargeImage).Resize(300, 300).CenterCrop().Into(Photo);
 

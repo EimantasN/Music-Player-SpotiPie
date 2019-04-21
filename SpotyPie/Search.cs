@@ -4,7 +4,9 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Felipecsl.GifImageViewLib;
+using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
+using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.Helpers;
@@ -51,6 +53,10 @@ namespace SpotyPie
         private RvList<Album> RvDataAlbums { get; set; }
         private RvList<Artist> RvDataArtist { get; set; }
 
+        private BaseRecycleView<Album> RvBaseAlbum { get; set; }
+
+        private BaseRecycleView<Artist> RvBaseArtist { get; set; }
+
         protected override void InitView()
         {
             SetupSearchLoadingGif();
@@ -76,22 +82,22 @@ namespace SpotyPie
             if (RvDataSongs == null)
             {
                 var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_rv);
-                RvDataSongs = rvBase.Setup(LinearLayoutManager.Vertical);
+                RvDataSongs = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 rvBase.DisableScroolNested();
             }
 
             if (RvDataAlbums == null)
             {
-                var rvBaseAlbum = new BaseRecycleView<Album>(this, Resource.Id.albums_rv);
-                RvDataAlbums = rvBaseAlbum.Setup(LinearLayoutManager.Vertical);
-                rvBaseAlbum.DisableScroolNested();
+                RvBaseAlbum = new BaseRecycleView<Album>(this, Resource.Id.albums_rv);
+                RvDataAlbums = RvBaseAlbum.Setup(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                RvBaseAlbum.DisableScroolNested();
             }
 
             if (RvDataArtist == null)
             {
-                var rvBaseArtist = new BaseRecycleView<Artist>(this, Resource.Id.artists_rv);
-                RvDataArtist = rvBaseArtist.Setup(LinearLayoutManager.Vertical);
-                rvBaseArtist.DisableScroolNested();
+                RvBaseArtist = new BaseRecycleView<Artist>(this, Resource.Id.artists_rv);
+                RvDataArtist = RvBaseArtist.Setup(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                RvBaseArtist.DisableScroolNested();
             }
         }
 
@@ -293,20 +299,19 @@ namespace SpotyPie
 
         public async Task SearchSong(string query)
         {
-            await SearchBaseAsync<Songs>(RvDataSongs, SongsContainer, query, SongLimit);
+            await SearchBaseAsync<Songs>(RvDataSongs, SongsContainer, query, SongLimit, RvType.SongWithImage);
         }
 
         public async Task SearchAlbums(string query)
         {
-            await SearchBaseAsync<Album>(RvDataAlbums, AlbumsContainer, query, SongLimit);
+            await SearchBaseAsync<Album>(RvDataAlbums, AlbumsContainer, query, SongLimit, RvType.AlbumGrid);
         }
 
         public async Task SearchArtist(string query)
         {
-            await SearchBaseAsync<Artist>(RvDataArtist, ArtistContainer, query, SongLimit);
+            await SearchBaseAsync<Artist>(RvDataArtist, ArtistContainer, query, SongLimit, RvType.ArtistGrid);
         }
-
-        public async Task SearchBaseAsync<T>(RvList<T> RvList, TextView Container, string query, int limit)
+        public async Task SearchBaseAsync<T>(RvList<T> RvList, TextView Container, string query, int limit, RvType type) where T : IBaseInterface
         {
             try
             {
@@ -316,6 +321,7 @@ namespace SpotyPie
                     if (Container.Visibility == ViewStates.Gone)
                         Container.Post(() => Container.Visibility = ViewStates.Visible);
 
+                    FormatView(ref DataList, type);
                     RvList.AddList(DataList.Take(limit).ToList());
                 }
                 else
@@ -333,6 +339,48 @@ namespace SpotyPie
                 {
                     Toast.MakeText(this.Context, e.Message, ToastLength.Short).Show();
                 }, null);
+            }
+        }
+
+        private void FormatView<T>(ref List<T> dataList, RvType type) where T : IBaseInterface
+        {
+            if (dataList == null || dataList.Count == 0)
+                return;
+
+            if (dataList.Count == 1)
+            {
+                Application.SynchronizationContext.Post(_ =>
+                {
+                    if (typeof(T) == typeof(Album))
+                    {
+                        RvBaseAlbum.SetLayoutManager(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                    }
+                    else if (typeof(T) == typeof(Artist))
+                    {
+                        RvBaseArtist.SetLayoutManager(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                    }
+                }, null);
+
+                if (typeof(T) != typeof(Songs))
+                    dataList.First().SetModelType(RvType.BigOne);
+                else
+                    dataList.First().SetModelType(type);
+            }
+            else
+            {
+                Application.SynchronizationContext.Post(_ =>
+                {
+                    if (typeof(T) == typeof(Album))
+                    {
+                        RvBaseAlbum.SetLayoutManager(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                    }
+                    else if (typeof(T) == typeof(Artist))
+                    {
+                        RvBaseArtist.SetLayoutManager(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                    }
+                }, null);
+
+                dataList.ForEach(x => x.SetModelType(type));
             }
         }
 

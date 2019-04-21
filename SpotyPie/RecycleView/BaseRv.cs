@@ -28,23 +28,27 @@ namespace SpotyPie.RecycleView
             }
             else if (typeof(T) == typeof(Album) || Dataset[position].GetType().Name == "Album")
             {
-                var al = Dataset[position] as Album;
+                Album al = Dataset[position] as Album;
                 if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.Album)
                     return Resource.Layout.big_rv_list;
                 else if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.AlbumList)
                     return Resource.Layout.album_list;
-                else
+                else if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.AlbumGrid)
+                    return Resource.Layout.grid_rv;
+                else if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.BigOne)
                     return Resource.Layout.big_rv_list_one;
             }
             else if (typeof(T) == typeof(Artist) || Dataset[position].GetType().Name == "Artist")
             {
-                var al = Dataset[position] as Artist;
-                if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.Artist)
+                Artist ar = Dataset[position] as Artist;
+                if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.Artist)
                     return Resource.Layout.big_rv_list_one;
-                else if (al.GetModelType() == Mobile_Api.Models.Enums.RvType.ArtistList)
-                {
+                else if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.ArtistList)
                     return Resource.Layout.artist_list;
-                }
+                else if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.ArtistGrid)
+                    return Resource.Layout.grid_rv;
+                else if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.BigOne)
+                    return Resource.Layout.big_rv_list_one;
             }
             //else if (typeof(T) == typeof(TwoBlockWithImage))
             //{
@@ -52,7 +56,11 @@ namespace SpotyPie.RecycleView
             //}
             else if (typeof(T) == typeof(SongItem) || Dataset[position].GetType().Name == "Songs")
             {
-                return Resource.Layout.song_list_rv;
+                Songs ar = Dataset[position] as Songs;
+                if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongWithImage)
+                    return Resource.Layout.song_list_with_image;
+                else
+                    return Resource.Layout.song_list_rv;
             }
             throw new System.Exception("No view found");
         }
@@ -70,6 +78,10 @@ namespace SpotyPie.RecycleView
             else if (viewType == Resource.Layout.big_rv_list)
             {
                 return new Models.BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list, parent, false), parent);
+            }
+            else if (viewType == Resource.Layout.grid_rv)
+            {
+                return new Models.BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.grid_rv, parent, false), parent);
             }
             else if (viewType == Resource.Layout.big_rv_list_one)
             {
@@ -112,6 +124,10 @@ namespace SpotyPie.RecycleView
                 };
 
                 return view;
+            }
+            else if (viewType == Resource.Layout.song_list_with_image)
+            {
+                return new SongWithImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_with_image, parent, false), parent);
             }
             else if (viewType == Resource.Layout.artist_list)
             {
@@ -158,6 +174,11 @@ namespace SpotyPie.RecycleView
             else if (holder is AlbumList)
             {
                 AlbumList view = holder as AlbumList;
+                view.PrepareView(Dataset[position], Context);
+            }
+            else if (holder is SongWithImage)
+            {
+                SongWithImage view = holder as SongWithImage;
                 view.PrepareView(Dataset[position], Context);
             }
         }

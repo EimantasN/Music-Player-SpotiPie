@@ -32,7 +32,7 @@ namespace SpotyPie.RecycleView.Models
         public void PrepareView(dynamic data, Context Context)
         {
             Title.Text = data.Name;
-            Picasso.With(Context).Load(data.MediumImage).NoFade().Into(Image);
+            Picasso.With(Context).Load(data.SmallImage).NoFade().Into(Image);
         }
     }
 }
