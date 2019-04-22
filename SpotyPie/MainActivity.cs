@@ -376,7 +376,16 @@ namespace SpotyPie
         {
             if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
             APPSTATE.SetAlbum(album);
-            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.first_layer, AlbumFragment).Commit();
+
+            if (!AlbumFragment.IsAdded)
+                SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, AlbumFragment).Commit();
+            else
+            {
+                AlbumFragment.Show();
+            }
+            if (ArtistFragment != null)
+                ArtistFragment.Hide();
+
             AlbumFragment.SetAlbum(album);
             ToogleSecondLayer(true);
         }
@@ -385,7 +394,16 @@ namespace SpotyPie
         {
             if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
             APPSTATE.SetArtist(artist);
-            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.first_layer, ArtistFragment).Commit();
+
+            if (!ArtistFragment.IsAdded)
+                SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, ArtistFragment).Commit();
+            else
+            {
+                ArtistFragment.Show();
+            }
+            if (AlbumFragment != null)
+                AlbumFragment.Hide();
+
             ArtistFragment.LoadArtist(artist);
             ToogleSecondLayer(true);
         }

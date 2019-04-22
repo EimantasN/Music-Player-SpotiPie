@@ -46,9 +46,9 @@ namespace Mobile_Api
             return await GetListAsync<Songs>($"{id}/top-tracks", "Artist");
         }
 
-        public async Task<List<Album>> GetTopTrackByArtistId(int id)
+        public async Task<List<Album>> GetArtistAlbums(int id)
         {
-            return await GetListAsync<Album>($"{id}/top-tracks", "Artist");
+            return await GetListAsync<Album>($"Albums/{id}", "Artist");
         }
 
         #endregion

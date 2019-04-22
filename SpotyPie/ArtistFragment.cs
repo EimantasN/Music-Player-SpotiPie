@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.OS;
 using Android.Support.V4.Widget;
 using Android.Views;
 using Android.Widget;
@@ -111,7 +112,7 @@ namespace SpotyPie
 
         public async Task LoadAlbums()
         {
-            SearchBase<Artist>(RvRevated.GetData(), await ParentActivity.GetService().GetRelated(CurrentArtist.Id), AlbumListTitle, RvType.Artist);
+            SearchBase<Album>(RvAlbums.GetData(), await ParentActivity.GetService().GetArtistAlbums(CurrentArtist.Id), AlbumListTitle, RvType.AlbumGrid);
         }
 
         public async Task LoadRelatedArtists()
@@ -197,6 +198,7 @@ namespace SpotyPie
                 CurrentArtist = artist;
                 if (Context != null)
                 {
+                    ScrollFather.ScrollTo(0, 0);
                     GetState().Activity.ActionName.Text = CurrentArtist.Name;
 
                     Picasso.With(Context).Load(CurrentArtist.LargeImage).Into(Photo);
@@ -211,6 +213,20 @@ namespace SpotyPie
             catch
             {
             }
+        }
+
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
+        {
+            base.OnViewCreated(view, savedInstanceState);
+        }
+
+        public override void OnStop()
+        {
+            RvSongs.GetData().Clear();
+            RvAlbums.GetData().Clear();
+            RvRevated.GetData().Clear();
+            CurrentArtist = null;
+            base.OnStop();
         }
 
         public void LoadData()

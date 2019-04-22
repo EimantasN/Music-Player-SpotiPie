@@ -120,6 +120,7 @@ namespace SpotyPie
                 CurrentALbum = album;
                 if (Context != null)
                 {
+                    ScrollFather.ScrollTo(0, 0);
                     GetState().Activity.ActionName.Text = CurrentALbum.Name;
                     isPlayable = true;
                     IsMeniuActive = false;
@@ -143,6 +144,13 @@ namespace SpotyPie
         public async Task LoadSongsAsync()
         {
             await GetAPIService().GetSongsByAlbumAsync(CurrentALbum, RvData, () => { });
+        }
+
+        public override void OnStop()
+        {
+            RvData.Clear();
+            CurrentALbum = null;
+            base.OnStop();
         }
 
         public override void ForceUpdate()
