@@ -57,6 +57,21 @@ namespace API.Controllers
             }
         }
 
+        // Get artist list
+        [HttpGet("Albums/{id}")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> GetArtistAlbums(int id)
+        {
+            try
+            {
+                return Ok(await _artists.GetArtistAlbum(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         //Get only artist info and images
         [HttpGet("{id}")]
         [EnableCors("AllowSpecificOrigin")]

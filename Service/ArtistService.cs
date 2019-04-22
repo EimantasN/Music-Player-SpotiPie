@@ -148,6 +148,19 @@ namespace Service
             }
         }
 
+        public async Task<List<Album>> GetArtistAlbum(int id)
+        {
+            try
+            {
+                var art = await _ctx.Artists.Include(x => x.Albums).Select(x => new { x.Id, x.Albums }).FirstOrDefaultAsync(x => x.Id == id);
+                return art.Albums;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<List<Song>> GetArtistTopTracksAsync(int id)
         {
             try
@@ -189,7 +202,7 @@ namespace Service
                     throw new Exception("Artist not found in database");
 
                 var sql = FormatSql(JsonConvert.DeserializeObject<List<string>>(Artist.Genres));
-                return null;
+                return await _ctx.Artists.AsNoTracking().FromSql(sql).ToListAsync();
             }
             catch (Exception e)
             {
@@ -203,7 +216,7 @@ namespace Service
                     genres[i] = $"Genres LIKE '%{genres[i].Replace("'", "\"")}%'";
                 }
 
-                return $"SELECT * FROM [SpotyPie].[dbo].[Artists] where {string.Join(" OR ", genres)};";
+                return $"SELECT * FROM [SpotyPie].[dbo].[Artists] where Id!={id} AND ({string.Join(" OR ", genres)});";
             }
         }
     }

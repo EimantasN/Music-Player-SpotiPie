@@ -23,5 +23,7 @@ namespace Database
         Task<List<Song>> GetArtistTopTracksAsync(int id);
 
         Task<List<Artist>> GetRelatedArtistsAsync(int id);
+
+        Task<List<Album>> GetArtistAlbum(int id);
     }
 }
