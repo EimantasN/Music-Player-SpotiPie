@@ -1,7 +1,7 @@
 ﻿using Android.Support.V4.View;
 using Android.Support.V7.Widget;
 using Android.Widget;
-using Mobile_Api;
+using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SpotyPie.RecycleView
 {
-    public class BaseRecycleView<T>
+    public class BaseRecycleView<T> where T : IBaseInterface
     {
         private RvList<T> RvDataset;
         private RecyclerView.Adapter RvAdapter;
@@ -32,12 +32,22 @@ namespace SpotyPie.RecycleView
 
         public RvList<T> Setup(LayoutManagers layout)
         {
+            Init(layout);
+            return RvDataset;
+        }
+
+        public void Init(LayoutManagers layout)
+        {
             RecyclerView = Activity.GetView().FindViewById<RecyclerView>(Id);
             SetLayoutManager(layout);
             RvAdapter = new BaseRv<T>(RvDataset, RecyclerView, Activity.Context);
             RvDataset.Adapter = RvAdapter;
             RecyclerView.SetAdapter(RvAdapter);
             SetOnClick();
+        }
+
+        public RvList<T> GetData()
+        {
             return RvDataset;
         }
 
@@ -89,10 +99,8 @@ namespace SpotyPie.RecycleView
                 {
                     if (RvDataset[position].GetType().Name == "Album")
                     {
-                        var Api = Activity.GetService();
-                        var al = RvDataset[position] as Album;
-                        Task.Run(() => Api.Update(al.Id));
-                        Activity.LoadAlbum(al);
+                        Task.Run(() => Activity.GetService().Update(RvDataset[position].GetId()));
+                        Activity.LoadAlbum(RvDataset[position] as Album);
                     }
                     else if (RvDataset[position].GetType().Name == "Songs")
                     {
@@ -100,7 +108,7 @@ namespace SpotyPie.RecycleView
                     }
                     else
                     {
-                        Toast.MakeText(this.Activity.Context, "Clicked -> " + RvDataset[position].GetType().Name, ToastLength.Short).Show();
+                        Activity.LoadArtist(RvDataset[position] as Artist);
                     }
                 }
             });

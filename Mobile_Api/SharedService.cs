@@ -26,9 +26,10 @@ namespace Mobile_Api
         }
 
         /// PVZ api/album/Recent
-        public async Task<List<T>> GetListAsync<T>(string type)
+        public async Task<List<T>> GetListAsync<T>(string type, string controller = "")
         {
-            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/{type}");
+            if (string.IsNullOrEmpty(controller)) controller = typeof(T).Name;
+            CustomRestClient Client = GetClient($"api/{controller}/{type}");
             return await GetList<T>(Client);
         }
 

@@ -24,8 +24,6 @@ namespace Service
             {
                 //Task.Run(() => Update(id));
                 var album = await _ctx.Artists
-                    .Include(x => x.Albums)
-                    .ThenInclude(x => x.Songs)
                     .FirstAsync(x => x.Id == id);
 
                 Update(album);
@@ -76,8 +74,6 @@ namespace Service
             {
                 return await _ctx.Artists
                     .AsNoTracking()
-                    .Include(x => x.Albums)
-                    .ThenInclude(x => x.Songs)
                     .Take(count)
                     .ToListAsync();
             }
@@ -93,8 +89,6 @@ namespace Service
             {
                 return await _ctx.Artists
                     .AsNoTracking()
-                    .Include(x => x.Albums)
-                    .ThenInclude(x => x.Songs)
                     .OrderByDescending(x => x.LastActiveTime).ThenBy(x => x.Popularity)
                     .OrderByDescending(x => x.LastActiveTime)
                     .Take(6)
@@ -112,8 +106,6 @@ namespace Service
             {
                 return await _ctx.Artists
                     .AsNoTracking()
-                    .Include(x => x.Albums)
-                    .ThenInclude(x => x.Songs)
                     .OrderByDescending(x => x.Popularity)
                     .Take(6)
                     .ToListAsync();
@@ -130,8 +122,6 @@ namespace Service
             {
                 return await _ctx.Artists
                         .AsNoTracking()
-                        .Include(x => x.Albums)
-                        .ThenInclude(x => x.Songs)
                         .OrderByDescending(x => x.LastActiveTime)
                         .Take(6)
                         .ToListAsync();
@@ -162,21 +152,31 @@ namespace Service
         {
             try
             {
-                var Artist = await _ctx.Artists
-                    .Include(x => x.Albums)
-                    .ThenInclude(x => x.Songs)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                string query = $"SELECT [Id] FROM[SpotyPie].[dbo].[Albums] where ArtistId = {id}";
+                List<int> Ids = await _ctx.Albums.FromSql(query).Select(x => x.Id).ToListAsync();
 
-                if (Artist == null)
-                    throw new Exception("Artist not found");
+                query = FormatSql(Ids);
+                List<Song> ArtistSongs = await _ctx.Songs
+                    .AsNoTracking()
+                    .FromSql(query)
+                    .ToListAsync();
 
-                List<Song> PopularSongs = new List<Song>();
-                Artist.Albums.ForEach(x => PopularSongs.Add(x.Songs.OrderByDescending(y => y.Popularity).First()));
-                return PopularSongs;
+                return ArtistSongs;
             }
             catch (Exception e)
             {
                 throw e;
+            }
+
+            string FormatSql(List<int> ids)
+            {
+                List<string> IdsFormated = new List<string>();
+                for (int i = 0; i < ids.Count; i++)
+                {
+                    IdsFormated.Add($"AlbumId={ids[i]}");
+                }
+
+                return $"SELECT TOP(6) * FROM [SpotyPie].[dbo].[Song] WHERE {string.Join(" OR ", IdsFormated)} ORDER BY Popularity DESC;";
             }
         }
 

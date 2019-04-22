@@ -38,10 +38,18 @@ namespace SpotyPie
 
         private Player.Player Player { get; set; }
 
-        public Current_state(Player.Player player, MainActivity activity)
+        public Current_state(MainActivity activity)
         {
-            this.Player = player;
             this.Activity = activity;
+            Player = new Player.Player();
+            this.Activity.mSupportFragmentManager.BeginTransaction()
+                    .Replace(Resource.Id.player_frame, Player)
+                    .Commit();
+        }
+
+        public Player.Player GetPlayer()
+        {
+            return Player;
         }
 
         public void SetSong(List<Songs> song, int position = 0, bool refresh = false)
@@ -66,9 +74,9 @@ namespace SpotyPie
                 Id = song[position].Id;
                 Start_music = true;
                 PlayerIsVisible = true;
-                Player.PlayToggle.SetImageResource(Resource.Drawable.play_loading);
-                Player.PlayToggle.SetImageResource(Resource.Drawable.play_loading);
-                Player.StartPlayMusic();
+                GetPlayer().PlayToggle.SetImageResource(Resource.Drawable.play_loading);
+                GetPlayer().PlayToggle.SetImageResource(Resource.Drawable.play_loading);
+                GetPlayer().StartPlayMusic();
             }
         }
 
@@ -95,13 +103,13 @@ namespace SpotyPie
                     if (Current_Player_Image != Current_Song.LargeImage)
                     {
                         Current_Player_Image = Current_Song.LargeImage;
-                        Picasso.With(Activity.ApplicationContext).Load(Current_Song.LargeImage).Into(Player.Player_Image);
+                        Picasso.With(Activity.ApplicationContext).Load(Current_Song.LargeImage).Into(GetPlayer().Player_Image);
                     }
-                    Player.CurretSongTimeText.Text = "0.00";
-                    Player.Player_song_name.Text = Current_Song.Name;
+                    GetPlayer().CurretSongTimeText.Text = "0.00";
+                    GetPlayer().Player_song_name.Text = Current_Song.Name;
                     Activity.SongTitle.Text = Current_Song.Name;
                     Activity.ArtistName.Text = Current_Song.Name;
-                    Player.Player_artist_name.Text = "Muse";
+                    GetPlayer().Player_artist_name.Text = "Muse";
                 }, null);
             });
         }
@@ -117,7 +125,7 @@ namespace SpotyPie
             //Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Album.Artists).First();
             Application.SynchronizationContext.Post(_ =>
             {
-                Player.Player_playlist_name.Text = "Muse" + " - " + Current_Album.Name;
+                GetPlayer().Player_playlist_name.Text = "Muse" + " - " + Current_Album.Name;
             }, null);
         }
 
@@ -128,15 +136,15 @@ namespace SpotyPie
             if (IsPlaying)
             {
                 Activity.PlayToggle.SetImageResource(Resource.Drawable.pause);
-                Player.PlayToggle.SetImageResource(Resource.Drawable.pause);
-                Player.MusicPlayer.Start();
+                GetPlayer().PlayToggle.SetImageResource(Resource.Drawable.pause);
+                GetPlayer().MusicPlayer.Start();
             }
             else
             {
                 Activity.PlayToggle.SetImageResource(Resource.Drawable.play_button);
-                Player.PlayToggle.SetImageResource(Resource.Drawable.play_button);
-                if (Player.MusicPlayer.IsPlaying)
-                    Player.MusicPlayer.Pause();
+                GetPlayer().PlayToggle.SetImageResource(Resource.Drawable.play_button);
+                if (GetPlayer().MusicPlayer.IsPlaying)
+                    GetPlayer().MusicPlayer.Pause();
             }
         }
 

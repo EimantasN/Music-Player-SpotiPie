@@ -31,15 +31,26 @@ namespace Mobile_Api
             return await GetListAsync<T>("Old");
         }
 
-        #region
+        #region ARTIST
         public async Task<Artist> GetWithAlbums(int id)
         {
-            return await GetOne<Artist>(id.ToString() + "/Albums");
+            return await GetOne<Artist>($"{id.ToString()}/Albums");
         }
         public async Task<List<Artist>> GetRelated(int id)
         {
-            return await GetListAsync<Artist>("Related/" + id);
+            return await GetListAsync<Artist>($"Related/{id}");
         }
+
+        public async Task<List<Songs>> GetTopTrackByArtistId(int id)
+        {
+            return await GetListAsync<Songs>($"{id}/top-tracks", "Artist");
+        }
+
+        public async Task<List<Album>> GetTopTrackByArtistId(int id)
+        {
+            return await GetListAsync<Album>($"{id}/top-tracks", "Artist");
+        }
+
         #endregion
 
         #region ALBUM

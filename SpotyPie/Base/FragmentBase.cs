@@ -86,6 +86,11 @@ namespace SpotyPie.Base
             ParentActivity.LoadAlbum(album);
         }
 
+        public void LoadArtist(Artist artist)
+        {
+            ParentActivity.LoadArtist(artist);
+        }
+
         public override void OnResume()
         {
             ForceUpdate();

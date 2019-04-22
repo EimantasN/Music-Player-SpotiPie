@@ -99,18 +99,18 @@ namespace SpotyPie
 
         private void Scroll_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)
         {
-            Scrolled = ScrollFather.ScrollY;
-            if (Scrolled < Height) //761 mazdaug
-            {
-                GetState().Activity.ActionName.Alpha = (float)((Scrolled * 100) / Height) / 100;
-                ButtonBackGround.Alpha = (float)((Scrolled * 100) / Height) / 100;
-                relative.Visibility = ViewStates.Invisible;
-            }
-            else
-            {
-                if (isPlayable)
-                    relative.Visibility = ViewStates.Visible;
-            }
+            //Scrolled = ScrollFather.ScrollY;
+            //if (Scrolled < Height) //761 mazdaug
+            //{
+            //    GetState().Activity.ActionName.Alpha = (float)((Scrolled * 100) / Height) / 100;
+            //    ButtonBackGround.Alpha = (float)((Scrolled * 100) / Height) / 100;
+            //    relative.Visibility = ViewStates.Invisible;
+            //}
+            //else
+            //{
+            //    if (isPlayable)
+            //        relative.Visibility = ViewStates.Visible;
+            //}
         }
 
         public void SetAlbum(Album album = null)

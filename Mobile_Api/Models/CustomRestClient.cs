@@ -57,6 +57,8 @@ namespace Mobile_Api.Models
 
                 if (response.IsSuccessful)
                 {
+                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                        return new List<T>();
                     return JsonConvert.DeserializeObject<List<T>>(response.Content);
                 }
                 else

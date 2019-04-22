@@ -15,7 +15,7 @@ namespace SpotyPie
     public class Browse : FragmentBase
     {
         //main_rv
-        private RvList<dynamic> RvData { get; set; }
+        private RvList<Songs> RvData { get; set; }
 
         public override int LayoutId { get; set; } = Resource.Layout.browse_layout;
 
@@ -23,7 +23,7 @@ namespace SpotyPie
         {
             if (RvData == null)
             {
-                var rvBase = new BaseRecycleView<dynamic>(this, Resource.Id.main_rv);
+                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.main_rv);
                 RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 rvBase.DisableScroolNested();
             }
@@ -39,15 +39,13 @@ namespace SpotyPie
         {
             try
             {
-                List<dynamic> data = new List<dynamic>() { null };
-                RvData.AddList(data);
-                var api = GetService();
+                List<Songs> data;
+                RvData.AddList(new List<Songs>() { null });
+                //data.AddRange(await GetService().GetRecent<Songs>());
+                //RvData.AddList(data);
 
-                data.AddRange(await api.GetRecent<Songs>());
-                RvData.AddList(data);
-
-                data.AddRange(await api.GetPopular<Songs>());
-                RvData.AddList(data);
+                //data.AddRange(await GetService().GetPopular<Songs>());
+                //RvData.AddList(data);
             }
             catch (Exception e)
             {
