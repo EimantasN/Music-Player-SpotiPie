@@ -35,6 +35,20 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("Update/{id}")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> Update(int id)
+        {
+            try
+            {
+                return Ok(await _songs.UpdateAsync(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         //[HttpGet("CurrentSong")]
         //public async Task<IActionResult> GetCurrentSong()
         //{

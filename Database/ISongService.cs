@@ -21,7 +21,7 @@ namespace Database
 
         Task<List<Song>> GetSongsByAlbumAsync(int albumId);
 
-        Task UpdateAsync(int id);
+        Task<Song> UpdateAsync(int id);
 
         Task<List<AudioBindError>> BindData();
 

@@ -84,6 +84,7 @@
     <Compile Include="Models\Enum\RvType.cs" />
     <Compile Include="Models\Enum\SecondLayerTypes.cs" />
     <Compile Include="Models\Enum\ThirdLayerTypes.cs" />
+    <Compile Include="Models\SongUpdate.cs" />
     <Compile Include="RecycleView\BaseRv.cs" />
     <Compile Include="Helpers\IFastScrollRecyclerViewAdapter.cs" />
     <Compile Include="Helpers\RecycleViewList.cs" />

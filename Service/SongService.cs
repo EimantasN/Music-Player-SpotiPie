@@ -154,7 +154,7 @@ namespace Services
             }
         }
 
-        public async Task UpdateAsync(int id)
+        public async Task<Song> UpdateAsync(int id)
         {
             try
             {
@@ -168,6 +168,7 @@ namespace Services
                     _ctx.Entry(song).State = EntityState.Modified;
                     await _ctx.SaveChangesAsync();
                 }
+                return song;
             }
             catch (Exception e)
             {

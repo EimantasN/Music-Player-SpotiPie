@@ -238,6 +238,32 @@ namespace SpotyPie
         }
         #endregion
 
+        #region Setters
+        public void UpdateSongs(int id)
+        {
+            if (_Songs == null && _Songs.Count == 0) return;
+
+            Songs song = _Songs.FirstOrDefault(x => x.Id == id);
+            song.Popularity++;
+
+        }
+        #endregion
+
+        #region Updates
+        internal async Task UpdateSongPopularity(int id)
+        {
+            try
+            {
+                await _service.Update<Songs>(id);
+                UpdateSongs(id);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+        #endregion
+
         private void InvokeOnMainThread(Action action)
         {
             Application.SynchronizationContext.Post(_ =>

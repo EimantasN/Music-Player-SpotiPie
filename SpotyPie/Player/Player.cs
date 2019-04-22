@@ -3,6 +3,7 @@ using Android.Media;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using SpotyPie.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +17,12 @@ namespace SpotyPie.Player
 
         private const string BaseUrl = "https://pie.pertrauktiestaskas.lt/api/stream/play/";
 
+        private float SongPlayedProcent = 0;
+
         private Object ProgressLock { get; set; } = new Object();
         private Object _checkSongLock { get; set; } = new Object();
+
+        private SongUpdate SongUpdate { get; set; }
 
         protected float mLastPosY;
         protected static int newsId = 0;
@@ -266,6 +271,7 @@ namespace SpotyPie.Player
 
         public void StartPlayMusic()
         {
+            SongUpdate = new SongUpdate(GetState().Current_Song?.Id);
             Task.Run(() =>
             {
                 if (GetState().Start_music)
@@ -348,6 +354,12 @@ namespace SpotyPie.Player
                                 Position = (int)MusicPlayer.CurrentPosition / 1000;
                                 if (CurrentTime.Seconds < Position)
                                 {
+                                    Application.SynchronizationContext.Post(_ =>
+                                    {
+                                        SongUpdate.CalculateTime(MusicPlayer.Duration,
+                                       async () => { await ParentActivity.GetAPIService().UpdateSongPopularity(GetState().Current_Song.Id); }
+                                       );
+                                    }, null);
                                     if (!SeekActive)
                                     {
                                         Application.SynchronizationContext.Post(_ => { SongTimeSeekBar.Progress = Progress; }, null);
@@ -376,6 +388,8 @@ namespace SpotyPie.Player
                 }
             }
         }
+
+
 
         private void Player_Error(object sender, MediaPlayer.ErrorEventArgs e)
         {
