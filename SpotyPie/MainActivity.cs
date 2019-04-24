@@ -1,19 +1,16 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
-using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using Mobile_Api;
 using Mobile_Api.Models;
-using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
-using SpotyPie.Helpers;
+using SpotyPie.Services;
 using System;
 using System.Windows.Input;
-using SupportFragment = Android.Support.V4.App.Fragment;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie
@@ -84,9 +81,6 @@ namespace SpotyPie
             mSupportFragmentManager = SupportFragmentManager;
 
             APPSTATE = new Current_state(this);
-
-            //_bluetoothHelper = new BluetoothHelper(Application.ApplicationContext);
-            //MyCommandExecute();
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
 
@@ -226,7 +220,12 @@ namespace SpotyPie
 
         private void PlayToggle_Click(object sender, EventArgs e)
         {
-            GetState().Music_play_toggle();
+            if (GetState().IsPlaying)
+                GetState().GetPlayer().Music_pause();
+            else
+            {
+                GetState().GetPlayer().Music_play();
+            }
         }
 
         private void MiniPlayer_Click(object sender, EventArgs e)

@@ -32,6 +32,10 @@ namespace SpotyPie
 
         public Album Current_Album { get; set; } = null;
 
+        public Artist Current_Artist { get; set; } = null;
+
+        public Playlist Current_Playlist { get; set; } = null;
+
         public Songs Current_Song { get; set; } = null;
 
         public List<Songs> Current_Song_List { get; set; } = new List<Songs>();
@@ -129,25 +133,6 @@ namespace SpotyPie
             }, null);
         }
 
-        public void Music_play_toggle()
-        {
-            IsPlaying = !IsPlaying;
-
-            if (IsPlaying)
-            {
-                Activity.PlayToggle.SetImageResource(Resource.Drawable.pause);
-                GetPlayer().PlayToggle.SetImageResource(Resource.Drawable.pause);
-                GetPlayer().MusicPlayer.Start();
-            }
-            else
-            {
-                Activity.PlayToggle.SetImageResource(Resource.Drawable.play_button);
-                GetPlayer().PlayToggle.SetImageResource(Resource.Drawable.play_button);
-                if (GetPlayer().MusicPlayer.IsPlaying)
-                    GetPlayer().MusicPlayer.Pause();
-            }
-        }
-
         public void Player_visiblibity_toggle()
         {
             if (PlayerIsVisible)
@@ -176,48 +161,6 @@ namespace SpotyPie
         {
             Activity.BackHeaderButton.Visibility = ViewStates.Gone;
             Activity.OptionsHeaderButton.Visibility = ViewStates.Gone;
-        }
-
-        public void ChangeSong(bool Foward)
-        {
-            if (Current_Song_List == null) return;
-
-            for (int i = 0; i < Current_Song_List.Count; i++)
-            {
-                if (Current_Song_List[i].IsPlayingNow())
-                {
-                    if (Foward)
-                    {
-                        Current_Song_List[i].SetIsPlaying(false);
-                        if ((i + 1) == Current_Song_List.Count)
-                        {
-                            Current_Song_List[0].SetIsPlaying(true);
-                            SetSong(Current_Song_List, 0);
-                        }
-                        else
-                        {
-                            Current_Song_List[i + 1].SetIsPlaying(true);
-                            SetSong(Current_Song_List, i + 1);
-                        }
-                    }
-                    else
-                    {
-                        Current_Song_List[i].SetIsPlaying(false);
-                        if (i == 0)
-                        {
-                            Current_Song_List[0].SetIsPlaying(true);
-                            SetSong(Current_Song_List, 0);
-                        }
-                        else
-                        {
-
-                            Current_Song_List[i - 1].SetIsPlaying(true);
-                            SetSong(Current_Song_List, i - 1);
-                        }
-                    }
-                    break;
-                }
-            }
         }
 
         internal void SetSongDuration(int Duration)
