@@ -65,6 +65,11 @@ namespace Mobile_Api
         {
             return await Post<Songs>("SetSongLenght", $"id={id}&lenght={duration}");
         }
+
+        public async Task<Songs> Corruped(int id)
+        {
+            return await Post<Songs>($"Corrupted/{id}", "Songs");
+        }
         #endregion
     }
 }

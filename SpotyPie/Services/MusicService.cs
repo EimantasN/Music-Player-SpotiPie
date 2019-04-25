@@ -129,6 +129,11 @@ namespace SpotyPie.Services
                 }
                 catch
                 {
+                    Task.Run(() =>
+                    {
+                        var API = new Mobile_Api.Service();
+                        API.Corruped(Current_Song.Id);
+                    });
                     Task.Run(() => CheckSong());
                 }
             });

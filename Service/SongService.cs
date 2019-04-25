@@ -311,7 +311,7 @@ namespace Services
                 int ID = FindSimilarName.findSimilarSongName(await _ctx.Songs.AsNoTracking().ToListAsync(), flacTag.Title);
                 if (ID == 0)
                 {
-                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Album not found in database");
+                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Song not found in database");
                 }
                 else
                 {
@@ -422,7 +422,7 @@ namespace Services
         {
             try
             {
-                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id && x.Popularity == 0);
                 var album = await _ctx.Albums.Include(x => x.Songs).FirstOrDefaultAsync(x => x.Id == song.AlbumId);
                 if (song != null && album != null)
                 {

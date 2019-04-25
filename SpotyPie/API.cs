@@ -245,7 +245,6 @@ namespace SpotyPie
 
             Songs song = _Songs.FirstOrDefault(x => x.Id == id);
             song.Popularity++;
-
         }
         #endregion
 
@@ -256,6 +255,18 @@ namespace SpotyPie
             {
                 await _service.Update<Songs>(id);
                 UpdateSongs(id);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        internal async Task SongCorrupted(int id)
+        {
+            try
+            {
+                await _service.Corruped(id);
             }
             catch (Exception e)
             {
