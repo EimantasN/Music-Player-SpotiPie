@@ -4,6 +4,10 @@ namespace Models.BackEnd
 {
     public class Song
     {
+        public virtual int AlbumId { get; set; }
+
+        public virtual int ArtistId { get; set; }
+
         public int Id { get; set; }
 
         public string SpotifyId { get; set; }
@@ -37,6 +41,8 @@ namespace Models.BackEnd
         public DateTime UploadTime { get; set; }
 
         public long Size { get; set; }
+
+        public bool Corrupted { get; set; }
 
     }
 }

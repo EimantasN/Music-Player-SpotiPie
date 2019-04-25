@@ -4,14 +4,16 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(SpotyPieIDbContext))]
-    partial class SpotyPieIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190425203052_added_corrupted_porp_to_song")]
+    partial class added_corrupted_porp_to_song
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +27,7 @@ namespace Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ArtistId");
+                    b.Property<int?>("ArtistId");
 
                     b.Property<bool>("IsPlayable");
 
@@ -181,9 +183,7 @@ namespace Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AlbumId");
-
-                    b.Property<int>("ArtistId");
+                    b.Property<int?>("AlbumId");
 
                     b.Property<bool>("Corrupted");
 
@@ -255,8 +255,7 @@ namespace Database.Migrations
                 {
                     b.HasOne("Models.BackEnd.Artist")
                         .WithMany("Albums")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ArtistId");
                 });
 
             modelBuilder.Entity("Models.BackEnd.Quote", b =>
@@ -270,8 +269,7 @@ namespace Database.Migrations
                 {
                     b.HasOne("Models.BackEnd.Album")
                         .WithMany("Songs")
-                        .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("AlbumId");
 
                     b.HasOne("Models.BackEnd.Playlist")
                         .WithMany("Songs")

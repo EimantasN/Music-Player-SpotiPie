@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace SpotyPie
+namespace SpotyPie.Services.Bluetooth.Interfaces
 {
     public interface IBth
     {

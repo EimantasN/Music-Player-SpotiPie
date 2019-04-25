@@ -7,28 +7,18 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using Thread = System.Threading.Thread;
 using Android.Runtime;
+using SpotyPie.Services.Bluetooth.Enumerators;
+using SpotyPie.Services.Bluetooth.Interfaces;
+using SpotyPie.Services.Bluetooth;
 
 namespace SpotyPie
 {
-    public enum BlhStatus
-    {
-        Started,
-        AdapterNotFound,
-        AdapterDisabled,
-        DeviceNotFound,
-        Connecting,
-        Connected,
-        Disconnected,
-        FailedCreateSocket,
-        Error
-    }
-
     public class Bth : IBth
     {
-        private BlhStatus Status { get; set; } = BlhStatus.Started;
-
         //For now hardcoded
         private string Name { get; set; } = "MDR-ZX330BT";
+
+        private BlhStatus Status { get; set; } = BlhStatus.Started;
 
         private CancellationTokenSource _ct { get; set; }
 
@@ -62,6 +52,8 @@ namespace SpotyPie
 
         private void Loop(string name, int sleepTime, bool readAsCharArray)
         {
+            BthHelper.RestartBluetooth();
+
             BluetoothDevice device = null;
             BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
             BluetoothSocket BthSocket = null;
@@ -128,6 +120,8 @@ namespace SpotyPie
                 }
                 catch
                 {
+                    Thread.Sleep(500);
+                    //BthHelper.RestartBluetooth();
                     Status = BlhStatus.Error;
                 }
 

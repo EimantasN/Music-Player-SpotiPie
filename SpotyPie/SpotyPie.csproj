@@ -74,11 +74,13 @@
     <Compile Include="AlbumFragment.cs" />
     <Compile Include="API.cs" />
     <Compile Include="Base\FragmentBase.cs" />
-    <Compile Include="Services\Bth.cs" />
+    <Compile Include="Services\Bluetooth\BthHelper.cs" />
+    <Compile Include="Services\Bluetooth\Enumerators\BlhStatus.cs" />
+    <Compile Include="Services\Bluetooth\Interfaces\IBth.cs" />
+    <Compile Include="Services\Bluetooth\Bth.cs" />
     <Compile Include="Helpers\Enums\Search_status.cs" />
     <Compile Include="Helpers\ConvertFileToByteArray.cs" />
     <Compile Include="Helpers\Screen.cs" />
-    <Compile Include="Services\IBth.cs" />
     <Compile Include="MainFragment.cs" />
     <Compile Include="Current_state.cs" />
     <Compile Include="Helpers\BluetoothHelper.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Models\Enum\SecondLayerTypes.cs" />
     <Compile Include="Models\Enum\ThirdLayerTypes.cs" />
     <Compile Include="Models\SongUpdate.cs" />
+    <Compile Include="Services\Helpers\ImageGetterForNotification.cs" />
     <Compile Include="Services\LocalBinder.cs" />
     <Compile Include="Services\MediaButtonBroadcastReceiver.cs" />
     <Compile Include="RecycleView\BaseRv.cs" />
@@ -397,6 +400,7 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="Resources\animation\" />
+    <Folder Include="Services\Bluetooth\Constants\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\repeat.xml" />

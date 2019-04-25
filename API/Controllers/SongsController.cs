@@ -49,6 +49,21 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("Corrupted/{id}")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> Corrupted(int id)
+        {
+            try
+            {
+                await _songs.SetCorruptedAsync(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         //[HttpGet("CurrentSong")]
         //public async Task<IActionResult> GetCurrentSong()
         //{

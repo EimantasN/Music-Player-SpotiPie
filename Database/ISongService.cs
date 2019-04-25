@@ -28,5 +28,7 @@ namespace Database
         Task<List<AudioBindError>> AddAudioToLibrary(IFormFile file);
 
         Task<Song> SetLenght(int id, long lenght);
+
+        Task SetCorruptedAsync(int id);
     }
 }

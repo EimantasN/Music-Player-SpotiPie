@@ -28,7 +28,7 @@ namespace SpotyPie
 
         public MainActivity Activity { get; set; }
 
-        private string Current_Player_Image { get; set; }
+        public string Current_Player_Image { get; set; }
 
         public Album Current_Album { get; set; } = null;
 
@@ -58,30 +58,7 @@ namespace SpotyPie
 
         public void SetSong(List<Songs> song, int position = 0, bool refresh = false)
         {
-            Activity.TogglePlayer(true);
-            SetCurrentSong(song, position);
-            UpdateCurrentInfo();
-
-            if (Activity.MiniPlayer.Visibility == ViewStates.Gone)
-                Activity.MiniPlayer.Visibility = ViewStates.Visible;
-        }
-
-        public void SetCurrentSong(List<Songs> song, int position)
-        {
-            Current_Song = song[position];
-            Current_Song.SetIsPlaying(true);
-            Current_Song_List = song;
-
-            if (Id != song[position].Id)
-            {
-                PrevId = Id;
-                Id = song[position].Id;
-                Start_music = true;
-                PlayerIsVisible = true;
-                GetPlayer().PlayToggle.SetImageResource(Resource.Drawable.play_loading);
-                GetPlayer().PlayToggle.SetImageResource(Resource.Drawable.play_loading);
-                GetPlayer().StartPlayMusic();
-            }
+            GetPlayer().SongChangeStarted(song, position);
         }
 
         public void SetCurrentSongList(List<Songs> songs)
@@ -96,26 +73,6 @@ namespace SpotyPie
         public void UpdateSongList(Songs song)
         {
             Current_Song_List.First(x => x.Id == Current_Song.Id).SetIsPlaying(true);
-        }
-
-        public void UpdateCurrentInfo()
-        {
-            Task.Run(() =>
-            {
-                Application.SynchronizationContext.Post(_ =>
-                {
-                    if (Current_Player_Image != Current_Song.LargeImage)
-                    {
-                        Current_Player_Image = Current_Song.LargeImage;
-                        Picasso.With(Activity.ApplicationContext).Load(Current_Song.LargeImage).Into(GetPlayer().Player_Image);
-                    }
-                    GetPlayer().CurretSongTimeText.Text = "0.00";
-                    GetPlayer().Player_song_name.Text = Current_Song.Name;
-                    Activity.SongTitle.Text = Current_Song.Name;
-                    Activity.ArtistName.Text = Current_Song.Name;
-                    GetPlayer().Player_artist_name.Text = "Muse";
-                }, null);
-            });
         }
 
         public void SetArtist(Artist art)

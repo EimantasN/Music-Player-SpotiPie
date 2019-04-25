@@ -34,6 +34,9 @@ namespace SpotyPie
                     return;
 
                 KeyEvent keyEvent = (KeyEvent)intent.GetParcelableExtra(Intent.ExtraKeyEvent);
+                if (keyEvent.Action != KeyEventActions.Down)
+                    return;
+
                 Intent intend = new Intent(context, typeof(MusicService));
                 intend.PutExtra("Data", keyEvent.KeyCode.ToString());
                 context.StartService(intend);

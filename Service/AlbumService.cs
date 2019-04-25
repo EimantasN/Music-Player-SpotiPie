@@ -23,6 +23,7 @@ namespace Services
             {
                 //Task.Run(() => Update(id));
                 var album = await _ctx.Albums.Include(x => x.Songs).FirstAsync(x => x.Id == id);
+                album.Songs = album.Songs.Where(x => x.IsPlayable).ToList();
                 Update(album);
                 if (album == null)
                     throw new Exception("album with id " + id + " not found");

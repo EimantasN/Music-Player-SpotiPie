@@ -417,5 +417,30 @@ namespace Services
                 throw e;
             }
         }
+
+        public async Task SetCorruptedAsync(int id)
+        {
+            try
+            {
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
+                var album = await _ctx.Albums.Include(x => x.Songs).FirstOrDefaultAsync(x => x.Id == song.AlbumId);
+                if (song != null && album != null)
+                {
+                    if (album.Songs.Count(x => x.IsPlayable && x.Corrupted == false) > 1)
+                        _ctx.Entry(album).State = EntityState.Modified;
+                    song.Corrupted = true;
+                    song.IsPlayable = false;
+                    if (File.Exists(song.LocalUrl))
+                        File.Delete(song.LocalUrl);
+                    song.LocalUrl = null;
+                    _ctx.Entry(song).State = EntityState.Modified;
+                    await _ctx.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
