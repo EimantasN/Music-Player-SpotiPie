@@ -149,7 +149,7 @@ namespace SpotyPie.Services
                 {
                     Task.Run(() =>
                     {
-                        GetAPIService().SetState(e);
+                        GetAPIService().SetState(Current_Song.Id);
                     });
                 }
             });
