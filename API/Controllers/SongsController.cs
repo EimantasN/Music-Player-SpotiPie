@@ -1,6 +1,7 @@
 ﻿using Database;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Models.BackEnd;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,9 +35,66 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("Update/{id}")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> Update(int id)
+        {
+            try
+            {
+                return Ok(await _songs.UpdateAsync(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("Corrupted/{id}")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> Corrupted(int id)
+        {
+            try
+            {
+                await _songs.SetCorruptedAsync(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        //[HttpGet("CurrentSong")]
+        //public async Task<IActionResult> GetCurrentSong()
+        //{
+        //    try
+        //    {
+        //        Song song = await _songs.GetCurrent();
+        //        return Ok();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest(e);
+        //    }
+        //}
+
+        [HttpPost("SetSongLenght")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> SetSongLenght([FromForm]int id, [FromForm] long lenght)
+        {
+            try
+            {
+                return Ok(await _songs.SetLenght(id, lenght));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpPost("Search")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> Search([FromBody] string query)
+        public async Task<IActionResult> Search([FromForm] string query)
         {
             try
             {
@@ -51,7 +109,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("Songs")]
+        [HttpGet("All")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetSongs()
         {

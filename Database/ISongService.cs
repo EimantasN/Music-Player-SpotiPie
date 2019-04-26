@@ -21,9 +21,14 @@ namespace Database
 
         Task<List<Song>> GetSongsByAlbumAsync(int albumId);
 
-        Task UpdateAsync(int id);
+        Task<Song> UpdateAsync(int id);
 
         Task<List<AudioBindError>> BindData();
+
         Task<List<AudioBindError>> AddAudioToLibrary(IFormFile file);
+
+        Task<Song> SetLenght(int id, long lenght);
+
+        Task SetCorruptedAsync(int id);
     }
 }

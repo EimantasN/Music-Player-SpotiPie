@@ -145,7 +145,6 @@ namespace SpotyPie.Player
                         Playlist.Add(x);
                         await Task.Delay(200);
                     }
-                    //Playlist.RemoveLoading();
                 }
                 else
                 {

@@ -23,18 +23,25 @@ namespace SpotyPie.RecycleView.Models
 
         internal void PrepareView(dynamic t, Context context)
         {
-            if (t.Id == Current_state.Id)
+            try
             {
-                SmallIcon.SetImageResource(Resource.Drawable.music_pause_small);
-                Title.SetTextColor(ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#1db954")));
-                SubTitile.SetTextColor(ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#1db954")));
+                if (t.Id == Current_state.Id)
+                {
+                    SmallIcon.SetImageResource(Resource.Drawable.music_pause_small);
+                    Title.SetTextColor(ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#1db954")));
+                    SubTitile.SetTextColor(ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#1db954")));
+                }
+                else
+                {
+                    SmallIcon.SetImageResource(Resource.Drawable.music_note_small);
+                }
+                Title.Text = t.Name;
+                SubTitile.Text = "Coming soon";
             }
-            else
+            catch (Exception e)
             {
-                SmallIcon.SetImageResource(Resource.Drawable.music_note_small);
+
             }
-            Title.Text = t.Name;
-            SubTitile.Text = "Coming soon";
         }
     }
 }

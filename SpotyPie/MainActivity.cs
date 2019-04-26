@@ -1,19 +1,16 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
-using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using Mobile_Api;
 using Mobile_Api.Models;
-using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
-using SpotyPie.Helpers;
+using SpotyPie.Services;
 using System;
 using System.Windows.Input;
-using SupportFragment = Android.Support.V4.App.Fragment;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie
@@ -27,16 +24,17 @@ namespace SpotyPie
 
         private Current_state APPSTATE;
 
-        FragmentBase CurrentFragment;
+        private FragmentBase CurrentFragment;
 
-        FragmentBase Home;
-        FragmentBase Browse;
-        FragmentBase Search;
-        FragmentBase Library;
-        public AlbumFragment AlbumFragment;
-        public SupportFragment ArtistFragment;
+        private MainFragment MainFragment;
+        private Search Search;
+        private Browse Browse;
+        private LibraryFragment Library;
+        private AlbumFragment AlbumFragment;
+        private ArtistFragment ArtistFragment;
 
-        BottomNavigationView bottomNavigation;
+
+        public BottomNavigationView bottomNavigation;
         public ImageButton PlayToggle;
 
         public TextView ArtistName;
@@ -59,7 +57,6 @@ namespace SpotyPie
 
         public FragmentBase FirstLayerFragment;
         public FragmentBase SecondLayerFragment;
-        public Player.Player Player;
 
         public int Add_to_playlist_id = 0;
 
@@ -81,15 +78,11 @@ namespace SpotyPie
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            Player = new Player.Player();
-            APPSTATE = new Current_state((Player.Player)Player, this);
+            mSupportFragmentManager = SupportFragmentManager;
 
-            //_bluetoothHelper = new BluetoothHelper(Application.ApplicationContext);
-            //MyCommandExecute();
+            APPSTATE = new Current_state(this);
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
-
-            mSupportFragmentManager = SupportFragmentManager;
 
             PlayerContainer = FindViewById<FrameLayout>(Resource.Id.player_frame);
             FirstLayer = FindViewById<FrameLayout>(Resource.Id.first_layer);
@@ -102,40 +95,42 @@ namespace SpotyPie
             SecondLayer.Visibility = ViewStates.Gone;
             FirstLayer.Visibility = ViewStates.Gone;
 
-            Home = new Browse();
-            Browse = new MainFragment();
-            Library = new LibraryFragment();
-
-            SupportFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.player_frame, Player)
-                .Commit();
-
-            PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
             ActionName = FindViewById<TextView>(Resource.Id.textView);
+
+            #region MINI PLAYER
+
             MiniPlayer = FindViewById<ConstraintLayout>(Resource.Id.PlayerContainer);
-            ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
+
+            PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             ShowPlayler = FindViewById<ImageButton>(Resource.Id.show_player);
-            //Animation marquee = AnimationUtils.LoadAnimation(this, Resource.Drawable.marquee);
-            //ArtistName.StartAnimation(marquee);
 
             SongTitle = FindViewById<TextView>(Resource.Id.song_name);
-            BackHeaderButton = FindViewById<ImageButton>(Resource.Id.back);
-            OptionsHeaderButton = FindViewById<ImageButton>(Resource.Id.options);
+            SongTitle.Selected = true;
+            SongTitle.Text = "Labai ilgas tekstas kuris keičiasi jeigu tekstas netelpa";
+            ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
+            ArtistName.Selected = true;
 
             if (GetState().IsPlaying)
                 PlayToggle.SetImageResource(Resource.Drawable.pause);
             else
                 PlayToggle.SetImageResource(Resource.Drawable.play_button);
 
+            //MiniPlayer.Visibility = ViewStates.Gone;
+
+            PlayToggle.Click += PlayToggle_Click;
+            ShowPlayler.Click += MiniPlayer_Click;
+            MiniPlayer.Click += MiniPlayer_Click;
+
+            #endregion
+
+            BackHeaderButton = FindViewById<ImageButton>(Resource.Id.back);
+            OptionsHeaderButton = FindViewById<ImageButton>(Resource.Id.options);
+
             BackHeaderButton.Click += BackHeaderButton_Click;
 
-            MiniPlayer.Click += MiniPlayer_Click;
-            ShowPlayler.Click += MiniPlayer_Click;
-            PlayToggle.Click += PlayToggle_Click;
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragment(Resource.Id.home);
-            MiniPlayer.Visibility = ViewStates.Gone;
         }
 
         protected override void OnDestroy()
@@ -151,7 +146,7 @@ namespace SpotyPie
 
         public override void OnBackPressed()
         {
-            if (Player.CheckChildFragments())
+            if (APPSTATE.GetPlayer().CheckChildFragments())
             {
 
                 switch (CurrentViewLayer)
@@ -209,9 +204,11 @@ namespace SpotyPie
             }
             catch (System.Exception)
             {
-                Home = new MainFragment();
+                if (MainFragment == null)
+                    MainFragment = new MainFragment();
+
                 SupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.content_frame, Home)
+                    .Replace(Resource.Id.content_frame, MainFragment)
                     .Commit();
             }
         }
@@ -223,7 +220,12 @@ namespace SpotyPie
 
         private void PlayToggle_Click(object sender, EventArgs e)
         {
-            GetState().Music_play_toggle();
+            if (GetState().IsPlaying)
+                GetState().GetPlayer().Music_pause();
+            else
+            {
+                GetState().GetPlayer().Music_play();
+            }
         }
 
         private void MiniPlayer_Click(object sender, EventArgs e)
@@ -247,43 +249,49 @@ namespace SpotyPie
             return base.OnOptionsItemSelected(item);
         }
 
-        private void SetUpViewPager(ViewPager viewPager)
-        {
-            TabAdapter adapter = new TabAdapter(SupportFragmentManager);
-            //adapter.AddFragment(new Home(), "Home");
-            //adapter.AddFragment(new Browse(), "Browse");
-            //adapter.AddFragment(new Search(), "Search");
-            //adapter.AddFragment(new LibraryFragment(), "Library");
+        private Mobile_Api.Service API { get; set; }
 
-            viewPager.Adapter = adapter;
-        }
-
-        public SongService SongAPI { get; set; }
-        public AlbumService AlbumAPI { get; set; }
+        private API Api_service { get; set; }
 
         private Object ServiceLock { get; set; } = new Object();
 
-        public dynamic GetService(ApiServices service)
+        public dynamic GetAPIService()
+        {
+            if (Api_service == null)
+                return Api_service = new API(new Mobile_Api.Service(), this);
+            return Api_service;
+        }
+
+        public dynamic GetService()
         {
             lock (ServiceLock)
             {
-                switch (service)
-                {
-                    case ApiServices.Songs:
-                        {
-                            if (SongAPI == null)
-                                return SongAPI = new SongService();
-                            return SongAPI;
-                        }
-                    case ApiServices.Albums:
-                        {
-                            if (AlbumAPI == null)
-                                return AlbumAPI = new AlbumService();
-                            return AlbumAPI;
-                        }
-                    default:
-                        return null;
-                }
+                if (API == null)
+                    return API = new Mobile_Api.Service();
+                return API;
+                //switch (service)
+                //{
+                //    case ApiServices.Songs:
+                //        {
+                //            if (SongAPI == null)
+                //                return SongAPI = new SongService();
+                //            return SongAPI;
+                //        }
+                //    case ApiServices.Albums:
+                //        {
+                //            if (AlbumAPI == null)
+                //                return AlbumAPI = new AlbumService();
+                //            return AlbumAPI;
+                //        }
+                //    case ApiServices.Artist:
+                //        {
+                //            if (ArtistAPI == null)
+                //                return ArtistAPI = new ArtistService();
+                //            return ArtistAPI;
+                //        }
+                //    default:
+                //        return null;
+                //}
             }
         }
 
@@ -297,32 +305,43 @@ namespace SpotyPie
                 CurrentFragment.Hide();
             }
 
-            FragmentBase fragment = null;
+            CurrentFragment = null;
             switch (id)
             {
                 case Resource.Id.home:
-                    fragment = Browse;
-                    ActionName.Text = "Home";
-                    break;
+                    {
+                        if (MainFragment == null) MainFragment = new MainFragment();
+                        CurrentFragment = MainFragment;
+                        ActionName.Text = "Home";
+                        break;
+                    }
                 case Resource.Id.browse:
-                    fragment = Home;
-                    ActionName.Text = "MUSE";
-                    break;
+                    {
+                        if (Browse == null) Browse = new Browse();
+                        CurrentFragment = Browse;
+                        ActionName.Text = "Muse";
+                        break;
+                    }
                 case Resource.Id.search:
-                    fragment = Search;
-                    HeaderContainer.Visibility = ViewStates.Gone;
-                    break;
+                    {
+                        if (Search == null) Search = new Search();
+                        CurrentFragment = Search;
+                        HeaderContainer.Visibility = ViewStates.Gone;
+                        break;
+                    }
                 case Resource.Id.library:
-                    fragment = Library;
-                    ActionName.Text = "Library";
-                    break;
+                    {
+                        if (Library == null) Library = new LibraryFragment();
+                        CurrentFragment = Library;
+                        ActionName.Text = "Library";
+                        break;
+                    }
             }
 
-            if (fragment == null)
+            if (CurrentFragment == null)
                 return;
 
-            CurrentFragment = fragment;
-            if (!fragment.IsAdded)
+            if (!CurrentFragment.IsAdded)
             {
                 SupportFragmentManager.BeginTransaction()
                     .Add(Resource.Id.content_frame, CurrentFragment)
@@ -354,13 +373,37 @@ namespace SpotyPie
 
         public void LoadAlbum(Album album)
         {
-            if (AlbumFragment == null)
+            if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
+            APPSTATE.SetAlbum(album);
+
+            if (!AlbumFragment.IsAdded)
+                SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, AlbumFragment).Commit();
+            else
             {
-                AlbumFragment = new AlbumFragment();
+                AlbumFragment.Show();
             }
-            //Current_state.SetAlbum(Dataset[position]);
-            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.first_layer, AlbumFragment).Commit();
+            if (ArtistFragment != null)
+                ArtistFragment.Hide();
+
             AlbumFragment.SetAlbum(album);
+            ToogleSecondLayer(true);
+        }
+
+        public void LoadArtist(Artist artist)
+        {
+            if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
+            APPSTATE.SetArtist(artist);
+
+            if (!ArtistFragment.IsAdded)
+                SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, ArtistFragment).Commit();
+            else
+            {
+                ArtistFragment.Show();
+            }
+            if (AlbumFragment != null)
+                AlbumFragment.Hide();
+
+            ArtistFragment.LoadArtist(artist);
             ToogleSecondLayer(true);
         }
 
@@ -372,7 +415,7 @@ namespace SpotyPie
                 LastViewLayer = CurrentViewLayer;
                 CurrentViewLayer = 2;
                 HideOthers();
-                AlbumFragment.ForceUpdate();
+                //AlbumFragment.ForceUpdate();
                 FirstLayer.Visibility = ViewStates.Visible;
                 FirstLayer.BringToFront();
             }
@@ -426,6 +469,15 @@ namespace SpotyPie
 
             if (CurrentViewLayer != 4)
                 TogglePlayer(false);
+
+            if (CurrentViewLayer == 2)
+            {
+                bottomNavigation.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                bottomNavigation.Visibility = ViewStates.Gone;
+            }
         }
     }
 }

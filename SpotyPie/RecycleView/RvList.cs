@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Android.App;
 using Android.Support.V7.Util;
 using Android.Support.V7.Widget;
@@ -36,6 +35,19 @@ namespace SpotyPie.RecycleView
             set { mAdapter = value; }
         }
 
+
+        public void Clear()
+        {
+            Application.SynchronizationContext.Post(_ =>
+            {
+                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, new List<dynamic>()), false);
+
+                // Overwrite the old data
+                Erase();
+                mItems.AddRange(new List<dynamic>());
+                result.DispatchUpdatesTo(Adapter);
+            }, null);
+        }
         public void AddList(List<T> newData)
         {
             List<dynamic> newList = new List<dynamic>();
@@ -47,7 +59,7 @@ namespace SpotyPie.RecycleView
         {
             Application.SynchronizationContext.Post(_ =>
             {
-                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, newData), true);
+                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, newData), false);
 
                 // Overwrite the old data
                 Erase();
@@ -134,29 +146,6 @@ namespace SpotyPie.RecycleView
             catch
             {
             }
-        }
-
-        public void Clear()
-        {
-            Application.SynchronizationContext.Post(_ =>
-            {
-                try
-                {
-                    int size = mItems.Count;
-                    for (int i = 0; i < mItems.Count; i++)
-                    {
-                        if (mItems[i] != null)
-                        {
-                            Remove(i);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                Adapter.NotifyDataSetChanged();
-            }, null);
         }
     }
 }

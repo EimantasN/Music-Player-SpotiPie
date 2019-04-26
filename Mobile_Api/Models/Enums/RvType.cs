@@ -2,9 +2,15 @@
 {
     public enum RvType
     {
+        Song,
+        SongWithImage,
         Artist,
         Album,
         Playlist,
-        AlbumBigOne
+        BigOne,
+        ArtistList,
+        AlbumList,
+        AlbumGrid,
+        ArtistGrid
     }
 }

@@ -61,9 +61,14 @@ namespace SpotyPie.Base
             return ParentActivity.FirstLayerFragment;
         }
 
-        public dynamic GetService(ApiServices service = ApiServices.Shared)
+        public API GetAPIService()
         {
-            return ParentActivity.GetService(service);
+            return ParentActivity.GetAPIService();
+        }
+
+        public dynamic GetService()
+        {
+            return ParentActivity.GetService();
         }
 
         public void InvokeOnMainThread(Action action)
@@ -79,6 +84,11 @@ namespace SpotyPie.Base
         public void LoadAlbum(Album album)
         {
             ParentActivity.LoadAlbum(album);
+        }
+
+        public void LoadArtist(Artist artist)
+        {
+            ParentActivity.LoadArtist(artist);
         }
 
         public override void OnResume()

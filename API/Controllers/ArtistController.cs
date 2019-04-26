@@ -17,38 +17,24 @@ namespace API.Controllers
     public class ArtistController : ControllerBase
     {
 
-        private readonly SpotyPieIDbContext _ctx;
-        private readonly CancellationTokenSource cts;
-        private CancellationToken ct;
-        private readonly IDb _ctd;
+        private readonly IArtistService _artists;
 
-        public ArtistController(SpotyPieIDbContext ctx, IDb ctd)
+        public ArtistController(IArtistService ctx)
         {
-            _ctx = ctx;
-            _ctd = ctd;
-            cts = new CancellationTokenSource();
-            ct = cts.Token;
+            _artists = ctx;
         }
 
         //Search for artists with specified name
-        [HttpPost("search")]
+        [HttpPost("Search")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> Search([FromBody] string query)
+        public async Task<IActionResult> Search([FromForm] string query)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(query))
                     return BadRequest("Bad search query");
 
-                var artists = await Task.Factory.StartNew(() =>
-                {
-                    return _ctx.Artists
-                    .AsNoTracking()
-                    .Include(x => x.Albums)
-                    .Where(x => x.Name.Contains(query));
-                });
-
-                return Ok(artists);
+                return Ok(await _artists.SearchAsync(query));
             }
             catch (Exception e)
             {
@@ -57,17 +43,30 @@ namespace API.Controllers
         }
 
         // Get artist list
-        [HttpGet("Artists")]
+        [HttpGet("All")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetArtists()
         {
             try
             {
-                var artists = await _ctx.Artists.ToListAsync();
-
-                return Ok(artists);
+                return Ok(await _artists.GetArtistsAsync());
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // Get artist list
+        [HttpGet("Albums/{id}")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> GetArtistAlbums(int id)
+        {
+            try
+            {
+                return Ok(await _artists.GetArtistAlbum(id));
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -80,10 +79,7 @@ namespace API.Controllers
         {
             try
             {
-                var artist = await _ctx.Artists
-                    .FirstOrDefaultAsync(x => x.Id == id);
-
-                return Ok(artist);
+                return Ok(await _artists.GetArtistAsync(id));
             }
             catch (Exception e)
             {
@@ -99,13 +95,7 @@ namespace API.Controllers
         {
             try
             {
-                //TODO add popularity option and order by that
-                var artist = await _ctx.Artists.Include(x => x.Albums)
-                    .Select(x => new { x.Id, x.Albums, x.Popularity })
-                    .OrderByDescending(x => x.Popularity)
-                    .FirstOrDefaultAsync(x => x.Id == id);
-
-                return Ok(artist.Albums);
+                return Ok(await _artists.GetArtistTopTracksAsync(id));
             }
             catch (Exception e)
             {
@@ -120,19 +110,7 @@ namespace API.Controllers
         {
             try
             {
-                var artist = await _ctx.Artists.FirstAsync(x => x.Id == id);
-                var GenresList = JsonConvert.DeserializeObject<List<string>>(artist.Genres);
-                List<Artist> RelatedArtist = new List<Artist>();
-                foreach (var a in GenresList)
-                {
-                    var artists = await _ctx.Artists.AsNoTracking().Where(x => x.Id != id && x.Genres.Contains(a)).ToListAsync();
-                    RelatedArtist.AddRange(artists);
-
-                    if (RelatedArtist.Count >= 6)
-                        break;
-                }
-
-                return Ok(RelatedArtist);
+                return Ok(await _artists.GetRelatedArtistsAsync(id));
             }
             catch (System.Exception ex)
             {
@@ -146,8 +124,7 @@ namespace API.Controllers
         {
             try
             {
-                var artists = await _ctd.GetArtistList();
-                return Ok(artists);
+                return Ok(await _artists.GetArtistsAsync());
             }
             catch (System.Exception ex)
             {
@@ -161,31 +138,7 @@ namespace API.Controllers
         {
             try
             {
-                var data = await _ctx.Artists.Select(x => new
-                {
-                    x.Id,
-                    x.Popularity,
-                    x.Name,
-                    x.Genres
-                }).
-                OrderByDescending(x => x.Popularity).Take(6).ToListAsync();
-                return Ok(data);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Route("{id}/Albums")]
-        [HttpGet]
-        [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetArtistAlbums(int id)
-        {
-            try
-            {
-                var data = await _ctx.Artists.Include(x => x.Albums).FirstOrDefaultAsync(x => x.Id == id);
-                return Ok(data);
+                return Ok(await _artists.GetPopularArtistsAsync());
             }
             catch (Exception e)
             {

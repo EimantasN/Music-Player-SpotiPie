@@ -2,6 +2,7 @@
 using Android.Support.V7.Widget;
 using Android.Widget;
 using Mobile_Api;
+using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
@@ -14,7 +15,7 @@ namespace SpotyPie
     public class Browse : FragmentBase
     {
         //main_rv
-        private RvList<dynamic> RvData { get; set; }
+        private RvList<Songs> RvData { get; set; }
 
         public override int LayoutId { get; set; } = Resource.Layout.browse_layout;
 
@@ -22,8 +23,8 @@ namespace SpotyPie
         {
             if (RvData == null)
             {
-                var rvBase = new BaseRecycleView<dynamic>(this, Resource.Id.main_rv);
-                RvData = rvBase.Setup(LinearLayoutManager.Vertical);
+                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.main_rv);
+                RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 rvBase.DisableScroolNested();
             }
             Task.Run(() => PopulateData());
@@ -38,16 +39,13 @@ namespace SpotyPie
         {
             try
             {
-                List<dynamic> data = new List<dynamic>() { null };
-                RvData.AddList(data);
-                var api = (SongService)GetService(ApiServices.Songs);
+                List<Songs> data;
+                RvData.AddList(new List<Songs>() { null });
+                //data.AddRange(await GetService().GetRecent<Songs>());
+                //RvData.AddList(data);
 
-                data.AddRange(await api.GetRecent());
-                RvData.AddList(data);
-
-                data.AddRange(await api.GetPopular());
-                RvData.AddList(data);
-                RvData.RemoveLoading(data);
+                //data.AddRange(await GetService().GetPopular<Songs>());
+                //RvData.AddList(data);
             }
             catch (Exception e)
             {

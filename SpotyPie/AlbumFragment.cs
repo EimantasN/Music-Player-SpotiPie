@@ -26,7 +26,7 @@ namespace SpotyPie
     {
         public Album CurrentALbum { get; set; }
 
-        private RvList<dynamic> RvData;
+        private RvList<Songs> RvData;
 
         ImageView AlbumPhoto;
         TextView AlbumTitle;
@@ -40,13 +40,12 @@ namespace SpotyPie
 
         private TextView download;
         private TextView Copyrights;
-        private ConstraintLayout backViewContainer;
         private ConstraintLayout InnerViewContainer;
 
         private MarginLayoutParams MarginParrams;
         private RelativeLayout relative;
         private NestedScrollView ScrollFather;
-        private FrameLayout Holder;
+        //private FrameLayout Holder;
 
         private int Height = 0;
         private int Scrolled;
@@ -58,8 +57,8 @@ namespace SpotyPie
         protected override void InitView()
         {
             //Background binding
-            Holder = RootView.FindViewById<FrameLayout>(Resource.Id.frameLayout);
-            Holder.Touch += Containerx_Touch;
+            //Holder = RootView.FindViewById<FrameLayout>(Resource.Id.frameLayout);
+            //Holder.Touch += Containerx_Touch;
             ShufflePlay = RootView.FindViewById<Button>(Resource.Id.button_text);
             ShufflePlay.Visibility = ViewStates.Gone;
 
@@ -80,22 +79,14 @@ namespace SpotyPie
             relative = RootView.FindViewById<RelativeLayout>(Resource.Id.hide);
 
             InnerViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.innerWrapper);
-            //InnerViewContainer.Visibility = ViewStates.Gone;
             ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
-            backViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.backViewContainer);
-            var parameters = backViewContainer.LayoutParameters;
-            parameters.Height = Resources.DisplayMetrics.WidthPixels;
-
-            backViewContainer.LayoutParameters = parameters;
-
-            Height = backViewContainer.LayoutParameters.Height;
 
             ScrollFather.ScrollChange += Scroll_ScrollChange;
 
             if (RvData == null)
             {
-                var rvBase = new BaseRecycleView<dynamic>(this, Resource.Id.song_list);
-                RvData = rvBase.Setup(LinearLayoutManager.Vertical);
+                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
+                RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 rvBase.DisableScroolNested();
             }
             SetAlbum(CurrentALbum);
@@ -106,25 +97,20 @@ namespace SpotyPie
             base.OnResume();
         }
 
-        private void Containerx_Touch(object sender, TouchEventArgs e)
-        {
-            Search.Action = e.Event.GetX();
-        }
-
         private void Scroll_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)
         {
-            Scrolled = ScrollFather.ScrollY;
-            if (Scrolled < Height) //761 mazdaug
-            {
-                GetState().Activity.ActionName.Alpha = (float)((Scrolled * 100) / Height) / 100;
-                ButtonBackGround.Alpha = (float)((Scrolled * 100) / Height) / 100;
-                relative.Visibility = ViewStates.Invisible;
-            }
-            else
-            {
-                if (isPlayable)
-                    relative.Visibility = ViewStates.Visible;
-            }
+            //Scrolled = ScrollFather.ScrollY;
+            //if (Scrolled < Height) //761 mazdaug
+            //{
+            //    GetState().Activity.ActionName.Alpha = (float)((Scrolled * 100) / Height) / 100;
+            //    ButtonBackGround.Alpha = (float)((Scrolled * 100) / Height) / 100;
+            //    relative.Visibility = ViewStates.Invisible;
+            //}
+            //else
+            //{
+            //    if (isPlayable)
+            //        relative.Visibility = ViewStates.Visible;
+            //}
         }
 
         public void SetAlbum(Album album = null)
@@ -134,18 +120,20 @@ namespace SpotyPie
                 CurrentALbum = album;
                 if (Context != null)
                 {
+                    ScrollFather.ScrollTo(0, 0);
                     GetState().Activity.ActionName.Text = CurrentALbum.Name;
                     isPlayable = true;
                     IsMeniuActive = false;
                     Scrolled = 0;
 
-                    Picasso.With(Context).Load(CurrentALbum.LargeImage).Resize(1200, 1200).CenterCrop().Into(AlbumPhoto);
+                    Picasso.With(Context).Load(CurrentALbum.LargeImage).Into(AlbumPhoto);
 
                     AlbumTitle.Text = CurrentALbum.Name;
-                    AlbumByText.Text = "Muse";
-                    List<dynamic> songs = new List<dynamic>();
-                    CurrentALbum.Songs.ForEach(x => songs.Add((dynamic)x));
-                    RvData.AddList(songs);
+
+                    //TODO connect artist name
+                    AlbumByText.Text = "Coming soon";
+
+                    Task.Run(async () => await LoadSongsAsync());
                 }
             }
             catch
@@ -153,14 +141,21 @@ namespace SpotyPie
             }
         }
 
+        public async Task LoadSongsAsync()
+        {
+            await GetAPIService().GetSongsByAlbumAsync(CurrentALbum, RvData, () => { });
+        }
+
+        public override void OnStop()
+        {
+            RvData.Clear();
+            CurrentALbum = null;
+            base.OnStop();
+        }
+
         public override void ForceUpdate()
         {
-            if (RvData != null)
-            {
-                List<dynamic> songs = new List<dynamic>();
-                CurrentALbum.Songs.ForEach(x => songs.Add((dynamic)x));
-                RvData.AddList(songs);
-            }
+            Task.Run(async () => await LoadSongsAsync());
         }
     }
 }

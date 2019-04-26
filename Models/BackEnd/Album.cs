@@ -9,6 +9,8 @@ namespace Models.BackEnd
     public class Album
     {
 
+        public virtual int ArtistId { get; set; }
+
         public int Id { get; set; }
 
         public string SpotifyId { get; set; }

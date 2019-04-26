@@ -23,6 +23,24 @@ namespace Services
             {
                 //Task.Run(() => Update(id));
                 var album = await _ctx.Albums.Include(x => x.Songs).FirstAsync(x => x.Id == id);
+                album.Songs = album.Songs.Where(x => x.IsPlayable).ToList();
+                Update(album);
+                if (album == null)
+                    throw new Exception("album with id " + id + " not found");
+                return album;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<Album> UpdateAlbum(int id)
+        {
+            try
+            {
+                //Task.Run(() => Update(id));
+                var album = await _ctx.Albums.FirstAsync(x => x.Id == id);
                 Update(album);
                 if (album == null)
                     throw new Exception("album with id " + id + " not found");
@@ -45,7 +63,6 @@ namespace Services
             }
             catch (Exception e)
             {
-
             }
         }
 
@@ -55,7 +72,6 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable == true)
                     .Take(count)
                     .ToListAsync();
@@ -93,7 +109,6 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable)
                     .OrderByDescending(x => x.LastActiveTime).ThenBy(x => x.Popularity)
                     .OrderByDescending(x => x.LastActiveTime)
@@ -112,7 +127,6 @@ namespace Services
             {
                 return await _ctx.Albums
                     .AsNoTracking()
-                    .Include(x => x.Songs)
                     .Where(x => x.IsPlayable)
                     .OrderByDescending(x => x.Popularity)
                     .Take(6)
@@ -130,7 +144,6 @@ namespace Services
             {
                 return await _ctx.Albums
                         .AsNoTracking()
-                        .Include(x => x.Songs)
                         .Where(x => x.IsPlayable)
                         .OrderByDescending(x => x.LastActiveTime)
                         .Take(6)
@@ -146,10 +159,10 @@ namespace Services
         {
             try
             {
+                query = $"SELECT * FROM[SpotyPie].[dbo].[Albums] where IsPlayable=1 AND Name Like '%{query.Replace("'", "\"")}%'";
+
                 return await _ctx.Albums
-                    .AsNoTracking()
-                    .Where(x => x.IsPlayable)
-                    .Where(x => x.Name.Contains(query))
+                    .FromSql(query)
                     .ToListAsync();
             }
             catch (Exception e)

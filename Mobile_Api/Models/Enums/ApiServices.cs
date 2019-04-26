@@ -4,6 +4,7 @@
     {
         Shared,
         Songs,
-        Albums
+        Albums,
+        Artist
     }
 }

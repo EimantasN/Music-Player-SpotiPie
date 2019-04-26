@@ -18,8 +18,8 @@ namespace SpotyPie.Player
         public override int LayoutId { get; set; } = Resource.Layout.player_song_list;
 
         //Album Songs
-        public List<Song> AlbumSongsItem = new List<Song>();
-        public RvList<Song> AlbumSongs = new RvList<Song>();
+        public List<Songs> AlbumSongsItem = new List<Songs>();
+        public RvList<Songs> AlbumSongs = new RvList<Songs>();
         private RecyclerView.LayoutManager AlbumSongsLayoutManager;
         private RecyclerView.Adapter AlbumSongsAdapter;
         private RecyclerView AlbumSongsRecyclerView;

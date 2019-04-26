@@ -5,21 +5,44 @@ using System.Threading.Tasks;
 
 namespace Mobile_Api
 {
-    public abstract class SharedService : BaseService
+    public abstract class SharedService : BaseClient
     {
-        public abstract string Controller { get; set; }
-
         public async Task<T> Get<T>(int id)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/" + id);
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/" + id);
             return await GetData<T>(Client);
         }
 
-        /// PVZ api/album/Recent
-        public async Task<List<T>> GetListAsync<T>(string type)
+        public async Task<T> GetOne<T>(string endPoint)
         {
-            CustomRestClient Client = GetClient($"api/{Controller}/" + type);
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/" + endPoint);
+            return await GetData<T>(Client);
+        }
+
+        public async Task Update<T>(int id)
+        {
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/Update/{id.ToString()}");
+            await PostData<T>(Client);
+        }
+
+        /// PVZ api/album/Recent
+        public async Task<List<T>> GetListAsync<T>(string type, string controller = "")
+        {
+            if (string.IsNullOrEmpty(controller)) controller = typeof(T).Name;
+            CustomRestClient Client = GetClient($"api/{controller}/{type}");
             return await GetList<T>(Client);
+        }
+
+        public async Task<T> Post<T>(string endPoint, string paramerters)
+        {
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/{endPoint}");
+            return await Client.PostCustomObject<T>(paramerters);
+        }
+
+        public async Task<List<T>> PostList<T>(string endPoint, string paramerters)
+        {
+            CustomRestClient Client = GetClient($"api/{typeof(T).Name}/{endPoint}");
+            return await Client.PostCustomObjectList<T>(paramerters);
         }
 
         private async Task<List<T>> GetList<T>(CustomRestClient client)
@@ -31,6 +54,21 @@ namespace Mobile_Api
             catch
             {
                 return new List<T>();
+            }
+            finally
+            {
+                Release(client);
+            }
+        }
+
+        private async Task PostData<T>(CustomRestClient client)
+        {
+            try
+            {
+                await client.CustomGetObject<T>(Method.POST);
+            }
+            catch
+            {
             }
             finally
             {

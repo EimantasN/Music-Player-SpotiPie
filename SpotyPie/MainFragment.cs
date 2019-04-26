@@ -77,68 +77,11 @@ namespace SpotyPie
 
         public void LoadData()
         {
-            Task.Run(() => GetRecentAlbumsAsync(this.Context));
+            Task.Run(() => GetAPIService().GetRecentAlbumsAsync(RecentAlbums, () => { Toggle(true, RecentHolder); }));
 
-            Task.Run(() => GetPolularAlbumsAsync(this.Context));
+            Task.Run(() => GetAPIService().GetPolularAlbumsAsync(BestAlbums, () => { Toggle(true, BestHolder); }));
 
-            //Task.Run(() => GetPolularArtistsAsync(this.Context));
-
-            Task.Run(() => GetOldAlbumsAsync(this.Context));
-        }
-
-        public async Task GetRecentAlbumsAsync(Context cnt)
-        {
-            try
-            {
-                var api = (AlbumService)GetService(ApiServices.Albums);
-                var albums = await api.GetRecent();
-                InvokeOnMainThread(() =>
-                {
-                    Toggle(true, RecentHolder);
-                    albums.ForEach(x => RecentAlbums.Add(x));
-                });
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public async Task GetPolularAlbumsAsync(Context cnt)
-        {
-            try
-            {
-                var api = (AlbumService)GetService(ApiServices.Albums);
-                var albums = await api.GetPopular();
-                InvokeOnMainThread(() =>
-                {
-                    Toggle(true, BestHolder);
-                    albums.ForEach(x => BestAlbums.Add(x));
-                });
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public async Task GetOldAlbumsAsync(Context cnt)
-        {
-            try
-            {
-                var api = (AlbumService)GetService(ApiServices.Albums);
-                var albums = await api.GetOld();
-
-                InvokeOnMainThread(() =>
-                {
-                    Toggle(true, JumpBackHolder);
-                    albums.ForEach(x => JumpBack.Add(x));
-                });
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            Task.Run(() => GetAPIService().GetOldAlbumsAsync(JumpBack, () => { Toggle(true, JumpBackHolder); }));
         }
 
         public async Task GetPlaylists(Context cnt)

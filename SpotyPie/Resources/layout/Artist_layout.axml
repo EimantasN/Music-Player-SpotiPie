@@ -1,25 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-		android:fillViewport="true"
-    android:background="@drawable/gradient_grey_reverse">
+    android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/album_photo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:srcCompat="@drawable/touch" />
 
-        <include layout="@layout/artist_song_list" />
+    <TextView
+        android:id="@+id/album_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Touch"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintBottom_toTopOf="@+id/playable_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <include layout="@layout/artist_scrolled_content" />
-    </FrameLayout>
+    <Button
+        android:id="@+id/playable_button"
+        android:layout_width="wrap_content"
+        android:layout_height="33dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/playable_button"
+        android:text="Playable"
+        android:stateListAnimator="@null"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/album_by_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/album_by_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="60dp"
+        android:text="album by July Talk"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="400dp" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/fatherScrool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/innerWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toBottomOf="@+id/view">
+
+            <Space
+                android:id="@+id/space"
+                android:layout_width="0dp"
+                android:layout_height="400dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <Button
+                android:id="@+id/button_text"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/button_rounded"
+                android:padding="5dp"
+                android:translationY="-25dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:text="SHUFFLE PLAY"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/space" />
+
+            <TextView
+                android:id="@+id/song_list_title"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:background="#222222"
+                android:gravity="left|bottom"
+                android:paddingTop="25dp"
+                android:text="Popular songs"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/space" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/song_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#222222"
+                android:paddingTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/song_list_title" />
+
+            <TextView
+                android:id="@+id/albums_list_title"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="#222222"
+                android:gravity="center"
+                android:text="Albums"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/space"
+                app:layout_constraintTop_toBottomOf="@+id/song_list" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/artist_albums_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#222222"
+                android:paddingTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/albums_list_title" />
+
+            <TextView
+                android:id="@+id/related_list_title"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="#222222"
+                android:gravity="center"
+                android:text="Related artists"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/space"
+                app:layout_constraintTop_toBottomOf="@+id/artist_albums_list" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/related_artist_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#222222"
+                android:paddingTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/related_list_title" />
+
+            <TextView
+                android:id="@+id/copyrights"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="#222222"
+                android:gravity="center"
+                android:padding="32dp"
+                android:text="© 2016 Sleepless Records Inc., Under Exclusive License to Universal Music Canada \n ℗ 2016 Sleepless Records Inc., Under Exclusive License to Universal Music Canada"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@android:color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/related_artist_list" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/hide"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:visibility="invisible"-->
+        <!--android:background="@android:color/transparent"-->
+        <!--android:gravity="center">-->
+
+
+
+    <!--</RelativeLayout>-->
 
 </android.support.constraint.ConstraintLayout>

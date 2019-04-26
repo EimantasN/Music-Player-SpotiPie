@@ -143,11 +143,9 @@ namespace Services
         {
             try
             {
+                query = $"SELECT * FROM[SpotyPie].[dbo].[Song] where IsPlayable=1 AND Name Like '%{query.Replace("'", "\"")}%'";
                 return await _ctx.Songs
-                    .AsNoTracking()
-                    .Where(x => x.IsPlayable == true)
-                    .Where(x => x.Name.Contains(query))
-                    .Take(10)
+                    .FromSql(query)
                     .ToListAsync();
             }
             catch (Exception e)
@@ -156,7 +154,7 @@ namespace Services
             }
         }
 
-        public async Task UpdateAsync(int id)
+        public async Task<Song> UpdateAsync(int id)
         {
             try
             {
@@ -170,6 +168,7 @@ namespace Services
                     _ctx.Entry(song).State = EntityState.Modified;
                     await _ctx.SaveChangesAsync();
                 }
+                return song;
             }
             catch (Exception e)
             {
@@ -277,10 +276,8 @@ namespace Services
                 Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()));
 
             string AlbumName = "";
-
+            Replacer.CorrentAlbum(flacTag.Album);
             var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Name.ToLower().Trim().Contains(flacTag.Album.ToLower().Trim()));
-            if(album == null)
-                album = await _ctx.Albums.FirstOrDefaultAsync(x => flacTag.Album.ToLower().Trim().Contains(x.Name.ToLower().Trim()));
             if (album == null)
             {
                 int ID = FindSimilarName.findSimilarAlbumName(await _ctx.Albums.AsNoTracking().ToListAsync(), flacTag.Album);
@@ -314,7 +311,7 @@ namespace Services
                 int ID = FindSimilarName.findSimilarSongName(await _ctx.Songs.AsNoTracking().ToListAsync(), flacTag.Title);
                 if (ID == 0)
                 {
-                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Album not found in database");
+                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Song not found in database");
                 }
                 else
                 {
@@ -349,26 +346,26 @@ namespace Services
                 //}
                 //else
                 //{
-                    File.Copy(filePath,
-                    destinationPath,
-                    true);
+                File.Copy(filePath,
+                destinationPath,
+                true);
 
-                    if (song.LocalUrl == null || song.LocalUrl != destinationPath && !Environment.OSVersion.ToString().Contains("W"))
+                if (song.LocalUrl == null || song.LocalUrl != destinationPath)
+                {
+                    song.LocalUrl = destinationPath;
+                    song.IsLocal = true;
+                    song.IsPlayable = true;
+                    song.UploadTime = DateTime.Now;
+                    song.Size = new FileInfo(destinationPath).Length;
+                    _ctx.Entry(song).State = EntityState.Modified;
+
+                    if (!album.IsPlayable)
                     {
-                        song.LocalUrl = destinationPath;
-                        song.IsLocal = true;
-                        song.IsPlayable = true;
-                        song.UploadTime = DateTime.Now;
-                        song.Size = new FileInfo(destinationPath).Length;
-                        _ctx.Entry(song).State = EntityState.Modified;
-
-                        if (!album.IsPlayable)
-                        {
-                            album.IsPlayable = true;
-                            _ctx.Entry(album).State = EntityState.Modified;
-                        }
-                        await _ctx.SaveChangesAsync();
+                        album.IsPlayable = true;
+                        _ctx.Entry(album).State = EntityState.Modified;
                     }
+                    await _ctx.SaveChangesAsync();
+                }
                 //}
             }
 
@@ -399,6 +396,50 @@ namespace Services
                 return
                     Environment.CurrentDirectory +
                     System.IO.Path.DirectorySeparatorChar + "Music";
+            }
+        }
+
+        public async Task<Song> SetLenght(int id, long durationMs)
+        {
+            try
+            {
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id);
+                if (song != null)
+                {
+                    song.DurationMs = durationMs;
+                    _ctx.Entry(song).State = EntityState.Modified;
+                    await _ctx.SaveChangesAsync();
+                }
+                return song;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task SetCorruptedAsync(int id)
+        {
+            try
+            {
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == id && x.Popularity == 0);
+                var album = await _ctx.Albums.Include(x => x.Songs).FirstOrDefaultAsync(x => x.Id == song.AlbumId);
+                if (song != null && album != null)
+                {
+                    if (album.Songs.Count(x => x.IsPlayable && x.Corrupted == false) > 1)
+                        _ctx.Entry(album).State = EntityState.Modified;
+                    song.Corrupted = true;
+                    song.IsPlayable = false;
+                    if (File.Exists(song.LocalUrl))
+                        File.Delete(song.LocalUrl);
+                    song.LocalUrl = null;
+                    _ctx.Entry(song).State = EntityState.Modified;
+                    await _ctx.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
     }

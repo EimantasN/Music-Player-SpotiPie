@@ -1,19 +1,18 @@
 ﻿using Android.App;
-using Android.Support.Constraints;
+using Android.OS;
 using Android.Support.V4.Widget;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
-using Newtonsoft.Json;
-using RestSharp;
+using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
+using Square.Picasso;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Android.Views.ViewGroup;
 
 namespace SpotyPie
 {
@@ -21,154 +20,40 @@ namespace SpotyPie
     {
         public override int LayoutId { get; set; } = Resource.Layout.Artist_layout;
 
-        //Background info
+        private TextView SongListTitle { get; set; }
+        private TextView AlbumListTitle { get; set; }
+        private TextView ArtistListTitle { get; set; }
+
+        private BaseRecycleView<Songs> RvSongs { get; set; }
+        private BaseRecycleView<Album> RvAlbums { get; set; }
+        private BaseRecycleView<Artist> RvRevated { get; set; }
+
+        private Artist CurrentArtist;
 
         ImageView Photo;
         TextView AlbumTitle;
         Button PlayableButton;
         TextView AlbumByText;
-        TextView Background;
 
-        TextView ButtonBackGround;
-        TextView ButtonBackGround2;
-
-        //Artist Songs
-        public List<Song> ArtistTopSongsData;
-        public RvList<Song> ArtistTopSongs;
-        private RecyclerView.LayoutManager ArtistSongsLayoutManager;
-        private RecyclerView.Adapter ArtistSongsAdapter;
-        private RecyclerView ArtistSongsRecyclerView;
-
-        ////Artist Albums
-        //List<Album> AlbumsData;
-        //public RvList<TwoBlockWithImage> Albums;
-        //private RecyclerView.LayoutManager AlbumsLayoutManager;
-        //private RecyclerView.Adapter AlbumsAdapter;
-        //private RecyclerView AlbumsRecyclerView;
-
-        private TextView download;
-        private TextView Copyrights;
-        private ConstraintLayout backViewContainer;
-        int Height = 0;
-
-        MarginLayoutParams MarginParrams;
-        RelativeLayout relative;
         private NestedScrollView ScrollFather;
+
         int scrolled = 0;
-
-        public async Task GetSongsAsync(int id)
-        {
-            try
-            {
-                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/api/artist/" + id + "/top-tracks");
-                var request = new RestRequest(Method.GET);
-                IRestResponse response = await Client.ExecuteGetTaskAsync(request);
-                if (response.IsSuccessful)
-                {
-                    List<Song> songs = JsonConvert.DeserializeObject<List<Song>>(response.Content);
-                    foreach (var x in songs.OrderByDescending(x => x.LastActiveTime).Take(6))
-                    {
-                        ArtistTopSongs.Add(x);
-                    }
-                    ArtistTopSongsData = songs;
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        //List<string> Genres = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist.Genres);
-                        //Copyrights.Text = string.Join("\n", Genres);
-                    }, null);
-                }
-                else
-                {
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        Toast.MakeText(this.Context, "GetSongsAsync API call error", ToastLength.Short).Show();
-                    }, null);
-                }
-            }
-            catch (Exception)
-            {
-
-            }
-        }
-
-        public async Task GetArtistAlbums(int id)
-        {
-            //try
-            //{
-            //    RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/api/artist/" + id + "/Albums");
-            //    var request = new RestRequest(Method.GET);
-            //    IRestResponse response = await Client.ExecuteGetTaskAsync(request);
-            //    if (response.IsSuccessful)
-            //    {
-            //        Artist ArtistWithAlbums = JsonConvert.DeserializeObject<Artist>(response.Content);
-            //        Application.SynchronizationContext.Post(_ =>
-            //        {
-            //            AlbumsData = ArtistWithAlbums.Albums;
-            //            for (int i = 0; i < ArtistWithAlbums.Albums.Count; i = i + 2)
-            //            {
-            //                if (ArtistWithAlbums.Albums.Count - i == 1)
-            //                {
-            //                    var x = ArtistWithAlbums.Albums[i];
-            //                    Albums.Add(new TwoBlockWithImage(
-            //                    new BlockWithImage(
-            //                        x.Id,
-            //                        RvType.Album,
-            //                        x.Name,
-            //                        x.Label,
-            //                        x.Images.First().Url)));
-            //                }
-            //                else
-            //                {
-            //                    var x = ArtistWithAlbums.Albums[i];
-            //                    var y = ArtistWithAlbums.Albums[i + 1];
-            //                    Albums.Add(new TwoBlockWithImage(
-            //                        new BlockWithImage(
-            //                            x.Id,
-            //                            RvType.Album,
-            //                            x.Name,
-            //                            x.Label,
-            //                            x.Images.First().Url),
-            //                            new BlockWithImage(
-            //                            y.Id,
-            //                            RvType.Album,
-            //                            y.Name,
-            //                            x.Label,
-            //                            y.Images.First().Url)));
-            //                }
-            //            }
-            //            List<string> Genres = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist.Genres);
-            //            Copyrights.Text = string.Join("\n", Genres);
-            //        }, null);
-            //    }
-            //    else
-            //    {
-            //        Application.SynchronizationContext.Post(_ =>
-            //        {
-            //            Toast.MakeText(this.Context, "GetArtistAlbums API call error", ToastLength.Short).Show();
-            //        }, null);
-            //    }
-            //}
-            //catch (Exception)
-            //{
-
-            //}
-        }
 
         private void Scroll_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)
         {
-            scrolled = ScrollFather.ScrollY;
-            if (scrolled < Height) //761 mazdaug
-            {
-                //MainActivity.ActionName.Alpha = (float)((scrolled * 100) / Height) / 100;
-                Background.Alpha = (float)((scrolled * 100) / Height) / 100;
-                ButtonBackGround.Alpha = (float)((scrolled * 100) / Height) / 100;
-                ButtonBackGround2.Alpha = (float)((scrolled * 100) / Height) / 100;
-                relative.Visibility = ViewStates.Invisible;
-            }
-            else
-            {
-                relative.Visibility = ViewStates.Visible;
-            }
+            //scrolled = ScrollFather.ScrollY;
+            //if (scrolled < Height) //761 mazdaug
+            //{
+            //    //MainActivity.ActionName.Alpha = (float)((scrolled * 100) / Height) / 100;
+            //    Background.Alpha = (float)((scrolled * 100) / Height) / 100;
+            //    ButtonBackGround.Alpha = (float)((scrolled * 100) / Height) / 100;
+            //    ButtonBackGround2.Alpha = (float)((scrolled * 100) / Height) / 100;
+            //    relative.Visibility = ViewStates.Invisible;
+            //}
+            //else
+            //{
+            //    relative.Visibility = ViewStates.Visible;
+            //}
         }
 
         protected override void InitView()
@@ -176,65 +61,189 @@ namespace SpotyPie
             //MainActivity.ActionName.Text = GetState().Current_Artist.Name;
 
             ////Background binding
-            //Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
-            //AlbumTitle = RootView.FindViewById<TextView>(Resource.Id.album_title);
-            //PlayableButton = RootView.FindViewById<Button>(Resource.Id.playable_button);
-            //AlbumByText = RootView.FindViewById<TextView>(Resource.Id.album_by_title);
-            //Background = RootView.FindViewById<TextView>(Resource.Id.view);
-            //Background.Alpha = 0.0f;
+            Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
+            AlbumTitle = RootView.FindViewById<TextView>(Resource.Id.album_title);
+            PlayableButton = RootView.FindViewById<Button>(Resource.Id.playable_button);
+            AlbumByText = RootView.FindViewById<TextView>(Resource.Id.album_by_title);
 
-            //ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
-            //ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
+            SongListTitle = RootView.FindViewById<TextView>(Resource.Id.song_list_title);
+            SongListTitle.Visibility = ViewStates.Gone;
+
+            AlbumListTitle = RootView.FindViewById<TextView>(Resource.Id.albums_list_title);
+            AlbumListTitle.Visibility = ViewStates.Gone;
+
+            ArtistListTitle = RootView.FindViewById<TextView>(Resource.Id.related_list_title);
+            ArtistListTitle.Visibility = ViewStates.Gone;
 
             //Picasso.With(Context).Load(GetState().Current_Artist.LargeImage).Resize(300, 300).CenterCrop().Into(Photo);
-
             //AlbumTitle.Text = GetState().Current_Artist.Name;
 
-            ////TODO error if genres is null
-            ////AlbumByText.Text = JsonConvert.DeserializeObject<List<string>>(Current_state.Current_Artist)[0];
+            ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
+            ScrollFather.ScrollChange += ScrollFather_ScrollChange;
 
-            //GetState().ShowHeaderNavigationButtons();
+            if (RvSongs == null)
+            {
+                RvSongs = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
+                RvSongs.Init(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                RvSongs.DisableScroolNested();
+            }
 
-            //download = RootView.FindViewById<TextView>(Resource.Id.download_text);
-            //Copyrights = RootView.FindViewById<TextView>(Resource.Id.copyrights);
-            //MarginParrams = (MarginLayoutParams)download.LayoutParameters;
+            if (RvAlbums == null)
+            {
+                RvAlbums = new BaseRecycleView<Album>(this, Resource.Id.artist_albums_list);
+                RvAlbums.Init(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                RvAlbums.DisableScroolNested();
+            }
 
-            //relative = RootView.FindViewById<RelativeLayout>(Resource.Id.hide);
+            if (RvRevated == null)
+            {
+                RvRevated = new BaseRecycleView<Artist>(this, Resource.Id.related_artist_list);
+                RvRevated.Init(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+                RvRevated.DisableScroolNested();
+            }
 
-            //ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
-            ////ScrollFather.SetOnTouchListener(this);
-            //backViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.backViewContainer);
-            //Height = backViewContainer.LayoutParameters.Height;
-            //ScrollFather.ScrollChange += Scroll_ScrollChange;
+            LoadArtist(CurrentArtist);
+        }
 
+        public async Task LoadSongs()
+        {
+            SearchBase<Songs>(RvSongs.GetData(), await ParentActivity.GetService().GetTopTrackByArtistId(CurrentArtist.Id), SongListTitle, RvType.SongWithImage, limit: 5);
+        }
 
-            ////Artist song list
+        public async Task LoadAlbums()
+        {
+            SearchBase<Album>(RvAlbums.GetData(), await ParentActivity.GetService().GetArtistAlbums(CurrentArtist.Id), AlbumListTitle, RvType.AlbumGrid);
+        }
 
-            //ArtistTopSongsData = new List<Song>();
-            //ArtistTopSongs = new RvList<Song>();
-            //ArtistSongsLayoutManager = new LinearLayoutManager(this.Activity);
-            //ArtistSongsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.song_list);
-            //ArtistSongsRecyclerView.SetLayoutManager(ArtistSongsLayoutManager);
-            //ArtistSongsAdapter = new VerticalRV(ArtistTopSongs, this.Context);
-            //ArtistTopSongs.Adapter = ArtistSongsAdapter;
-            //ArtistSongsRecyclerView.SetAdapter(ArtistSongsAdapter);
-            //ArtistSongsRecyclerView.NestedScrollingEnabled = false;
+        public async Task LoadRelatedArtists()
+        {
+            SearchBase<Artist>(RvRevated.GetData(), await ParentActivity.GetService().GetRelated(CurrentArtist.Id), ArtistListTitle, RvType.Artist);
+        }
+        public void SearchBase<T>(RvList<T> RvList, List<T> DataList, TextView header, RvType type, int limit = int.MaxValue) where T : IBaseInterface
+        {
+            try
+            {
+                if (DataList != null && DataList.Count > 0)
+                {
+                    if (header.Visibility == ViewStates.Gone)
+                        header.Post(() => header.Visibility = ViewStates.Visible);
 
-            //Artist song list
-            //AlbumsData = new List<Album>();
-            //Albums = new RvList<TwoBlockWithImage>();
-            //AlbumsLayoutManager = new LinearLayoutManager(this.Activity);
-            //AlbumsRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.artist_albums_list);
-            //AlbumsRecyclerView.SetLayoutManager(AlbumsLayoutManager);
-            //AlbumsAdapter = new BaseRv<TwoBlockWithImage>(Albums, AlbumsRecyclerView, this.Context);
-            //Albums.Adapter = AlbumsAdapter;
-            //AlbumsRecyclerView.SetAdapter(AlbumsAdapter);
-            //AlbumsRecyclerView.NestedScrollingEnabled = false;
+                    FormatView(ref DataList, type);
+                    RvList.AddList(DataList.Take(limit).ToList());
+                }
+                else
+                {
+                    if (header.Visibility == ViewStates.Visible)
+                    {
+                        header.Post(() => header.Visibility = ViewStates.Gone);
+                        RvList.Clear();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Application.SynchronizationContext.Post(_ =>
+                {
+                    Toast.MakeText(this.Context, e.Message, ToastLength.Short).Show();
+                }, null);
+            }
+        }
+
+        private void FormatView<T>(ref List<T> dataList, RvType type) where T : IBaseInterface
+        {
+            if (dataList == null || dataList.Count == 0)
+                return;
+
+            if (dataList.Count == 1)
+            {
+                Application.SynchronizationContext.Post(_ =>
+                {
+                    if (typeof(T) == typeof(Album))
+                    {
+                        RvAlbums.SetLayoutManager(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                    }
+                    else if (typeof(T) == typeof(Artist))
+                    {
+                        RvRevated.SetLayoutManager(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                    }
+                }, null);
+
+                if (typeof(T) != typeof(Songs))
+                    dataList.First().SetModelType(RvType.BigOne);
+                else
+                    dataList.First().SetModelType(type);
+            }
+            else
+            {
+                Application.SynchronizationContext.Post(_ =>
+                {
+                    if (typeof(T) == typeof(Album))
+                    {
+                        RvAlbums.SetLayoutManager(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                    }
+                    else if (typeof(T) == typeof(Artist))
+                    {
+                        RvRevated.SetLayoutManager(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+                    }
+                }, null);
+
+                dataList.ForEach(x => x.SetModelType(type));
+            }
+        }
+
+        public new void LoadArtist(Artist artist)
+        {
+            try
+            {
+                CurrentArtist = artist;
+                if (Context != null)
+                {
+                    ScrollFather.ScrollTo(0, 0);
+                    GetState().Activity.ActionName.Text = CurrentArtist.Name;
+
+                    Picasso.With(Context).Load(CurrentArtist.LargeImage).Into(Photo);
+
+                    AlbumTitle.Text = CurrentArtist.Name;
+
+                    //TODO connect artist name
+                    AlbumByText.Text = "Coming soon";
+                    LoadData();
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
+        {
+            base.OnViewCreated(view, savedInstanceState);
+        }
+
+        public override void OnStop()
+        {
+            RvSongs.GetData().Clear();
+            RvAlbums.GetData().Clear();
+            RvRevated.GetData().Clear();
+            CurrentArtist = null;
+            base.OnStop();
+        }
+
+        public void LoadData()
+        {
+            Task.Run(async () => await LoadSongs());
+            Task.Run(async () => await LoadAlbums());
+            Task.Run(async () => await LoadRelatedArtists());
+        }
+
+        private void ScrollFather_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)
+        {
+
         }
 
         public override void ForceUpdate()
         {
-            throw new NotImplementedException();
+            LoadData();
         }
     }
 }

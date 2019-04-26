@@ -8,7 +8,7 @@
 
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/se_image"
         android:layout_width="0dp"
         android:layout_height="250dp"
         android:layout_marginTop="16dp"
@@ -19,7 +19,7 @@
         app:srcCompat="@drawable/touch" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -31,24 +31,24 @@
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/guideline24"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
-        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+        app:layout_constraintTop_toBottomOf="@+id/image" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="July Talk"
         android:gravity="center"
+        android:text="July Talk"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@color/greylight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline24"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline23"
