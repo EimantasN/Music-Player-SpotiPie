@@ -14,9 +14,12 @@ namespace Mobile_Api
 
         public async Task Report(Exception e)
         {
-            await Post("Reports","", $"message ={e.Message}&method={e?.StackTrace}");
         }
 
         public async Task SetState(int songId = 0, int albumId = 0, int artistId = 0, int playlistId = 0)
+        {
+            string query = string.Empty;
+            await Post("Reports", "", $"songId ={songId}$artistId={artistId}$albumId={albumId}playlistId={playlistId}");
+        }
     }
 }
