@@ -277,8 +277,10 @@ namespace Services
                 Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()));
 
             string AlbumName = "";
-            Replacer.CorrentAlbum(flacTag.Album);
+
             var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Name.ToLower().Trim().Contains(flacTag.Album.ToLower().Trim()));
+            if(album == null)
+                album = await _ctx.Albums.FirstOrDefaultAsync(x => flacTag.Album.ToLower().Trim().Contains(x.Name.ToLower().Trim()));
             if (album == null)
             {
                 int ID = FindSimilarName.findSimilarAlbumName(await _ctx.Albums.AsNoTracking().ToListAsync(), flacTag.Album);
@@ -351,7 +353,7 @@ namespace Services
                     destinationPath,
                     true);
 
-                    if (song.LocalUrl == null || song.LocalUrl != destinationPath)
+                    if (song.LocalUrl == null || song.LocalUrl != destinationPath && !Environment.OSVersion.ToString().Contains("W"))
                     {
                         song.LocalUrl = destinationPath;
                         song.IsLocal = true;

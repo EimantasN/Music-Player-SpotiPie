@@ -23,6 +23,37 @@ namespace API.Controllers
             _ctx = ctx;
         }
 
+        [HttpGet("CorectDatabase")]
+        public ActionResult CorectDatabase()
+        {
+            try
+            {
+                var songs = _ctx.Songs.ToList();
+                foreach (var x in songs)
+                {
+                    if (x.LocalUrl != null && x.LocalUrl.Contains("C:"))
+                        x.LocalUrl = null;
+
+                    if (string.IsNullOrEmpty(x.LocalUrl))
+                    {
+                        x.IsLocal = false;
+                        x.IsPlayable = false;
+                    }
+                    else
+                    {
+                        x.IsPlayable = true;
+                    }
+                    _ctx.Entry(x).State = EntityState.Modified;
+                    _ctx.SaveChanges();
+                }
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
         [HttpGet("FFpeg")]
         public ActionResult FFpeg()
         {
