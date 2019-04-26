@@ -25,6 +25,8 @@ namespace Database
 
         public DbSet<Song> ActiveSong { get; set; }
 
+        public DbSet<Error> Errors { get; set; }
+
         public DbSet<Quote> Quotes { get; set; }
     }
 }

@@ -127,14 +127,14 @@ namespace SpotyPie.Services
                     MusicPlayer.SetDataSource(BaseUrl + Current_Song.Id);
                     MusicPlayer.Prepare();
                 }
-                catch
+                catch (Exception e)
                 {
                     Task.Run(() =>
                     {
                         var API = new Mobile_Api.Service();
                         API.Corruped(Current_Song.Id);
+                        CheckSong();
                     });
-                    Task.Run(() => CheckSong());
                 }
             });
         }
