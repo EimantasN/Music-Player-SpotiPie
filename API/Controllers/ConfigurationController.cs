@@ -34,7 +34,7 @@ namespace API.Controllers
         {
             try
             {
-                return new JsonResult(new { settings.AudioStoragePath, settings.AudioCachePath, settings.FirstUse, settings.StreamQuality });
+                return Ok(new { settings.AudioStoragePath, settings.AudioCachePath, settings.FirstUse, settings.StreamQuality });
             }
             catch (Exception ex)
             {
@@ -48,8 +48,7 @@ namespace API.Controllers
         {
             try
             {
-                var r = await _ctd.BindAudioFiles();
-                return Ok(r);
+                return Ok(await _ctd.BindAudioFiles());
             }
             catch (Exception ex)
             {
@@ -140,8 +139,7 @@ namespace API.Controllers
         {
             try
             {
-                var result = await _ctd.CacheImages();
-                return Ok(result);
+                return Ok(await _ctd.CacheImages());
             }
             catch (Exception ex)
             {

@@ -23,23 +23,13 @@ namespace API.Controllers
             _album = ctx;
         }
 
-        [HttpGet]
-        public IActionResult Get()
-        {
-            //_ctd.Start();
-            return Ok();
-        }
-
         //Search for albums with specified name
-        [HttpPost("search")]
+        [HttpPost("Search")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> Search([FromForm] string query)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(query))
-                    return BadRequest("Bad search query");
-
                 return Ok(await _album.Search(query));
             }
             catch (Exception e)
@@ -54,9 +44,6 @@ namespace API.Controllers
         {
             try
             {
-                if (id == 0)
-                    return BadRequest("id cant be 0");
-
                 return Ok(await _album.UpdateAlbum(id));
             }
             catch (Exception e)
@@ -72,9 +59,6 @@ namespace API.Controllers
         {
             try
             {
-                if (id <= 0)
-                    return BadRequest("Id can't be " + id);
-
                 return Ok(await _album.GetAlbumAsync(id));
             }
             catch (Exception e)

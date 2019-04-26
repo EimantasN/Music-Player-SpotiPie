@@ -31,9 +31,6 @@ namespace API.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(query))
-                    return BadRequest("Bad search query");
-
                 return Ok(await _artists.SearchAsync(query));
             }
             catch (Exception e)
@@ -88,7 +85,7 @@ namespace API.Controllers
         }
 
         //Return artist top 15 tracks
-        [Route("{id}/top-tracks")]
+        [Route("{id}/Top-tracks")]
         [HttpGet]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetArtistTopTracks(int id)
@@ -118,21 +115,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet]
-        [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetAllArtists()
-        {
-            try
-            {
-                return Ok(await _artists.GetArtistsAsync());
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-
-        [Route("Popular/")]
+        [Route("Popular")]
         [HttpGet]
         public async Task<IActionResult> GetPopularArtists()
         {

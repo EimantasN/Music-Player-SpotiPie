@@ -28,7 +28,7 @@ namespace API.Controllers
                 .Build();
         }
 
-        [HttpGet("library")]
+        [HttpGet("Library")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetLibraryInformation(CancellationToken t)
         {
@@ -42,7 +42,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("list")]
+        [HttpGet("FileList")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetFileList(CancellationToken t)
         {
@@ -56,7 +56,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet()]
+        [HttpGet("SystemInformation")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetSysInformation(CancellationToken t)
         {
@@ -77,5 +77,6 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
     }
 }

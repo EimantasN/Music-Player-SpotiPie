@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -24,7 +25,7 @@ namespace API.Controllers
         }
 
         [HttpGet("CorectDatabase")]
-        public ActionResult CorectDatabase()
+        public async Task<ActionResult> CorectDatabaseAsync()
         {
             try
             {
@@ -44,7 +45,7 @@ namespace API.Controllers
                         x.IsPlayable = true;
                     }
                     _ctx.Entry(x).State = EntityState.Modified;
-                    _ctx.SaveChanges();
+                    await _ctx.SaveChangesAsync();
                 }
                 return Ok();
             }
@@ -54,7 +55,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("FFpeg")]
+        [HttpGet("FFpeg_test")]
         public ActionResult FFpeg()
         {
             try
@@ -75,20 +76,20 @@ namespace API.Controllers
         }
 
         [HttpGet("GetQuote/{id}")]
-        public Quote AddedQuote(int id)
+        public async Task<IActionResult> AddedQuoteAsync(int id)
         {
             try
             {
-                return _ctx.Quotes.First(x => x.Id == id);
+                return Ok(await _ctx.Quotes.FirstOrDefaultAsync(x => x.Id == id));
             }
             catch (Exception e)
             {
-                return null;
+                return BadRequest(e);
             }
         }
 
         [HttpPost("AddQuote")]
-        public void AddedQuote([FromForm] string quote)
+        public async Task<IActionResult> AddedQuote([FromForm] string quote)
         {
             try
             {
@@ -100,100 +101,60 @@ namespace API.Controllers
                     var q = new Quote(quote);
                     Quotes.Quotes.Add(q);
                     _ctx.Entry(Quotes).State = EntityState.Modified;
-                    _ctx.SaveChanges();
+                    await _ctx.SaveChangesAsync();
                 }
+                return Ok();
             }
             catch (Exception e)
             {
+                return BadRequest(e);
             }
         }
 
         [HttpPost("GetDataFromSpotify")]
-        public string GetData([FromForm] string artistId, [FromForm] string token)
+        public IActionResult GetData([FromForm] string artistId, [FromForm] string token)
         {
-            MainParser parser = new MainParser(artistId, token);
-            var artist = parser.Bind();
-            var Artist = _ctx.Artists.Include(x => x.Albums).ThenInclude(x => x.Songs).FirstOrDefault(x => x.SpotifyId == artist.SpotifyId);
-            if (Artist == null)
+            try
             {
-                _ctx.Artists.Add(artist);
-                _ctx.SaveChanges();
-            }
-            else
-            {
-                foreach (var spotAlbum in artist.Albums)
+                MainParser parser = new MainParser(artistId, token);
+                var artist = parser.Bind();
+                var Artist = _ctx.Artists.Include(x => x.Albums).ThenInclude(x => x.Songs).FirstOrDefault(x => x.SpotifyId == artist.SpotifyId);
+                if (Artist == null)
                 {
-                    var tempAlbum = _ctx.Albums.FirstOrDefault(x => x.SpotifyId == spotAlbum.SpotifyId);
-                    if (tempAlbum == null)
+                    _ctx.Artists.Add(artist);
+                    _ctx.SaveChanges();
+                }
+                else
+                {
+                    foreach (var spotAlbum in artist.Albums)
                     {
-                        Artist.Albums.Add(tempAlbum);
-                        _ctx.Entry(tempAlbum).State = EntityState.Modified;
-                        _ctx.SaveChanges();
-                    }
-                    else
-                    {
-                        var AlbumWithSongs = _ctx.Albums.Include(x => x.Songs).FirstOrDefault(x => x.SpotifyId == spotAlbum.SpotifyId);
-                        foreach (var spotSong in spotAlbum.Songs)
+                        var tempAlbum = _ctx.Albums.FirstOrDefault(x => x.SpotifyId == spotAlbum.SpotifyId);
+                        if (tempAlbum == null)
                         {
-                            if (!AlbumWithSongs.Songs.Any(x => x.SpotifyId == spotSong.SpotifyId))
+                            Artist.Albums.Add(tempAlbum);
+                            _ctx.Entry(tempAlbum).State = EntityState.Modified;
+                            _ctx.SaveChanges();
+                        }
+                        else
+                        {
+                            var AlbumWithSongs = _ctx.Albums.Include(x => x.Songs).FirstOrDefault(x => x.SpotifyId == spotAlbum.SpotifyId);
+                            foreach (var spotSong in spotAlbum.Songs)
                             {
-                                AlbumWithSongs.Songs.Add(spotSong);
-                                _ctx.Entry(AlbumWithSongs).State = EntityState.Modified;
-                                _ctx.SaveChanges();
+                                if (!AlbumWithSongs.Songs.Any(x => x.SpotifyId == spotSong.SpotifyId))
+                                {
+                                    AlbumWithSongs.Songs.Add(spotSong);
+                                    _ctx.Entry(AlbumWithSongs).State = EntityState.Modified;
+                                    _ctx.SaveChanges();
+                                }
                             }
                         }
                     }
                 }
-            }
-            return null;
-        }
-
-        [HttpGet]
-        public void Get()
-        {
-            try
-            {
-                var albums = _ctx.Albums.Include(x => x.Songs).ToList();
-                foreach (var album in albums)
-                {
-                }
-                //    var image = album.Images.OrderBy(x => x.Width).First().Url;
-                //    foreach (var song in album.Songs)
-                //    {
-                //        if (song.Image == null)
-                //        {
-                //            var artist = JsonConvert.DeserializeObject<List<Artist>>(song.Artists);
-                //            song.Artists = JsonConvert.SerializeObject(artist.Select(x => x.Name).ToList());
-                //            song.Image = image;
-                //            List<string> genres = new List<string>();
-
-                //            string tempGendres = "";
-                //            foreach (var art in artist.Select(x => x.Name).ToList())
-                //            {
-                //                List<string> g = new List<string>();
-                //                foreach (var z in _ctx.Artists.Where(x => x.Name.Contains(art)).Select(x => x.Genres))
-                //                {
-                //                    if (!string.IsNullOrEmpty(z))
-                //                        foreach (var y in JsonConvert.DeserializeObject<List<string>>(z))
-                //                        {
-                //                            if (!g.Any(x => x == y))
-                //                            {
-                //                                g.Add(y);
-                //                            }
-                //                        }
-                //                }
-                //                song.Genres = JsonConvert.SerializeObject(g);
-                //            }
-
-                //            _ctx.Entry(song).State = EntityState.Modified;
-                //            _ctx.SaveChanges();
-                //        }
-                //    }
-                //}
+                return Ok();
             }
             catch (Exception e)
             {
-
+                return BadRequest(e);
             }
         }
     }

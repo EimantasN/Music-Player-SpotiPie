@@ -64,20 +64,6 @@ namespace API.Controllers
             }
         }
 
-        //[HttpGet("CurrentSong")]
-        //public async Task<IActionResult> GetCurrentSong()
-        //{
-        //    try
-        //    {
-        //        Song song = await _songs.GetCurrent();
-        //        return Ok();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return BadRequest(e);
-        //    }
-        //}
-
         [HttpPost("SetSongLenght")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> SetSongLenght([FromForm]int id, [FromForm] long lenght)
