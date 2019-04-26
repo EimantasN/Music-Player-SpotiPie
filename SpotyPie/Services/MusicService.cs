@@ -22,6 +22,8 @@ namespace SpotyPie.Services
     [Service]
     public class MusicService : Service
     {
+        private Mobile_Api.Service API { get; set; }
+
         private IBinder binder;
 
         private MediaSession mediaSession;
@@ -75,6 +77,13 @@ namespace SpotyPie.Services
         public List<Songs> Current_Song_List { get; set; } = new List<Songs>();
 
         private Object _checkSongLock { get; set; } = new Object();
+
+        public Mobile_Api.Service GetAPIService()
+        {
+            if (API == null)
+                API = new Mobile_Api.Service();
+            return API;
+        }
 
         public override IBinder OnBind(Intent intent)
         {
@@ -131,9 +140,16 @@ namespace SpotyPie.Services
                 {
                     Task.Run(() =>
                     {
-                        var API = new Mobile_Api.Service();
-                        API.Corruped(Current_Song.Id);
+                        GetAPIService().Report(e);
+                        GetAPIService().Corruped(Current_Song.Id);
                         CheckSong();
+                    });
+                }
+                finally
+                {
+                    Task.Run(() =>
+                    {
+                        GetAPIService().SetState(e);
                     });
                 }
             });

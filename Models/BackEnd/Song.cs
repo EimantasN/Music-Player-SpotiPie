@@ -44,5 +44,11 @@ namespace Models.BackEnd
 
         public bool Corrupted { get; set; }
 
+
+        //Just for quick access
+        public string ArtistName { get; set; }
+
+        public string AlbumName { get; set; }
+
     }
 }

@@ -122,6 +122,22 @@ namespace Mobile_Api.Models
             }
         }
 
+        public async Task PostCustomObject(string parameters)
+        {
+            try
+            {
+                IRestResponse response;
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                request.AddParameter("application/x-www-form-urlencoded", parameters, ParameterType.RequestBody);
+                response = await base.ExecuteTaskAsync(request);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<List<T>> PostCustomObjectList<T>(string parameters)
         {
             try

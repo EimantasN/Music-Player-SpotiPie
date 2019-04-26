@@ -41,6 +41,14 @@ namespace Mobile_Api.Models
 
         public bool IsPlaying { get; set; }
 
+        public string ArtistName { get; set; }
+
+        public string AlbumName { get; set; }
+
+        public int AlbumId { get; set; }
+
+        public int ArtistId { get; set; }
+
         protected override RvType Type { get; set; }
 
         public bool IsPlayingNow() { return IsPlaying; }
