@@ -27,6 +27,8 @@ namespace Database
 
         Task<Song> UpdateAsync(int id);
 
+        Task<List<Song>> SongByArtistId(int artistId);
+
         Task<List<AudioBindError>> BindData();
 
         Task<List<AudioBindError>> AddAudioToLibrary(IFormFile file);

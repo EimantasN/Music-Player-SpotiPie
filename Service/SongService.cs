@@ -155,6 +155,18 @@ namespace Services
             }
         }
 
+        public async Task<List<Song>> SongByArtistId(int artistId)
+        {
+            try
+            {
+                return await _ctx.Songs.AsNoTracking().Where(x => x.ArtistId == artistId && x.IsPlayable).ToListAsync(); ;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<Song> UpdateAsync(int id)
         {
             try
@@ -165,6 +177,7 @@ namespace Services
                 {
                     song.LastActiveTime = DateTime.Now.ToUniversalTime();
                     song.Popularity++;
+                    song.Corrupted = 0;
 
                     _ctx.Entry(song).State = EntityState.Modified;
                     await _ctx.SaveChangesAsync();
