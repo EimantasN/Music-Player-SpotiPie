@@ -29,30 +29,56 @@ namespace API.Controllers
         {
             try
             {
-                var songs = _ctx.Songs.ToList();
-                foreach (var x in songs)
-                {
-                    if (x.LocalUrl != null && x.LocalUrl.Contains("C:"))
-                        x.LocalUrl = null;
+                var Artist = await _ctx.Artists.Include(x => x.Albums).ThenInclude(x => x.Songs).ToListAsync();
 
-                    if (string.IsNullOrEmpty(x.LocalUrl))
+                foreach (var artist in Artist)
+                {
+                    foreach (var album in artist.Albums)
                     {
-                        x.IsLocal = false;
-                        x.IsPlayable = false;
+                        foreach (var song in album.Songs)
+                        {
+                            song.ArtistId = artist.Id;
+                            song.ArtistName = artist.Name;
+                            song.AlbumName = album.Name;
+                            _ctx.Entry(song).State = EntityState.Modified;
+                        }
+                        await _ctx.SaveChangesAsync();
                     }
-                    else
-                    {
-                        x.IsPlayable = true;
-                    }
-                    _ctx.Entry(x).State = EntityState.Modified;
-                    await _ctx.SaveChangesAsync();
                 }
-                return Ok();
             }
             catch (Exception e)
             {
-                return BadRequest(e);
+
             }
+
+            return Ok();
+
+            //try
+            //{
+            //    var songs = _ctx.Songs.ToList();
+            //    foreach (var x in songs)
+            //    {
+            //        if (x.LocalUrl != null && x.LocalUrl.Contains("C:"))
+            //            x.LocalUrl = null;
+
+            //        if (string.IsNullOrEmpty(x.LocalUrl))
+            //        {
+            //            x.IsLocal = false;
+            //            x.IsPlayable = false;
+            //        }
+            //        else
+            //        {
+            //            x.IsPlayable = true;
+            //        }
+            //        _ctx.Entry(x).State = EntityState.Modified;
+            //        await _ctx.SaveChangesAsync();
+            //    }
+            //    return Ok();
+            //}
+            //catch (Exception e)
+            //{
+            //    return BadRequest(e);
+            //}
         }
 
         [HttpGet("FFpeg_test")]

@@ -442,5 +442,57 @@ namespace Services
                 throw e;
             }
         }
+
+        public async Task SetStateAsync(int songId, int artistId, int albumId, int playlistId)
+        {
+            try
+            {
+                var currentSong = await _ctx.CurrentSong.FirstOrDefaultAsync();
+                if (currentSong != null)
+                {
+                    currentSong.SongId = songId != 0 ? songId : currentSong.SongId;
+
+                    if (songId > 0)
+                    {
+                        var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == songId);
+                        if (song != null)
+                        {
+                            currentSong.AlbumId = song.AlbumId;
+                            currentSong.ArtistId = song.ArtistId;
+                            //currentSong.PlaylistId = song.PlaylistId;
+                        }
+                    }
+                    else
+                    {
+                        currentSong.AlbumId = albumId != 0 ? albumId : currentSong.AlbumId;
+                        currentSong.ArtistId = artistId != 0 ? artistId : currentSong.ArtistId;
+                        currentSong.PlaylistId = playlistId != 0 ? playlistId : currentSong.PlaylistId;
+                    }
+
+                    _ctx.Entry(currentSong).State = EntityState.Modified;
+                }
+                else
+                {
+                    var model = new CurrentSong
+                    {
+                        SongId = songId,
+                        AlbumId = albumId,
+                        ArtistId = artistId,
+                        PlaylistId = playlistId
+                    };
+                    await _ctx.CurrentSong.AddAsync(model);
+                }
+                await _ctx.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public Task<CurrentSong> GetState()
+        {
+            return _ctx.CurrentSong.FirstOrDefaultAsync();
+        }
     }
 }

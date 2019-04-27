@@ -4268,8 +4268,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0900cd
 			public const int backViewContainer = 2131296461;
 			
-			// aapt resource value: 0x7f09015c
-			public const int back_button = 2131296604;
+			// aapt resource value: 0x7f090154
+			public const int back_button = 2131296596;
 			
 			// aapt resource value: 0x7f0900c9
 			public const int backgroundHalf = 2131296457;
@@ -4372,6 +4372,9 @@ namespace SpotyPie
 			
 			// aapt resource value: 0x7f090159
 			public const int current_song_time = 2131296601;
+			
+			// aapt resource value: 0x7f09015c
+			public const int currenty_playing_text = 2131296604;
 			
 			// aapt resource value: 0x7f090089
 			public const int custom = 2131296393;
@@ -4835,8 +4838,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f09010f
 			public const int playlist = 2131296527;
 			
-			// aapt resource value: 0x7f090154
-			public const int playlist_name = 2131296596;
+			// aapt resource value: 0x7f09015d
+			public const int playlist_name = 2131296605;
 			
 			// aapt resource value: 0x7f0900fc
 			public const int playlist_rv = 2131296508;
@@ -5149,9 +5152,6 @@ namespace SpotyPie
 			
 			// aapt resource value: 0x7f0900ec
 			public const int textView17 = 2131296492;
-			
-			// aapt resource value: 0x7f09015d
-			public const int textView6 = 2131296605;
 			
 			// aapt resource value: 0x7f090183
 			public const int textView7 = 2131296643;

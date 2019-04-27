@@ -7,6 +7,10 @@ namespace Database
 {
     public interface ISongService
     {
+        Task SetStateAsync(int songId, int artistId, int albumId, int playlistId);
+
+        Task<CurrentSong> GetState();
+
         Task<List<Song>> SearchAsync(string query);
 
         Task<List<Song>> GetAllAsync(int count = 30);

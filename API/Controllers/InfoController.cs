@@ -3,11 +3,9 @@ using Database;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Models.BackEnd;
 using Service.Settings;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,15 +16,17 @@ namespace API.Controllers
     public class InfoController : ControllerBase
     {
         private readonly CancellationTokenSource cts;
+        private readonly ISongService _song;
         private readonly SpotyPieIDbContext _ctx;
         private CancellationToken ct;
         private readonly IDb _ctd;
         private ISettings settings;
 
-        public InfoController(IDb ctd, SpotyPieIDbContext ctx)
+        public InfoController(IDb ctd, SpotyPieIDbContext ctx, ISongService song)
         {
             _ctx = ctx;
             _ctd = ctd;
+            _song = song;
             cts = new CancellationTokenSource();
             ct = cts.Token;
             settings = new ConfigurationBuilder<ISettings>()
@@ -40,7 +40,7 @@ namespace API.Controllers
         {
             try
             {
-                return Ok(await _ctx.CurrentSong.FirstOrDefaultAsync());
+                return Ok(await _song.GetState());
             }
             catch (Exception ex)
             {
@@ -58,28 +58,8 @@ namespace API.Controllers
         {
             try
             {
-                var currentSong = await _ctx.CurrentSong.FirstOrDefaultAsync();
-                if (currentSong != null)
-                {
-                    currentSong.SongId = songId != 0 ? songId : currentSong.SongId;
-                    currentSong.ArtistId = artistId != 0 ? artistId : currentSong.ArtistId;
-                    currentSong.AlbumId = albumId != 0 ? albumId : currentSong.AlbumId;
-                    currentSong.PlaylistId = playlistId != 0 ? playlistId : currentSong.PlaylistId;
-                    _ctx.Entry(currentSong).State = EntityState.Modified;
-                }
-                else
-                {
-                    var model = new CurrentSong
-                    {
-                        SongId = songId,
-                        AlbumId = albumId,
-                        ArtistId = artistId,
-                        PlaylistId = playlistId
-                    };
-                    await _ctx.CurrentSong.AddAsync(model);
-                }
-                await _ctx.SaveChangesAsync();
-                return Ok(currentSong);
+                await _song.SetStateAsync(songId, artistId, albumId, playlistId);
+                return Ok();
             }
             catch (Exception ex)
             {
