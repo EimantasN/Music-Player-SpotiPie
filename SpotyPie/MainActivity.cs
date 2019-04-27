@@ -10,6 +10,7 @@ using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.Services;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
@@ -107,9 +108,17 @@ namespace SpotyPie
 
             SongTitle = FindViewById<TextView>(Resource.Id.song_name);
             SongTitle.Selected = true;
-            SongTitle.Text = "Labai ilgas tekstas kuris keičiasi jeigu tekstas netelpa";
             ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
             ArtistName.Selected = true;
+
+
+            //TODO make more maintanable
+            Task.Run(async () =>
+            {
+                var song = await GetAPIService().GetCurrentSong();
+                SongTitle.Text = song.Name;
+                ArtistName.Text = song.ArtistName;
+            });
 
             if (GetState().IsPlaying)
                 PlayToggle.SetImageResource(Resource.Drawable.pause);
@@ -255,7 +264,7 @@ namespace SpotyPie
 
         private Object ServiceLock { get; set; } = new Object();
 
-        public dynamic GetAPIService()
+        public API GetAPIService()
         {
             if (Api_service == null)
                 return Api_service = new API(new Mobile_Api.Service(), this);

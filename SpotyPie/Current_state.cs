@@ -1,12 +1,9 @@
 ﻿using Android.App;
 using Android.Views;
-using Mobile_Api;
 using Mobile_Api.Models;
-using Square.Picasso;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SpotyPie
 {
@@ -86,7 +83,7 @@ namespace SpotyPie
             //Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Album.Artists).First();
             Application.SynchronizationContext.Post(_ =>
             {
-                GetPlayer().Player_playlist_name.Text = "Muse" + " - " + Current_Album.Name;
+                GetPlayer().Player_playlist_name.Text = Current_Album.Name;
             }, null);
         }
 

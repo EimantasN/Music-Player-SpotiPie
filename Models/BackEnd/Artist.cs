@@ -16,7 +16,9 @@ namespace Models.BackEnd
         public long Popularity { get; set; }
 
         public string LargeImage { get; set; }
+
         public string MediumImage { get; set; }
+
         public string SmallImage { get; set; }
 
         public List<Album> Albums { get; set; }

@@ -12,6 +12,13 @@ namespace SpotyPie
 {
     public class API
     {
+        private static Object _currentStateGetter = new Object();
+        private bool GettingState { get; set; } = false;
+
+        private dynamic State { get; set; }
+
+        private DateTime StateGettinTime { get; set; }
+
         private Mobile_Api.Service _service;
         private MainActivity _activity;
 
@@ -30,7 +37,25 @@ namespace SpotyPie
         {
             _service = service;
             _activity = activity;
+            GetCurrentState();
         }
+
+        #region Current State
+
+        private async Task GetCurrentState()
+        {
+            GettingState = true;
+            StateGettinTime = DateTime.Now;
+            State = await _service.GetState();
+        }
+
+        public async Task<Songs> GetCurrentSong()
+        {
+            await GetCurrentState();
+            return await GetSongAsync(State.SongId);
+        }
+
+        #endregion
 
         #region Library
 
@@ -236,6 +261,28 @@ namespace SpotyPie
                 }
             }
         }
+
+        private async Task<Songs> GetSongAsync(int id)
+        {
+            Songs song;
+            if (_Songs == null) _Songs = new List<Songs>();
+            if (_Songs.Count > 0)
+            {
+                song = _Songs.FirstOrDefault(x => x.Id == id);
+                if (song != null)
+                    return song;
+            }
+
+            song = await _service.Get<Songs>(id);
+            if (song != null)
+            {
+                _Songs.Add(song);
+                return song;
+            }
+
+            throw new Exception($"Can't find song with id -> {id}");
+        }
+
         #endregion
 
         #region Setters

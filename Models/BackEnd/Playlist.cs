@@ -9,9 +9,9 @@ namespace Models.BackEnd
 
         public string Name { get; set; }
 
-        public string Artists { get; set; }
+        public List<Artist> Artists { get; set; }
 
-        public string Gendres { get; set; }
+        public List<Gendre> Gendres { get; set; }
 
         public List<Song> Songs { get; set; }
 
@@ -25,6 +25,6 @@ namespace Models.BackEnd
 
         public long Popularity { get; set; }
 
-        public string Image { get; set; }
+        public List<Image> Images { get; set; }
     }
 }

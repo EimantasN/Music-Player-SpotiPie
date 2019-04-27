@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Models.BackEnd.Enumerators;
+using System;
+using System.Collections.Generic;
 
 namespace Models.BackEnd
 {
     public class Song
     {
+        public int Id { get; set; }
+
         public virtual int AlbumId { get; set; }
 
         public virtual int ArtistId { get; set; }
-
-        public int Id { get; set; }
 
         public string SpotifyId { get; set; }
 
@@ -42,13 +44,15 @@ namespace Models.BackEnd
 
         public long Size { get; set; }
 
-        public bool Corrupted { get; set; }
-
+        public int Corrupted { get; set; }
 
         //Just for quick access
         public string ArtistName { get; set; }
 
         public string AlbumName { get; set; }
 
+        public List<Image> Images { get; set; } 
+
+        public SongType Type { get; set; }
     }
 }

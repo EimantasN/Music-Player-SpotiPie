@@ -99,27 +99,41 @@ namespace SpotyPie.Services
 
         public void SetSong(int position)
         {
-            if (Current_Song == null || Current_Song.Id != Current_Song_List[position].Id)
+            try
             {
-                SetCurrentSong(position);
+                if (Current_Song == null || Current_Song.Id != Current_Song_List[position].Id)
+                {
+                    SetCurrentSong(position);
 
-                if (serviceCallbacks == null)
-                    Notification($"Now playing {Current_Song.Name}", $"", Current_Song.MediumImage);
+                    if (serviceCallbacks == null)
+                        Notification($"Now playing {Current_Song.Name}", $"", Current_Song.MediumImage);
+                }
+            }
+            catch (Exception e)
+            {
+                Task.Run(() => GetAPIService().Report(e));
             }
         }
 
         private void SetCurrentSong(int position)
         {
-            InformUiSongChanged(Current_Song_List, position);
-            PrevId = Current_Song == null ? Current_Song_List.Last().Id : Current_Song.Id;
-            Current_Song = Current_Song_List[position];
-            Current_Song.SetIsPlaying(true);
-            SongUpdate = new SongUpdate(Current_Song?.Id);
-            LoadSong();
+            try
+            {
+                InformUiSongChanged(Current_Song_List, position);
+                PrevId = Current_Song == null ? Current_Song_List.Last().Id : Current_Song.Id;
+                Current_Song = Current_Song_List[position];
+                Current_Song.SetIsPlaying(true);
+                SongUpdate = new SongUpdate(Current_Song?.Id);
+                LoadSong();
 
-            SetBthHeadSetButtons();
-            remoteControlClient.SetPlaybackState(RemoteControlPlayState.Buffering);
-            UpdateMetadata();
+                SetBthHeadSetButtons();
+                remoteControlClient.SetPlaybackState(RemoteControlPlayState.Buffering);
+                UpdateMetadata();
+            }
+            catch (Exception e)
+            {
+                Task.Run(() => GetAPIService().Report(e));
+            }
         }
 
         private void LoadSong()
@@ -149,7 +163,7 @@ namespace SpotyPie.Services
                 {
                     Task.Run(() =>
                     {
-                        GetAPIService().SetState(Current_Song.Id);
+                        GetAPIService().SetState(songId: Current_Song.Id);
                     });
                 }
             });
@@ -219,7 +233,7 @@ namespace SpotyPie.Services
             }
             catch (Exception e)
             {
-
+                Task.Run(() => GetAPIService().Report(e));
             }
         }
 
@@ -254,14 +268,21 @@ namespace SpotyPie.Services
 
         private void MusicPlayer_Prepared(object sender, EventArgs e)
         {
-            if (remoteControlClient != null)
-                remoteControlClient.SetPlaybackState(RemoteControlPlayState.Playing);
-            UpdateMetadata();
+            try
+            {
+                if (remoteControlClient != null)
+                    remoteControlClient.SetPlaybackState(RemoteControlPlayState.Playing);
+                UpdateMetadata();
 
-            MusicPlayer?.Start();
-            CurrentTime = new TimeSpan(0, 0, 0, 0);
-            Task.Run(() => UpdateLoop());
-            serviceCallbacks?.PlayerPrepared(MusicPlayer == null ? 999 : MusicPlayer.Duration);
+                MusicPlayer?.Start();
+                CurrentTime = new TimeSpan(0, 0, 0, 0);
+                Task.Run(() => UpdateLoop());
+                serviceCallbacks?.PlayerPrepared(MusicPlayer == null ? 999 : MusicPlayer.Duration);
+            }
+            catch (Exception ex)
+            {
+                Task.Run(() => GetAPIService().Report(ex));
+            }
         }
 
         public override void OnCreate()
@@ -274,6 +295,7 @@ namespace SpotyPie.Services
             }
             catch (Exception e)
             {
+                Task.Run(() => GetAPIService().Report(e));
             }
         }
 
@@ -307,7 +329,7 @@ namespace SpotyPie.Services
             }
             catch (Exception e)
             {
-
+                Task.Run(() => GetAPIService().Report(e));
             }
         }
 
@@ -324,24 +346,31 @@ namespace SpotyPie.Services
                     AudioManager = null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Console.WriteLine(ex);
+                Task.Run(() => GetAPIService().Report(e));
             }
         }
 
         private void UpdateMetadata()
         {
-            if (remoteControlClient == null)
-                return;
+            try
+            {
+                if (remoteControlClient == null)
+                    return;
 
-            var metadataEditor = remoteControlClient.EditMetadata(true);
-            metadataEditor.PutString(MetadataKey.Album, Current_Song.Name);
-            metadataEditor.PutString(MetadataKey.Artist, Current_Song.Popularity.ToString());
-            metadataEditor.PutString(MetadataKey.Albumartist, "Raw Stiles");
-            metadataEditor.PutString(MetadataKey.Title, Current_Song.Name);
-            metadataEditor.PutBitmap(BitmapKey.Artwork, GetImage(Current_Song.MediumImage));
-            metadataEditor.Apply();
+                var metadataEditor = remoteControlClient.EditMetadata(true);
+                metadataEditor.PutString(MetadataKey.Album, Current_Song.AlbumName);
+                metadataEditor.PutString(MetadataKey.Artist, Current_Song.ArtistName);
+                metadataEditor.PutString(MetadataKey.Albumartist, $"{Current_Song.AlbumName} - {Current_Song.ArtistName}");
+                metadataEditor.PutString(MetadataKey.Title, Current_Song.Name);
+                metadataEditor.PutBitmap(BitmapKey.Artwork, GetImage(Current_Song.LargeImage));
+                metadataEditor.Apply();
+            }
+            catch (Exception e)
+            {
+                Task.Run(() => GetAPIService().Report(e));
+            }
         }
 
         public override void OnDestroy()
@@ -375,23 +404,16 @@ namespace SpotyPie.Services
             }
             catch (Exception e)
             {
-
+                Task.Run(() => GetAPIService().Report(e));
             }
         }
 
         public Bitmap GetImage(string url)
         {
-            try
-            {
-                RestClient client = new RestClient(url);
-                RestRequest request = new RestRequest(Method.GET);
-                var fileBytes = client.DownloadData(request);
-                return BitmapFactory.DecodeStream(new MemoryStream(fileBytes));
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            RestClient client = new RestClient(url);
+            RestRequest request = new RestRequest(Method.GET);
+            var fileBytes = client.DownloadData(request);
+            return BitmapFactory.DecodeStream(new MemoryStream(fileBytes));
         }
 
         private void Notification(string title, string content, string imgUrl)
@@ -421,57 +443,64 @@ namespace SpotyPie.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Task.Run(() => GetAPIService().Report(e));
             }
         }
 
         public void ChangeSong(bool Foward)
         {
-            if (serviceCallbacks != null)
+            try
             {
-                if (Foward)
-                    serviceCallbacks.PrevSongPlayer();
-                else
-                    serviceCallbacks.NextSongPlayer();
-            }
-
-            if (Current_Song_List == null) return;
-
-            for (int i = 0; i < Current_Song_List.Count; i++)
-            {
-                if (Current_Song_List[i].IsPlayingNow())
+                if (serviceCallbacks != null)
                 {
                     if (Foward)
-                    {
-                        Current_Song_List[i].SetIsPlaying(false);
-                        if ((i + 1) == Current_Song_List.Count)
-                        {
-                            Current_Song_List[0].SetIsPlaying(true);
-                            SetSong(0);
-                        }
-                        else
-                        {
-                            Current_Song_List[i + 1].SetIsPlaying(true);
-                            SetSong(i + 1);
-                        }
-                    }
+                        serviceCallbacks.PrevSongPlayer();
                     else
+                        serviceCallbacks.NextSongPlayer();
+                }
+
+                if (Current_Song_List == null) return;
+
+                for (int i = 0; i < Current_Song_List.Count; i++)
+                {
+                    if (Current_Song_List[i].IsPlayingNow())
                     {
-                        Current_Song_List[i].SetIsPlaying(false);
-                        if (i == 0)
+                        if (Foward)
                         {
-                            Current_Song_List[0].SetIsPlaying(true);
-                            SetSong(0);
+                            Current_Song_List[i].SetIsPlaying(false);
+                            if ((i + 1) == Current_Song_List.Count)
+                            {
+                                Current_Song_List[0].SetIsPlaying(true);
+                                SetSong(0);
+                            }
+                            else
+                            {
+                                Current_Song_List[i + 1].SetIsPlaying(true);
+                                SetSong(i + 1);
+                            }
                         }
                         else
                         {
+                            Current_Song_List[i].SetIsPlaying(false);
+                            if (i == 0)
+                            {
+                                Current_Song_List[0].SetIsPlaying(true);
+                                SetSong(0);
+                            }
+                            else
+                            {
 
-                            Current_Song_List[i - 1].SetIsPlaying(true);
-                            SetSong(i - 1);
+                                Current_Song_List[i - 1].SetIsPlaying(true);
+                                SetSong(i - 1);
+                            }
                         }
+                        break;
                     }
-                    break;
                 }
+            }
+            catch (Exception e)
+            {
+                Task.Run(() => GetAPIService().Report(e));
             }
         }
 
@@ -488,35 +517,42 @@ namespace SpotyPie.Services
 
         public void SongEnded()
         {
-            Application.SynchronizationContext.Post(_ =>
+            try
             {
-                if (CurrentTime.Seconds != 0)
+                Application.SynchronizationContext.Post(_ =>
                 {
-                    CurrentTime = new TimeSpan(0, 0, 0, 0);
-                    serviceCallbacks?.SongEnded();
-                    switch (Repeat_state)
+                    if (CurrentTime.Seconds != 0)
                     {
-                        case 0:
-                            {
-                                ChangeSong(true);
-                                break;
-                            }
-                        case 1:
-                            {
-                                MusicPlayer.SeekTo(0);
-                                MusicPlayer.Start();
-                                Task.Run(() => UpdateLoop());
-                                break;
-                            }
-                        case 2:
-                            {
-                                serviceCallbacks?.SongStopped();
-                                //Stop music
-                                break;
-                            }
+                        CurrentTime = new TimeSpan(0, 0, 0, 0);
+                        serviceCallbacks?.SongEnded();
+                        switch (Repeat_state)
+                        {
+                            case 0:
+                                {
+                                    ChangeSong(true);
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    MusicPlayer.SeekTo(0);
+                                    MusicPlayer.Start();
+                                    Task.Run(() => UpdateLoop());
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    serviceCallbacks?.SongStopped();
+                                    //Stop music
+                                    break;
+                                }
+                        }
                     }
-                }
-            }, null);
+                }, null);
+            }
+            catch (Exception e)
+            {
+                Task.Run(() => GetAPIService().Report(e));
+            }
         }
 
         public void UpdateLoop()
@@ -554,8 +590,9 @@ namespace SpotyPie.Services
 
                                 Thread.Sleep(RefreshRate);
                             }
-                            catch (Exception ex)
+                            catch (Exception e)
                             {
+                                Task.Run(() => GetAPIService().Report(e));
                             }
                         }
                         Application.SynchronizationContext.Post(_ => { Updating = false; }, null);
@@ -563,9 +600,10 @@ namespace SpotyPie.Services
                         Task.Run(() => UpdateLoop());
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     Application.SynchronizationContext.Post(_ => { Updating = false; }, null);
+                    Task.Run(() => GetAPIService().Report(e));
                 }
             }
         }

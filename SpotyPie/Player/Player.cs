@@ -89,9 +89,6 @@ namespace SpotyPie.Player
 
             ParentActivity = (MainActivity)Activity;
 
-            PlayerSongList = new PlaylistSongList();
-
-            PlayerSongListContainer = RootView.FindViewById<FrameLayout>(Resource.Id.player_frame);
             SongListButton = RootView.FindViewById<ImageButton>(Resource.Id.song_list);
             SongListButton.Click += SongListButton_Click;
 
@@ -249,25 +246,39 @@ namespace SpotyPie.Player
             }
         }
 
-        private void SongListButton_Click(object sender, EventArgs e)
+        private PlaylistSongList GetSongListFragment()
+        {
+            if (PlayerSongList == null)
+            {
+                PlayerSongList = new PlaylistSongList();
+
+                PlayerSongListContainer = RootView.FindViewById<FrameLayout>(Resource.Id.player_frame);
+                PlayerSongListContainer.Visibility = ViewStates.Gone;
+            }
+
+            return PlayerSongList;
+        }
+
+        private void SongListButton_Click(object sender, EventArgs ee)
         {
             try
             {
-                if (!PlayerSongList.IsAdded)
+                if (!GetSongListFragment().IsAdded)
                 {
                     ChildFragmentManager.BeginTransaction()
-                        .Add(Resource.Id.player_frame, PlayerSongList)
+                        .Add(Resource.Id.player_frame, GetSongListFragment())
                         .Commit();
                 }
                 else
                 {
-                    PlayerSongList.Update();
+                    GetSongListFragment().Update();
                 }
                 CurrentState = 2;
+                PlayerSongListContainer.TranslationX = 0;
                 PlayerSongListContainer.Visibility = ViewStates.Visible;
                 PlayerSongListContainer.BringToFront();
             }
-            catch (Exception)
+            catch (Exception e)
             {
             }
         }
@@ -393,10 +404,8 @@ namespace SpotyPie.Player
                     CurretSongTimeText.Text = "0.00";
                     Player_song_name.Text = MusicService.Current_Song.Name;
                     ParentActivity.SongTitle.Text = MusicService.Current_Song.Name;
-                    ParentActivity.ArtistName.Text = MusicService.Current_Song.Name;
-                    Player_artist_name.Text = "Muse";
-
-                    ParentActivity.TogglePlayer(true);
+                    ParentActivity.ArtistName.Text = MusicService.Current_Song.ArtistName;
+                    Player_artist_name.Text = MusicService.Current_Song.ArtistName;
                     if (ParentActivity.MiniPlayer.Visibility == ViewStates.Gone)
                         ParentActivity.MiniPlayer.Visibility = ViewStates.Visible;
 
@@ -415,7 +424,11 @@ namespace SpotyPie.Player
 
         public void SongChangeStarted(List<Songs> song, int position)
         {
-            MusicService?.SongChangeStarted(song, position);
+            Task.Run(() =>
+            {
+                Application.SynchronizationContext.Post(_ => { ParentActivity.TogglePlayer(true); }, null);
+                MusicService?.SongChangeStarted(song, position);
+            });
         }
 
         #endregion

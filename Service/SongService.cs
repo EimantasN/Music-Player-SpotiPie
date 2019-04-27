@@ -426,9 +426,9 @@ namespace Services
                 var album = await _ctx.Albums.Include(x => x.Songs).FirstOrDefaultAsync(x => x.Id == song.AlbumId);
                 if (song != null && album != null)
                 {
-                    if (album.Songs.Count(x => x.IsPlayable && x.Corrupted == false) > 1)
+                    if (album.Songs.Count(x => x.IsPlayable && x.Corrupted < 4) > 1)
                         _ctx.Entry(album).State = EntityState.Modified;
-                    song.Corrupted = true;
+                    song.Corrupted++;
                     song.IsPlayable = false;
                     if (File.Exists(song.LocalUrl))
                         File.Delete(song.LocalUrl);

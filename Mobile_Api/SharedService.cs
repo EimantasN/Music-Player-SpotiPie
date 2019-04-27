@@ -67,7 +67,7 @@ namespace Mobile_Api
             }
         }
 
-        private async Task PostData<T>(CustomRestClient client)
+        protected async Task PostData<T>(CustomRestClient client)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace Mobile_Api
             }
         }
 
-        private async Task<T> GetData<T>(CustomRestClient client)
+        protected async Task<T> GetData<T>(CustomRestClient client)
         {
             try
             {

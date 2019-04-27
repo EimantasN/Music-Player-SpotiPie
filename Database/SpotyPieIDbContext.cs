@@ -27,6 +27,8 @@ namespace Database
 
         public DbSet<Error> Errors { get; set; }
 
+        public DbSet<Gendre> Gendres { get; set; }
+
         public DbSet<Quote> Quotes { get; set; }
     }
 }

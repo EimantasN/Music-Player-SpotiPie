@@ -71,7 +71,7 @@ namespace API.Controllers
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 _ctx.Update(playlist);
-                playlist.Image = playlist.Songs[new Random((int)DateTime.Now.Ticks).Next(0, playlist.Songs.Count)].LargeImage;
+                //playlist.Image = playlist.Songs[new Random((int)DateTime.Now.Ticks).Next(0, playlist.Songs.Count)].LargeImage;
                 playlist.LastActiveTime = DateTime.Now;
                 playlist.Popularity++;
                 _ctx.SaveChanges();
@@ -103,7 +103,7 @@ namespace API.Controllers
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 _ctx.Update(playlist);
-                playlist.Image = playlist.Songs[new Random((int)DateTime.Now.Ticks).Next(0, playlist.Songs.Count)].LargeImage;
+                //playlist.Image = playlist.Songs[new Random((int)DateTime.Now.Ticks).Next(0, playlist.Songs.Count)].LargeImage;
                 playlist.LastActiveTime = DateTime.Now;
                 playlist.Popularity++;
                 _ctx.SaveChanges();
@@ -166,7 +166,7 @@ namespace API.Controllers
                         playlist.Total++;
                     }
 
-                    playlist.Image = playlist.Songs[0].LargeImage;
+                    //playlist.Image = playlist.Songs[0].LargeImage;
                 }
 
                 _ctx.Playlist.Add(playlist);
@@ -200,8 +200,8 @@ namespace API.Controllers
                         {
                             _ctx.Update(playlist);
 
-                            if (playlist.Image == null)
-                                playlist.Image = track.LargeImage;
+                            //if (playlist.Image == null)
+                            //    playlist.Image = track.LargeImage;
 
                             playlist.Songs.Add(track);
                             playlist.Total++;
