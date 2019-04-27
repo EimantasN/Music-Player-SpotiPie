@@ -34,7 +34,7 @@ namespace SpotyPie.Services
 
         private bool Updating { get; set; } = false;
 
-        private int RefreshRate = 100;
+        private int RefreshRate = 250;
 
         private TimeSpan CurrentTime { get; set; } = new TimeSpan(0, 0, 0, 0, 0);
 
@@ -184,9 +184,9 @@ namespace SpotyPie.Services
                 MusicPlayer = new MediaPlayer();
                 MusicPlayer.Prepared += MusicPlayer_Prepared;
                 Destoyed = false;
-                bluetooth = new Bth();
-                bluetooth.Start();
-                var a = bluetooth.PairedDevices();
+                //bluetooth = new Bth();
+                //bluetooth.Start();
+                //var a = bluetooth.PairedDevices();
                 CreateNotificationChannel();
             }
             if (!InputIn)

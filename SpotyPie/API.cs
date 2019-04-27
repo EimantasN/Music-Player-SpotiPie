@@ -175,6 +175,21 @@ namespace SpotyPie
             }
         }
 
+        internal async Task<List<Songs>> GetArtistSongsAsync(Artist artist)
+        {
+            try
+            {
+                if (artist == null)
+                    throw new Exception("Artist can't be null");
+                List<Songs> songs = await _service.GetSongsByArtistAsync(artist);
+                return songs;
+            }
+            catch (Exception e)
+            {
+                return new List<Songs>();
+            }
+        }
+
         #endregion
 
         #region Getters
@@ -198,20 +213,20 @@ namespace SpotyPie
             return UpdateAlbums(al);
         }
 
-        private async Task<List<Songs>> GetSongsByArtistAsync(Album al)
-        {
-            //if (_Artists == null)
-            //    _Artists = new List<Artist>() { al };
+        //private async Task<List<Songs>> GetSongsByArtistAsync(Album al)
+        //{
+        //    if (_Artists == null)
+        //        _Artists = new List<Artist>() { al };
 
-            //if (al.Songs != null && al.Songs.Count != 0)
-            //    return al.Songs;
-            //else
-            //{
-            //    al = await GetAlbumByIdAsync(al.Id);
-            //    return al.Songs;
-            //}
-            return null;
-        }
+        //    if (al.Songs != null && al.Songs.Count != 0)
+        //        return al.Songs;
+        //    else
+        //    {
+        //        al = await GetAlbumByIdAsync(al.Id);
+        //        return al.Songs;
+        //    }
+        //    return null;
+        //}
 
         private async Task<Artist> GetArtistByIdAsync(int id)
         {

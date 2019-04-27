@@ -35,6 +35,8 @@ namespace SpotyPie
         Button PlayableButton;
         TextView AlbumByText;
 
+        Button ShufflePlay;
+
         private NestedScrollView ScrollFather;
 
         int scrolled = 0;
@@ -60,6 +62,8 @@ namespace SpotyPie
         {
             //MainActivity.ActionName.Text = GetState().Current_Artist.Name;
 
+            ShufflePlay = RootView.FindViewById<Button>(Resource.Id.button_text);
+            ShufflePlay.Click += ShufflePlay_Click;
             ////Background binding
             Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
             AlbumTitle = RootView.FindViewById<TextView>(Resource.Id.album_title);
@@ -103,6 +107,22 @@ namespace SpotyPie
             }
 
             LoadArtist(CurrentArtist);
+        }
+
+        private void ShufflePlay_Click(object sender, EventArgs e)
+        {
+            ShufflePlay.Text = "Loading songs";
+
+            Task.Run(async () =>
+            {
+                var data = await GetAPIService().GetArtistSongsAsync(CurrentArtist);
+                Application.SynchronizationContext.Post(_=>
+                {
+                    GetState().SetSong(data, 0);
+                }, null);
+            });
+
+            Toast.MakeText(this.Context, "Veikia", ToastLength.Short).Show();
         }
 
         public async Task LoadSongs()

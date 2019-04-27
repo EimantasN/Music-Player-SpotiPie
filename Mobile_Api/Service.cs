@@ -1,4 +1,5 @@
 ﻿using Mobile_Api.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -69,6 +70,11 @@ namespace Mobile_Api
         public async Task<Songs> Corruped(int id)
         {
             return await Post<Songs>($"Corrupted/{id}", "Songs");
+        }
+
+        public async Task<List<Songs>> GetSongsByArtistAsync(Artist artist)
+        {
+            return await GetListAsync<Songs>($"Artists/{artist.Id}");
         }
         #endregion
     }
