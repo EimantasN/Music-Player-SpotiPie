@@ -27,6 +27,42 @@ namespace API.Controllers
         [HttpGet("CorectDatabase")]
         public async Task<ActionResult> CorectDatabaseAsync()
         {
+            await FixEnviromentLocalUrlsErrors();
+            return Ok();
+        }
+
+        //private async Task FixTypeIssue
+
+        private async Task FixEnviromentLocalUrlsErrors()
+        {
+            try
+            {
+                var songs = _ctx.Songs.ToList();
+                foreach (var x in songs)
+                {
+                    if (x.LocalUrl != null && x.LocalUrl.Contains("C:"))
+                        x.LocalUrl = null;
+
+                    if (string.IsNullOrEmpty(x.LocalUrl))
+                    {
+                        x.IsLocal = false;
+                        x.IsPlayable = false;
+                    }
+                    else
+                    {
+                        x.IsPlayable = true;
+                    }
+                    _ctx.Entry(x).State = EntityState.Modified;
+                    await _ctx.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        private async Task FillNullCollumsWithDataAsync()
+        {
             try
             {
                 var Artist = await _ctx.Artists.Include(x => x.Albums).ThenInclude(x => x.Songs).ToListAsync();
@@ -50,35 +86,6 @@ namespace API.Controllers
             {
 
             }
-
-            return Ok();
-
-            //try
-            //{
-            //    var songs = _ctx.Songs.ToList();
-            //    foreach (var x in songs)
-            //    {
-            //        if (x.LocalUrl != null && x.LocalUrl.Contains("C:"))
-            //            x.LocalUrl = null;
-
-            //        if (string.IsNullOrEmpty(x.LocalUrl))
-            //        {
-            //            x.IsLocal = false;
-            //            x.IsPlayable = false;
-            //        }
-            //        else
-            //        {
-            //            x.IsPlayable = true;
-            //        }
-            //        _ctx.Entry(x).State = EntityState.Modified;
-            //        await _ctx.SaveChangesAsync();
-            //    }
-            //    return Ok();
-            //}
-            //catch (Exception e)
-            //{
-            //    return BadRequest(e);
-            //}
         }
 
         [HttpGet("FFpeg_test")]
@@ -157,8 +164,8 @@ namespace API.Controllers
                         var tempAlbum = _ctx.Albums.FirstOrDefault(x => x.SpotifyId == spotAlbum.SpotifyId);
                         if (tempAlbum == null)
                         {
-                            Artist.Albums.Add(tempAlbum);
-                            _ctx.Entry(tempAlbum).State = EntityState.Modified;
+                            Artist.Albums.Add(spotAlbum);
+                            _ctx.Entry(Artist).State = EntityState.Modified;
                             _ctx.SaveChanges();
                         }
                         else

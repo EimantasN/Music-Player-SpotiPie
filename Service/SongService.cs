@@ -8,6 +8,7 @@ using IdSharp.Tagging.VorbisComment;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Models.BackEnd;
+using Models.BackEnd.Enumerators;
 using Service.Helpers;
 
 namespace Services
@@ -208,7 +209,16 @@ namespace Services
                             fileName = Path.GetFileName(path);
                             newPath = path.Replace(fileName, Replacer.RemoveSpecialCharacters(fileName)).Replace("_flac", ".flac");
                             File.Move(path, newPath);
-                            var data = await SaveFileAsync(newPath);
+                            var data = await SaveFileAsync(newPath, SongType.Flac);
+                            if (data != null)
+                                Errors.Add(data);
+                        }
+                        else if (path.Contains(".mp3"))
+                        {
+                            fileName = Path.GetFileName(path);
+                            newPath = path.Replace(fileName, Replacer.RemoveSpecialCharacters(fileName)).Replace("_mp3", ".mp3");
+                            File.Move(path, newPath);
+                            var data = await SaveFileAsync(newPath, SongType.Mp3);
                             if (data != null)
                                 Errors.Add(data);
                         }
@@ -232,7 +242,21 @@ namespace Services
             List<AudioBindError> Errors = new List<AudioBindError>();
             try
             {
-                string FilePath = GetEnviromentPath() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName).Replace("_flac", ".flac");
+                string FilePath = string.Empty;
+                SongType type = SongType.Flac;
+                if (file.FileName.Contains(".flac"))
+                {
+                    FilePath = GetEnviromentPath() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName).Replace("_flac", ".flac");
+                }
+                else if (file.FileName.Contains(".mp3"))
+                {
+                    FilePath = GetEnviromentPath() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName).Replace("_mp3", ".mp3");
+                    type = SongType.Mp3;
+                }
+
+                if (string.IsNullOrEmpty(FilePath))
+                    return Errors;
+
                 using (var fileStream = new FileStream(FilePath, FileMode.Create))
                 {
                     await file.CopyToAsync(fileStream);
@@ -240,7 +264,7 @@ namespace Services
 
                 try
                 {
-                    var data = await SaveFileAsync(FilePath);
+                    var data = await SaveFileAsync(FilePath, type);
                     if (data != null)
                         Errors.Add(data);
                 }
@@ -257,18 +281,18 @@ namespace Services
             }
         }
 
-        private async Task<AudioBindError> SaveFileAsync(string filePath)
+        private async Task<AudioBindError> SaveFileAsync(string filePath, SongType type)
         {
-            var flacTag = new VorbisComment(filePath);
+            SongTag tag = new SongTag(filePath);
 
-            if (string.IsNullOrEmpty(flacTag.Album) || string.IsNullOrEmpty(flacTag.Title) || string.IsNullOrEmpty(flacTag.Artist))
+            if (string.IsNullOrEmpty(tag.Album) || string.IsNullOrEmpty(tag.Title) || string.IsNullOrEmpty(tag.Artist))
             {
-                return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Wrong Flac");
+                return new AudioBindError(filePath, tag.Artist, tag.Album, tag.Title, "Wrong Flac");
             }
 
-            var artist = await _ctx.Artists.FirstOrDefaultAsync(x => x.Name.ToLower().Trim() == flacTag.Artist.ToLower().Trim());
+            var artist = await _ctx.Artists.FirstOrDefaultAsync(x => x.Name.ToLower().Trim() == tag.Artist.ToLower().Trim());
             if (artist == null)
-                return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Artist not found in database");
+                return new AudioBindError(filePath, tag.Artist, tag.Album, tag.Title, "Artist not found in database");
 
             CheckForDirectory(
                 GetEnviromentPath() +
@@ -276,14 +300,23 @@ namespace Services
                 Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()));
 
             string AlbumName = "";
-            Replacer.CorrentAlbum(flacTag.Album);
-            var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Name.ToLower().Trim().Contains(flacTag.Album.ToLower().Trim()));
+            Replacer.CorrentAlbum(tag.Album);
+            var album = await _ctx.Albums.FirstOrDefaultAsync(x => x.Name.ToLower().Trim().Contains(tag.Album.ToLower().Trim()));
             if (album == null)
             {
-                int ID = FindSimilarName.findSimilarAlbumName(await _ctx.Albums.AsNoTracking().ToListAsync(), flacTag.Album);
+                int ID = FindSimilarName.findSimilarAlbumName(await _ctx.Albums.AsNoTracking().ToListAsync(), tag.Album);
                 if (ID == 0)
                 {
-                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Album not found in database");
+                    List<Song> thirdCheck = await _ctx.Songs.Where(x => x.Name.ToLower().Trim().Contains(tag.Title.ToLower().Trim())
+                     && x.ArtistId == artist.Id).ToListAsync();
+
+                    ID = FindSimilarName.findSimilarSongName(_ctx, thirdCheck, tag.Title, 0, artist.Id);
+
+                    if (ID == 0)
+                        return new AudioBindError(filePath, tag.Artist, tag.Album, tag.Title, "Album not found in database");
+
+                    album = await _ctx.Albums.FirstAsync(x => x.Id == thirdCheck.First(y => y.Id == ID).AlbumId);
+                    AlbumName = album.Name.ToLower().Trim();
                 }
                 else
                 {
@@ -305,13 +338,13 @@ namespace Services
 
             string destinationPath = "";
             string SongName = null;
-            var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Name.Replace("&", "and").ToLower().Trim().Contains(flacTag.Title.Replace("&", "and").ToLower().Trim()));
+            Song song = null;
             if (song == null)
             {
-                int ID = FindSimilarName.findSimilarSongName(await _ctx.Songs.AsNoTracking().ToListAsync(), flacTag.Title);
+                int ID = FindSimilarName.findSimilarSongName(_ctx, await _ctx.Songs.AsNoTracking().ToListAsync(), tag.Title, album.Id, artist.Id);
                 if (ID == 0)
                 {
-                    return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Song not found in database");
+                    return new AudioBindError(filePath, tag.Artist, tag.Album, tag.Title, "Song not found in database");
                 }
                 else
                 {
@@ -326,15 +359,19 @@ namespace Services
 
             if (!string.IsNullOrEmpty(SongName))
             {
+                string Extension = type == SongType.Flac ? ".flac" : ".mp3";
                 destinationPath = GetEnviromentPath() +
                     Path.DirectorySeparatorChar +
                     Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()) +
                     Path.DirectorySeparatorChar +
                     Replacer.RemoveSpecialCharacters(AlbumName) +
                     Path.DirectorySeparatorChar +
-                    Replacer.RemoveSpecialCharacters(SongName) + ".flac";
+                    Replacer.RemoveSpecialCharacters(SongName) + Extension;
 
-                Ffmpeg.ConvertFile(filePath);
+                if (type == SongType.Flac && (tag.Bitrate == 0 || tag.Bitrate > 1000))
+                {
+                    Ffmpeg.ConvertFile(filePath);
+                }
 
                 long newFileSize = new FileInfo(filePath).Length;
 
@@ -355,6 +392,7 @@ namespace Services
                     song.LocalUrl = destinationPath;
                     song.IsLocal = true;
                     song.IsPlayable = true;
+                    song.Type = type;
                     song.UploadTime = DateTime.Now;
                     song.Size = new FileInfo(destinationPath).Length;
                     _ctx.Entry(song).State = EntityState.Modified;
@@ -371,7 +409,7 @@ namespace Services
 
             if (!string.IsNullOrEmpty(destinationPath) && !File.Exists(destinationPath))
             {
-                return new AudioBindError(filePath, flacTag.Artist, flacTag.Album, flacTag.Title, "Failed to create file or get path");
+                return new AudioBindError(filePath, tag.Artist, tag.Album, tag.Title, "Failed to create file or get path");
             }
             else
             {
