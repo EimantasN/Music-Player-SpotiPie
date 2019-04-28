@@ -38,5 +38,9 @@ namespace SpotyPie.Services
         void SongStopped();
 
         void SetSeekBarProgress(int progress, string text);
+
+        int GetViewLoadState();
+
+        void SetViewLoadState();
     }
 }

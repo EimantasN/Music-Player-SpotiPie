@@ -2,10 +2,12 @@
 using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
+using Realms;
 using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SpotyPie
@@ -38,6 +40,22 @@ namespace SpotyPie
             _service = service;
             _activity = activity;
             GetCurrentState();
+            TryToGetRealm();
+        }
+
+        private void TryToGetRealm()
+        {
+            try
+            {
+                Realm realm = Realm.GetInstance();
+                realm.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Realm.DeleteRealm(RealmConfiguration.DefaultConfiguration);
+                Realm realm = Realm.GetInstance();
+                realm.Dispose();
+            }
         }
 
         #region Current State
@@ -336,6 +354,38 @@ namespace SpotyPie
             }
         }
         #endregion
+
+        public void SetCurrentList(List<Songs> songs)
+        {
+            try
+            {
+                var realm = Realm.GetInstance();
+                songs.ForEach(x =>
+                {
+                    realm.Write(() =>
+                            {
+                                realm.Add<Songs>(x);
+                            });
+                });
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        public IList<Songs> GetCurrentList()
+        {
+            try
+            {
+                var realm = Realm.GetInstance();
+                var songs = realm.All<Songs>().ToList();
+                return songs;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
 
         private void InvokeOnMainThread(Action action)
         {

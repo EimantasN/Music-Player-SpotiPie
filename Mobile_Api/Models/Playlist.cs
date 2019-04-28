@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Mobile_Api.Interfaces;
+using Mobile_Api.Models.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Playlist
+    public class Playlist : BaseModel
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string Name { get; set; }
 
@@ -26,5 +28,6 @@ namespace Mobile_Api.Models
         public long Popularity { get; set; }
 
         public string Image { get; set; }
+        protected override RvType Type { get; set; } = RvType.Playlist;
     }
 }

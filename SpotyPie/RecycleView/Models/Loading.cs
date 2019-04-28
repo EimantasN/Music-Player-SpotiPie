@@ -7,7 +7,8 @@ namespace SpotyPie.RecycleView.Models
     {
         public View LoadingView { get; set; }
 
-        public Loading(View view) : base(view)
-        { }
+        public Loading(View view, ViewGroup parent) : base(view)
+        {
+        }
     }
 }

@@ -1,11 +1,13 @@
-﻿using Mobile_Api.Models.Enums;
+﻿using Mobile_Api.Interfaces;
+using Mobile_Api.Models.Enums;
+using Realms;
 using System;
 
 namespace Mobile_Api.Models
 {
-    public class Songs : BaseModel
+    public class Songs : RealmObject, IBaseInterface
     {
-        public override int Id { get; set; }
+        public int Id { get; set; }
 
         public string SpotifyId { get; set; }
 
@@ -33,9 +35,9 @@ namespace Mobile_Api.Models
 
         public bool IsPlayable { get; set; }
 
-        public DateTime LastActiveTime { get; set; }
+        public DateTimeOffset LastActiveTime { get; set; }
 
-        public DateTime UploadTime { get; set; }
+        public DateTimeOffset UploadTime { get; set; }
 
         public long Size { get; set; }
 
@@ -49,17 +51,29 @@ namespace Mobile_Api.Models
 
         public int ArtistId { get; set; }
 
-        protected override RvType Type { get; set; }
+        public RvType Type { get; set; }
 
         public bool IsPlayingNow() { return IsPlaying; }
+
         public void SetIsPlaying(bool state) { IsPlaying = state; }
 
-        public Songs(bool fake)
+        public Songs()
         {
-            Id = 10;
-            Name = "Testas";
-            LocalUrl = "";
-            LargeImage = "";
+        }
+
+        public int GetId()
+        {
+            return Id;
+        }
+
+        public RvType GetModelType()
+        {
+            return Type;
+        }
+
+        public void SetModelType(RvType type)
+        {
+            Type = type;
         }
     }
 }

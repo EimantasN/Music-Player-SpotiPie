@@ -23,7 +23,19 @@ namespace SpotyPie.RecycleView.Models
 
         public ImageView R_Image { get; set; }
 
-        public BlockImageTwo(View view) : base(view) { }
+        public BlockImageTwo(View view, ViewGroup parent) : base(view)
+        {
+            L_Title = view.FindViewById<TextView>(Resource.Id.album_title_left);
+            L_SubTitile = view.FindViewById<TextView>(Resource.Id.left_subtitle);
+            L_Image = view.FindViewById<ImageView>(Resource.Id.left_image);
+
+            R_Title = view.FindViewById<TextView>(Resource.Id.album_title_right);
+            R_SubTitile = view.FindViewById<TextView>(Resource.Id.right_subtitle);
+            R_Image = view.FindViewById<ImageView>(Resource.Id.right_image);
+
+            IsRecyclable = true;
+        }
+
 
         internal void PrepareView(dynamic data, Context context)
         {

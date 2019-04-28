@@ -24,6 +24,7 @@ namespace SpotyPie.RecycleView.Models
             Image = view.FindViewById<ImageView>(Resource.Id.se_image);
             SubTitile = view.FindViewById<TextView>(Resource.Id.subtitle);
             Title = view.FindViewById<TextView>(Resource.Id.title);
+            IsRecyclable = true;
         }
 
         public void PrepareView(dynamic data, Context Context)
@@ -35,7 +36,7 @@ namespace SpotyPie.RecycleView.Models
 
                 //TODO ADD SUBTITLE
                 SubTitile.Text = "Coming soon";
-                Picasso.With(Context).Load(data.MediumImage).Into(Image);
+                Picasso.With(Context).Load(data.MediumImage).NoFade().Fit().CenterCrop().Into(Image);
             }
             catch (Exception e)
             {

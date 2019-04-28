@@ -27,12 +27,14 @@ namespace SpotyPie.RecycleView.Models
         {
             Image = view.FindViewById<CircleImageView>(Resource.Id.image);
             Title = view.FindViewById<TextView>(Resource.Id.title);
+
+            IsRecyclable = true;
         }
 
         public void PrepareView(dynamic data, Context Context)
         {
             Title.Text = data.Name;
-            Picasso.With(Context).Load(data.SmallImage).NoFade().Into(Image);
+            Picasso.With(Context).Load(data.SmallImage).NoFade().Fit().CenterCrop().Into(Image);
         }
     }
 }

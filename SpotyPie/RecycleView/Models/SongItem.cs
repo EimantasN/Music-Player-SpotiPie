@@ -4,6 +4,7 @@ using Android.Content.Res;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 
 namespace SpotyPie.RecycleView.Models
 {
@@ -19,9 +20,18 @@ namespace SpotyPie.RecycleView.Models
 
         public ImageButton Options { get; set; }
 
-        public SongItem(View view) : base(view) { }
+        public SongItem(View view, ViewGroup parent) : base(view)
+        {
+            Title = view.FindViewById<TextView>(Resource.Id.Title);
+            SubTitile = view.FindViewById<TextView>(Resource.Id.subtitle);
+            Options = view.FindViewById<ImageButton>(Resource.Id.option);
+            SmallIcon = view.FindViewById<ImageView>(Resource.Id.small_img);
 
-        internal void PrepareView(dynamic t, Context context)
+            IsRecyclable = true;
+        }
+
+
+        internal void PrepareView(Songs t, Context context)
         {
             try
             {
@@ -36,7 +46,7 @@ namespace SpotyPie.RecycleView.Models
                     SmallIcon.SetImageResource(Resource.Drawable.music_note_small);
                 }
                 Title.Text = t.Name;
-                SubTitile.Text = "Coming soon";
+                SubTitile.Text = t.ArtistName;
             }
             catch (Exception e)
             {

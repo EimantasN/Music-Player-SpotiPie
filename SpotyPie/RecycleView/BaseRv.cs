@@ -2,12 +2,13 @@
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using SpotyPie.RecycleView.Models;
 
 namespace SpotyPie.RecycleView
 {
-    public class BaseRv<T> : RecyclerView.Adapter
+    public class BaseRv<T> : RecyclerView.Adapter where T : IBaseInterface
     {
         protected RvList<T> Dataset;
         protected RecyclerView mRecyclerView;
@@ -18,6 +19,14 @@ namespace SpotyPie.RecycleView
             Dataset = data;
             mRecyclerView = recyclerView;
             Context = context;
+            this.HasStableIds = true;
+        }
+
+        public override long GetItemId(int position)
+        {
+            if (Dataset[position] != null)
+                return Dataset[position].GetId();
+            return 0;
         }
 
         public override int GetItemViewType(int position)
@@ -50,10 +59,6 @@ namespace SpotyPie.RecycleView
                 else if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.BigOne)
                     return Resource.Layout.big_rv_list_one;
             }
-            //else if (typeof(T) == typeof(TwoBlockWithImage))
-            //{
-            //    return Resource.Layout.boxed_rv_list_two;
-            //}
             else if (typeof(T) == typeof(SongItem) || Dataset[position].GetType().Name == "Songs")
             {
                 Songs ar = Dataset[position] as Songs;
@@ -67,77 +72,29 @@ namespace SpotyPie.RecycleView
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            if (viewType == Resource.Layout.Loading)
+            switch (viewType)
             {
-                View LoadingView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.Loading, parent, false);
-
-                Models.Loading view = new Models.Loading(LoadingView) { };
-
-                return view;
+                case Resource.Layout.Loading:
+                    return new Loading(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.Loading, parent, false), parent);
+                case Resource.Layout.big_rv_list:
+                    return new BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list, parent, false), parent);
+                case Resource.Layout.song_list_rv:
+                    return new SongItem(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_rv, parent, false), parent);
+                case Resource.Layout.grid_rv:
+                    return new BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.grid_rv, parent, false), parent);
+                case Resource.Layout.big_rv_list_one:
+                    return new BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list_one, parent, false), parent);
+                case Resource.Layout.boxed_rv_list_two:
+                    return new BlockImageTwo(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.boxed_rv_list_two, parent, false), parent);
+                case Resource.Layout.song_list_with_image:
+                    return new SongWithImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_with_image, parent, false), parent);
+                case Resource.Layout.artist_list:
+                    return new ArtistList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.artist_list, parent, false), parent);
+                case Resource.Layout.album_list:
+                    return new AlbumList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.album_list, parent, false), parent);
+                default:
+                    throw new System.Exception("View Id in RV not found");
             }
-            else if (viewType == Resource.Layout.big_rv_list)
-            {
-                return new Models.BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list, parent, false), parent);
-            }
-            else if (viewType == Resource.Layout.grid_rv)
-            {
-                return new Models.BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.grid_rv, parent, false), parent);
-            }
-            else if (viewType == Resource.Layout.big_rv_list_one)
-            {
-                return new Models.BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list_one, parent, false), parent);
-            }
-            else if (viewType == Resource.Layout.boxed_rv_list_two)
-            {
-                View EmptyTime = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.boxed_rv_list_two, parent, false);
-
-                TextView mL_Title = EmptyTime.FindViewById<TextView>(Resource.Id.album_title_left);
-                TextView mL_SubTitle = EmptyTime.FindViewById<TextView>(Resource.Id.left_subtitle);
-                ImageView mL_Image = EmptyTime.FindViewById<ImageView>(Resource.Id.left_image);
-
-                TextView mR_Title = EmptyTime.FindViewById<TextView>(Resource.Id.album_title_right);
-                TextView mR_SubTitle = EmptyTime.FindViewById<TextView>(Resource.Id.right_subtitle);
-                ImageView mR_Image = EmptyTime.FindViewById<ImageView>(Resource.Id.right_image);
-
-                Models.BlockImageTwo view = new Models.BlockImageTwo(EmptyTime)
-                {
-                    L_Title = mL_Title,
-                    L_SubTitile = mL_SubTitle,
-                    L_Image = mL_Image,
-                    R_Title = mR_Title,
-                    R_SubTitile = mR_SubTitle,
-                    R_Image = mR_Image
-                };
-
-                return view;
-            }
-            else if (viewType == Resource.Layout.song_list_rv)
-            {
-                View EmptyTime = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_rv, parent, false);
-
-                SongItem view = new SongItem(EmptyTime)
-                {
-                    Title = EmptyTime.FindViewById<TextView>(Resource.Id.Title),
-                    SubTitile = EmptyTime.FindViewById<TextView>(Resource.Id.subtitle),
-                    Options = EmptyTime.FindViewById<ImageButton>(Resource.Id.option),
-                    SmallIcon = EmptyTime.FindViewById<ImageView>(Resource.Id.small_img)
-                };
-
-                return view;
-            }
-            else if (viewType == Resource.Layout.song_list_with_image)
-            {
-                return new SongWithImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_with_image, parent, false), parent);
-            }
-            else if (viewType == Resource.Layout.artist_list)
-            {
-                return new ArtistList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.artist_list, parent, false), parent);
-            }
-            else if (viewType == Resource.Layout.album_list)
-            {
-                return new AlbumList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.album_list, parent, false), parent);
-            }
-            throw new System.Exception("View Id in RV not found");
         }
 
         public override int ItemCount
@@ -164,7 +121,7 @@ namespace SpotyPie.RecycleView
             else if (holder is SongItem)
             {
                 SongItem view = holder as SongItem;
-                view.PrepareView(Dataset[position], Context);
+                view.PrepareView(Dataset[position] as Songs, Context);
             }
             else if (holder is ArtistList)
             {
@@ -179,7 +136,7 @@ namespace SpotyPie.RecycleView
             else if (holder is SongWithImage)
             {
                 SongWithImage view = holder as SongWithImage;
-                view.PrepareView(Dataset[position], Context);
+                view.PrepareView(Dataset[position] as Songs, Context);
             }
         }
     }

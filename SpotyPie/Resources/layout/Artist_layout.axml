@@ -218,16 +218,4 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/hide"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:visibility="invisible"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:gravity="center">-->
-
-
-
-    <!--</RelativeLayout>-->
-
 </android.support.constraint.ConstraintLayout>

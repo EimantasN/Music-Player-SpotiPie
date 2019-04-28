@@ -3,16 +3,17 @@ using Android.App;
 using Android.Support.V7.Util;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using Mobile_Api.Interfaces;
 using SpotyPie.RecycleView.Helpers;
 
 namespace SpotyPie.RecycleView
 {
-    public class RvList<T>
+    public class RvList<T> where T : IBaseInterface
     {
-        private List<dynamic> mItems;
+        private List<T> mItems;
         private RecyclerView.Adapter mAdapter;
 
-        public List<dynamic> GetList()
+        public List<T> GetList()
         {
             return mItems;
         }
@@ -21,12 +22,12 @@ namespace SpotyPie.RecycleView
 
         public void Erase()
         {
-            mItems = new List<dynamic>();
+            mItems = new List<T>();
         }
 
         public RvList()
         {
-            mItems = new List<dynamic>();
+            mItems = new List<T>();
         }
 
         public RecyclerView.Adapter Adapter
@@ -40,26 +41,20 @@ namespace SpotyPie.RecycleView
         {
             Application.SynchronizationContext.Post(_ =>
             {
-                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, new List<dynamic>()), false);
+                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, new List<T>()), false);
 
                 // Overwrite the old data
                 Erase();
-                mItems.AddRange(new List<dynamic>());
+                mItems.AddRange(new List<T>());
                 result.DispatchUpdatesTo(Adapter);
             }, null);
         }
-        public void AddList(List<T> newData)
-        {
-            List<dynamic> newList = new List<dynamic>();
-            newData.ForEach(x => newList.Add((dynamic)x));
-            AddList(newList);
-        }
 
-        public void AddList(List<dynamic> newData)
+        public void AddList(List<T> newData)
         {
             Application.SynchronizationContext.Post(_ =>
             {
-                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate(mItems, newData), false);
+                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, newData), false);
 
                 // Overwrite the old data
                 Erase();
@@ -106,7 +101,7 @@ namespace SpotyPie.RecycleView
             get { return mItems.Count; }
         }
 
-        internal void RemoveLoading(List<dynamic> data)
+        internal void RemoveLoading(List<T> data)
         {
             try
             {

@@ -104,7 +104,7 @@ namespace SpotyPie.RecycleView
                     }
                     else if (RvDataset[position].GetType().Name == "Songs")
                     {
-                        Activity.GetState().SetSong(JsonConvert.DeserializeObject<List<Songs>>(JsonConvert.SerializeObject(RvDataset.GetList())), position);
+                        Activity.GetState().SetSong(RvDataset.GetList() as List<Songs>, position);
                     }
                     else
                     {

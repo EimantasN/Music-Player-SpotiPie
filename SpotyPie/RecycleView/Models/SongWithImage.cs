@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
 using Square.Picasso;
 
 namespace SpotyPie.RecycleView.Models
@@ -27,20 +28,15 @@ namespace SpotyPie.RecycleView.Models
             Title = view.FindViewById<TextView>(Resource.Id.title);
             SubTitile = view.FindViewById<TextView>(Resource.Id.subtitle);
             Options = view.FindViewById<ImageButton>(Resource.Id.option);
+
+            IsRecyclable = true;
         }
 
-        public void PrepareView(dynamic data, Context Context)
+        public void PrepareView(Songs data, Context Context)
         {
-            try
-            {
-                Title.Text = data.Name;
-                SubTitile.Text = $"Popularity - {data.Popularity}";
-                Picasso.With(Context).Load(data.MediumImage).Into(Image);
-            }
-            catch (Exception e)
-            {
-
-            }
+            Title.Text = data.Name;
+            SubTitile.Text = $"Popularity - {data.Popularity}";
+            Picasso.With(Context).Load(data.SmallImage).NoFade().Fit().CenterCrop().Into(Image);
         }
     }
 }

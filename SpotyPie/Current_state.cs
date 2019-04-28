@@ -53,9 +53,12 @@ namespace SpotyPie
             return Player;
         }
 
-        public void SetSong(List<Songs> song, int position = 0, bool refresh = false)
+        public void SetSong(List<Songs> songs, int position = 0, bool refresh = false)
         {
-            GetPlayer().SongChangeStarted(song, position);
+            GetPlayer().SongChangeStarted(songs, position);
+            //var x = new List<Songs>();
+            //x.AddRange(songs);
+            //Activity.GetAPIService().SetCurrentList(x);
         }
 
         public void SetCurrentSongList(List<Songs> songs)

@@ -83,6 +83,8 @@ namespace SpotyPie
 
             APPSTATE = new Current_state(this);
 
+            var x = GetAPIService().GetCurrentList();
+
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
 
             PlayerContainer = FindViewById<FrameLayout>(Resource.Id.player_frame);
@@ -110,7 +112,6 @@ namespace SpotyPie
             SongTitle.Selected = true;
             ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
             ArtistName.Selected = true;
-
 
             //TODO make more maintanable
             Task.Run(async () =>
