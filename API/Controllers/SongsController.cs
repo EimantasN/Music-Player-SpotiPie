@@ -35,6 +35,20 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("GetNextSong")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> GetNextSong()
+        {
+            try
+            {
+                return Ok(await _songs.GetNextSong());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpGet("Artists/{id}")]
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> GetArtistSongs(int id)

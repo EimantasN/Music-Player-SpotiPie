@@ -13,6 +13,12 @@ namespace Mobile_Api
             return await GetData<T>(Client);
         }
 
+        public async Task<T> Get<T>(string controller, string method)
+        {
+            CustomRestClient Client = GetClient($"api/{controller}/{method}");
+            return await GetData<T>(Client);
+        }
+
         public async Task<T> GetOne<T>(string endPoint)
         {
             CustomRestClient Client = GetClient($"api/{typeof(T).Name}/" + endPoint);

@@ -72,6 +72,11 @@ namespace Mobile_Api
             return await Post<Songs>($"Corrupted/{id}", "Songs");
         }
 
+        public async Task<Songs> GetNextSong()
+        {
+            return await Get<Songs>("Songs", "GetNextSong");
+        }
+
         public async Task<List<Songs>> GetSongsByArtistAsync(Artist artist)
         {
             return await GetListAsync<Songs>($"Artists/{artist.Id}");

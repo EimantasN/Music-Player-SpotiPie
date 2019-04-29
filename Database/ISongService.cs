@@ -11,6 +11,8 @@ namespace Database
 
         Task<CurrentSong> GetState();
 
+        Task<Song> GetNextSong();
+
         Task<List<Song>> SearchAsync(string query);
 
         Task<List<Song>> GetAllAsync(int count = 30);

@@ -523,7 +523,8 @@ namespace SpotyPie.Services
                             if ((i + 1) == Current_Song_List.Count)
                             {
                                 Current_Song_List[0].SetIsPlaying(true);
-                                SetSong(0);
+                                //Task run because in this method requst is made so it will block main thread
+                                Task.Run(() => SongListEndCheckForAutoPlayAsync());
                             }
                             else
                             {
@@ -553,6 +554,30 @@ namespace SpotyPie.Services
             catch (Exception e)
             {
                 Task.Run(() => GetAPIService().Report(e));
+            }
+        }
+
+        private async Task SongListEndCheckForAutoPlayAsync()
+        {
+            try
+            {
+                Songs song = await GetAPIService().GetNextSong();
+                if (!Current_Song_List.Any(x => x.Id == song.Id))
+                {
+                    Application.SynchronizationContext.Post(_ =>
+                    {
+                        Current_Song_List.Add(song);
+                        SetSong(Current_Song_List.Count - 1);
+                    }, null);
+                }
+                else
+                {
+                    Application.SynchronizationContext.Post(_ => { SetSong(0); }, null);
+                }
+            }
+            catch (Exception e)
+            {
+
             }
         }
 
