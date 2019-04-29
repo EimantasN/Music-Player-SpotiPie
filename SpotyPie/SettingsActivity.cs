@@ -1,5 +1,4 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Widget;
@@ -8,6 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using SpotyPie.Database.ViewModels;
 using System.Threading;
+using Android.Bluetooth;
+using System;
+using System.Threading.Tasks;
+using Android.Views;
 
 namespace SpotyPie
 {
@@ -15,6 +18,7 @@ namespace SpotyPie
     public class SettingsActivity : AppCompatActivity
     {
         private Spinner MusicQualitySpinner;
+        private Spinner BluetoothDeviceSpinner;
         private Switch DataSaverSwitch;
         private Switch ExplicitContentSwitch;
         private Switch UnplayableSongsSwitch;
@@ -23,12 +27,18 @@ namespace SpotyPie
         private Switch AutoHeadsetSwitch;
         private Switch CellularSwitch;
 
+        private TextView DeviceName;
+        private TextView DeviceStatus;
+        private TextView CurrentText;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.settings);
 
             Settings settings = InitRealSettings();
+
+            InitSpinner();
 
             DataSaverSwitch = FindViewById<Switch>(Resource.Id.data_saver_switch);
             DataSaverSwitch.CheckedChange += DataSaverSwitch_CheckedChange;
@@ -57,6 +67,72 @@ namespace SpotyPie
             CellularSwitch = FindViewById<Switch>(Resource.Id.cellular_switch);
             CellularSwitch.CheckedChange += CellularSwitch_CheckedChange;
             CellularSwitch.Checked = settings.CellularSwitch;
+
+            InitBluetoothSpinner();
+        }
+
+        private void InitBluetoothSpinner()
+        {
+            if (AutoHeadsetSwitch.Checked)
+            {
+                Task.Run(() =>
+                {
+                    Settings settings = InitRealSettings();
+                    List<String> Devices = new List<String>();
+                    if (string.IsNullOrEmpty(settings.CurrentBthDeviceName))
+                        Devices.Add("Not selected");
+                    else
+                        Devices.Add(settings.CurrentBthDeviceName);
+
+                    Devices.AddRange(PairedDevices(Devices[0]));
+                    Application.SynchronizationContext.Post(_ =>
+                    {
+                        var adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSelectableListItem, Devices);
+
+                        DeviceName = FindViewById<TextView>(Resource.Id.textView33);
+                        DeviceName.Text = Devices[0];
+                        DeviceName.Visibility = ViewStates.Visible;
+
+                        //TODO Add connectivity
+                        DeviceStatus = FindViewById<TextView>(Resource.Id.device_connected_status);
+                        DeviceStatus.Visibility = ViewStates.Gone;
+
+                        CurrentText = FindViewById<TextView>(Resource.Id.textView34);
+                        CurrentText.Visibility = ViewStates.Visible;
+
+                        BluetoothDeviceSpinner = FindViewById<Spinner>(Resource.Id.bluetooth_device_spinner);
+                        BluetoothDeviceSpinner.Visibility = ViewStates.Visible;
+
+                        BluetoothDeviceSpinner.Adapter = adapter;
+                        BluetoothDeviceSpinner.ItemSelected += BluetoothDeviceSpinner_ItemSelected;
+                    }, null);
+                });
+            }
+            else
+            {
+                if (DeviceName != null)
+                {
+                    DeviceName.Visibility = ViewStates.Gone;
+
+                    //DeviceStatus.Visibility = ViewStates.Gone;
+                    DeviceStatus.Visibility = ViewStates.Gone;
+                    CurrentText.Visibility = ViewStates.Gone;
+                    BluetoothDeviceSpinner.Visibility = ViewStates.Gone;
+                }
+            }
+        }
+
+        private void BluetoothDeviceSpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            TextView a = (TextView)e.View;
+            DeviceName.Text = a.Text;
+
+            new Thread(() =>
+            {
+                var realm = Realm.GetInstance();
+                var settings = realm.All<Settings>().First();
+                realm.Write(() => settings.CurrentBthDeviceName = a.Text);
+            }).Start();
         }
 
         private Settings InitRealSettings()
@@ -68,7 +144,8 @@ namespace SpotyPie
                 {
                     realm.Add(new Settings());
                 });
-            return realm.All<Settings>().First();
+            var settings = realm.All<Settings>().First();
+            return settings;
         }
 
         protected override void OnDestroy()
@@ -96,7 +173,7 @@ namespace SpotyPie
 
         private void AutoHeadsetSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            Toast.MakeText(this.ApplicationContext, $"AutoHeadsetSwitch {AutoHeadsetSwitch.Checked}", ToastLength.Short).Show();
+            InitBluetoothSpinner();
             new Thread(() =>
             {
                 var realm = Realm.GetInstance();
@@ -107,7 +184,6 @@ namespace SpotyPie
 
         private void CustomImagesSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            Toast.MakeText(this.ApplicationContext, $"CustomImagesSwitch {CustomImagesSwitch.Checked}", ToastLength.Short).Show();
             new Thread(() =>
             {
                 var realm = Realm.GetInstance();
@@ -118,7 +194,6 @@ namespace SpotyPie
 
         private void AutoplaySwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            Toast.MakeText(this.ApplicationContext, $"AutoplaySwitch {AutoplaySwitch.Checked}", ToastLength.Short).Show();
             new Thread(() =>
             {
                 var realm = Realm.GetInstance();
@@ -129,7 +204,6 @@ namespace SpotyPie
 
         private void UnplayableSongsSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            Toast.MakeText(this.ApplicationContext, $"UnplayableSongsSwitch {UnplayableSongsSwitch.Checked}", ToastLength.Short).Show();
             new Thread(() =>
             {
                 var realm = Realm.GetInstance();
@@ -140,7 +214,6 @@ namespace SpotyPie
 
         private void ExplicitContentSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            Toast.MakeText(this.ApplicationContext, $"ExplicitContentSwitch {ExplicitContentSwitch.Checked}", ToastLength.Short).Show();
             new Thread(() =>
             {
                 var realm = Realm.GetInstance();
@@ -151,7 +224,6 @@ namespace SpotyPie
 
         private void DataSaverSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            Toast.MakeText(this.ApplicationContext, $"DataSaverSwitch {DataSaverSwitch.Checked}", ToastLength.Short).Show();
             new Thread(() =>
             {
                 var realm = Realm.GetInstance();
@@ -171,13 +243,25 @@ namespace SpotyPie
 
         private void Spinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-            Toast.MakeText(this.ApplicationContext, $"Selected {MusicQualitySpinner.SelectedItemId}", ToastLength.Short).Show();
             new Thread(() =>
             {
                 var realm = Realm.GetInstance();
                 var settings = realm.All<Settings>().First();
                 realm.Write(() => settings.MusicQuality = (int)MusicQualitySpinner.SelectedItemId);
             }).Start();
+        }
+
+        public List<string> PairedDevices(string current)
+        {
+            BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
+            List<string> devices = new List<string>();
+            foreach (var bd in adapter.BondedDevices)
+            {
+                if (bd.Name != current)
+                    devices.Add(bd.Name);
+            }
+
+            return devices;
         }
     }
 }

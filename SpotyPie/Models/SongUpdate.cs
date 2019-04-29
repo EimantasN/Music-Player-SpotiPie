@@ -31,11 +31,9 @@ namespace SpotyPie.Models
                 if (!IsUpdated)
                 {
                     this.Seconds++;
-                    //PlayedProcent = (SongDuration / (Seconds * 100000));
-
                     if (Seconds > 60)
                     {
-                        action.Invoke();
+                        action?.Invoke();
                         IsUpdated = true;
                     }
                 }

@@ -1,5 +1,4 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
@@ -8,7 +7,6 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
-using SpotyPie.Services;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -58,6 +56,8 @@ namespace SpotyPie
 
         public FragmentBase FirstLayerFragment;
         public FragmentBase SecondLayerFragment;
+
+        private ImageButton Settings;
 
         public int Add_to_playlist_id = 0;
 
@@ -139,8 +139,16 @@ namespace SpotyPie
 
             BackHeaderButton.Click += BackHeaderButton_Click;
 
+            Settings = FindViewById<ImageButton>(Resource.Id.settings);
+            Settings.Click += Settings_Click;
+
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragment(Resource.Id.home);
+        }
+
+        private void Settings_Click(object sender, EventArgs e)
+        {
+            StartActivity(typeof(SettingsActivity));
         }
 
         protected override void OnDestroy()
@@ -323,6 +331,7 @@ namespace SpotyPie
                         if (MainFragment == null) MainFragment = new MainFragment();
                         CurrentFragment = MainFragment;
                         ActionName.Text = "Home";
+                        Settings.Visibility = ViewStates.Visible;
                         break;
                     }
                 case Resource.Id.browse:
@@ -330,6 +339,7 @@ namespace SpotyPie
                         if (Browse == null) Browse = new Browse();
                         CurrentFragment = Browse;
                         ActionName.Text = "Muse";
+                        Settings.Visibility = ViewStates.Gone;
                         break;
                     }
                 case Resource.Id.search:
@@ -337,6 +347,7 @@ namespace SpotyPie
                         if (Search == null) Search = new Search();
                         CurrentFragment = Search;
                         HeaderContainer.Visibility = ViewStates.Gone;
+                        Settings.Visibility = ViewStates.Gone;
                         break;
                     }
                 case Resource.Id.library:
@@ -344,6 +355,7 @@ namespace SpotyPie
                         if (Library == null) Library = new LibraryFragment();
                         CurrentFragment = Library;
                         ActionName.Text = "Library";
+                        Settings.Visibility = ViewStates.Gone;
                         break;
                     }
             }

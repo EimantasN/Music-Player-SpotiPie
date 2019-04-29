@@ -20,6 +20,8 @@ namespace SpotyPie.Database.ViewModels
 
         public int MusicQuality { get; set; }
 
+        public string CurrentBthDeviceName { get; set; }
+
         public Settings()
         {
 

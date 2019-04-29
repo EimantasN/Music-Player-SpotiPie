@@ -406,6 +406,7 @@ namespace SpotyPie.Player
             {
                 Application.SynchronizationContext.Post(_ =>
                 {
+                    PlayToggle.SetImageResource(Resource.Drawable.play_loading);
                     TotalSongTimeText.Visibility = ViewStates.Invisible;
 
                     GetState().Current_Song_List = newSongList;
