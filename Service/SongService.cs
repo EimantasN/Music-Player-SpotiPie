@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Database;
-using IdSharp.Tagging.VorbisComment;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Models.BackEnd;
@@ -190,22 +189,7 @@ namespace Services
             }
         }
 
-        private void CheckForDirectory(string path)
-        {
-            string[] directorys = path.Replace(GetEnviromentPath(), "").Split(Path.DirectorySeparatorChar);
-
-            string tempPath = GetEnviromentPath();
-            foreach (var x in directorys)
-            {
-                if (!string.IsNullOrEmpty(x))
-                {
-                    tempPath += Path.DirectorySeparatorChar + x;
-                    if (!Directory.Exists(tempPath))
-                        Directory.CreateDirectory(tempPath);
-                }
-            }
-        }
-
+        
         public async Task<List<AudioBindError>> BindData()
         {
             List<AudioBindError> Errors = new List<AudioBindError>();
@@ -213,7 +197,7 @@ namespace Services
             {
                 string fileName;
                 string newPath;
-                foreach (var path in System.IO.Directory.EnumerateFiles(GetEnviromentPath()))
+                foreach (var path in System.IO.Directory.EnumerateFiles(EnviromentPath.GetEnviromentPathMusic()))
                 {
                     try
                     {
@@ -259,11 +243,11 @@ namespace Services
                 SongType type = SongType.Flac;
                 if (file.FileName.Contains(".flac"))
                 {
-                    FilePath = GetEnviromentPath() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName).Replace("_flac", ".flac");
+                    FilePath = EnviromentPath.GetEnviromentPathMusic() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName).Replace("_flac", ".flac");
                 }
                 else if (file.FileName.Contains(".mp3"))
                 {
-                    FilePath = GetEnviromentPath() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName).Replace("_mp3", ".mp3");
+                    FilePath = EnviromentPath.GetEnviromentPathMusic() + Path.DirectorySeparatorChar + Replacer.RemoveSpecialCharacters(file.FileName).Replace("_mp3", ".mp3");
                     type = SongType.Mp3;
                 }
 
@@ -307,10 +291,10 @@ namespace Services
             if (artist == null)
                 return new AudioBindError(filePath, tag.Artist, tag.Album, tag.Title, "Artist not found in database");
 
-            CheckForDirectory(
-                GetEnviromentPath() +
+            EnviromentPath.CheckForDirectory(
+                EnviromentPath.GetEnviromentPathMusic() +
                 Path.DirectorySeparatorChar +
-                Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()));
+                Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()), Content.Music);
 
             string AlbumName = "";
             Replacer.CorrentAlbum(tag.Album);
@@ -342,12 +326,12 @@ namespace Services
                 AlbumName = album.Name.ToLower().Trim();
             }
 
-            CheckForDirectory(
-                GetEnviromentPath() +
+            EnviromentPath.CheckForDirectory(
+                EnviromentPath.GetEnviromentPathMusic() +
                 Path.DirectorySeparatorChar +
                 Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()) +
                 Path.DirectorySeparatorChar +
-                Replacer.RemoveSpecialCharacters(AlbumName));
+                Replacer.RemoveSpecialCharacters(AlbumName), Content.Music);
 
             string destinationPath = "";
             string SongName = null;
@@ -373,7 +357,7 @@ namespace Services
             if (!string.IsNullOrEmpty(SongName))
             {
                 string Extension = type == SongType.Flac ? ".flac" : ".mp3";
-                destinationPath = GetEnviromentPath() +
+                destinationPath = EnviromentPath.GetEnviromentPathMusic() +
                     Path.DirectorySeparatorChar +
                     Replacer.RemoveSpecialCharacters(artist.Name.ToLower().Trim()) +
                     Path.DirectorySeparatorChar +
@@ -577,14 +561,23 @@ namespace Services
             }
         }
 
-        public async Task<Song> GetNewImageAsync()
+        public async Task<List<Image>> GetNewImageAsync(int id)
         {
             try
             {
-                Song song = await _ctx.Songs.FirstOrDefaultAsync(x => x.IsPlayable && x.Corrupted < 4);
-                Genius imgGetter = new Genius(song);
-                await imgGetter.StartAsync(_ctx);
-                return null;
+                Song song = await _ctx.Songs.Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == id);
+                //TODO Add to check for updates after two weeks of last download
+                if (song.Images == null || song.Images.Count == 0)
+                {
+                    Genius imgGetter = new Genius(song);
+                    await imgGetter.StartAsync(_ctx);
+                    song = await _ctx.Songs.Include(x => x.Images).Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == id);
+                    return song.Images;
+                }
+                else
+                {
+                    return song.Images;
+                }
             }
             catch (Exception e)
             {

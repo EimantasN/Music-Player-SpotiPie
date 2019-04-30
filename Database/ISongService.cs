@@ -38,6 +38,6 @@ namespace Database
         Task<Song> SetLenght(int id, long lenght);
 
         Task SetCorruptedAsync(int id);
-        Task<Song> GetNewImageAsync();
+        Task<List<Image>> GetNewImageAsync(int id);
     }
 }

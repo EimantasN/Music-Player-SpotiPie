@@ -49,13 +49,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("GetNewImageForSong")]
+        [HttpGet("GetNewImageForSong/{id}")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetNewImage()
+        public async Task<IActionResult> GetNewImage(int id)
         {
             try
             {
-                return Ok(await _songs.GetNewImageAsync());
+                return Ok(await _songs.GetNewImageAsync(id));
             }
             catch (Exception ex)
             {
