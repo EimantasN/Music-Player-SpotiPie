@@ -81,6 +81,12 @@ namespace Mobile_Api
         {
             return await GetListAsync<Songs>($"Artists/{artist.Id}");
         }
+
+        public async Task<List<Image>> GetNewImageForSong(int id)
+        {
+            return await GetListAsync<Image>($"GetNewImageForSong/{id}", "Songs");
+        }
+
         #endregion
     }
 }

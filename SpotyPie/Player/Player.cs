@@ -5,11 +5,13 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
+using Realms;
 using SpotyPie.Models;
 using SpotyPie.Services;
 using Square.Picasso;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -412,11 +414,7 @@ namespace SpotyPie.Player
                     GetState().Current_Song_List = newSongList;
                     GetState().Current_Song = newSongList[position];
 
-                    if (Current_Player_Image != newSongList[position].LargeImage)
-                    {
-                        Current_Player_Image = newSongList[position].LargeImage;
-                        Picasso.With(Activity.ApplicationContext).Load(newSongList[position].LargeImage).Into(Player_Image);
-                    }
+                    LoadCustomImage(newSongList, position);
 
                     Player_song_name.Text = GetState().Current_Song.Name;
                     //Player_artist_name = GetState().
@@ -435,6 +433,51 @@ namespace SpotyPie.Player
 
                 }, null);
             });
+        }
+
+        private void LoadCustomImage(List<Songs> newSongList, int position)
+        {
+            Task.Run(async () =>
+            {
+                var real = Realm.GetInstance();
+                Database.ViewModels.Settings settings = real.All<Database.ViewModels.Settings>().First();
+
+                if (!settings.CustomImagesSwitch)
+                {
+                    LoadOld();
+                }
+                else
+                {
+                    List<Mobile_Api.Models.Image> imageList = await ParentActivity.GetAPIService().GetNewImageForSongAsync(newSongList[position].Id);
+                    if (imageList == null || imageList.Count == 0)
+                        LoadOld();
+                    else
+                    {
+                        var img = imageList.OrderByDescending(x => x.Width).ThenByDescending(x => x.Height).First();
+                        if (Current_Player_Image != newSongList[position].LargeImage)
+                        {
+                            Application.SynchronizationContext.Post(_ =>
+                            {
+                                Current_Player_Image = img.Url;
+                                Picasso.With(Activity.ApplicationContext).Load(img.Url).Into(Player_Image);
+                            }, null);
+                        }
+                    }
+
+                }
+            });
+
+            void LoadOld()
+            {
+                Application.SynchronizationContext.Post(_ =>
+                {
+                    if (Current_Player_Image != newSongList[position].LargeImage)
+                    {
+                        Current_Player_Image = newSongList[position].LargeImage;
+                        Picasso.With(Activity.ApplicationContext).Load(newSongList[position].LargeImage).Into(Player_Image);
+                    }
+                }, null);
+            }
         }
 
         public void SongLoadEnded()

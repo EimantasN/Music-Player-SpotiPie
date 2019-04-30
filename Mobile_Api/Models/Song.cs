@@ -2,6 +2,7 @@
 using Mobile_Api.Models.Enums;
 using Realms;
 using System;
+using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
@@ -50,6 +51,8 @@ namespace Mobile_Api.Models
         public int AlbumId { get; set; }
 
         public int ArtistId { get; set; }
+
+        public List<Image> Images { get; set; }
 
         public RvType Type { get; set; }
 

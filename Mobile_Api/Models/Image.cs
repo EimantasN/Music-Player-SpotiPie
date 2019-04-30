@@ -6,7 +6,9 @@
 
         public string Url { get; set; }
 
-        //public string LocalUrl { get; set; }
+        public string LocalUrl { get; set; }
+
+        public string Base64 { get; set; }
 
         public long Height { get; set; }
 

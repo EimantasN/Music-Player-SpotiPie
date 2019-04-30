@@ -394,5 +394,10 @@ namespace SpotyPie
                 action.Invoke();
             }, null);
         }
+
+        internal async Task<List<Image>> GetNewImageForSongAsync(int id)
+        {
+            return await _service.GetNewImageForSong(id);
+        }
     }
 }
