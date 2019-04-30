@@ -517,12 +517,11 @@ namespace SpotyPie.Services
                 {
                     if (Current_Song_List[i].IsPlayingNow())
                     {
+                        Current_Song_List[i].SetIsPlaying(false);
                         if (Foward)
                         {
-                            Current_Song_List[i].SetIsPlaying(false);
                             if ((i + 1) == Current_Song_List.Count)
                             {
-                                Current_Song_List[0].SetIsPlaying(true);
                                 //Task run because in this method requst is made so it will block main thread
                                 Task.Run(() => SongListEndCheckForAutoPlayAsync());
                             }
@@ -534,7 +533,6 @@ namespace SpotyPie.Services
                         }
                         else
                         {
-                            Current_Song_List[i].SetIsPlaying(false);
                             if (i == 0)
                             {
                                 Current_Song_List[0].SetIsPlaying(true);
@@ -566,6 +564,8 @@ namespace SpotyPie.Services
                 {
                     Application.SynchronizationContext.Post(_ =>
                     {
+                        song.SetModelType(Mobile_Api.Models.Enums.RvType.SongWithImage);
+                        song.IsPlaying = true;
                         Current_Song_List.Add(song);
                         SetSong(Current_Song_List.Count - 1);
                     }, null);
@@ -577,7 +577,7 @@ namespace SpotyPie.Services
             }
             catch (Exception e)
             {
-
+                Application.SynchronizationContext.Post(_ => { SetSong(0); }, null);
             }
         }
 

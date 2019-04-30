@@ -5,8 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Config.Net" Version="4.13.2" />
-    <PackageReference Include="Config.Net.Json" Version="4.13.2" />
+    <PackageReference Include="Config.Net" Version="4.13.7" />
+    <PackageReference Include="Config.Net.Json" Version="4.13.7" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.4" />
     <PackageReference Include="IdSharp.Common" Version="1.0.1" />
     <PackageReference Include="IdSharp.Tagging" Version="1.0.0-rc3" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />

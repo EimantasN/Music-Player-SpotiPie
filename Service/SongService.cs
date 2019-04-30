@@ -592,5 +592,19 @@ namespace Services
                 return song;
             }
         }
+
+        public async Task<Song> GetNewImageAsync()
+        {
+            try
+            {
+                Song song = await _ctx.Songs.FirstOrDefaultAsync(x => x.IsPlayable && x.Corrupted < 4);
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
