@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 using Service.GeniusAPI.Models;
 using System.Linq;
 using Database;
-using System.Drawing;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 
@@ -155,10 +154,10 @@ namespace Service.Helpers
                 string base64Img = base64;
 
                 //Getting bitmap fro img dimensions
-                Bitmap bmp;
+                Shaman.System.Drawing.Bitmap bmp;
                 using (var ms = new MemoryStream(imageBytes))
                 {
-                    bmp = new Bitmap(ms);
+                    bmp = new Shaman.System.Drawing.Bitmap(ms);
                 }
                 width = bmp.Width;
                 height = bmp.Height;
