@@ -10,6 +10,7 @@ using System.Linq;
 using Database;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 namespace Service.Helpers
 {
@@ -154,10 +155,10 @@ namespace Service.Helpers
                 string base64Img = base64;
 
                 //Getting bitmap fro img dimensions
-                Shaman.System.Drawing.Bitmap bmp;
+                Bitmap bmp;
                 using (var ms = new MemoryStream(imageBytes))
                 {
-                    bmp = new Shaman.System.Drawing.Bitmap(ms);
+                    bmp = new Bitmap(ms);
                 }
                 width = bmp.Width;
                 height = bmp.Height;
