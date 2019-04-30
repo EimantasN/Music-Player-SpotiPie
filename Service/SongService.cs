@@ -432,23 +432,7 @@ namespace Services
             return null;
         }
 
-        private string GetEnviromentPath()
-        {
-            if (!Environment.OSVersion.ToString().Contains("W"))
-            {
-                return
-                    System.IO.Path.DirectorySeparatorChar + "root" +
-                    System.IO.Path.DirectorySeparatorChar + "Content" +
-                    System.IO.Path.DirectorySeparatorChar + "Flac";
-
-            }
-            else
-            {
-                return
-                    Environment.CurrentDirectory +
-                    System.IO.Path.DirectorySeparatorChar + "Music";
-            }
-        }
+        
 
         public async Task<Song> SetLenght(int id, long durationMs)
         {
@@ -598,7 +582,8 @@ namespace Services
             try
             {
                 Song song = await _ctx.Songs.FirstOrDefaultAsync(x => x.IsPlayable && x.Corrupted < 4);
-
+                Genius imgGetter = new Genius(song);
+                await imgGetter.StartAsync(_ctx);
                 return null;
             }
             catch (Exception e)
