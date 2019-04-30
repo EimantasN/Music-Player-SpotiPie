@@ -136,7 +136,7 @@ namespace Service.Helpers
             }
             catch (Exception e)
             {
-
+                throw e;
             }
         }
 

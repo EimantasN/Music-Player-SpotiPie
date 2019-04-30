@@ -54,7 +54,7 @@ namespace Service.Helpers
             string path;
             if (!Environment.OSVersion.ToString().Contains("W"))
             {
-                path = GetBase() + System.IO.Path.DirectorySeparatorChar + "Images";
+                path = GetBase() + Path.DirectorySeparatorChar + "Images";
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
