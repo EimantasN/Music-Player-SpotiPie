@@ -85,27 +85,6 @@ namespace SpotyPie
             ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
             ScrollFather.ScrollChange += ScrollFather_ScrollChange;
 
-            if (RvSongs == null)
-            {
-                RvSongs = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
-                RvSongs.Init(RecycleView.Enums.LayoutManagers.Linear_vertical);
-                RvSongs.DisableScroolNested();
-            }
-
-            if (RvAlbums == null)
-            {
-                RvAlbums = new BaseRecycleView<Album>(this, Resource.Id.artist_albums_list);
-                RvAlbums.Init(RecycleView.Enums.LayoutManagers.Grind_2_col);
-                RvAlbums.DisableScroolNested();
-            }
-
-            if (RvRevated == null)
-            {
-                RvRevated = new BaseRecycleView<Artist>(this, Resource.Id.related_artist_list);
-                RvRevated.Init(RecycleView.Enums.LayoutManagers.Linear_horizontal);
-                RvRevated.DisableScroolNested();
-            }
-
             LoadArtist(CurrentArtist);
         }
 
@@ -119,25 +98,24 @@ namespace SpotyPie
                 Application.SynchronizationContext.Post(_=>
                 {
                     GetState().SetSong(data, 0);
+                    ShufflePlay.Text = "Playing";
                 }, null);
             });
-
-            Toast.MakeText(this.Context, "Veikia", ToastLength.Short).Show();
         }
 
         public async Task LoadSongs()
         {
-            SearchBase<Songs>(RvSongs.GetData(), await ParentActivity.GetService().GetTopTrackByArtistId(CurrentArtist.Id), SongListTitle, RvType.SongWithImage, limit: 5);
+            SearchBase<Songs>(RvSongs.GetData(), await ParentActivity.GetAPIService().GetTopTrackByArtistIdAsync(CurrentArtist.Id), SongListTitle, RvType.SongWithImage, limit: 5);
         }
 
         public async Task LoadAlbums()
         {
-            SearchBase<Album>(RvAlbums.GetData(), await ParentActivity.GetService().GetArtistAlbums(CurrentArtist.Id), AlbumListTitle, RvType.AlbumGrid);
+            SearchBase<Album>(RvAlbums.GetData(), await ParentActivity.GetAPIService().GetArtistAlbumsAsync(CurrentArtist.Id), AlbumListTitle, RvType.AlbumGrid);
         }
 
         public async Task LoadRelatedArtists()
         {
-            SearchBase<Artist>(RvRevated.GetData(), await ParentActivity.GetService().GetRelated(CurrentArtist.Id), ArtistListTitle, RvType.Artist);
+            SearchBase<Artist>(RvRevated.GetData(), await ParentActivity.GetAPIService().GetRelatedAsync(CurrentArtist.Id), ArtistListTitle, RvType.Artist);
         }
         public void SearchBase<T>(RvList<T> RvList, List<T> DataList, TextView header, RvType type, int limit = int.MaxValue) where T : IBaseInterface
         {
@@ -227,7 +205,7 @@ namespace SpotyPie
 
                     //TODO connect artist name
                     AlbumByText.Text = "Coming soon";
-                    LoadData();
+                    ForceUpdate();
                 }
             }
             catch
@@ -235,26 +213,6 @@ namespace SpotyPie
             }
         }
 
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
-        }
-
-        public override void OnStop()
-        {
-            RvSongs.GetData().Clear();
-            RvAlbums.GetData().Clear();
-            RvRevated.GetData().Clear();
-            CurrentArtist = null;
-            base.OnStop();
-        }
-
-        public void LoadData()
-        {
-            Task.Run(async () => await LoadSongs());
-            Task.Run(async () => await LoadAlbums());
-            Task.Run(async () => await LoadRelatedArtists());
-        }
 
         private void ScrollFather_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)
         {
@@ -263,7 +221,51 @@ namespace SpotyPie
 
         public override void ForceUpdate()
         {
-            LoadData();
+            if (RvSongs == null)
+            {
+                RvSongs = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
+                RvSongs.Init(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                RvSongs.DisableScroolNested();
+            }
+
+            if (RvAlbums == null)
+            {
+                RvAlbums = new BaseRecycleView<Album>(this, Resource.Id.artist_albums_list);
+                RvAlbums.Init(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                RvAlbums.DisableScroolNested();
+            }
+
+            if (RvRevated == null)
+            {
+                RvRevated = new BaseRecycleView<Artist>(this, Resource.Id.related_artist_list);
+                RvRevated.Init(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+                RvRevated.DisableScroolNested();
+            }
+
+            Task.Run(async () => await LoadSongs());
+            Task.Run(async () => await LoadAlbums());
+            Task.Run(async () => await LoadRelatedArtists());
+        }
+
+        public override void ReleaseData()
+        {
+            if (RvSongs != null)
+            {
+                RvSongs.Dispose();
+                RvSongs = null;
+            }
+
+            if (RvAlbums != null)
+            {
+                RvAlbums.Dispose();
+                RvAlbums = null;
+            }
+
+            if (RvRevated != null)
+            {
+                RvRevated.Dispose();
+                RvRevated = null;
+            }
         }
     }
 }

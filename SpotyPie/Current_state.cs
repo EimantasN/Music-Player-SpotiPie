@@ -4,6 +4,7 @@ using Mobile_Api.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SpotyPie
 {
@@ -126,13 +127,12 @@ namespace SpotyPie
             {
                 if (Current_Song.DurationMs != Duration)
                 {
-                    var API = Activity.GetService();
-                    var a = API.SetSongDuration(Current_Song.Id, Duration);
+                    Task.Run(() => Activity.GetAPIService().SetSongDurationAsync(Current_Song.Id, Duration));
                 }
             }
             catch (Exception e)
             {
-
+                throw e;
             }
         }
 

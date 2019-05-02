@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Artist : BaseModel
+    public class Artist : BaseModel, IDisposable
     {
         public override int Id { get; set; }
 
@@ -27,5 +27,16 @@ namespace Mobile_Api.Models
         public DateTime LastActiveTime { get; set; }
 
         protected override RvType Type { get; set; } = RvType.Artist;
+
+        public void Dispose()
+        {
+            SpotifyId = null;
+            Genres = null;
+            Name = null;
+            LargeImage = null;
+            MediumImage = null;
+            SmallImage = null;
+            Albums = null;
+        }
     }
 }

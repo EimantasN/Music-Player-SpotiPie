@@ -13,21 +13,31 @@ namespace SpotyPie.Library.Fragments
     {
         public override int LayoutId { get; set; } = Resource.Layout.library_album_layout;
 
-        private RvList<Album> RvData { get; set; }
+        private BaseRecycleView<Album> RvData { get; set; }
 
         protected override void InitView()
         {
-            if (RvData == null)
-            {
-                var rvBase = new BaseRecycleView<Album>(this, Resource.Id.albums);
-                RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
-                rvBase.DisableScroolNested();
-            }
         }
 
         public override void ForceUpdate()
         {
-            Task.Run(async () => await GetAPIService().GetAll<Album>(RvData, null, RvType.AlbumList));
+            if (RvData == null)
+            {
+                RvData = new BaseRecycleView<Album>(this, Resource.Id.albums);
+                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                RvData.DisableScroolNested();
+            }
+
+            Task.Run(async () => await GetAPIService().GetAll<Album>(RvData.GetData(), null, RvType.AlbumList));
+        }
+
+        public override void ReleaseData()
+        {
+            if (RvData != null)
+            {
+                RvData.Dispose();
+                RvData = null;
+            }
         }
     }
 }

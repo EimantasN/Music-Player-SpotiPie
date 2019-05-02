@@ -1,24 +1,13 @@
-﻿using Android.App;
-using Android.OS;
-using Android.Support.Constraints;
+﻿using Android.Support.Constraints;
 using Android.Support.V4.Widget;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
-using Newtonsoft.Json;
-using RestSharp;
 using SpotyPie.Base;
-using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
 using Square.Picasso;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using static Android.Views.View;
 using static Android.Views.ViewGroup;
-using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie
 {
@@ -26,7 +15,7 @@ namespace SpotyPie
     {
         public Album CurrentALbum { get; set; }
 
-        private RvList<Songs> RvData;
+        private BaseRecycleView<Songs> RvData;
 
         ImageView AlbumPhoto;
         TextView AlbumTitle;
@@ -83,12 +72,6 @@ namespace SpotyPie
 
             ScrollFather.ScrollChange += Scroll_ScrollChange;
 
-            if (RvData == null)
-            {
-                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
-                RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
-                rvBase.DisableScroolNested();
-            }
             SetAlbum(CurrentALbum);
         }
 
@@ -133,7 +116,7 @@ namespace SpotyPie
                     //TODO connect artist name
                     AlbumByText.Text = "Coming soon";
 
-                    Task.Run(async () => await LoadSongsAsync());
+                    ForceUpdate();
                 }
             }
             catch
@@ -141,21 +124,25 @@ namespace SpotyPie
             }
         }
 
-        public async Task LoadSongsAsync()
-        {
-            await GetAPIService().GetSongsByAlbumAsync(CurrentALbum, RvData, () => { });
-        }
-
-        public override void OnStop()
-        {
-            RvData.Clear();
-            CurrentALbum = null;
-            base.OnStop();
-        }
-
         public override void ForceUpdate()
         {
-            Task.Run(async () => await LoadSongsAsync());
+            if (RvData == null)
+            {
+                RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
+                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                RvData.DisableScroolNested();
+            }
+
+            Task.Run(async () => await GetAPIService().GetSongsByAlbumAsync(CurrentALbum, RvData.GetData(), () => { }));
+        }
+
+        public override void ReleaseData()
+        {
+            if (RvData != null)
+            {
+                RvData.Dispose();
+                RvData = null;
+            }
         }
     }
 }

@@ -25,16 +25,16 @@
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
     <AndroidSupportedAbis />
@@ -82,6 +82,8 @@
     <Compile Include="Base\FragmentBase.cs" />
     <Compile Include="Database\ViewModels\CurrentState.cs" />
     <Compile Include="Database\ViewModels\Settings.cs" />
+    <Compile Include="RecycleView\AttachStateChangeListener.cs" />
+    <Compile Include="RecycleView\SpotyPieRv.cs" />
     <Compile Include="Services\Bluetooth\BthHelper.cs" />
     <Compile Include="Services\Bluetooth\Enumerators\BlhStatus.cs" />
     <Compile Include="Services\Bluetooth\Interfaces\IBth.cs" />

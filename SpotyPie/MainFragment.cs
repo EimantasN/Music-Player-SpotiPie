@@ -14,27 +14,27 @@ namespace SpotyPie
 {
     public class MainFragment : FragmentBase
     {
-        //Recent albums
-        public RvList<Album> RecentAlbums;
-
-        //Best albums
-        public RvList<Album> BestAlbums;
-
         //Best artists
-        public RvList<Album> BestArtists;
-
-        //Jump back albums
-        public RvList<Album> JumpBack;
+        //public RvList<Album> BestArtists;
 
         //Top playlist
-        public RvList<Album> TopPlaylist;
+        //public RvList<Album> TopPlaylist;
+
+        //Recent albums
+        private BaseRecycleView<Album> RecentAlbums { get; set; }
+
+        //Best albums
+        private BaseRecycleView<Album> BestAlbums { get; set; }
+
+        //Jump back albums
+        private BaseRecycleView<Album> JumpBack { get; set; }
 
         //Holders
-        ConstraintLayout RecentHolder;
-        ConstraintLayout PlaylistHolder;
-        ConstraintLayout BestHolder;
-        ConstraintLayout JumpBackHolder;
-        ProgressBar Loading;
+        private ConstraintLayout RecentHolder;
+        private ConstraintLayout PlaylistHolder;
+        private ConstraintLayout BestHolder;
+        private ConstraintLayout JumpBackHolder;
+        private ProgressBar Loading;
 
         public override int LayoutId { get; set; } = Resource.Layout.home_layout;
 
@@ -46,17 +46,6 @@ namespace SpotyPie
             RecentHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.recent_albums_holder);
             BestHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.best_albums_holder);
             JumpBackHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.constraintLayout);
-
-            Toggle(false, PlaylistHolder);
-            Toggle(false, RecentHolder);
-            Toggle(false, BestHolder);
-            Toggle(false, JumpBackHolder);
-
-            RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv).Setup(LinearLayoutManager.Horizontal);
-            BestAlbums = new BaseRecycleView<Album>(this, Resource.Id.best_albums_rv).Setup(LinearLayoutManager.Horizontal);
-            //BestArtists = new BaseRecycleView<Album>(this, Resource.Id.best_artists_rv, BestArtistData).Setup();
-            JumpBack = new BaseRecycleView<Album>(this, Resource.Id.albums_old_rv).Setup(LinearLayoutManager.Horizontal);
-            //TopPlaylist = new BaseRecycleView<Album>(this, Resource.Id.playlist_rv, TopPlaylistData).Setup();
         }
 
         public void Toggle(bool state, ConstraintLayout layout)
@@ -75,38 +64,55 @@ namespace SpotyPie
             }
         }
 
-        public void LoadData()
-        {
-            Task.Run(() => GetAPIService().GetRecentAlbumsAsync(RecentAlbums, () => { Toggle(true, RecentHolder); }));
-
-            Task.Run(() => GetAPIService().GetPolularAlbumsAsync(BestAlbums, () => { Toggle(true, BestHolder); }));
-
-            Task.Run(() => GetAPIService().GetOldAlbumsAsync(JumpBack, () => { Toggle(true, JumpBackHolder); }));
-        }
-
-        public async Task GetPlaylists(Context cnt)
-        {
-            try
-            {
-                var playlists = await GetService().GetListAsync<Playlist>(PlaylistType.Playlists);
-                InvokeOnMainThread(() =>
-                {
-                    //TopPlaylistData = playlists;
-                    //foreach (var x in playlists)
-                    //{
-                    //    TopPlaylist.Add(new BlockWithImage(x.Id, RvType.Playlist, x.Name, x.Created.ToString("yyyy-MM-dd"), x.ImageUrl));
-                    //}
-                });
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
         public override void ForceUpdate()
         {
-            LoadData();
+            Toggle(false, PlaylistHolder);
+            Toggle(false, RecentHolder);
+            Toggle(false, BestHolder);
+            Toggle(false, JumpBackHolder);
+
+            if (RecentAlbums == null)
+            {
+                RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv);
+                RecentAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+            }
+
+            if (BestAlbums == null)
+            {
+                BestAlbums = new BaseRecycleView<Album>(this, Resource.Id.best_albums_rv);
+                BestAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+            }
+
+            if (JumpBack == null)
+            {
+                JumpBack = new BaseRecycleView<Album>(this, Resource.Id.albums_old_rv);
+                JumpBack.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+            }
+
+            Task.Run(() => GetAPIService().GetRecentAlbumsAsync(RecentAlbums.GetData(), () => { Toggle(true, RecentHolder); }));
+            Task.Run(() => GetAPIService().GetPolularAlbumsAsync(BestAlbums.GetData(), () => { Toggle(true, BestHolder); }));
+            Task.Run(() => GetAPIService().GetOldAlbumsAsync(JumpBack.GetData(), () => { Toggle(true, JumpBackHolder); }));
+        }
+
+        public override void ReleaseData()
+        {
+            if (RecentAlbums != null)
+            {
+                RecentAlbums.Dispose();
+                RecentAlbums = null;
+            }
+
+            if (BestAlbums != null)
+            {
+                BestAlbums.Dispose();
+                BestAlbums = null;
+            }
+
+            if (JumpBack != null)
+            {
+                JumpBack.Dispose();
+                JumpBack = null;
+            }
         }
     }
 }

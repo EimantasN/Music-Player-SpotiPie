@@ -1,9 +1,7 @@
 ﻿using Android.App;
 using Android.OS;
 using Android.Views;
-using Mobile_Api;
 using Mobile_Api.Models;
-using Mobile_Api.Models.Enums;
 using System;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
@@ -12,6 +10,8 @@ namespace SpotyPie.Base
     public abstract class FragmentBase : SupportFragment
     {
         public abstract int LayoutId { get; set; }
+
+        public bool IsVisible { get; set; }
 
         protected View RootView;
 
@@ -30,33 +30,41 @@ namespace SpotyPie.Base
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             RootView = inflater.Inflate(GetLayout(), container, false);
-
-            ParentActivity = (MainActivity)this.Activity;
-
+            ParentActivity = (MainActivity)Activity;
             InitView();
             return RootView;
         }
 
         public abstract void ForceUpdate();
+        public abstract void ReleaseData();
 
         public void Hide()
         {
+            IsVisible = false;
             RootView.Alpha = 0.0f;
             RootView.TranslationX = 10000;
+            ParentActivity = null;
+            ReleaseData();
         }
 
         public void Show()
         {
+            IsVisible = true;
             RootView.Alpha = 1f;
             RootView.TranslationX = 0;
+            if(ParentActivity == null)
+                ParentActivity = (MainActivity)Activity;
         }
 
         public Current_state GetState()
         {
+            if(ParentActivity == null)
+                ParentActivity = (MainActivity)Activity;
+
             return ParentActivity.GetState();
         }
 
-        public Android.Support.V4.App.Fragment GetCurrentFragment()
+        public SupportFragment GetCurrentFragment()
         {
             return ParentActivity.FirstLayerFragment;
         }
@@ -64,11 +72,6 @@ namespace SpotyPie.Base
         public API GetAPIService()
         {
             return ParentActivity.GetAPIService();
-        }
-
-        public dynamic GetService()
-        {
-            return ParentActivity.GetService();
         }
 
         public void InvokeOnMainThread(Action action)
@@ -95,6 +98,12 @@ namespace SpotyPie.Base
         {
             ForceUpdate();
             base.OnResume();
+        }
+
+        public override void OnStop()
+        {
+            ReleaseData();
+            base.OnStop();
         }
 
         public override void OnDestroyView()

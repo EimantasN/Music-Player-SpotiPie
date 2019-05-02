@@ -8,23 +8,21 @@ namespace SpotyPie
 {
     public class LibraryFragment : FragmentBase
     {
+        TabLayout Tabs;
+        ViewPager ViewPager;
+
         public override int LayoutId { get; set; } = Resource.Layout.library_layout;
-
-        public override void ForceUpdate()
-        {
-
-        }
 
         protected override void InitView()
         {
             GetState().Activity.ActionName.Text = "Library";
             GetState().Activity.ActionName.Alpha = 1.0f;
 
-            TabLayout tabs = RootView.FindViewById<TabLayout>(Resource.Id.tabs);
-            ViewPager viewPager = RootView.FindViewById<ViewPager>(Resource.Id.viewpager);
+            Tabs = RootView.FindViewById<TabLayout>(Resource.Id.tabs);
+            ViewPager = RootView.FindViewById<ViewPager>(Resource.Id.viewpager);
 
-            SetUpViewPager(viewPager);
-            tabs.SetupWithViewPager(viewPager);
+            SetUpViewPager(ViewPager);
+            Tabs.SetupWithViewPager(ViewPager);
         }
 
         private void SetUpViewPager(ViewPager viewPager)
@@ -33,6 +31,16 @@ namespace SpotyPie
             adapter.AddFragment(new Artists(), "Artists");
             adapter.AddFragment(new Albums(), "Albums");
             viewPager.Adapter = adapter;
+        }
+
+        public override void ForceUpdate()
+        {
+
+        }
+
+        public override void ReleaseData()
+        {
+
         }
     }
 }

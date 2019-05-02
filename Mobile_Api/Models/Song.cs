@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Songs : RealmObject, IBaseInterface
+    public class Songs : RealmObject, IBaseInterface, IDisposable
     {
         public int Id { get; set; }
 
@@ -77,6 +77,19 @@ namespace Mobile_Api.Models
         public void SetModelType(RvType type)
         {
             Type = type;
+        }
+
+        public void Dispose()
+        {
+            Images = null;
+            SpotifyId = null;
+            Name = null;
+            LargeImage = null;
+            MediumImage = null;
+            SmallImage = null;
+            LocalUrl = null;
+            ArtistName = null;
+            AlbumName = null;
         }
     }
 }

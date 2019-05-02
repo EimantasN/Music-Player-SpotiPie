@@ -9,28 +9,35 @@ namespace SpotyPie.Player
     {
         public override int LayoutId { get; set; } = Resource.Layout.player_song_list;
 
-        private RvList<Songs> RvData { get; set; }
+        private BaseRecycleView<Songs> RvData { get; set; }
 
         protected override void InitView()
         {
-            //
-            if (RvData == null)
-            {
-                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
-                RvData = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
-                rvBase.DisableScroolNested();
-                Update();
-            }
         }
 
         public void Update()
         {
-            RvData.AddList(GetState().Current_Song_List);
+            RvData.GetData().AddList(GetState().Current_Song_List);
         }
 
         public override void ForceUpdate()
         {
-            RvData.AddList(GetState().Current_Song_List);
+            if (RvData == null)
+            {
+                RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
+                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                RvData.DisableScroolNested();
+            }
+            Update();
+        }
+
+        public override void ReleaseData()
+        {
+            if (RvData != null)
+            {
+                RvData.Dispose();
+                RvData = null;
+            }
         }
     }
 }

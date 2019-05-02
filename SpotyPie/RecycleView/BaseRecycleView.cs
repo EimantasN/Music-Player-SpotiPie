@@ -1,25 +1,30 @@
 ﻿using Android.Support.V4.View;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using Microsoft.Win32.SafeHandles;
 using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.RecycleView.Enums;
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace SpotyPie.RecycleView
 {
-    public class BaseRecycleView<T> where T : IBaseInterface
+    public class BaseRecycleView<T> where T : IDisposable, IBaseInterface
     {
+        private bool Disposed = false;
+        private SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
         private RvList<T> RvDataset;
-        private RecyclerView.Adapter RvAdapter;
-        private RecyclerView RecyclerView;
+        private SpotyPieRv RecyclerView;
         private LayoutManagers Manager = LayoutManagers.Unseted;
 
         private FragmentBase Activity { get; set; }
+
         private int Id { get; set; }
 
         public BaseRecycleView(FragmentBase Activity, int RvId)
@@ -38,11 +43,10 @@ namespace SpotyPie.RecycleView
 
         public void Init(LayoutManagers layout)
         {
-            RecyclerView = Activity.GetView().FindViewById<RecyclerView>(Id);
+            RecyclerView = Activity.GetView().FindViewById<SpotyPieRv>(Id);
             SetLayoutManager(layout);
-            RvAdapter = new BaseRv<T>(RvDataset, RecyclerView, Activity.Context);
-            RvDataset.Adapter = RvAdapter;
-            RecyclerView.SetAdapter(RvAdapter);
+            RecyclerView.SetAdapter(new BaseRv<T>(RvDataset, RecyclerView, Activity.Context));
+            RvDataset.Adapter = RecyclerView.GetAdapter();
             SetOnClick();
         }
 
@@ -99,7 +103,7 @@ namespace SpotyPie.RecycleView
                 {
                     if (RvDataset[position].GetType().Name == "Album")
                     {
-                        Task.Run(() => Activity.GetService().Update(RvDataset[position].GetId()));
+                        Task.Run(() => Activity.GetAPIService().UpdateAsync<Album>(RvDataset[position].GetId()));
                         Activity.LoadAlbum(RvDataset[position] as Album);
                     }
                     else if (RvDataset[position].GetType().Name == "Songs")
@@ -112,6 +116,31 @@ namespace SpotyPie.RecycleView
                     }
                 }
             });
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (Disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                RvDataset.Clear();
+                RvDataset = null;
+                Activity = null;
+                RecyclerView.Dispose();
+                RecyclerView = null;
+            }
+
+            Disposed = true;
         }
     }
 }

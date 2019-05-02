@@ -1,17 +1,9 @@
-﻿using Android.Support.V7.Widget;
+﻿using System;
+using Android.Support.V7.Widget;
 using Android.Views;
-using System;
 
-namespace SpotyPie.Helpers
+namespace SpotyPie.RecycleView
 {
-    public static class RV_click
-    {
-        public static void SetItemClickListener(this RecyclerView rv, Action<RecyclerView, int, View> action)
-        {
-            rv.AddOnChildAttachStateChangeListener(new AttachStateChangeListener(rv, action));
-        }
-    }
-
     public class AttachStateChangeListener : Java.Lang.Object, RecyclerView.IOnChildAttachStateChangeListener
     {
         private RecyclerView mRecyclerview;

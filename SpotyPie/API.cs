@@ -147,6 +147,16 @@ namespace SpotyPie
             }
         }
 
+        internal async Task SetSongDurationAsync(int id, int duration)
+        {
+            await _service.SetSongDuration(id, duration);
+        }
+
+        internal async Task UpdateAsync<T>(int id)
+        {
+            await _service.Update<T>(id);
+        }
+
         public async Task GetOldAlbumsAsync(RvList<Album> RvList, Action action)
         {
             try
@@ -191,6 +201,21 @@ namespace SpotyPie
             {
 
             }
+        }
+
+        internal async Task<List<Artist>> GetRelatedAsync(int id)
+        {
+            return await _service.GetRelated(id);
+        }
+
+        internal async Task<List<Album>> GetArtistAlbumsAsync(int id)
+        {
+            return await _service.GetArtistAlbums(id);
+        }
+
+        internal async Task<List<Songs>> GetTopTrackByArtistIdAsync(int id)
+        {
+            return await _service.GetTopTrackByArtistId(id);
         }
 
         internal async Task<List<Songs>> GetArtistSongsAsync(Artist artist)
@@ -398,6 +423,11 @@ namespace SpotyPie
         internal async Task<List<Image>> GetNewImageForSongAsync(int id)
         {
             return await _service.GetNewImageForSong(id);
+        }
+
+        internal async Task<List<T>> SearchAsync<T>(string query) where T : IBaseInterface
+        {
+            return await _service.Search<T>(query);
         }
     }
 }

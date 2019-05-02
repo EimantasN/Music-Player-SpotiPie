@@ -88,5 +88,10 @@ namespace SpotyPie.Player
         {
             throw new NotImplementedException();
         }
+
+        public override void ReleaseData()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

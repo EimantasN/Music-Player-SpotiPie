@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Album : BaseModel
+    public class Album : BaseModel, IDisposable
     {
         [JsonProperty("id")]
         public override int Id { get; set; }
@@ -48,6 +48,17 @@ namespace Mobile_Api.Models
         public Album()
         {
 
+        }
+
+        public void Dispose()
+        {
+            Songs = null;
+            SpotifyId = null;
+            LargeImage = null;
+            MediumImage = null;
+            SmallImage = null;
+            Name = null;
+            ReleaseDate = null;
         }
     }
 }

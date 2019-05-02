@@ -42,16 +42,14 @@ namespace SpotyPie
 
         FrameLayout SearchEmpty;
 
-        EditText search;
-        ImageView SearchIcon;
-        ProgressBar SearchLoading;
+        private EditText search;
+        private ImageView SearchIcon;
+        private ProgressBar SearchLoading;
 
         private GifImageView Searching_Gif;
         private ImageView Search_start_image;
 
-        private RvList<Songs> RvDataSongs { get; set; }
-        private RvList<Album> RvDataAlbums { get; set; }
-        private RvList<Artist> RvDataArtist { get; set; }
+        private BaseRecycleView<Songs> RvBaseSong { get; set; }
 
         private BaseRecycleView<Album> RvBaseAlbum { get; set; }
 
@@ -78,27 +76,6 @@ namespace SpotyPie
             SearchLoading = RootView.FindViewById<ProgressBar>(Resource.Id.search_loading);
             search = RootView.FindViewById<EditText>(Resource.Id.search_text);
             search.FocusChange += Search_FocusChange;
-
-            if (RvDataSongs == null)
-            {
-                var rvBase = new BaseRecycleView<Songs>(this, Resource.Id.song_rv);
-                RvDataSongs = rvBase.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
-                rvBase.DisableScroolNested();
-            }
-
-            if (RvDataAlbums == null)
-            {
-                RvBaseAlbum = new BaseRecycleView<Album>(this, Resource.Id.albums_rv);
-                RvDataAlbums = RvBaseAlbum.Setup(RecycleView.Enums.LayoutManagers.Grind_2_col);
-                RvBaseAlbum.DisableScroolNested();
-            }
-
-            if (RvDataArtist == null)
-            {
-                RvBaseArtist = new BaseRecycleView<Artist>(this, Resource.Id.artists_rv);
-                RvDataArtist = RvBaseArtist.Setup(RecycleView.Enums.LayoutManagers.Grind_2_col);
-                RvBaseArtist.DisableScroolNested();
-            }
         }
 
         private void SetupSearchLoadingGif()
@@ -109,13 +86,6 @@ namespace SpotyPie
             Stream input = this.Activity.Resources.OpenRawResource(Resource.Drawable.seaching_image);//this.Activity.Assets.Open("seaching_image.gif");
             byte[] bytes = ConvertFileToByteArray.Convert(input);
             Searching_Gif.SetBytes(bytes);
-        }
-
-        public override void OnResume()
-        {
-            base.OnResume();
-            SearchNow = true;
-            Task.Run(() => Checker());
         }
 
         public override void OnStop()
@@ -151,6 +121,10 @@ namespace SpotyPie
         {
             var query = string.Empty;
             long index = 0;
+            long tempIndex;
+            Task SongSearchTask;
+            Task AlbumSearchTask;
+            Task ArtistSearchTask;
             while (SearchNow)
             {
                 try
@@ -158,21 +132,21 @@ namespace SpotyPie
                     if (query != search.Text && !string.IsNullOrEmpty(search.Text) && search.Text != "Search song, album, playlist and etc.")
                     {
                         query = search.Text;
-                        long tempIndex = ++index;
+                        tempIndex = ++index;
 
                         ToggleSearchLoading(Search_status.Searching);
 
-                        var a = Task.Run(() => SearchSong(search.Text));
-                        var b = Task.Run(() => SearchAlbums(search.Text));
-                        var c = Task.Run(() => SearchArtist(search.Text));
+                        SongSearchTask = Task.Run(() => SearchSong(search.Text));
+                        AlbumSearchTask = Task.Run(() => SearchAlbums(search.Text));
+                        ArtistSearchTask = Task.Run(() => SearchArtist(search.Text));
 
-                        while (!(a.IsCompletedSuccessfully || a.IsCanceled || a.IsCompleted || a.IsFaulted)) await Task.Delay(50);
-                        while (!(b.IsCompletedSuccessfully || b.IsCanceled || b.IsCompleted || b.IsFaulted)) await Task.Delay(50);
-                        while (!(c.IsCompletedSuccessfully || c.IsCanceled || c.IsCompleted || c.IsFaulted)) await Task.Delay(50);
+                        while (!(SongSearchTask.IsCompletedSuccessfully || SongSearchTask.IsCanceled || SongSearchTask.IsCompleted || SongSearchTask.IsFaulted)) await Task.Delay(50);
+                        while (!(AlbumSearchTask.IsCompletedSuccessfully || AlbumSearchTask.IsCanceled || AlbumSearchTask.IsCompleted || AlbumSearchTask.IsFaulted)) await Task.Delay(50);
+                        while (!(ArtistSearchTask.IsCompletedSuccessfully || ArtistSearchTask.IsCanceled || ArtistSearchTask.IsCompleted || ArtistSearchTask.IsFaulted)) await Task.Delay(50);
 
                         if (index == tempIndex)
                         {
-                            if (RvDataSongs.Count > 0 || RvDataAlbums.Count > 0 || RvDataArtist.Count > 0)
+                            if (RvBaseSong.GetData().Count > 0 || RvBaseAlbum.GetData().Count > 0 || RvBaseArtist.GetData().Count > 0)
                                 ToggleSearchLoading(Search_status.Found);
                             else
                                 ToggleSearchLoading(Search_status.NothingFound);
@@ -186,7 +160,7 @@ namespace SpotyPie
                         Snackbar.Make(this.Activity.Window.DecorView.RootView, e.Message, Snackbar.LengthShort).Show();
                     }, null);
                 }
-                await Task.Delay(25);
+                await Task.Delay(250);
             }
         }
 
@@ -202,7 +176,7 @@ namespace SpotyPie
                     }
                 case Search_status.Searching:
                     {
-                        if (RvDataSongs.Count == 0 && RvDataAlbums.Count == 0 && RvDataArtist.Count == 0)
+                        if (RvBaseSong.GetData().Count == 0 && RvBaseAlbum.GetData().Count == 0 && RvBaseArtist.GetData().Count == 0)
                         {
                             ToggleSeachInfoFrame(true, true);
                         }
@@ -299,23 +273,24 @@ namespace SpotyPie
 
         public async Task SearchSong(string query)
         {
-            await SearchBaseAsync<Songs>(RvDataSongs, SongsContainer, query, SongLimit, RvType.SongWithImage);
+            await SearchBaseAsync<Songs>(RvBaseSong.GetData(), SongsContainer, query, SongLimit, RvType.SongWithImage);
         }
 
         public async Task SearchAlbums(string query)
         {
-            await SearchBaseAsync<Album>(RvDataAlbums, AlbumsContainer, query, SongLimit, RvType.AlbumGrid);
+            await SearchBaseAsync<Album>(RvBaseAlbum.GetData(), AlbumsContainer, query, SongLimit, RvType.AlbumGrid);
         }
 
         public async Task SearchArtist(string query)
         {
-            await SearchBaseAsync<Artist>(RvDataArtist, ArtistContainer, query, SongLimit, RvType.ArtistGrid);
+            await SearchBaseAsync<Artist>(RvBaseArtist.GetData(), ArtistContainer, query, SongLimit, RvType.ArtistGrid);
         }
+
         public async Task SearchBaseAsync<T>(RvList<T> RvList, TextView Container, string query, int limit, RvType type) where T : IBaseInterface
         {
             try
             {
-                List<T> DataList = await ParentActivity.GetService().Search<T>(query);
+                List<T> DataList = await ParentActivity.GetAPIService().SearchAsync<T>(query);
                 if (DataList != null && DataList.Count > 0)
                 {
                     if (Container.Visibility == ViewStates.Gone)
@@ -388,6 +363,50 @@ namespace SpotyPie
         {
             search.Text = "Search song, album, playlist and etc.";
             ToggleSearchLoading(Search_status.Started);
+            if (RvBaseSong == null)
+            {
+                RvBaseSong = new BaseRecycleView<Songs>(this, Resource.Id.song_rv);
+                RvBaseSong.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                RvBaseSong.DisableScroolNested();
+            }
+
+            if (RvBaseAlbum == null)
+            {
+                RvBaseAlbum = new BaseRecycleView<Album>(this, Resource.Id.albums_rv);
+                RvBaseAlbum.Setup(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                RvBaseAlbum.DisableScroolNested();
+            }
+
+            if (RvBaseArtist == null)
+            {
+                RvBaseArtist = new BaseRecycleView<Artist>(this, Resource.Id.artists_rv);
+                RvBaseArtist.Setup(RecycleView.Enums.LayoutManagers.Grind_2_col);
+                RvBaseArtist.DisableScroolNested();
+            }
+
+            SearchNow = true;
+            Task.Run(() => Checker());
+        }
+
+        public override void ReleaseData()
+        {
+            if(RvBaseSong != null)
+            {
+                RvBaseSong.Dispose();
+                RvBaseSong = null;
+            }
+
+            if (RvBaseAlbum != null)
+            {
+                RvBaseAlbum.Dispose();
+                RvBaseAlbum = null;
+            }
+
+            if (RvBaseArtist != null)
+            {
+                RvBaseArtist.Dispose();
+                RvBaseArtist = null;
+            }
         }
     }
 }

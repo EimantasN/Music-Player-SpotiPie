@@ -267,8 +267,6 @@ namespace SpotyPie
             return base.OnOptionsItemSelected(item);
         }
 
-        private Mobile_Api.Service API { get; set; }
-
         private API Api_service { get; set; }
 
         private Object ServiceLock { get; set; } = new Object();
@@ -278,39 +276,6 @@ namespace SpotyPie
             if (Api_service == null)
                 return Api_service = new API(new Mobile_Api.Service(), this);
             return Api_service;
-        }
-
-        public dynamic GetService()
-        {
-            lock (ServiceLock)
-            {
-                if (API == null)
-                    return API = new Mobile_Api.Service();
-                return API;
-                //switch (service)
-                //{
-                //    case ApiServices.Songs:
-                //        {
-                //            if (SongAPI == null)
-                //                return SongAPI = new SongService();
-                //            return SongAPI;
-                //        }
-                //    case ApiServices.Albums:
-                //        {
-                //            if (AlbumAPI == null)
-                //                return AlbumAPI = new AlbumService();
-                //            return AlbumAPI;
-                //        }
-                //    case ApiServices.Artist:
-                //        {
-                //            if (ArtistAPI == null)
-                //                return ArtistAPI = new ArtistService();
-                //            return ArtistAPI;
-                //        }
-                //    default:
-                //        return null;
-                //}
-            }
         }
 
         void LoadFragment(int id)
@@ -328,7 +293,8 @@ namespace SpotyPie
             {
                 case Resource.Id.home:
                     {
-                        if (MainFragment == null) MainFragment = new MainFragment();
+                        if (MainFragment == null)
+                            MainFragment = new MainFragment();
                         CurrentFragment = MainFragment;
                         ActionName.Text = "Home";
                         Settings.Visibility = ViewStates.Visible;
@@ -336,7 +302,8 @@ namespace SpotyPie
                     }
                 case Resource.Id.browse:
                     {
-                        if (Browse == null) Browse = new Browse();
+                        if (Browse == null)
+                            Browse = new Browse();
                         CurrentFragment = Browse;
                         ActionName.Text = "Muse";
                         Settings.Visibility = ViewStates.Gone;
@@ -344,7 +311,8 @@ namespace SpotyPie
                     }
                 case Resource.Id.search:
                     {
-                        if (Search == null) Search = new Search();
+                        if (Search == null)
+                            Search = new Search();
                         CurrentFragment = Search;
                         HeaderContainer.Visibility = ViewStates.Gone;
                         Settings.Visibility = ViewStates.Gone;
@@ -366,8 +334,8 @@ namespace SpotyPie
             if (!CurrentFragment.IsAdded)
             {
                 SupportFragmentManager.BeginTransaction()
-                    .Add(Resource.Id.content_frame, CurrentFragment)
-                    .Commit();
+                .Replace(Resource.Id.content_frame, CurrentFragment)
+                .Commit();
             }
             else
             {
@@ -379,10 +347,12 @@ namespace SpotyPie
         {
             if (FirstLayerFragment != null)
             {
+                FirstLayerFragment.ReleaseData();
                 var transaction = mSupportFragmentManager.BeginTransaction();
                 transaction.Remove(FirstLayerFragment);
                 transaction.Commit();
                 transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitFragmentClose);
+                transaction = null;
                 FirstLayerFragment = null;
                 FirstLayer.TranslationX = widthInDp;
             }
@@ -443,6 +413,7 @@ namespace SpotyPie
             }
             else
             {
+                CurrentFragment.ReleaseData();
                 FirstLayer.Visibility = ViewStates.Gone;
             }
         }
@@ -477,6 +448,12 @@ namespace SpotyPie
             }
             else
             {
+                if (AlbumFragment != null && AlbumFragment.IsVisible)
+                    AlbumFragment.ReleaseData();
+
+                if (ArtistFragment != null && ArtistFragment.IsVisible)
+                    ArtistFragment.ReleaseData();
+
                 SecondLayer.Visibility = ViewStates.Gone;
             }
         }
