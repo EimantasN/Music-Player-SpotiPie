@@ -1,4 +1,5 @@
 ﻿using Android.Support.V7.Widget;
+using Android.Views;
 using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
@@ -27,6 +28,12 @@ namespace SpotyPie.Player
                 RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
                 RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 RvData.DisableScroolNested();
+                RvData.SetClickAction(() =>
+                {
+                    Player p = (Player)this.ParentFragment;
+                    p.PlayerSongListContainer.Visibility = ViewStates.Gone;
+                    p.CurrentState = 1;
+                });
             }
             Update();
         }

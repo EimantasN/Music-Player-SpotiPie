@@ -10,13 +10,12 @@
     <ImageView
         android:id="@+id/se_image"
         android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="200dp"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toStartOf="@+id/guideline24"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/touch" />
+        app:srcCompat="@drawable/img_loading" />
 
     <TextView
         android:id="@+id/title"
@@ -27,11 +26,14 @@
         android:layout_marginEnd="8dp"
         android:text="Touch"
         android:gravity="center"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/guideline24"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
-        app:layout_constraintTop_toBottomOf="@+id/image" />
+        app:layout_constraintTop_toBottomOf="@+id/se_image" />
 
     <TextView
         android:id="@+id/subtitle"
@@ -42,6 +44,9 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
         android:text="July Talk"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@color/greylight"
@@ -62,5 +67,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.8072917" />
+        app:layout_constraintGuide_percent="0.8" />
 </android.support.constraint.ConstraintLayout>

@@ -27,7 +27,7 @@ namespace SpotyPie
 
         private MainFragment MainFragment;
         private Search Search;
-        private Browse Browse;
+        private MainArtist Browse;
         private LibraryFragment Library;
         private AlbumFragment AlbumFragment;
         private ArtistFragment ArtistFragment;
@@ -56,8 +56,6 @@ namespace SpotyPie
 
         public FragmentBase FirstLayerFragment;
         public FragmentBase SecondLayerFragment;
-
-        private ImageButton Settings;
 
         public int Add_to_playlist_id = 0;
 
@@ -139,16 +137,8 @@ namespace SpotyPie
 
             BackHeaderButton.Click += BackHeaderButton_Click;
 
-            Settings = FindViewById<ImageButton>(Resource.Id.settings);
-            Settings.Click += Settings_Click;
-
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragment(Resource.Id.home);
-        }
-
-        private void Settings_Click(object sender, EventArgs e)
-        {
-            StartActivity(typeof(SettingsActivity));
         }
 
         protected override void OnDestroy()
@@ -280,8 +270,8 @@ namespace SpotyPie
 
         void LoadFragment(int id)
         {
-            if (HeaderContainer.Visibility == ViewStates.Gone)
-                HeaderContainer.Visibility = ViewStates.Visible;
+            //if (HeaderContainer.Visibility == ViewStates.Gone)
+            //    HeaderContainer.Visibility = ViewStates.Visible;
 
             if (CurrentFragment != null)
             {
@@ -297,16 +287,14 @@ namespace SpotyPie
                             MainFragment = new MainFragment();
                         CurrentFragment = MainFragment;
                         ActionName.Text = "Home";
-                        Settings.Visibility = ViewStates.Visible;
                         break;
                     }
                 case Resource.Id.browse:
                     {
                         if (Browse == null)
-                            Browse = new Browse();
+                            Browse = new MainArtist();
                         CurrentFragment = Browse;
                         ActionName.Text = "Muse";
-                        Settings.Visibility = ViewStates.Gone;
                         break;
                     }
                 case Resource.Id.search:
@@ -315,7 +303,6 @@ namespace SpotyPie
                             Search = new Search();
                         CurrentFragment = Search;
                         HeaderContainer.Visibility = ViewStates.Gone;
-                        Settings.Visibility = ViewStates.Gone;
                         break;
                     }
                 case Resource.Id.library:
@@ -323,7 +310,6 @@ namespace SpotyPie
                         if (Library == null) Library = new LibraryFragment();
                         CurrentFragment = Library;
                         ActionName.Text = "Library";
-                        Settings.Visibility = ViewStates.Gone;
                         break;
                     }
             }
@@ -407,13 +393,14 @@ namespace SpotyPie
                 LastViewLayer = CurrentViewLayer;
                 CurrentViewLayer = 2;
                 HideOthers();
-                //AlbumFragment.ForceUpdate();
+                //AlbumFragment?.ForceUpdate();
+                //ArtistFragment?.ForceUpdate();
                 FirstLayer.Visibility = ViewStates.Visible;
                 FirstLayer.BringToFront();
             }
             else
             {
-                CurrentFragment.ReleaseData();
+                CurrentFragment?.ForceUpdate();
                 FirstLayer.Visibility = ViewStates.Gone;
             }
         }
@@ -431,6 +418,7 @@ namespace SpotyPie
             }
             else
             {
+                bottomNavigation.Visibility = ViewStates.Visible;
                 PlayerContainer.Visibility = ViewStates.Gone;
             }
         }
@@ -443,16 +431,17 @@ namespace SpotyPie
                 LastViewLayer = CurrentViewLayer;
                 CurrentViewLayer = 3;
                 HideOthers();
+                //AlbumFragment.ForceUpdate();
                 SecondLayer.Visibility = ViewStates.Visible;
                 SecondLayer.BringToFront();
             }
             else
             {
-                if (AlbumFragment != null && AlbumFragment.IsVisible)
-                    AlbumFragment.ReleaseData();
+                //if (AlbumFragment != null && AlbumFragment.IsVisible)
+                //    AlbumFragment.ReleaseData();
 
-                if (ArtistFragment != null && ArtistFragment.IsVisible)
-                    ArtistFragment.ReleaseData();
+                //if (ArtistFragment != null && ArtistFragment.IsVisible)
+                //    ArtistFragment.ReleaseData();
 
                 SecondLayer.Visibility = ViewStates.Gone;
             }

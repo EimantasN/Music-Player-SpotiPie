@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
+	android:clickable="true"
     android:background="@drawable/gradient_grey_reverse">
 
     <ImageButton
@@ -13,39 +13,65 @@
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_marginBottom="32dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/play_button"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
         tools:ignore="VectorDrawableCompat" />
 
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/img_holder"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginStart="16dp"-->
+        <!--android:layout_marginLeft="16dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:layout_marginEnd="16dp"-->
+        <!--android:layout_marginRight="16dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:backgroundTint="@android:color/transparent"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+        <!--android:clipChildren="false"-->
+        <!--android:clipToPadding="false"-->
+        <!--android:elevation="8dp"-->
+        <!--app:cardElevation="10dp"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/song_name"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/playlist_name">-->
+
     <ImageView
-        android:id="@+id/album_image"
+        android:id="@+id/img_holder"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="24dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/song_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/back_button"
-        app:srcCompat="@drawable/touch" />
+        app:layout_constraintTop_toBottomOf="@+id/playlist_name"
+        app:srcCompat="@drawable/img_loading" />
+
+    <!--</android.support.v7.widget.CardView>-->
+
 
     <ImageButton
         android:id="@+id/repeat"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/play_stop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/play_stop"
@@ -53,52 +79,42 @@
 
     <ImageButton
         android:id="@+id/preview_song"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:background="@android:color/transparent"
         android:rotation="180"
         android:scaleType="fitCenter"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/play_stop"
         app:layout_constraintEnd_toStartOf="@+id/play_stop"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toEndOf="@+id/shuffle"
         app:layout_constraintTop_toTopOf="@+id/play_stop"
         app:srcCompat="@drawable/next" />
 
     <ImageButton
         android:id="@+id/next_song"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/play_stop"
         app:layout_constraintEnd_toStartOf="@+id/repeat"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toEndOf="@+id/play_stop"
         app:layout_constraintTop_toTopOf="@+id/play_stop"
         app:srcCompat="@drawable/next" />
 
     <ImageButton
         android:id="@+id/shuffle"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/play_stop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/play_stop"
-        app:layout_constraintVertical_bias="0.515"
         app:srcCompat="@drawable/shuffle_disabled" />
 
     <TextView
@@ -137,93 +153,107 @@
 
     <ImageButton
         android:id="@+id/song_list"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginRight="6dp"
+        android:layout_width="40dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:background="@android:color/transparent"
-        android:padding="10dp"
         android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/playlist_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView6"
         app:srcCompat="@drawable/palyer_playlist" />
 
     <ImageButton
         android:id="@+id/back_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:background="@android:color/transparent"
-        android:padding="16dp"
-        android:rotation="180"
+        android:padding="8dp"
+        android:rotation="90"
         android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/playlist_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView6"
         app:srcCompat="@drawable/expand" />
 
     <TextView
-        android:id="@+id/currenty_playing_text"
-        android:layout_width="0dp"
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="PLAYING FROM"
-        android:singleLine="true"
-        android:gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Playing from playlist"
+        android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="@+id/playlist_name"
-        app:layout_constraintStart_toStartOf="@+id/playlist_name"
+        app:layout_constraintEnd_toStartOf="@+id/song_list"
+        app:layout_constraintStart_toEndOf="@+id/back_button"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/playlist_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:text="July Talk - Touch"
         android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
         android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/song_list"
         app:layout_constraintStart_toEndOf="@+id/back_button"
-        app:layout_constraintTop_toBottomOf="@+id/currenty_playing_text" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/song_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
         android:text="Johnny + Mary"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@android:color/white"
-        android:textSize="16dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toTopOf="@+id/artist_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/add_to_playlist"
+        app:layout_constraintStart_toEndOf="@+id/save_to_songs" />
 
     <TextView
         android:id="@+id/artist_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginBottom="24dp"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
         android:text="July Talk"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@color/greylight"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
-        app:layout_constraintEnd_toEndOf="@+id/song_name"
-        app:layout_constraintStart_toStartOf="@+id/song_name" />
+        app:layout_constraintEnd_toStartOf="@+id/add_to_playlist"
+        app:layout_constraintStart_toEndOf="@+id/save_to_songs" />
 
     <ImageView
         android:id="@+id/save_to_songs"

@@ -1,10 +1,8 @@
 ﻿using Android.Support.V4.View;
 using Android.Support.V7.Widget;
-using Android.Widget;
 using Microsoft.Win32.SafeHandles;
 using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
-using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Helpers;
 using SpotyPie.RecycleView.Enums;
@@ -15,13 +13,14 @@ using System.Threading.Tasks;
 
 namespace SpotyPie.RecycleView
 {
-    public class BaseRecycleView<T> where T : IDisposable, IBaseInterface
+    public class BaseRecycleView<T> where T : IBaseInterface
     {
         private bool Disposed = false;
-        private SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
         private RvList<T> RvDataset;
-        private SpotyPieRv RecyclerView;
+        private SpotyPieRv CustomRecyclerView;
         private LayoutManagers Manager = LayoutManagers.Unseted;
+
+        private Action CustomAction;
 
         private FragmentBase Activity { get; set; }
 
@@ -35,6 +34,11 @@ namespace SpotyPie.RecycleView
             this.Id = RvId;
         }
 
+        internal void SetClickAction(Action p)
+        {
+            CustomAction = p;
+        }
+
         public RvList<T> Setup(LayoutManagers layout)
         {
             Init(layout);
@@ -43,10 +47,10 @@ namespace SpotyPie.RecycleView
 
         public void Init(LayoutManagers layout)
         {
-            RecyclerView = Activity.GetView().FindViewById<SpotyPieRv>(Id);
+            CustomRecyclerView = new SpotyPieRv(Activity.GetView().FindViewById<RecyclerView>(Id));
             SetLayoutManager(layout);
-            RecyclerView.SetAdapter(new BaseRv<T>(RvDataset, RecyclerView, Activity.Context));
-            RvDataset.Adapter = RecyclerView.GetAdapter();
+            CustomRecyclerView.GetRecycleView().SetAdapter(new BaseRv<T>(RvDataset, CustomRecyclerView.GetRecycleView(), Activity.Context));
+            RvDataset.Adapter = CustomRecyclerView.GetRecycleView().GetAdapter();
             SetOnClick();
         }
 
@@ -64,7 +68,7 @@ namespace SpotyPie.RecycleView
                         if (Manager == LayoutManagers.Unseted || Manager != LayoutManagers.Linear_vertical)
                         {
                             Manager = LayoutManagers.Linear_vertical;
-                            RecyclerView.SetLayoutManager(new LinearLayoutManager(this.Activity.Activity, LinearLayoutManager.Vertical, false));
+                            CustomRecyclerView.GetRecycleView().SetLayoutManager(new LinearLayoutManager(this.Activity.Activity, LinearLayoutManager.Vertical, false));
                         }
                         break;
                     }
@@ -73,7 +77,7 @@ namespace SpotyPie.RecycleView
                         if (Manager == LayoutManagers.Unseted || Manager != LayoutManagers.Linear_horizontal)
                         {
                             Manager = LayoutManagers.Linear_horizontal;
-                            RecyclerView.SetLayoutManager(new LinearLayoutManager(this.Activity.Activity, LinearLayoutManager.Horizontal, false));
+                            CustomRecyclerView.GetRecycleView().SetLayoutManager(new LinearLayoutManager(this.Activity.Activity, LinearLayoutManager.Horizontal, false));
                         }
                         break;
                     }
@@ -82,7 +86,7 @@ namespace SpotyPie.RecycleView
                         if (Manager == LayoutManagers.Unseted || Manager != LayoutManagers.Grind_2_col)
                         {
                             Manager = LayoutManagers.Grind_2_col;
-                            RecyclerView.SetLayoutManager(new GridLayoutManager(this.Activity.Activity, 2));
+                            CustomRecyclerView.GetRecycleView().SetLayoutManager(new GridLayoutManager(this.Activity.Activity, 2));
                         }
                         break;
                     }
@@ -91,15 +95,15 @@ namespace SpotyPie.RecycleView
 
         public void DisableScroolNested()
         {
-            RecyclerView.NestedScrollingEnabled = false;
-            ViewCompat.SetNestedScrollingEnabled(RecyclerView, false);
+            CustomRecyclerView.GetRecycleView().NestedScrollingEnabled = false;
+            ViewCompat.SetNestedScrollingEnabled(CustomRecyclerView.GetRecycleView(), false);
         }
 
         public void SetOnClick()
         {
-            RecyclerView.SetItemClickListener((rv, position, view) =>
+            CustomRecyclerView.GetRecycleView().SetItemClickListener((rv, position, view) =>
             {
-                if (RecyclerView != null && RecyclerView.ChildCount != 0)
+                if (CustomRecyclerView != null && CustomRecyclerView.GetRecycleView().ChildCount != 0)
                 {
                     if (RvDataset[position].GetType().Name == "Album")
                     {
@@ -114,6 +118,8 @@ namespace SpotyPie.RecycleView
                     {
                         Activity.LoadArtist(RvDataset[position] as Artist);
                     }
+
+                    CustomAction?.Invoke();
                 }
             });
         }
@@ -132,12 +138,11 @@ namespace SpotyPie.RecycleView
 
             if (disposing)
             {
-                handle.Dispose();
                 RvDataset.Clear();
                 RvDataset = null;
                 Activity = null;
-                RecyclerView.Dispose();
-                RecyclerView = null;
+                CustomRecyclerView.Dispose();
+                CustomRecyclerView = null;
             }
 
             Disposed = true;

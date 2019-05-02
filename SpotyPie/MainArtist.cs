@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SpotyPie
 {
-    public class Browse : FragmentBase
+    public class MainArtist : FragmentBase
     {
         //main_rv
         private BaseRecycleView<Songs> RvData { get; set; }
@@ -25,17 +25,17 @@ namespace SpotyPie
 
         public async Task PopulateData()
         {
-            
+
         }
 
         public override void ForceUpdate()
         {
-            if (RvData == null)
-            {
-                RvData = new BaseRecycleView<Songs>(this, Resource.Id.main_rv);
-                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
-                RvData.DisableScroolNested();
-            }
+            //if (RvData == null)
+            //{
+            //    RvData = new BaseRecycleView<Songs>(this, Resource.Id.main_rv);
+            //    RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
+            //    RvData.DisableScroolNested();
+            //}
 
             //Task.Run(async () => await LoadSongs());
         }

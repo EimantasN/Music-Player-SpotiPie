@@ -36,6 +36,8 @@ namespace SpotyPie
         private ConstraintLayout JumpBackHolder;
         private ProgressBar Loading;
 
+        private ImageButton Settings;
+
         public override int LayoutId { get; set; } = Resource.Layout.home_layout;
 
         protected override void InitView()
@@ -46,6 +48,14 @@ namespace SpotyPie
             RecentHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.recent_albums_holder);
             BestHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.best_albums_holder);
             JumpBackHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.constraintLayout);
+
+            Settings = RootView.FindViewById<ImageButton>(Resource.Id.settings);
+            Settings.Click += Settings_Click;
+        }
+
+        private void Settings_Click(object sender, EventArgs e)
+        {
+            Activity.StartActivity(typeof(SettingsActivity));
         }
 
         public void Toggle(bool state, ConstraintLayout layout)

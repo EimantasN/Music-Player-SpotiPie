@@ -1,32 +1,43 @@
 ﻿using System;
 using Android.Content;
+using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
+using Mobile_Api.Interfaces;
 
 namespace SpotyPie.RecycleView
 {
-    public class SpotyPieRv : RecyclerView, RecyclerView.IOnChildAttachStateChangeListener
+    public class SpotyPieRv : Java.Lang.Object, RecyclerView.IOnChildAttachStateChangeListener
     {
         private AttachStateChangeListener Lisiner;
+        private RecyclerView Rv;
 
-        public SpotyPieRv(Context context) : base(context)
+        public SpotyPieRv(RecyclerView rv)
         {
+            Rv = rv;
         }
 
         public void SetAction(Action<RecyclerView, int, View> action)
         {
-            Lisiner = new AttachStateChangeListener(this, action);
+            Lisiner = new AttachStateChangeListener(this.Rv, action);
         }
 
         public void OnChildViewAttachedToWindow(View view)
         {
-            this.AddOnChildAttachStateChangeListener(Lisiner);
+            if (Lisiner != null)
+                this.Rv.AddOnChildAttachStateChangeListener(Lisiner);
+            throw new Exception("Lisiner cant be null");
         }
 
         public void OnChildViewDetachedFromWindow(View view)
         {
-            if(Lisiner != null)
-                this.RemoveOnChildAttachStateChangeListener(Lisiner);
+            if (Lisiner != null)
+                this.Rv.RemoveOnChildAttachStateChangeListener(Lisiner);
+        }
+
+        public RecyclerView GetRecycleView()
+        {
+            return Rv;
         }
     }
 }

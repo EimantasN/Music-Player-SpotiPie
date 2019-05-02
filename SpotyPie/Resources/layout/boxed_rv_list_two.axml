@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/touch" />
+        app:srcCompat="@drawable/img_loading" />
 
     <ImageView
         android:id="@+id/right_image"
@@ -38,7 +38,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/left_image"
-        app:srcCompat="@drawable/touch" />
+        app:srcCompat="@drawable/img_loading" />
 
     <TextView
         android:id="@+id/album_title_left"

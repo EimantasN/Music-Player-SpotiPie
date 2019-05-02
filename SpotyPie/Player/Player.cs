@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Media;
 using Android.OS;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
@@ -37,7 +38,7 @@ namespace SpotyPie.Player
         protected const int OffsetContainer = 250;
         protected int FragmentWidth = 0;
 
-        private int CurrentState { get; set; } = 1;
+        public int CurrentState { get; set; } = 1;
 
         PlaylistSongList PlayerSongList;
 
@@ -55,7 +56,7 @@ namespace SpotyPie.Player
         public TextView CurretSongTimeText;
         TextView TotalSongTimeText;
 
-        public ImageView Player_Image;
+        public ImageView ImgHolder;
         public TextView Player_song_name;
         public TextView Player_artist_name;
         public TextView Player_playlist_name;
@@ -107,9 +108,11 @@ namespace SpotyPie.Player
             Save_to_songs = RootView.FindViewById<ImageView>(Resource.Id.save_to_songs);
             Save_to_songs.Click += Save_to_songs_Click;
 
-            Player_Image = RootView.FindViewById<ImageView>(Resource.Id.album_image);
+            ImgHolder = RootView.FindViewById<ImageView>(Resource.Id.img_holder);
             Player_song_name = RootView.FindViewById<TextView>(Resource.Id.song_name);
+            Player_song_name.Selected = true;
             Player_artist_name = RootView.FindViewById<TextView>(Resource.Id.artist_name);
+            Player_artist_name.Selected = true;
             Player_playlist_name = RootView.FindViewById<TextView>(Resource.Id.playlist_name);
 
             CurretSongTimeText = RootView.FindViewById<TextView>(Resource.Id.current_song_time);
@@ -167,13 +170,13 @@ namespace SpotyPie.Player
 
             Intent intent = new Intent(this.Activity, typeof(MusicService));
             this.Activity.BindService(intent, this.ServiceConnection, Bind.AutoCreate);
-            Player_Image.SetOnTouchListener(this);
+            ImgHolder.SetOnTouchListener(this);
             base.OnResume();
         }
 
         public override void OnDestroy()
         {
-            Player_Image.SetOnTouchListener(null);
+            ImgHolder.SetOnTouchListener(null);
             base.OnDestroy();
         }
 
@@ -211,7 +214,7 @@ namespace SpotyPie.Player
                         else
                         {
                             v.Animate().TranslationX(FragmentWidth);
-                            NextSong_Click(null, null);
+                            PreviewSong_Click(null, null);
                             return true;
                         }
                     }
@@ -225,7 +228,7 @@ namespace SpotyPie.Player
                         else
                         {
                             v.Animate().TranslationX(FragmentWidth);
-                            PreviewSong_Click(null, null);
+                            NextSong_Click(null, null);
                             return true;
                         }
                     }
@@ -289,26 +292,26 @@ namespace SpotyPie.Player
 
         public void NextSongPlayer()
         {
-            Task.Run(() =>
+            Task.Run((Action)(() =>
             {
-                Application.SynchronizationContext.Post(_ =>
+                Application.SynchronizationContext.Post((SendOrPostCallback)(_ =>
                 {
-                    Player_Image.TranslationX = FragmentWidth * -1;
-                    Player_Image?.Animate().TranslationX(0);
-                }, null);
-            });
+                    this.ImgHolder.TranslationX = FragmentWidth * -1;
+                    this.ImgHolder?.Animate().TranslationX(0);
+                }), null);
+            }));
         }
 
         public void PrevSongPlayer()
         {
-            Task.Run(() =>
+            Task.Run((Action)(() =>
             {
-                Application.SynchronizationContext.Post(_ =>
+                Application.SynchronizationContext.Post((SendOrPostCallback)(_ =>
                 {
-                    Player_Image.TranslationX = FragmentWidth;
-                    Player_Image?.Animate().TranslationX(0);
-                }, null);
-            });
+                    this.ImgHolder.TranslationX = FragmentWidth;
+                    this.ImgHolder?.Animate().TranslationX(0);
+                }), null);
+            }));
         }
 
         private void PreviewSong_Click(object sender, EventArgs e)
@@ -437,7 +440,7 @@ namespace SpotyPie.Player
 
         private void LoadCustomImage(List<Songs> newSongList, int position)
         {
-            Task.Run(async () =>
+            Task.Run((Func<Task>)(async () =>
             {
                 var real = Realm.GetInstance();
                 Database.ViewModels.Settings settings = real.All<Database.ViewModels.Settings>().First();
@@ -448,6 +451,10 @@ namespace SpotyPie.Player
                 }
                 else
                 {
+                    Application.SynchronizationContext.Post((SendOrPostCallback)(_ =>
+                    {
+                        ImgHolder.SetImageResource(Resource.Drawable.img_loading);
+                    }), null);
                     List<Mobile_Api.Models.Image> imageList = await ParentActivity.GetAPIService().GetNewImageForSongAsync(newSongList[position].Id);
                     if (imageList == null || imageList.Count == 0)
                         LoadOld();
@@ -456,27 +463,27 @@ namespace SpotyPie.Player
                         var img = imageList.OrderByDescending(x => x.Width).ThenByDescending(x => x.Height).First();
                         if (Current_Player_Image != newSongList[position].LargeImage)
                         {
-                            Application.SynchronizationContext.Post(_ =>
+                            Application.SynchronizationContext.Post((SendOrPostCallback)(_ =>
                             {
                                 Current_Player_Image = img.Url;
-                                Picasso.With(Activity.ApplicationContext).Load(img.Url).Into(Player_Image);
-                            }, null);
+                                Picasso.With(Activity.ApplicationContext).Load(img.Url).Resize(1200, 1200).CenterCrop().Into((ImageView)this.ImgHolder);
+                            }), null);
                         }
                     }
 
                 }
-            });
+            }));
 
             void LoadOld()
             {
-                Application.SynchronizationContext.Post(_ =>
+                Application.SynchronizationContext.Post((SendOrPostCallback)(_ =>
                 {
                     if (Current_Player_Image != newSongList[position].LargeImage)
                     {
                         Current_Player_Image = newSongList[position].LargeImage;
-                        Picasso.With(Activity.ApplicationContext).Load(newSongList[position].LargeImage).Into(Player_Image);
+                        Picasso.With(Activity.ApplicationContext).Load(newSongList[position].LargeImage).Resize(1200, 1200).CenterCrop().Into((ImageView)this.ImgHolder);
                     }
-                }, null);
+                }), null);
             }
         }
 

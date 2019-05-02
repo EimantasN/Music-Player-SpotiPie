@@ -95,7 +95,7 @@ namespace SpotyPie
             Task.Run(async () =>
             {
                 var data = await GetAPIService().GetArtistSongsAsync(CurrentArtist);
-                Application.SynchronizationContext.Post(_=>
+                Application.SynchronizationContext.Post(_ =>
                 {
                     GetState().SetSong(data, 0);
                     ShufflePlay.Text = "Playing";
