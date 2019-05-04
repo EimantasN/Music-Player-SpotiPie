@@ -102,6 +102,7 @@ namespace SpotyPie
             #region MINI PLAYER
 
             MiniPlayer = FindViewById<ConstraintLayout>(Resource.Id.PlayerContainer);
+            MiniPlayer.Visibility = ViewStates.Gone;
 
             PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             ShowPlayler = FindViewById<ImageButton>(Resource.Id.show_player);
@@ -111,20 +112,14 @@ namespace SpotyPie
             ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
             ArtistName.Selected = true;
 
-            //TODO make more maintanable
-            Task.Run(async () =>
-            {
-                var song = await GetAPIService().GetCurrentSong();
-                SongTitle.Text = song.Name;
-                ArtistName.Text = song.ArtistName;
-            });
+            LoadCurrentState();
 
             if (GetState().IsPlaying)
                 PlayToggle.SetImageResource(Resource.Drawable.pause);
             else
                 PlayToggle.SetImageResource(Resource.Drawable.play_button);
 
-            //MiniPlayer.Visibility = ViewStates.Gone;
+
 
             PlayToggle.Click += PlayToggle_Click;
             ShowPlayler.Click += MiniPlayer_Click;
@@ -139,6 +134,34 @@ namespace SpotyPie
 
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragment(Resource.Id.home);
+        }
+
+        private void LoadCurrentState()
+        {
+            //TODO make more maintanable
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var song = await GetAPIService().GetCurrentSong();
+                    Application.SynchronizationContext.Post(_ =>
+                    {
+                        if (song != null)
+                        {
+                            SongTitle.Text = song.Name;
+                            ArtistName.Text = song.ArtistName;
+                            MiniPlayer.Visibility = ViewStates.Visible;
+                        }
+                    }, null);
+                }
+                catch (Exception e)
+                {
+                    Application.SynchronizationContext.Post(_ =>
+                    {
+                        Toast.MakeText(this.ApplicationContext, "Failed load current state", ToastLength.Long).Show();
+                    }, null);
+                }
+            });
         }
 
         protected override void OnDestroy()
@@ -238,7 +261,8 @@ namespace SpotyPie
 
         private void MiniPlayer_Click(object sender, EventArgs e)
         {
-            GetState().Player_visiblibity_toggle();
+            GetState().SetSong(GetAPIService().GetCurrentListLive(), 0);
+            //GetState().Player_visiblibity_toggle();
         }
 
         private void BottomNavigation_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)

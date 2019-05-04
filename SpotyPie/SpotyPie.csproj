@@ -43,7 +43,7 @@
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <AotAssemblies>true</AotAssemblies>
     <EnableLLVM>true</EnableLLVM>
-    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
@@ -101,6 +101,7 @@
     <Compile Include="Models\SongUpdate.cs" />
     <Compile Include="Services\Helpers\ImageGetterForNotification.cs" />
     <Compile Include="Services\LocalBinder.cs" />
+    <Compile Include="Services\LockScreenMusicPlayer.cs" />
     <Compile Include="Services\MediaButtonBroadcastReceiver.cs" />
     <Compile Include="RecycleView\BaseRv.cs" />
     <Compile Include="Helpers\IFastScrollRecyclerViewAdapter.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search.cs" />
+    <Compile Include="Services\MediaSessionCustomCallback.cs" />
     <Compile Include="Services\MusicService.cs" />
     <Compile Include="Services\Restarters\MusicServiceRestart.cs" />
     <Compile Include="Services\ServiceCallbacks.cs" />

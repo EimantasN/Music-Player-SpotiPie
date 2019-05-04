@@ -19,5 +19,5 @@
     </intent-filter>
   </receiver>
 
-  <application android:allowBackup="true" android:hardwareAccelerated="false" android:largeHeap="true" android:label="@string/app_name" android:roundIcon="@drawable/logo_spotify" android:supportsRtl="true" android:theme="@style/AppTheme" android:icon="@drawable/logo_spotify"></application>
+  <application android:allowBackup="true" android:hardwareAccelerated="true" android:largeHeap="true" android:label="@string/app_name" android:roundIcon="@drawable/logo_spotify" android:supportsRtl="true" android:theme="@style/AppTheme" android:icon="@drawable/logo_spotify"></application>
 </manifest>

@@ -7,7 +7,7 @@ namespace SpotyPie.Services.Restarters
     {
         public override void OnReceive(Context context, Intent intent)
         {
-            context.StartService(new Intent(context, typeof(MusicService)));
+            //context.StartService(new Intent(context, typeof(MusicService)));
         }
     }
 }

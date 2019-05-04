@@ -39,7 +39,6 @@ namespace SpotyPie
         {
             _service = service;
             _activity = activity;
-            GetCurrentState();
             TryToGetRealm();
         }
 
@@ -50,8 +49,10 @@ namespace SpotyPie
                 Realm realm = Realm.GetInstance();
                 realm.Dispose();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                //Recreate real if real class changed
+
                 Realm.DeleteRealm(RealmConfiguration.DefaultConfiguration);
                 Realm realm = Realm.GetInstance();
                 realm.Dispose();
@@ -70,7 +71,7 @@ namespace SpotyPie
         public async Task<Songs> GetCurrentSong()
         {
             await GetCurrentState();
-            return await GetSongAsync(State.SongId);
+            return await GetSongAsync((int)State.songId);
         }
 
         #endregion
@@ -398,7 +399,7 @@ namespace SpotyPie
             }
         }
 
-        public IList<Songs> GetCurrentList()
+        public List<Songs> GetCurrentList()
         {
             try
             {
@@ -407,6 +408,18 @@ namespace SpotyPie
                 return songs;
             }
             catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public List<Songs> GetCurrentListLive()
+        {
+            try
+            {
+                return _Songs;
+            }
+            catch (Exception)
             {
                 return null;
             }

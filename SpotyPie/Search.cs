@@ -13,13 +13,14 @@ using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie
 {
-    public class Search : FragmentBase
+    public class Search : FragmentBase, ViewTreeObserver.IOnGlobalLayoutListener
     {
         public override int LayoutId { get; set; } = Resource.Layout.search_layout;
 
@@ -76,6 +77,8 @@ namespace SpotyPie
             SearchLoading = RootView.FindViewById<ProgressBar>(Resource.Id.search_loading);
             search = RootView.FindViewById<EditText>(Resource.Id.search_text);
             search.FocusChange += Search_FocusChange;
+
+            RootView.ViewTreeObserver.AddOnGlobalLayoutListener(this);
         }
 
         private void SetupSearchLoadingGif()
@@ -98,15 +101,12 @@ namespace SpotyPie
         {
             if (search.IsFocused)
             {
-                GetState().ToggleBotNav(false);
                 GetState().ToggleMiniPlayer(false);
                 if (search.Text.Contains("Search"))
                     search.Text = "";
             }
             else
             {
-                GetState().ToggleBotNav(true);
-                GetState().ToggleMiniPlayer(true);
                 if (string.IsNullOrEmpty(search.Text))
                     search.Text = "Search song, album, playlist and etc.";
             }
@@ -151,6 +151,10 @@ namespace SpotyPie
                             else
                                 ToggleSearchLoading(Search_status.NothingFound);
                         }
+                    }
+                    else if (string.IsNullOrEmpty(query))
+                    {
+                        ToggleSearchLoading(Search_status.NothingFound);
                     }
                 }
                 catch (Exception e)
@@ -390,7 +394,7 @@ namespace SpotyPie
 
         public override void ReleaseData()
         {
-            if(RvBaseSong != null)
+            if (RvBaseSong != null)
             {
                 RvBaseSong.Dispose();
                 RvBaseSong = null;
@@ -406,6 +410,21 @@ namespace SpotyPie
             {
                 RvBaseArtist.Dispose();
                 RvBaseArtist = null;
+            }
+        }
+
+        public void OnGlobalLayout()
+        {
+            int heightDiff = RootView.RootView.Height - RootView.Height;
+            if (heightDiff > 500)
+            {
+                GetState().ToggleBotNav(false);
+                GetState().ToggleMiniPlayer(false);
+            }
+            else
+            {
+                GetState().ToggleBotNav(true);
+                GetState().ToggleMiniPlayer(true);
             }
         }
     }

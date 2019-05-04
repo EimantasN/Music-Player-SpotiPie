@@ -26,11 +26,7 @@ namespace SpotyPie.Services
 
         private IBinder binder;
 
-        private MediaSession mediaSession;
-
-        private ComponentName remoteComponentName;
-
-        private RemoteControlClient remoteControlClient;
+        private LockScreenMusicPlayer LockScreenPlayer;
 
         private bool Updating { get; set; } = false;
 
@@ -123,8 +119,8 @@ namespace SpotyPie.Services
                 {
                     serviceCallbacks?.SetViewLoadState();
                     InformUiSongChanged(Current_Song_List, position);
+                    LockScreenPlayer.SongLoadStarted();
                     LoadSong();
-                    UpdateLockScreenPlayer();
                 }
             }
             catch (Exception e)
@@ -147,15 +143,6 @@ namespace SpotyPie.Services
                 }
                 return false;
             }
-        }
-
-        public void UpdateLockScreenPlayer()
-        {
-            //if (serviceCallbacks == null)
-            //{
-            remoteControlClient.SetPlaybackState(RemoteControlPlayState.Buffering);
-            UpdateMetadata();
-            //}
         }
 
         private void LoadSong()
@@ -181,7 +168,7 @@ namespace SpotyPie.Services
                             MusicPlayer.Reset();
                             MusicPlayer.SetAudioStreamType(Android.Media.Stream.Music);
                             MusicPlayer.SetDataSource(BaseUrl + Current_Song.Id);
-                            MusicPlayer.Prepare();
+                            MusicPlayer.PrepareAsync();
                         }
                         catch (Exception e)
                         {
@@ -312,11 +299,7 @@ namespace SpotyPie.Services
             {
                 serviceCallbacks?.PlayerPrepared(MusicPlayer == null ? 999 : MusicPlayer.Duration);
 
-                if (remoteControlClient != null && serviceCallbacks == null)
-                {
-                    remoteControlClient.SetPlaybackState(RemoteControlPlayState.Playing);
-                    UpdateMetadata();
-                }
+                LockScreenPlayer.SongLoaded(Current_Song);
 
                 MusicPlayer?.Start();
                 CurrentTime = new TimeSpan(0, 0, 0, 0);
@@ -333,85 +316,8 @@ namespace SpotyPie.Services
             try
             {
                 binder = new LocalBinder(this);
-                SetBthHeadSetButtons();
+                LockScreenPlayer = new LockScreenMusicPlayer(this);
                 base.OnCreate();
-            }
-            catch (Exception e)
-            {
-                Task.Run(() => GetAPIService().Report(e));
-            }
-        }
-
-        private void SetBthHeadSetButtons()
-        {
-            try
-            {
-                if (AudioManager == null)
-                    AudioManager = (AudioManager)this.GetSystemService("audio");
-                remoteComponentName = new ComponentName(PackageName, new MediaButtonBroadcastReceiver().ComponentName);
-
-                if (remoteControlClient == null)
-                {
-                    AudioManager.RegisterMediaButtonEventReceiver(remoteComponentName);
-                    //Create a new pending intent that we want triggered by remote control client
-                    var mediaButtonIntent = new Intent(Intent.ActionMediaButton);
-                    mediaButtonIntent.SetComponent(remoteComponentName);
-                    // Create new pending intent for the intent
-                    var mediaPendingIntent = PendingIntent.GetBroadcast(this, 0, mediaButtonIntent, 0);
-                    // Create and register the remote control client
-                    remoteControlClient = new RemoteControlClient(mediaPendingIntent);
-                    AudioManager.RegisterRemoteControlClient(remoteControlClient);
-                }
-                //add transport control flags we can to handle
-                remoteControlClient.SetTransportControlFlags(RemoteControlFlags.Play |
-                                         RemoteControlFlags.Pause |
-                                         RemoteControlFlags.PlayPause |
-                                         RemoteControlFlags.Stop |
-                                         RemoteControlFlags.Previous |
-                                         RemoteControlFlags.Next);
-            }
-            catch (Exception e)
-            {
-                Task.Run(() => GetAPIService().Report(e));
-            }
-        }
-
-        private void UnregisterRemoteClient()
-        {
-            try
-            {
-                if (AudioManager != null)
-                {
-                    AudioManager.UnregisterMediaButtonEventReceiver(remoteComponentName);
-                    AudioManager.UnregisterRemoteControlClient(remoteControlClient);
-                    remoteControlClient.Dispose();
-                    remoteControlClient = null;
-                    AudioManager = null;
-                }
-            }
-            catch (Exception e)
-            {
-                Task.Run(() => GetAPIService().Report(e));
-            }
-        }
-
-        private void UpdateMetadata()
-        {
-            try
-            {
-                if (remoteControlClient == null)
-                    return;
-
-                var metadataEditor = remoteControlClient.EditMetadata(false);
-                metadataEditor.PutString(MetadataKey.Album, Current_Song.AlbumName);
-                metadataEditor.PutString(MetadataKey.Artist, Current_Song.ArtistName);
-                metadataEditor.PutString(MetadataKey.Albumartist, $"{Current_Song.AlbumName} - {Current_Song.ArtistName}");
-                metadataEditor.PutString(MetadataKey.Title, Current_Song.Name);
-                var img = GetImage();
-                if (img != null)
-                    metadataEditor.PutBitmap(BitmapKey.Artwork, img);
-                //Task.Run(() => GetImage(metadataEditor));
-                metadataEditor.Apply();
             }
             catch (Exception e)
             {
@@ -438,7 +344,7 @@ namespace SpotyPie.Services
 
                 string channelName = Resources.GetString(Resource.String.channelName);
                 string channelDescription = Resources.GetString(Resource.String.channelDescription);
-                string ChannelId = Resources.GetString(Resource.String.channelDescription);
+                string ChannelId = Resources.GetString(Resource.String.ChannelId);
                 var channel = new NotificationChannel(ChannelId, channelName, NotificationImportance.Default)
                 {
                     Description = channelDescription
@@ -450,25 +356,6 @@ namespace SpotyPie.Services
             catch (Exception e)
             {
                 Task.Run(() => GetAPIService().Report(e));
-            }
-        }
-
-        public Bitmap GetImage()
-        {
-            try
-            {
-                RestClient client = new RestClient(Current_Song.LargeImage);
-                RestRequest request = new RestRequest(Method.GET);
-                using (MemoryStream str = new MemoryStream(client.DownloadData(request)))
-                {
-                    return BitmapFactory.DecodeStream(str);
-                }
-            }
-            catch (Exception e)
-            {
-                Task.Run(() => API.Report(e));
-                return null;
-
             }
         }
 
