@@ -105,8 +105,8 @@ namespace SpotyPie.Services
                 {
                     SetCurrentSong(position);
 
-                    if (serviceCallbacks == null)
-                        Notification($"Now playing {Current_Song.Name}", $"", Current_Song.MediumImage);
+                    //if (serviceCallbacks == null)
+                    Notification($"Now playing {Current_Song.Name}", $"{Current_Song.AlbumName} - by {Current_Song.ArtistName}", Current_Song.MediumImage);
                 }
             }
             catch (Exception e)
@@ -151,11 +151,11 @@ namespace SpotyPie.Services
 
         public void UpdateLockScreenPlayer()
         {
-            if (serviceCallbacks == null)
-            {
-                remoteControlClient.SetPlaybackState(RemoteControlPlayState.Buffering);
-                UpdateMetadata();
-            }
+            //if (serviceCallbacks == null)
+            //{
+            remoteControlClient.SetPlaybackState(RemoteControlPlayState.Buffering);
+            UpdateMetadata();
+            //}
         }
 
         private void LoadSong()
@@ -407,7 +407,10 @@ namespace SpotyPie.Services
                 metadataEditor.PutString(MetadataKey.Artist, Current_Song.ArtistName);
                 metadataEditor.PutString(MetadataKey.Albumartist, $"{Current_Song.AlbumName} - {Current_Song.ArtistName}");
                 metadataEditor.PutString(MetadataKey.Title, Current_Song.Name);
-                Task.Run(() => GetImage(metadataEditor));
+                var img = GetImage();
+                if (img != null)
+                    metadataEditor.PutBitmap(BitmapKey.Artwork, img);
+                //Task.Run(() => GetImage(metadataEditor));
                 metadataEditor.Apply();
             }
             catch (Exception e)
@@ -433,9 +436,9 @@ namespace SpotyPie.Services
                     return;
                 }
 
-                var channelName = "SpotyPie";
-                var channelDescription = "SpotyPie hight quality music now possible";
-                var ChannelId = "987456123";
+                string channelName = Resources.GetString(Resource.String.channelName);
+                string channelDescription = Resources.GetString(Resource.String.channelDescription);
+                string ChannelId = Resources.GetString(Resource.String.channelDescription);
                 var channel = new NotificationChannel(ChannelId, channelName, NotificationImportance.Default)
                 {
                     Description = channelDescription
@@ -450,24 +453,22 @@ namespace SpotyPie.Services
             }
         }
 
-        public void GetImage(RemoteControlClient.MetadataEditor editor)
+        public Bitmap GetImage()
         {
             try
             {
                 RestClient client = new RestClient(Current_Song.LargeImage);
                 RestRequest request = new RestRequest(Method.GET);
-                var fileBytes = client.DownloadData(request);
-                var image = BitmapFactory.DecodeStream(new MemoryStream(fileBytes));
-
-                Application.SynchronizationContext.Post(_ =>
+                using (MemoryStream str = new MemoryStream(client.DownloadData(request)))
                 {
-                    editor.PutBitmap(BitmapKey.Artwork, image);
-                    editor.Apply();
-                }, null);
+                    return BitmapFactory.DecodeStream(str);
+                }
             }
             catch (Exception e)
             {
                 Task.Run(() => API.Report(e));
+                return null;
+
             }
         }
 
@@ -479,7 +480,7 @@ namespace SpotyPie.Services
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "SpotyPie hight quality music now possible")
                 .SetContentTitle(title)
                 .SetContentText(content)
-                .SetSmallIcon(Resource.Drawable.logo_spotify);
+                .SetSmallIcon(Resource.Drawable.img_loading);
 
                 //Bitmap image = GetImage(imgUrl);
                 //if (image != null)

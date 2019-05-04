@@ -5861,6 +5861,9 @@ namespace SpotyPie
 		public partial class String
 		{
 			
+			// aapt resource value: 0x7f0a0051
+			public const int ChannelId = 2131361873;
+			
 			// aapt resource value: 0x7f0a0018
 			public const int abc_action_bar_home_description = 2131361816;
 			
@@ -5990,6 +5993,12 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0041
 			public const int bottom_sheet_behavior = 2131361857;
 			
+			// aapt resource value: 0x7f0a0052
+			public const int channelDescription = 2131361874;
+			
+			// aapt resource value: 0x7f0a0050
+			public const int channelName = 2131361872;
+			
 			// aapt resource value: 0x7f0a0042
 			public const int character_counter_content_description = 2131361858;
 			
@@ -6080,8 +6089,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0047
 			public const int mtrl_chip_close_icon_content_description = 2131361863;
 			
-			// aapt resource value: 0x7f0a0050
-			public const int muse = 2131361872;
+			// aapt resource value: 0x7f0a0053
+			public const int muse = 2131361875;
 			
 			// aapt resource value: 0x7f0a0048
 			public const int password_toggle_content_description = 2131361864;
