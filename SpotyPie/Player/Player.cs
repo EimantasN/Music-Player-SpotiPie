@@ -1,13 +1,10 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Media;
 using Android.OS;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Realms;
-using SpotyPie.Models;
 using SpotyPie.Services;
 using Square.Picasso;
 using System;
@@ -15,7 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Player
@@ -163,12 +159,12 @@ namespace SpotyPie.Player
 
         public override void OnResume()
         {
-            if (!IsMyServiceRunning(typeof(MusicService)))
+            if (!IsMyServiceRunning(typeof(MediaPlayerService)))
             {
-                this.Activity.StartService(new Intent(this.Activity, typeof(MusicService)));
+                this.Activity.StartService(new Intent(this.Activity, typeof(MediaPlayerService)));
             }
 
-            Intent intent = new Intent(this.Activity, typeof(MusicService));
+            Intent intent = new Intent(this.Activity, typeof(MediaPlayerService));
             this.Activity.BindService(intent, this.ServiceConnection, Bind.AutoCreate);
             ImgHolder.SetOnTouchListener(this);
             base.OnResume();
@@ -600,10 +596,12 @@ namespace SpotyPie.Player
 
         public void OnServiceConnected(ComponentName name, IBinder service)
         {
-            LocalBinder binder = (LocalBinder)service;
-            MusicService = binder.Service;
-            Bound = true;
-            MusicService.SetCallbacks(this);
+
+            MediaPlayerServiceBinder binder = (MediaPlayerServiceBinder)service;
+            binder.GetMediaPlayerService().Play();
+            //MusicService = binder.Service;
+            //Bound = true;
+            //MusicService.SetCallbacks(this);
         }
 
         public void OnServiceDisconnected(ComponentName name)

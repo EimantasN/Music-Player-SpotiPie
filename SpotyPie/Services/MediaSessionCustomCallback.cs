@@ -1,23 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.Media.Session;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+﻿using Android.Support.V4.Media.Session;
 
 namespace SpotyPie.Services
 {
-    public class MediaSessionCustomCallback : MediaSession.Callback
+    public class MediaSessionCustomCallback : MediaSessionCompat.Callback
     {
-        public override bool OnMediaButtonEvent(Intent mediaButtonIntent)
+        private MediaPlayerServiceBinder mediaPlayerService;
+        public MediaSessionCustomCallback(MediaPlayerServiceBinder service)
         {
-            return true;
+            mediaPlayerService = service;
+        }
+
+        public override void OnPause()
+        {
+            mediaPlayerService.GetMediaPlayerService().Pause();
+            base.OnPause();
+        }
+
+        public override void OnPlay()
+        {
+            mediaPlayerService.GetMediaPlayerService().Play();
+            base.OnPlay();
+        }
+
+        public override void OnSkipToNext()
+        {
+            mediaPlayerService.GetMediaPlayerService().PlayNext();
+            base.OnSkipToNext();
+        }
+
+        public override void OnSkipToPrevious()
+        {
+            mediaPlayerService.GetMediaPlayerService().PlayPrevious();
+            base.OnSkipToPrevious();
+        }
+
+        public override void OnStop()
+        {
+            mediaPlayerService.GetMediaPlayerService().Stop();
+            base.OnStop();
         }
     }
 }

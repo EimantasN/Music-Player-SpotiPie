@@ -5,6 +5,7 @@ using Android.Media;
 using Android.Media.Session;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Support.V4.Media.Session;
 using Android.Views;
 using Mobile_Api.Models;
 using RestSharp;
@@ -65,9 +66,6 @@ namespace SpotyPie.Services
 
         public int PrevId { get; set; }
 
-
-        private const string BaseUrl = "https://pie.pertrauktiestaskas.lt/api/stream/play/";
-
         public Songs Current_Song { get; set; }
 
         public List<Songs> Current_Song_List { get; set; } = new List<Songs>();
@@ -119,7 +117,7 @@ namespace SpotyPie.Services
                 {
                     serviceCallbacks?.SetViewLoadState();
                     InformUiSongChanged(Current_Song_List, position);
-                    LockScreenPlayer.SongLoadStarted();
+                    LockScreenPlayer.SetState(PlaybackStateCompat.StateBuffering);
                     LoadSong();
                 }
             }
@@ -160,15 +158,8 @@ namespace SpotyPie.Services
                         try
                         {
                             Starting = false;
-                            if (MusicPlayer == null)
-                                MusicPlayer = new MediaPlayer();
-
-                            if (MusicPlayer.IsPlaying)
-                                MusicPlayer.Stop();
-                            MusicPlayer.Reset();
-                            MusicPlayer.SetAudioStreamType(Android.Media.Stream.Music);
-                            MusicPlayer.SetDataSource(BaseUrl + Current_Song.Id);
-                            MusicPlayer.PrepareAsync();
+                            LockScreenPlayer.mediaControllerCompat.GetTransportControls().Play();
+                            LockScreenPlayer.LoadSongInSession(Current_Song);
                         }
                         catch (Exception e)
                         {
@@ -196,6 +187,22 @@ namespace SpotyPie.Services
             });
         }
 
+        public MediaPlayer GetMediaPlayer()
+        {
+            if (MusicPlayer == null)
+            {
+                MusicPlayer = new MediaPlayer();
+                MusicPlayer.SetAudioStreamType(Android.Media.Stream.Music);
+                MusicPlayer.SetWakeMode(ApplicationContext, WakeLockFlags.Partial);
+                MusicPlayer.Prepared += MusicPlayer_Prepared;
+                return MusicPlayer;
+            }
+            else
+            {
+                return MusicPlayer;
+            }
+        }
+
         public void CheckSong()
         {
             lock (_checkSongLock)
@@ -208,8 +215,7 @@ namespace SpotyPie.Services
         {
             if (Destoyed == true)
             {
-                MusicPlayer = new MediaPlayer();
-                MusicPlayer.Prepared += MusicPlayer_Prepared;
+                GetMediaPlayer();
                 Destoyed = false;
                 //bluetooth = new Bth();
                 //bluetooth.Start();
@@ -233,22 +239,25 @@ namespace SpotyPie.Services
                 {
                     case Keycode.MediaPlay:
                         {
-                            PlayerPlay();
+                            LockScreenPlayer.mediaControllerCompat.GetTransportControls().Play();
+                            //PlayerPlay();
                             break;
                         }
                     case Keycode.MediaPause:
                         {
-                            PlayerPause();
+                            LockScreenPlayer.mediaControllerCompat.GetTransportControls().Pause();
+                            //PlayerPause();
                             break;
                         }
                     case Keycode.MediaNext:
                         {
-                            ChangeSong(true);
+                            //LockScreenPlayer.mediaControllerCompat.GetTransportControls().Play();
+                            //ChangeSong(true);
                             break;
                         }
                     case Keycode.MediaPrevious:
                         {
-                            ChangeSong(false);
+                            //ChangeSong(false);
                             break;
                         }
                     default:
@@ -299,7 +308,7 @@ namespace SpotyPie.Services
             {
                 serviceCallbacks?.PlayerPrepared(MusicPlayer == null ? 999 : MusicPlayer.Duration);
 
-                LockScreenPlayer.SongLoaded(Current_Song);
+                LockScreenPlayer.UpdateMetaData(Current_Song);
 
                 MusicPlayer?.Start();
                 CurrentTime = new TimeSpan(0, 0, 0, 0);

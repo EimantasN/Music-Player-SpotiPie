@@ -37,7 +37,7 @@ namespace SpotyPie
                 if (keyEvent.Action != KeyEventActions.Down)
                     return;
 
-                Intent intend = new Intent(context, typeof(MusicService));
+                Intent intend = new Intent(context, typeof(MediaPlayerServiceBinder));
                 intend.PutExtra("Data", keyEvent.KeyCode.ToString());
                 context.StartService(intend);
             }
