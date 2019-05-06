@@ -1,42 +1,49 @@
 ﻿using Android.Support.V4.Media.Session;
+using Mobile_Api.Models;
 
 namespace SpotyPie.Services
 {
     public class MediaSessionCustomCallback : MediaSessionCompat.Callback
     {
-        private MediaPlayerServiceBinder mediaPlayerService;
-        public MediaSessionCustomCallback(MediaPlayerServiceBinder service)
+        private MusicService _musicService;
+        private Songs _song;
+        public MediaSessionCustomCallback(MusicService service)
         {
-            mediaPlayerService = service;
+            _musicService = service;
+        }
+
+        public void SetSoong(Songs song)
+        {
+            _song = song;
         }
 
         public override void OnPause()
         {
-            mediaPlayerService.GetMediaPlayerService().Pause();
+            _musicService.PlayerPause();
             base.OnPause();
         }
 
         public override void OnPlay()
         {
-            mediaPlayerService.GetMediaPlayerService().Play();
+            _musicService.PlayerPlay();
             base.OnPlay();
         }
 
         public override void OnSkipToNext()
         {
-            mediaPlayerService.GetMediaPlayerService().PlayNext();
+            _musicService.ChangeSong(true);
             base.OnSkipToNext();
         }
 
         public override void OnSkipToPrevious()
         {
-            mediaPlayerService.GetMediaPlayerService().PlayPrevious();
+            _musicService.ChangeSong(false);
             base.OnSkipToPrevious();
         }
 
         public override void OnStop()
         {
-            mediaPlayerService.GetMediaPlayerService().Stop();
+            _musicService.PlayerPause();
             base.OnStop();
         }
     }

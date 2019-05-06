@@ -159,13 +159,14 @@ namespace SpotyPie.Player
 
         public override void OnResume()
         {
-            if (!IsMyServiceRunning(typeof(MediaPlayerService)))
+            if (!IsMyServiceRunning(typeof(MusicService)))
             {
-                this.Activity.StartService(new Intent(this.Activity, typeof(MediaPlayerService)));
+                this.Activity.StartService(new Intent(this.Activity, typeof(MusicService)));
             }
 
-            Intent intent = new Intent(this.Activity, typeof(MediaPlayerService));
-            this.Activity.BindService(intent, this.ServiceConnection, Bind.AutoCreate);
+            Intent intent = new Intent(this.Activity, typeof(MusicService));
+            Activity.BindService(intent, this.ServiceConnection, Bind.AutoCreate);
+
             ImgHolder.SetOnTouchListener(this);
             base.OnResume();
         }
@@ -285,6 +286,7 @@ namespace SpotyPie.Player
             {
             }
         }
+
 
         public void NextSongPlayer()
         {
@@ -597,11 +599,10 @@ namespace SpotyPie.Player
         public void OnServiceConnected(ComponentName name, IBinder service)
         {
 
-            MediaPlayerServiceBinder binder = (MediaPlayerServiceBinder)service;
-            binder.GetMediaPlayerService().Play();
-            //MusicService = binder.Service;
-            //Bound = true;
-            //MusicService.SetCallbacks(this);
+            MusicServiceBinder binder = (MusicServiceBinder)service;
+            Bound = true;
+            MusicService = binder.Service;
+            binder.Service.SetCallbacks(this);
         }
 
         public void OnServiceDisconnected(ComponentName name)

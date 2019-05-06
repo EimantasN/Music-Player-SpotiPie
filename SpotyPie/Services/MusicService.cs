@@ -23,6 +23,8 @@ namespace SpotyPie.Services
     [Service]
     public class MusicService : Service
     {
+        private const string BaseUrl = "https://pie.pertrauktiestaskas.lt/api/stream/play/";
+
         private Mobile_Api.Service API { get; set; }
 
         private IBinder binder;
@@ -40,7 +42,6 @@ namespace SpotyPie.Services
         public bool Start_music { get; set; }
 
         public bool PlayerIsVisible { get; set; }
-
 
         private ServiceCallbacks serviceCallbacks;
 
@@ -117,7 +118,7 @@ namespace SpotyPie.Services
                 {
                     serviceCallbacks?.SetViewLoadState();
                     InformUiSongChanged(Current_Song_List, position);
-                    LockScreenPlayer.SetState(PlaybackStateCompat.StateBuffering);
+                    LockScreenPlayer.SetStateBuffering();
                     LoadSong();
                 }
             }
@@ -158,8 +159,10 @@ namespace SpotyPie.Services
                         try
                         {
                             Starting = false;
-                            LockScreenPlayer.mediaControllerCompat.GetTransportControls().Play();
-                            LockScreenPlayer.LoadSongInSession(Current_Song);
+                            LockScreenPlayer?.SetStateBuffering();
+                            GetMediaPlayer().Reset();
+                            GetMediaPlayer().SetDataSource(BaseUrl + Current_Song.Id);
+                            GetMediaPlayer().Prepare();
                         }
                         catch (Exception e)
                         {
@@ -225,55 +228,57 @@ namespace SpotyPie.Services
             if (!InputIn)
             {
                 InputIn = true;
-                HeadSetInput(intent.GetStringExtra("Data"));
+                HeadSetInput(intent);
             }
             return StartCommandResult.Sticky;
         }
 
-        public void HeadSetInput(string input)
+        public void HeadSetInput(Intent intent)
         {
             try
             {
-                Enum.TryParse(input, out Keycode key);
-                switch (key)
+                if (intent == null || intent.Action == null)
+                    return;
+
+                string action = intent.Action;
+                switch (action)
                 {
-                    case Keycode.MediaPlay:
+                    case LockScreenMusicPlayer.ActionPlay:
                         {
-                            LockScreenPlayer.mediaControllerCompat.GetTransportControls().Play();
-                            //PlayerPlay();
+                            LockScreenPlayer?.mediaControllerCompat?.GetTransportControls()?.Play();
                             break;
                         }
-                    case Keycode.MediaPause:
+                    case LockScreenMusicPlayer.ActionPause:
                         {
-                            LockScreenPlayer.mediaControllerCompat.GetTransportControls().Pause();
-                            //PlayerPause();
+                            LockScreenPlayer?.mediaControllerCompat?.GetTransportControls()?.Stop();
                             break;
                         }
-                    case Keycode.MediaNext:
+                    case LockScreenMusicPlayer.ActionNext:
                         {
-                            //LockScreenPlayer.mediaControllerCompat.GetTransportControls().Play();
-                            //ChangeSong(true);
+                            LockScreenPlayer?.mediaControllerCompat?.GetTransportControls()?.SkipToNext();
                             break;
                         }
-                    case Keycode.MediaPrevious:
+                    case LockScreenMusicPlayer.ActionPrevious:
                         {
-                            //ChangeSong(false);
+                            LockScreenPlayer?.mediaControllerCompat?.GetTransportControls()?.SkipToPrevious();
                             break;
                         }
                     default:
-                        Console.WriteLine(key);
                         break;
                 }
                 Thread.Sleep(1000);
-                InputIn = false;
             }
             catch (Exception e)
             {
                 Task.Run(() => GetAPIService().Report(e));
             }
+            finally
+            {
+                InputIn = false;
+            }
         }
 
-        private void PlayerPlay()
+        public void PlayerPlay()
         {
             if (MusicPlayer == null)
                 return;
@@ -285,7 +290,7 @@ namespace SpotyPie.Services
             }
         }
 
-        private void PlayerPause()
+        public void PlayerPause()
         {
             if (MusicPlayer == null)
                 return;
@@ -293,6 +298,7 @@ namespace SpotyPie.Services
             if (MusicPlayer.IsPlaying)
             {
                 serviceCallbacks?.Music_pause();
+                LockScreenPlayer?.SetStateStopped();
                 MusicPlayer.Stop();
             }
         }
@@ -308,9 +314,10 @@ namespace SpotyPie.Services
             {
                 serviceCallbacks?.PlayerPrepared(MusicPlayer == null ? 999 : MusicPlayer.Duration);
 
-                LockScreenPlayer.UpdateMetaData(Current_Song);
+                LockScreenPlayer?.SetStatePlaying();
 
                 MusicPlayer?.Start();
+
                 CurrentTime = new TimeSpan(0, 0, 0, 0);
                 Task.Run(() => UpdateLoop());
             }
@@ -324,7 +331,7 @@ namespace SpotyPie.Services
         {
             try
             {
-                binder = new LocalBinder(this);
+                binder = new MusicServiceBinder(this);
                 LockScreenPlayer = new LockScreenMusicPlayer(this);
                 base.OnCreate();
             }

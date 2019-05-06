@@ -78,25 +78,27 @@ namespace SpotyPie.Services
         public MediaPlayerService()
         {
             // Create an instance for a runnable-handler
-            PlayingHandler = new Handler();
+            //PlayingHandler = new Handler();
 
-            // Create a runnable, restarting itself if the status still is "playing"
-            PlayingHandlerRunnable = new Java.Lang.Runnable(() => {
-                OnPlaying(EventArgs.Empty);
+            //// Create a runnable, restarting itself if the status still is "playing"
+            //PlayingHandlerRunnable = new Java.Lang.Runnable(() =>
+            //{
+            //    OnPlaying(EventArgs.Empty);
 
-                if (MediaPlayerState == PlaybackStateCompat.StatePlaying)
-                {
-                    PlayingHandler.PostDelayed(PlayingHandlerRunnable, 250);
-                }
-            });
+            //    if (MediaPlayerState == PlaybackStateCompat.StatePlaying)
+            //    {
+            //        PlayingHandler.PostDelayed(PlayingHandlerRunnable, 250);
+            //    }
+            //});
 
-            // On Status changed to PLAYING, start raising the Playing event
-            StatusChanged += (object sender, EventArgs e) => {
-                if (MediaPlayerState == PlaybackStateCompat.StatePlaying)
-                {
-                    PlayingHandler.PostDelayed(PlayingHandlerRunnable, 0);
-                }
-            };
+            //// On Status changed to PLAYING, start raising the Playing event
+            //StatusChanged += (object sender, EventArgs e) =>
+            //{
+            //    if (MediaPlayerState == PlaybackStateCompat.StatePlaying)
+            //    {
+            //        PlayingHandler.PostDelayed(PlayingHandlerRunnable, 0);
+            //    }
+            //};
         }
 
         protected virtual void OnStatusChanged(EventArgs e)
@@ -194,7 +196,6 @@ namespace SpotyPie.Services
             try
             {
                 mediaPlayer.Start();
-                UpdatePlaybackState(PlaybackStateCompat.StatePlaying);
             }
             catch (Exception ex)
             {
@@ -345,11 +346,11 @@ namespace SpotyPie.Services
                 UpdateMediaMetadataCompat(metaRetriever);
                 StartNotification();
 
-                byte[] imageByteArray = metaRetriever.GetEmbeddedPicture();
-                if (imageByteArray == null)
-                    Cover = await BitmapFactory.DecodeResourceAsync(Resources, Resource.Drawable.img_loading);
-                else
-                    Cover = await BitmapFactory.DecodeByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
+                //byte[] imageByteArray = metaRetriever.GetEmbeddedPicture();
+                //if (imageByteArray == null)
+                //    Cover = await BitmapFactory.DecodeResourceAsync(Resources, Resource.Drawable.img_loading);
+                //else
+                //    Cover = await BitmapFactory.DecodeByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
             }
             catch (Exception ex)
             {
@@ -366,7 +367,8 @@ namespace SpotyPie.Services
 
         public async Task Seek(int position)
         {
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 if (mediaPlayer != null)
                 {
                     mediaPlayer.SeekTo(position);
@@ -418,7 +420,8 @@ namespace SpotyPie.Services
 
         public async Task Pause()
         {
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 if (mediaPlayer == null)
                     return;
 
@@ -431,7 +434,8 @@ namespace SpotyPie.Services
 
         public async Task Stop()
         {
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 if (mediaPlayer == null)
                     return;
 

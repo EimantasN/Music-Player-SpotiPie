@@ -2,9 +2,9 @@
 
 namespace SpotyPie.Services
 {
-    public class LocalBinder : Binder
+    public class MusicServiceBinder : Binder
     {
-        public LocalBinder(MusicService service)
+        public MusicServiceBinder(MusicService service)
         {
             this.Service = service;
         }
