@@ -64,10 +64,12 @@ namespace SpotyPie.RecycleView
                 Songs ar = Dataset[position] as Songs;
                 if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongWithImage)
                     return Resource.Layout.song_list_with_image;
-                else if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongBindList)
-                    return Resource.Layout.song_detail_list;
                 else
                     return Resource.Layout.song_list_rv;
+            }
+            else if (typeof(T) == typeof(SongTag) || Dataset[position].GetType().Name == "SongTag")
+            {
+                return Resource.Layout.song_detail_list;
             }
             throw new System.Exception("No view found");
         }
@@ -151,7 +153,7 @@ namespace SpotyPie.RecycleView
             else if (holder is SongBindList)
             {
                 SongBindList view = holder as SongBindList;
-                view.PrepareView(Dataset[position] as Songs, Context);
+                view.PrepareView(Dataset[position] as SongTag, Context);
                 return;
             }
 

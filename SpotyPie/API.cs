@@ -376,6 +376,11 @@ namespace SpotyPie
         }
         #endregion
 
+        public async Task<List<SongTag>> GetUnbindedSongList()
+        {
+            return await _service.GetListAsync<SongTag>("UnbindedSongs", "Songs");
+        }
+
         public void SetCurrentList(List<Songs> songs)
         {
             try

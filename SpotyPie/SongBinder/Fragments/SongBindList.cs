@@ -3,6 +3,8 @@ using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
 using SpotyPie.SongBinder.Enumerators;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SpotyPie.SongBinder.Fragments
@@ -11,7 +13,7 @@ namespace SpotyPie.SongBinder.Fragments
     {
         public override int LayoutId { get; set; } = Resource.Layout.song_bind_list;
 
-        private BaseRecycleView<Songs> Songs { get; set; }
+        private BaseRecycleView<SongTag> Songs { get; set; }
 
         protected override void InitView()
         {
@@ -21,14 +23,30 @@ namespace SpotyPie.SongBinder.Fragments
         {
             if (Songs == null)
             {
-                Songs = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
+                Songs = new BaseRecycleView<SongTag>(this, Resource.Id.song_list);
                 Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 Songs.SetClickAction(() =>
                 {
                     ParentActivity.GetInstance().LoadFragmentInner(BinderFragments.SongDetailsFragment);
                 });
             }
-            Task.Run(() => ParentActivity.GetAPIService().GetAll<Songs>(Songs.GetData(), null, RvType.SongBindList));
+            Task.Run(() => LoadUnbindedSongsAsync());
+        }
+
+        private async Task LoadUnbindedSongsAsync()
+        {
+            try
+            {
+                List<SongTag> unbindedSongs = await ParentActivity.GetAPIService().GetUnbindedSongList();
+                if (unbindedSongs != null && unbindedSongs.Count != 0)
+                {
+                    Songs.GetData().AddList(unbindedSongs);
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         public override void ReleaseData()

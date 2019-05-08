@@ -251,9 +251,9 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("UnbindedSongs")]
+        [HttpGet("UnbindedSongs")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> UnbindedSongs()
+        public IActionResult UnbindedSongs()
         {
             try
             {

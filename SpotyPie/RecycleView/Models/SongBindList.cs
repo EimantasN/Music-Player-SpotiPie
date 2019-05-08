@@ -28,11 +28,11 @@ namespace SpotyPie.RecycleView.Models
         }
 
 
-        internal void PrepareView(Songs song, Context context)
+        internal void PrepareView(SongTag song, Context context)
         {
-            Title.Text = song.Name;
-            Album.Text = song.AlbumName;
-            Artist.Text = song.ArtistName;
+            Title.Text = song.Title;
+            Album.Text = song.Album;
+            Artist.Text = song.Artist;
         }
     }
 }
