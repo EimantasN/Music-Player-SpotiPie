@@ -2,7 +2,6 @@
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
@@ -10,7 +9,6 @@ using SpotyPie.Base;
 using SpotyPie.Enums.Activitys;
 using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie
@@ -20,7 +18,6 @@ namespace SpotyPie
     {
         private int LastViewLayer = 0;
         private int CurrentViewLayer = 1;
-        //private BluetoothHelper _bluetoothHelper;
 
         private Current_state APPSTATE;
 
@@ -60,27 +57,14 @@ namespace SpotyPie
 
         ConstraintLayout HeaderContainer;
 
-        public SupportFragmentManager mSupportFragmentManager;
-
-        public ICommand MyCommand { get; }
-
-        private void MyCommandExecute()
-        {
-            //var deviceName = "MDR";
-            //if (!_bluetoothHelper.IsConnected)
-            //    _bluetoothHelper.Connect(deviceName);
-        }
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            mSupportFragmentManager = SupportFragmentManager;
+            InitFather();
 
             APPSTATE = new Current_state(this);
-
-            var x = GetAPIService().GetCurrentList();
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
 
@@ -165,18 +149,12 @@ namespace SpotyPie
 
         protected override void OnDestroy()
         {
-            APPSTATE.Dispose();
             base.OnDestroy();
-        }
-
-        public Current_state GetState()
-        {
-            return APPSTATE;
         }
 
         public override void OnBackPressed()
         {
-            if (APPSTATE.GetPlayer().CheckChildFragments())
+            if (GetState().GetPlayer().CheckChildFragments())
             {
 
                 switch (CurrentViewLayer)
@@ -349,7 +327,7 @@ namespace SpotyPie
         public void LoadAlbum(Album album)
         {
             if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
-            APPSTATE.SetAlbum(album);
+            GetState().SetAlbum(album);
 
             if (!AlbumFragment.IsAdded)
                 SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, AlbumFragment).Commit();
@@ -364,10 +342,17 @@ namespace SpotyPie
             ToogleSecondLayer(true);
         }
 
+        public Current_state GetState()
+        {
+            if (APPSTATE == null)
+                APPSTATE = new Current_state(this);
+            return APPSTATE;
+        }
+
         public void LoadArtist(Artist artist)
         {
             if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
-            APPSTATE.SetArtist(artist);
+            GetState().SetArtist(artist);
 
             if (!ArtistFragment.IsAdded)
                 SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, ArtistFragment).Commit();
@@ -390,8 +375,6 @@ namespace SpotyPie
                 LastViewLayer = CurrentViewLayer;
                 CurrentViewLayer = 2;
                 HideOthers();
-                //AlbumFragment?.ForceUpdate();
-                //ArtistFragment?.ForceUpdate();
                 FirstLayer.Visibility = ViewStates.Visible;
                 FirstLayer.BringToFront();
             }
@@ -428,18 +411,11 @@ namespace SpotyPie
                 LastViewLayer = CurrentViewLayer;
                 CurrentViewLayer = 3;
                 HideOthers();
-                //AlbumFragment.ForceUpdate();
                 SecondLayer.Visibility = ViewStates.Visible;
                 SecondLayer.BringToFront();
             }
             else
             {
-                //if (AlbumFragment != null && AlbumFragment.IsVisible)
-                //    AlbumFragment.ReleaseData();
-
-                //if (ArtistFragment != null && ArtistFragment.IsVisible)
-                //    ArtistFragment.ReleaseData();
-
                 SecondLayer.Visibility = ViewStates.Gone;
             }
         }
@@ -463,6 +439,16 @@ namespace SpotyPie
             {
                 bottomNavigation.Visibility = ViewStates.Gone;
             }
+        }
+
+        public override dynamic GetInstance()
+        {
+            return this;
+        }
+
+        protected override void InitFather()
+        {
+            mSupportFragmentManager = SupportFragmentManager;
         }
     }
 }

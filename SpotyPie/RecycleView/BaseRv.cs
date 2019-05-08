@@ -65,7 +65,7 @@ namespace SpotyPie.RecycleView
                 if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongWithImage)
                     return Resource.Layout.song_list_with_image;
                 else if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongBindList)
-                    return Resource.Layout.song_bind_list;
+                    return Resource.Layout.song_detail_list;
                 else
                     return Resource.Layout.song_list_rv;
             }
@@ -90,8 +90,8 @@ namespace SpotyPie.RecycleView
                     return new BlockImageTwo(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.boxed_rv_list_two, parent, false), parent);
                 case Resource.Layout.song_list_with_image:
                     return new SongWithImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_with_image, parent, false), parent);
-                case Resource.Layout.song_bind_list:
-                    return new SongBindList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_bind_list, parent, false), parent);
+                case Resource.Layout.song_detail_list:
+                    return new SongBindList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_detail_list, parent, false), parent);
                 case Resource.Layout.artist_list:
                     return new ArtistList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.artist_list, parent, false), parent);
                 case Resource.Layout.album_list:

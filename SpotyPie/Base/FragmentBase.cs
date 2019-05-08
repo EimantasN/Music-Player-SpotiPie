@@ -15,7 +15,7 @@ namespace SpotyPie.Base
 
         protected View RootView;
 
-        protected MainActivity ParentActivity;
+        protected ActivityBase ParentActivity;
 
         public View GetView()
         {
@@ -30,7 +30,7 @@ namespace SpotyPie.Base
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             RootView = inflater.Inflate(GetLayout(), container, false);
-            ParentActivity = (MainActivity)Activity;
+            ParentActivity = (ActivityBase)Activity;
             InitView();
             return RootView;
         }
@@ -52,26 +52,24 @@ namespace SpotyPie.Base
             IsVisible = true;
             RootView.Alpha = 1f;
             RootView.TranslationX = 0;
-            if (ParentActivity == null)
-                ParentActivity = (MainActivity)Activity;
         }
 
         public Current_state GetState()
         {
             if (ParentActivity == null)
-                ParentActivity = (MainActivity)Activity;
+                ParentActivity = (ActivityBase)Activity;
 
-            return ParentActivity.GetState();
+            return ParentActivity.GetInstance().GetState();
         }
 
         public SupportFragment GetCurrentFragment()
         {
-            return ParentActivity.FirstLayerFragment;
+            return ParentActivity.GetInstance().FirstLayerFragment;
         }
 
         public API GetAPIService()
         {
-            return ParentActivity.GetAPIService();
+            return ParentActivity.GetInstance().GetAPIService();
         }
 
         public void InvokeOnMainThread(Action action)
@@ -86,12 +84,12 @@ namespace SpotyPie.Base
 
         public void LoadAlbum(Album album)
         {
-            ParentActivity.LoadAlbum(album);
+            ParentActivity.GetInstance().LoadAlbum(album);
         }
 
         public void LoadArtist(Artist artist)
         {
-            ParentActivity.LoadArtist(artist);
+            ParentActivity.GetInstance().LoadArtist(artist);
         }
 
         public override void OnResume()
@@ -109,6 +107,14 @@ namespace SpotyPie.Base
         public override void OnDestroyView()
         {
             base.OnDestroyView();
+        }
+
+        public void RunOnUiThread(Action action)
+        {
+            Activity.RunOnUiThread(() =>
+            {
+                action?.Invoke();
+            });
         }
     }
 }

@@ -2,6 +2,7 @@
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
+using SpotyPie.SongBinder.Enumerators;
 using System.Threading.Tasks;
 
 namespace SpotyPie.SongBinder.Fragments
@@ -22,6 +23,10 @@ namespace SpotyPie.SongBinder.Fragments
             {
                 Songs = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
                 Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                Songs.SetClickAction(() =>
+                {
+                    ParentActivity.GetInstance().LoadFragmentInner(BinderFragments.SongDetailsFragment);
+                });
             }
             Task.Run(() => ParentActivity.GetAPIService().GetAll<Songs>(Songs.GetData(), null, RvType.SongBindList));
         }

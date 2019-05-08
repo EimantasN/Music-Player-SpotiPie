@@ -299,5 +299,15 @@ namespace SpotyPie
         {
 
         }
+
+        public override dynamic GetInstance()
+        {
+            return this;
+        }
+
+        protected override void InitFather()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

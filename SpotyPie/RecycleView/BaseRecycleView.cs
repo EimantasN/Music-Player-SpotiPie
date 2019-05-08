@@ -112,7 +112,9 @@ namespace SpotyPie.RecycleView
                     }
                     else if (RvDataset[position].GetType().Name == "Songs")
                     {
-                        Activity.GetState().SetSong(RvDataset.GetList() as List<Songs>, position);
+                        Songs song = RvDataset[position] as Songs;
+                        if (song.GetModelType() != Mobile_Api.Models.Enums.RvType.SongBindList)
+                            Activity.GetState().SetSong(RvDataset.GetList() as List<Songs>, position);
                     }
                     else
                     {

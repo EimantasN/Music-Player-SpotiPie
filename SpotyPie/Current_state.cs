@@ -44,7 +44,7 @@ namespace SpotyPie
         {
             this.Activity = activity;
             Player = new Player.Player();
-            this.Activity.mSupportFragmentManager.BeginTransaction()
+            activity.mSupportFragmentManager.BeginTransaction()
                     .Replace(Resource.Id.player_frame, Player)
                     .Commit();
         }

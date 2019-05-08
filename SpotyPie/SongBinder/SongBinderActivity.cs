@@ -8,10 +8,8 @@ using SpotyPie.SongBinder.Enumerators;
 namespace SpotyPie.SongBinder
 {
     [Activity(Label = "SongBinderActivity", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Theme = "@style/Theme.SpotyPie")]
-    public class SongBinderActivity : AppCompatActivity
+    public class SongBinderActivity : ActivityBase
     {
-        private FragmentBase CurrentFragment;
-
         //Action buttons
         private Button BindSongs;
         private Button Sync;
@@ -19,7 +17,6 @@ namespace SpotyPie.SongBinder
         private Button DeleteSong;
         private Button LoadTorrent;
         private Button SetQuality;
-
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -47,42 +44,34 @@ namespace SpotyPie.SongBinder
 
         private void BindSongs_Click(object sender, System.EventArgs e)
         {
-            LoadFragment(BinderFragments.UnBindedSongList);
+            LoadFragmentInner(BinderFragments.UnBindedSongList);
         }
 
-        void LoadFragment(BinderFragments fragment)
+
+        //DO not use this to load fragment
+        protected override void LoadFragment(dynamic switcher)
         {
-            //if (HeaderContainer.Visibility == ViewStates.Gone)
-            //    HeaderContainer.Visibility = ViewStates.Visible;
-
-            if (CurrentFragment != null)
-            {
-                CurrentFragment.Hide();
-            }
-
-            CurrentFragment = null;
-            switch (fragment)
+            switch (switcher)
             {
                 case BinderFragments.UnBindedSongList:
-                    CurrentFragment = new SongBinder.Fragments.SongBindList();
+                    CurrentFragment = new Fragments.SongBindList();
+                    break;
+                case BinderFragments.SongDetailsFragment:
+                    CurrentFragment = new Fragments.SongDetailsFragment();
                     break;
                 default:
                     break;
             }
+        }
 
-            if (CurrentFragment == null)
-                return;
+        public override dynamic GetInstance()
+        {
+            return this;
+        }
 
-            if (!CurrentFragment.IsAdded)
-            {
-                SupportFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.content_frame, CurrentFragment)
-                .Commit();
-            }
-            else
-            {
-                CurrentFragment.Show();
-            }
+        protected override void InitFather()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Android.Support.V7.App;
+﻿using Android.OS;
+using Android.Support.V7.App;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie.Base
@@ -11,7 +12,14 @@ namespace SpotyPie.Base
 
         private API Api_service { get; set; }
 
-        public API GetAPIService()
+        public SupportFragmentManager mSupportFragmentManager;
+
+        public abstract dynamic GetInstance();
+
+        protected abstract void InitFather();
+
+
+            public API GetAPIService()
         {
             if (Api_service == null)
                 return Api_service = new API(new Mobile_Api.Service(), this);
@@ -20,7 +28,7 @@ namespace SpotyPie.Base
 
         protected abstract void LoadFragment(dynamic switcher);
 
-        protected void LoadFragmentInner(dynamic switcher)
+        public void LoadFragmentInner(dynamic switcher)
         {
             if (CurrentFragment != null)
             {
@@ -46,6 +54,11 @@ namespace SpotyPie.Base
             {
                 CurrentFragment.Show();
             }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
         }
 
         public void RemoveCurrentFragment()
