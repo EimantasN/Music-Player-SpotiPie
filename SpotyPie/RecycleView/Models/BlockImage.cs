@@ -29,19 +29,12 @@ namespace SpotyPie.RecycleView.Models
 
         public void PrepareView(dynamic data, Context Context)
         {
-            try
-            {
-                if (data.Name.Length > 13) Title.Selected = true;
-                Title.Text = data.Name;
+            if (data.Name.Length > 13) Title.Selected = true;
+            Title.Text = data.Name;
 
-                //TODO ADD SUBTITLE
-                SubTitile.Text = "Coming soon";
-                Picasso.With(Context).Load(data.MediumImage).NoFade().Fit().CenterCrop().Into(Image);
-            }
-            catch (Exception e)
-            {
-
-            }
+            //TODO ADD SUBTITLE
+            SubTitile.Text = "Coming soon";
+            Picasso.With(Context).Load(data.MediumImage).NoFade().Fit().CenterCrop().Into(Image);
         }
     }
 }

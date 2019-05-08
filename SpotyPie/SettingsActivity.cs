@@ -11,12 +11,15 @@ using Android.Bluetooth;
 using System;
 using System.Threading.Tasks;
 using Android.Views;
+using SpotyPie.Base;
 
 namespace SpotyPie
 {
-    [Activity(Label = "SettingsActivity", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
-    public class SettingsActivity : AppCompatActivity
+    [Activity(Label = "SettingsActivity", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Theme = "@style/Theme.SpotyPie")]
+    public class SettingsActivity : ActivityBase
     {
+        private API Api_service { get; set; }
+
         private Spinner MusicQualitySpinner;
         private Spinner BluetoothDeviceSpinner;
         private Switch DataSaverSwitch;
@@ -30,6 +33,12 @@ namespace SpotyPie
         private TextView DeviceName;
         private TextView DeviceStatus;
         private TextView CurrentText;
+
+        private TextView SongBindedText;
+        private TextView SongBindedCount;
+        private TextView SongUnbindedText;
+        private TextView SongUnbindedCount;
+        private Button LaunchSongBinder;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -69,6 +78,28 @@ namespace SpotyPie
             CellularSwitch.Checked = settings.CellularSwitch;
 
             InitBluetoothSpinner();
+
+            //Song binder
+            SongBindedText = FindViewById<TextView>(Resource.Id.song_binded_text);
+            SongBindedCount = FindViewById<TextView>(Resource.Id.song_binded_count);
+            SongUnbindedText = FindViewById<TextView>(Resource.Id.song_unbinded_text);
+            SongUnbindedCount = FindViewById<TextView>(Resource.Id.song_unbinded_count);
+            LaunchSongBinder = FindViewById<Button>(Resource.Id.song_binder_btn);
+            LaunchSongBinder.Click += LaunchSongBinder_Click;
+
+            Task.Run(() => GetBindStatistics());
+        }
+
+        private void LaunchSongBinder_Click(object sender, EventArgs e)
+        {
+            StartActivity(typeof(SongBinder.SongBinderActivity));
+        }
+
+        private void GetBindStatistics()
+        {
+            RunOnUiThread(() =>
+            {
+            });
         }
 
         private void InitBluetoothSpinner()
@@ -85,7 +116,7 @@ namespace SpotyPie
                         Devices.Add(settings.CurrentBthDeviceName);
 
                     Devices.AddRange(PairedDevices(Devices[0]));
-                    Application.SynchronizationContext.Post(_ =>
+                    RunOnUiThread(() =>
                     {
                         var adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSelectableListItem, Devices);
 
@@ -105,19 +136,20 @@ namespace SpotyPie
 
                         BluetoothDeviceSpinner.Adapter = adapter;
                         BluetoothDeviceSpinner.ItemSelected += BluetoothDeviceSpinner_ItemSelected;
-                    }, null);
+                    });
                 });
             }
             else
             {
                 if (DeviceName != null)
                 {
-                    DeviceName.Visibility = ViewStates.Gone;
-
-                    //DeviceStatus.Visibility = ViewStates.Gone;
-                    DeviceStatus.Visibility = ViewStates.Gone;
-                    CurrentText.Visibility = ViewStates.Gone;
-                    BluetoothDeviceSpinner.Visibility = ViewStates.Gone;
+                    RunOnUiThread(() =>
+                    {
+                        DeviceName.Visibility = ViewStates.Gone;
+                        DeviceStatus.Visibility = ViewStates.Gone;
+                        CurrentText.Visibility = ViewStates.Gone;
+                        BluetoothDeviceSpinner.Visibility = ViewStates.Gone;
+                    });
                 }
             }
         }
@@ -262,6 +294,11 @@ namespace SpotyPie
             }
 
             return devices;
+        }
+
+        protected override void LoadFragment()
+        {
+            throw new NotImplementedException();
         }
     }
 }

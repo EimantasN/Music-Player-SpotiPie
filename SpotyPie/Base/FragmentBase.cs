@@ -52,13 +52,13 @@ namespace SpotyPie.Base
             IsVisible = true;
             RootView.Alpha = 1f;
             RootView.TranslationX = 0;
-            if(ParentActivity == null)
+            if (ParentActivity == null)
                 ParentActivity = (MainActivity)Activity;
         }
 
         public Current_state GetState()
         {
-            if(ParentActivity == null)
+            if (ParentActivity == null)
                 ParentActivity = (MainActivity)Activity;
 
             return ParentActivity.GetState();

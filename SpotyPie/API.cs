@@ -1,4 +1,6 @@
 ﻿using Android.App;
+using Android.Support.V4.App;
+using Android.Support.V7.App;
 using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
@@ -15,6 +17,7 @@ namespace SpotyPie
     public class API
     {
         private static Object _currentStateGetter = new Object();
+
         private bool GettingState { get; set; } = false;
 
         private dynamic State { get; set; }
@@ -22,7 +25,8 @@ namespace SpotyPie
         private DateTime StateGettinTime { get; set; }
 
         private Mobile_Api.Service _service;
-        private MainActivity _activity;
+
+        private AppCompatActivity _activity;
 
         private List<Album> _Albums { get; set; }
         private List<Artist> _Artists { get; set; }
@@ -35,7 +39,7 @@ namespace SpotyPie
 
         #endregion
 
-        public API(Mobile_Api.Service service, MainActivity activity)
+        public API(Mobile_Api.Service service, AppCompatActivity activity)
         {
             _service = service;
             _activity = activity;
@@ -83,7 +87,7 @@ namespace SpotyPie
             try
             {
                 List<T> AlbumsData = new List<T>() { default(T) };
-                InvokeOnMainThread(() => RvList.AddList(AlbumsData));
+                RvList.AddList(AlbumsData);
 
                 AlbumsData = await _service.GetAll<T>();
 
@@ -108,19 +112,16 @@ namespace SpotyPie
 
         #region MainFragment
 
-        public async Task GetRecentAlbumsAsync(RvList<Album> RvList, Action action)
+        public async Task GetRecentAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
         {
             try
             {
                 List<Album> AlbumData = await _service.GetRecent<Album>();
-                InvokeOnMainThread(() =>
+                activity.RunOnUiThread(() =>
                 {
-                    if (action != null)
-                    {
-                        action.Invoke();
-                    }
-                    RvList.AddList(AlbumData);
+                    action?.Invoke();
                 });
+                RvList.AddList(AlbumData);
             }
             catch (Exception e)
             {
@@ -128,19 +129,33 @@ namespace SpotyPie
             }
         }
 
-        public async Task GetPolularAlbumsAsync(RvList<Album> RvList, Action action)
+        public async Task GetPolularAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
         {
             try
             {
                 List<Album> AlbumData = await _service.GetPopular<Album>();
+                activity.RunOnUiThread(() =>
+                {
+                    action?.Invoke();
+                });
+                RvList.AddList(AlbumData);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task GetOldAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
+        {
+            try
+            {
+                List<Album> AlbumData = await _service.GetOld<Album>();
                 InvokeOnMainThread(() =>
                 {
-                    if (action != null)
-                    {
-                        action.Invoke();
-                    }
-                    RvList.AddList(AlbumData);
+                    action?.Invoke();
                 });
+                RvList.AddList(AlbumData);
             }
             catch (Exception e)
             {
@@ -156,26 +171,6 @@ namespace SpotyPie
         internal async Task UpdateAsync<T>(int id)
         {
             await _service.Update<T>(id);
-        }
-
-        public async Task GetOldAlbumsAsync(RvList<Album> RvList, Action action)
-        {
-            try
-            {
-                List<Album> AlbumData = await _service.GetOld<Album>();
-                InvokeOnMainThread(() =>
-                {
-                    if (action != null)
-                    {
-                        action.Invoke();
-                    }
-                    RvList.AddList(AlbumData);
-                });
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
         }
 
         #endregion

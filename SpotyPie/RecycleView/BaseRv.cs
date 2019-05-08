@@ -64,6 +64,8 @@ namespace SpotyPie.RecycleView
                 Songs ar = Dataset[position] as Songs;
                 if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongWithImage)
                     return Resource.Layout.song_list_with_image;
+                else if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongBindList)
+                    return Resource.Layout.song_bind_list;
                 else
                     return Resource.Layout.song_list_rv;
             }
@@ -88,6 +90,8 @@ namespace SpotyPie.RecycleView
                     return new BlockImageTwo(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.boxed_rv_list_two, parent, false), parent);
                 case Resource.Layout.song_list_with_image:
                     return new SongWithImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_with_image, parent, false), parent);
+                case Resource.Layout.song_bind_list:
+                    return new SongBindList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_bind_list, parent, false), parent);
                 case Resource.Layout.artist_list:
                     return new ArtistList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.artist_list, parent, false), parent);
                 case Resource.Layout.album_list:
@@ -106,38 +110,52 @@ namespace SpotyPie.RecycleView
         {
             if (holder is Loading)
             {
-                ;
+                return;
             }
             else if (holder is BlockImage)
             {
                 BlockImage view = holder as BlockImage;
                 view.PrepareView(Dataset[position], Context);
+                return;
             }
             else if (holder is BlockImageTwo)
             {
                 BlockImageTwo view = holder as BlockImageTwo;
                 view.PrepareView(Dataset[position], Context);
+                return;
             }
             else if (holder is SongItem)
             {
                 SongItem view = holder as SongItem;
                 view.PrepareView(Dataset[position] as Songs, Context);
+                return;
             }
             else if (holder is ArtistList)
             {
                 ArtistList view = holder as ArtistList;
                 view.PrepareView(Dataset[position], Context);
+                return;
             }
             else if (holder is AlbumList)
             {
                 AlbumList view = holder as AlbumList;
                 view.PrepareView(Dataset[position], Context);
+                return;
             }
             else if (holder is SongWithImage)
             {
                 SongWithImage view = holder as SongWithImage;
                 view.PrepareView(Dataset[position] as Songs, Context);
+                return;
             }
+            else if (holder is SongBindList)
+            {
+                SongBindList view = holder as SongBindList;
+                view.PrepareView(Dataset[position] as Songs, Context);
+                return;
+            }
+
+            throw new System.Exception("Failed to find holder");
         }
     }
 }

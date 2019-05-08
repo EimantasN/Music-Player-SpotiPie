@@ -11,6 +11,7 @@
         ArtistList,
         AlbumList,
         AlbumGrid,
-        ArtistGrid
+        ArtistGrid,
+        SongBindList
     }
 }

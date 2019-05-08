@@ -159,10 +159,9 @@ namespace SpotyPie
                 }
                 catch (Exception e)
                 {
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        Snackbar.Make(this.Activity.Window.DecorView.RootView, e.Message, Snackbar.LengthShort).Show();
-                    }, null);
+                    Activity.RunOnUiThread(() =>
+                        Snackbar.Make(this.Activity.Window.DecorView.RootView, e.Message, Snackbar.LengthShort).Show()
+                    );
                 }
                 await Task.Delay(250);
             }
@@ -216,7 +215,7 @@ namespace SpotyPie
                         {
                             Searching_Gif.Post(() => Searching_Gif.Visibility = ViewStates.Visible);
                             Search_start_image.Post(() => Search_start_image.Visibility = ViewStates.Invisible);
-                            Application.SynchronizationContext.Post(_ => { Searching_Gif.StartAnimation(); }, null);
+                            Activity.RunOnUiThread(() => { Searching_Gif.StartAnimation(); });
                         }
                     }
                     else
@@ -225,7 +224,7 @@ namespace SpotyPie
                         {
                             Searching_Gif.Post(() => Searching_Gif.Visibility = ViewStates.Invisible);
                             Search_start_image.Post(() => Search_start_image.Visibility = ViewStates.Visible);
-                            Application.SynchronizationContext.Post(_ => { Searching_Gif.StopAnimation(); }, null);
+                            Activity.RunOnUiThread(() => { Searching_Gif.StopAnimation(); });
                         }
                     }
                 }

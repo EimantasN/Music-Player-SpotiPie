@@ -15,15 +15,13 @@ using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 namespace SpotyPie
 {
     [Activity(Label = "SpotyPie", MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
-    public class MainActivity : AppCompatActivity
+    public class MainActivity : ActivityBase
     {
         private int LastViewLayer = 0;
         private int CurrentViewLayer = 1;
         //private BluetoothHelper _bluetoothHelper;
 
         private Current_state APPSTATE;
-
-        private FragmentBase CurrentFragment;
 
         private MainFragment MainFragment;
         private Search Search;
@@ -350,21 +348,6 @@ namespace SpotyPie
             else
             {
                 CurrentFragment.Show();
-            }
-        }
-
-        public void RemoveCurrentFragment()
-        {
-            if (FirstLayerFragment != null)
-            {
-                FirstLayerFragment.ReleaseData();
-                var transaction = mSupportFragmentManager.BeginTransaction();
-                transaction.Remove(FirstLayerFragment);
-                transaction.Commit();
-                transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitFragmentClose);
-                transaction = null;
-                FirstLayerFragment = null;
-                FirstLayer.TranslationX = widthInDp;
             }
         }
 

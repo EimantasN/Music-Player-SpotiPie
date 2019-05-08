@@ -79,10 +79,12 @@
   <ItemGroup>
     <Compile Include="AlbumFragment.cs" />
     <Compile Include="API.cs" />
+    <Compile Include="Base\ActivityBase.cs" />
     <Compile Include="Base\FragmentBase.cs" />
     <Compile Include="Database\ViewModels\CurrentState.cs" />
     <Compile Include="Database\ViewModels\Settings.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
+    <Compile Include="RecycleView\Models\SongBindList.cs" />
     <Compile Include="RecycleView\SpotyPieRv.cs" />
     <Compile Include="Services\Bluetooth\BthHelper.cs" />
     <Compile Include="Services\Bluetooth\Enumerators\BlhStatus.cs" />
@@ -145,6 +147,9 @@
     <Compile Include="Services\ServiceCallbacks.cs" />
     <Compile Include="Services\MediaPlayerService.cs" />
     <Compile Include="SettingsActivity.cs" />
+    <Compile Include="SongBinder\Enumerators\BinderFragments.cs" />
+    <Compile Include="SongBinder\Fragments\SongBindList.cs" />
+    <Compile Include="SongBinder\SongBinderActivity.cs" />
     <Compile Include="SplashActivity.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -580,6 +585,15 @@
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\tune.png" />
     <AndroidResource Include="Resources\drawable\img_loading.png" />
+    <AndroidResource Include="Resources\layout\song_binder_activity.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\song_detail_list.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\song_bind_list.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

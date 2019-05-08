@@ -99,9 +99,9 @@ namespace SpotyPie
                 JumpBack.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
             }
 
-            Task.Run(() => GetAPIService().GetRecentAlbumsAsync(RecentAlbums.GetData(), () => { Toggle(true, RecentHolder); }));
-            Task.Run(() => GetAPIService().GetPolularAlbumsAsync(BestAlbums.GetData(), () => { Toggle(true, BestHolder); }));
-            Task.Run(() => GetAPIService().GetOldAlbumsAsync(JumpBack.GetData(), () => { Toggle(true, JumpBackHolder); }));
+            Task.Run(() => GetAPIService().GetRecentAlbumsAsync(RecentAlbums.GetData(), () => { Toggle(true, RecentHolder); }, this.Activity));
+            Task.Run(() => GetAPIService().GetPolularAlbumsAsync(BestAlbums.GetData(), () => { Toggle(true, BestHolder); }, this.Activity));
+            Task.Run(() => GetAPIService().GetOldAlbumsAsync(JumpBack.GetData(), () => { Toggle(true, JumpBackHolder); }, this.Activity));
         }
 
         public override void ReleaseData()
