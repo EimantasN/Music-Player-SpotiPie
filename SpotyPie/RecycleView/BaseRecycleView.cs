@@ -19,6 +19,7 @@ namespace SpotyPie.RecycleView
         private RvList<T> RvDataset;
         private SpotyPieRv CustomRecyclerView;
         private LayoutManagers Manager = LayoutManagers.Unseted;
+        public int LastPosition { get; private set; }
 
         private Action CustomAction;
 
@@ -105,6 +106,7 @@ namespace SpotyPie.RecycleView
             {
                 if (CustomRecyclerView != null && CustomRecyclerView.GetRecycleView().ChildCount != 0)
                 {
+                    LastPosition = position;
                     if (RvDataset[position].GetType().Name == "Album")
                     {
                         Task.Run(() => Activity.GetAPIService().UpdateAsync<Album>(RvDataset[position].GetId()));
@@ -116,7 +118,11 @@ namespace SpotyPie.RecycleView
                         if (song.GetModelType() != Mobile_Api.Models.Enums.RvType.SongBindList)
                             Activity.GetState().SetSong(RvDataset.GetList() as List<Songs>, position);
                     }
-                    else
+                    else if (RvDataset[position].GetType().Name == "SongTag")
+                    {
+                        //Ignore i sending action only run fragment
+                    }
+                    else if (RvDataset[position].GetType().Name == "Artist")
                     {
                         Activity.LoadArtist(RvDataset[position] as Artist);
                     }

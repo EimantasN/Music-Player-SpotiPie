@@ -19,6 +19,7 @@ namespace SpotyPie.SongBinder.Fragments
             InfoHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.info_holder);
             Loading = RootView.FindViewById<ProgressBar>(Resource.Id.loading);
 
+            var a = JsonModel;
 
             Task.Run(() => LoadInfoAsync());
         }

@@ -11,6 +11,8 @@ namespace SpotyPie.Base
     {
         public abstract int LayoutId { get; set; }
 
+        protected string JsonModel { get; set; }
+
         public bool IsVisible { get; set; }
 
         protected View RootView;
@@ -115,6 +117,11 @@ namespace SpotyPie.Base
             {
                 action?.Invoke();
             });
+        }
+
+        public void SendData(string data)
+        {
+            this.JsonModel = data;
         }
     }
 }

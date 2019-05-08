@@ -28,7 +28,7 @@ namespace SpotyPie.Base
 
         protected abstract void LoadFragment(dynamic switcher);
 
-        public void LoadFragmentInner(dynamic switcher)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null)
         {
             if (CurrentFragment != null)
             {
@@ -43,6 +43,10 @@ namespace SpotyPie.Base
             {
                 throw new System.Exception("Fragment not founded");
             }
+
+            //Can send data to fragment
+            if (!string.IsNullOrEmpty(jsonModel))
+                CurrentFragment.SendData(jsonModel);
 
             if (!CurrentFragment.IsAdded)
             {

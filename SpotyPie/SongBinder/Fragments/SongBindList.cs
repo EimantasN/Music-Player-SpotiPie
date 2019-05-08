@@ -1,5 +1,6 @@
 ﻿using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
+using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
 using SpotyPie.SongBinder.Enumerators;
@@ -27,7 +28,7 @@ namespace SpotyPie.SongBinder.Fragments
                 Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 Songs.SetClickAction(() =>
                 {
-                    ParentActivity.GetInstance().LoadFragmentInner(BinderFragments.SongDetailsFragment);
+                    ParentActivity.GetInstance().LoadFragmentInner(BinderFragments.SongDetailsFragment, JsonConvert.SerializeObject(Songs.GetData().GetList()[Songs.LastPosition]));
                 });
             }
             Task.Run(() => LoadUnbindedSongsAsync());
