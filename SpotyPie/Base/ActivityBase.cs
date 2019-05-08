@@ -7,7 +7,7 @@ namespace SpotyPie.Base
     {
         protected virtual int FirstLayerFragmentHolder { get; set; } = Resource.Id.content_frame;
 
-        private FragmentBase CurrentFragment;
+        protected virtual FragmentBase CurrentFragment { get; set; }
 
         private API Api_service { get; set; }
 
@@ -18,9 +18,9 @@ namespace SpotyPie.Base
             return Api_service;
         }
 
-        protected abstract void LoadFragment();
+        protected abstract void LoadFragment(dynamic switcher);
 
-        private void LoadFragmentInner()
+        protected void LoadFragmentInner(dynamic switcher)
         {
             if (CurrentFragment != null)
             {
@@ -29,7 +29,7 @@ namespace SpotyPie.Base
 
             CurrentFragment = null;
 
-            LoadFragment();
+            LoadFragment(switcher);
 
             if (CurrentFragment == null)
             {

@@ -292,13 +292,12 @@ namespace SpotyPie
                 if (bd.Name != current)
                     devices.Add(bd.Name);
             }
-
             return devices;
         }
 
-        protected override void LoadFragment()
+        protected override void LoadFragment(dynamic switcher)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

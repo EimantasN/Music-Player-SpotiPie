@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
+using SpotyPie.Enums.Activitys;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -131,7 +132,7 @@ namespace SpotyPie
             BackHeaderButton.Click += BackHeaderButton_Click;
 
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
-            LoadFragment(Resource.Id.home);
+            LoadFragmentInner(Main.Home);
         }
 
         private void LoadCurrentState()
@@ -265,7 +266,21 @@ namespace SpotyPie
 
         private void BottomNavigation_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
-            LoadFragment(e.Item.ItemId);
+            switch (e.Item.ItemId)
+            {
+                case Resource.Id.home:
+                    LoadFragmentInner(Main.Home);
+                    break;
+                case Resource.Id.browse:
+                    LoadFragmentInner(Main.Browse);
+                    break;
+                case Resource.Id.search:
+                    LoadFragmentInner(Main.Search);
+                    break;
+                case Resource.Id.library:
+                    LoadFragmentInner(Main.Library);
+                    break;
+            }
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -279,75 +294,50 @@ namespace SpotyPie
             return base.OnOptionsItemSelected(item);
         }
 
-        private API Api_service { get; set; }
-
-        private Object ServiceLock { get; set; } = new Object();
-
-        public API GetAPIService()
+        protected override void LoadFragment(dynamic switcher)
         {
-            if (Api_service == null)
-                return Api_service = new API(new Mobile_Api.Service(), this);
-            return Api_service;
-        }
-
-        void LoadFragment(int id)
-        {
-            //if (HeaderContainer.Visibility == ViewStates.Gone)
-            //    HeaderContainer.Visibility = ViewStates.Visible;
-
-            if (CurrentFragment != null)
+            switch (switcher)
             {
-                CurrentFragment.Hide();
-            }
+                case Main main:
+                    switch (main)
+                    {
+                        case Main.Home:
 
-            CurrentFragment = null;
-            switch (id)
-            {
-                case Resource.Id.home:
-                    {
-                        if (MainFragment == null)
-                            MainFragment = new MainFragment();
-                        CurrentFragment = MainFragment;
-                        ActionName.Text = "Home";
-                        break;
-                    }
-                case Resource.Id.browse:
-                    {
-                        if (Browse == null)
-                            Browse = new MainArtist();
-                        CurrentFragment = Browse;
-                        ActionName.Text = "Muse";
-                        break;
-                    }
-                case Resource.Id.search:
-                    {
-                        if (Search == null)
-                            Search = new Search();
-                        CurrentFragment = Search;
-                        HeaderContainer.Visibility = ViewStates.Gone;
-                        break;
-                    }
-                case Resource.Id.library:
-                    {
-                        if (Library == null) Library = new LibraryFragment();
-                        CurrentFragment = Library;
-                        ActionName.Text = "Library";
-                        break;
-                    }
-            }
+                            if (MainFragment == null)
+                                MainFragment = new MainFragment();
+                            CurrentFragment = MainFragment;
+                            ActionName.Text = "Home";
 
-            if (CurrentFragment == null)
-                return;
+                            break;
+                        case Main.Browse:
 
-            if (!CurrentFragment.IsAdded)
-            {
-                SupportFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.content_frame, CurrentFragment)
-                .Commit();
-            }
-            else
-            {
-                CurrentFragment.Show();
+                            if (Browse == null)
+                                Browse = new MainArtist();
+                            CurrentFragment = Browse;
+                            ActionName.Text = "Muse";
+
+                            break;
+                        case Main.Search:
+
+                            if (Search == null)
+                                Search = new Search();
+                            CurrentFragment = Search;
+                            HeaderContainer.Visibility = ViewStates.Gone;
+
+                            break;
+                        case Main.Library:
+
+                            if (Library == null) Library = new LibraryFragment();
+                            CurrentFragment = Library;
+                            ActionName.Text = "Library";
+
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    throw new Exception("Fragment not found");
             }
         }
 

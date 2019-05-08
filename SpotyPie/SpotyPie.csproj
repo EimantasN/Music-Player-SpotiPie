@@ -83,6 +83,7 @@
     <Compile Include="Base\FragmentBase.cs" />
     <Compile Include="Database\ViewModels\CurrentState.cs" />
     <Compile Include="Database\ViewModels\Settings.cs" />
+    <Compile Include="Enums\Activitys\MainActivity.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
     <Compile Include="RecycleView\Models\SongBindList.cs" />
     <Compile Include="RecycleView\SpotyPieRv.cs" />
