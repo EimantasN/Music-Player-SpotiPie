@@ -584,5 +584,45 @@ namespace Services
                 throw e;
             }
         }
+
+        public List<SongTag> UnbindedSongs()
+        {
+            List<SongTag> SongTags = new List<SongTag>();
+            try
+            {
+                string fileName;
+                string newPath;
+                foreach (var path in System.IO.Directory.EnumerateFiles(EnviromentPath.GetEnviromentPathMusic()))
+                {
+                    try
+                    {
+                        if (path.Contains(".flac"))
+                        {
+                            fileName = Path.GetFileName(path);
+                            newPath = path.Replace(fileName, Replacer.RemoveSpecialCharacters(fileName)).Replace("_flac", ".flac");
+                            File.Move(path, newPath);
+                            SongTags.Add(new SongTag(newPath));
+                        }
+                        else if (path.Contains(".mp3"))
+                        {
+                            fileName = Path.GetFileName(path);
+                            newPath = path.Replace(fileName, Replacer.RemoveSpecialCharacters(fileName)).Replace("_mp3", ".mp3");
+                            File.Move(path, newPath);
+                            SongTags.Add(new SongTag(newPath));
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //Need to log errors
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Need to log errors
+            }
+
+            return SongTags;
+        }
     }
 }

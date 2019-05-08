@@ -39,5 +39,7 @@ namespace Database
 
         Task SetCorruptedAsync(int id);
         Task<List<Image>> GetNewImageAsync(int id);
+
+        List<SongTag> UnbindedSongs();
     }
 }

@@ -250,5 +250,19 @@ namespace API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPost("UnbindedSongs")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> UnbindedSongs()
+        {
+            try
+            {
+                return Ok(_songs.UnbindedSongs());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
