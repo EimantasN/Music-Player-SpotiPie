@@ -264,5 +264,25 @@ namespace API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPost("GetSongToBind")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> GetSongToBindAsync(
+            [FromForm] int songCof,
+            [FromForm] int albumCof,
+            [FromForm] int artistCof,
+            [FromForm] string songTitle,
+            [FromForm] string album,
+            [FromForm] string artist)
+        {
+            try
+            {
+                return Ok(await _songs.GetSongToBindAsync(songTitle, songCof, album, albumCof, artist, artistCof));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

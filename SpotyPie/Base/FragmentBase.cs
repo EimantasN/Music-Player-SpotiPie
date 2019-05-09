@@ -1,7 +1,9 @@
 ﻿using Android.App;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Views;
 using Mobile_Api.Models;
+using Newtonsoft.Json;
 using System;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
@@ -122,6 +124,28 @@ namespace SpotyPie.Base
         public void SendData(string data)
         {
             this.JsonModel = data;
+        }
+
+        public T GetModel<T>()
+        {
+            if (!string.IsNullOrEmpty(JsonModel))
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<T>(JsonModel);
+                }
+                catch //Ignored
+                {
+                }
+            }
+            Snackbar snacbar = Snackbar.Make(RootView, "Failed to load song details", Snackbar.LengthLong);
+            snacbar.SetAction("Ok", (view) =>
+            {
+                snacbar.Dismiss();
+                snacbar.Dispose();
+            });
+            snacbar.Show();
+            return default(T);
         }
     }
 }

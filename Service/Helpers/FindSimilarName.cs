@@ -87,5 +87,17 @@ namespace Service.Helpers
                 return 0;
             }
         }
+
+        public static bool CheckSimilarity(string query, string value, int cof)
+        {
+            double temp = StringSimilarity.CalculateSimilarity(query.ToLower().Trim(), value.ToLower().Trim());
+            temp += cof / 100;
+
+            if (temp >= Barrier)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

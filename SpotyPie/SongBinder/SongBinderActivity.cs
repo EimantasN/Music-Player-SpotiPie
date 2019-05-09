@@ -59,6 +59,9 @@ namespace SpotyPie.SongBinder
                 case BinderFragments.SongDetailsFragment:
                     CurrentFragment = new Fragments.SongDetailsFragment();
                     break;
+                case BinderFragments.BindIndividualSongFragment:
+                    CurrentFragment = new Fragments.BindIndividualSongFragment();
+                    break;
                 default:
                     break;
             }

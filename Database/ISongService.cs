@@ -41,5 +41,6 @@ namespace Database
         Task<List<Image>> GetNewImageAsync(int id);
 
         List<SongTag> UnbindedSongs();
+        Task<List<Song>> GetSongToBindAsync(string songTitle, int songCof, string album, int albumCof, string artist, int artistCof);
     }
 }

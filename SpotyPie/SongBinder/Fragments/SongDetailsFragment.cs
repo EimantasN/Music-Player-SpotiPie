@@ -25,6 +25,12 @@ namespace SpotyPie.SongBinder.Fragments
         private TextView DiscNumber;
         private TextView Bitrate;
 
+        private Button Delete;
+        private Button AddImage;
+        private Button SetQuality;
+        private Button Connect;
+
+
         protected override void InitView()
         {
             InfoHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.info_holder);
@@ -38,10 +44,27 @@ namespace SpotyPie.SongBinder.Fragments
             DiscNumber = RootView.FindViewById<TextView>(Resource.Id.disc_number_value);
             Bitrate = RootView.FindViewById<TextView>(Resource.Id.bitrate_value);
 
-            Task.Run(() => LoadInfoAsync());
+            Delete = RootView.FindViewById<Button>(Resource.Id.delete);
+            Delete.Enabled = false;
+
+            AddImage = RootView.FindViewById<Button>(Resource.Id.add_image);
+            AddImage.Enabled = false;
+
+            SetQuality = RootView.FindViewById<Button>(Resource.Id.quality);
+            SetQuality.Enabled = false;
+
+            Connect = RootView.FindViewById<Button>(Resource.Id.connect);
+            Connect.Click += Connect_Click;
+
+            Task.Run(() => LoadInfo());
         }
 
-        private async Task LoadInfoAsync()
+        private void Connect_Click(object sender, EventArgs e)
+        {
+            ParentActivity?.LoadFragmentInner(Enumerators.BinderFragments.BindIndividualSongFragment, JsonModel);
+        }
+
+        private void LoadInfo()
         {
             RunOnUiThread(() =>
             {
@@ -52,30 +75,17 @@ namespace SpotyPie.SongBinder.Fragments
 
         public override void ForceUpdate()
         {
-            //if (!string.IsNullOrEmpty(JsonModel))
-            //{
-            //    try
-            //    {
-            //        SongTag songDetails = JsonConvert.DeserializeObject<SongTag>(JsonModel);
-            //        SongTitle.Text = songDetails.Title;
-            //        Album.Text = songDetails.Album;
-            //        Artist.Text = songDetails.Artist;
-            //        Gendres.Text = songDetails.Gendre;
-            //        Year.Text = songDetails.Year.ToString();
-            //        DiscNumber.Text = songDetails.TrackNumber.ToString();
-            //        Bitrate.Text = songDetails.Bitrate.ToString();
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Snackbar snacbar = Snackbar.Make(RootView, "Failed to load song details", Snackbar.LengthLong);
-            //        snacbar.SetAction("Ok", (view) =>
-            //        {
-            //            snacbar.Dismiss();
-            //            snacbar.Dispose();
-            //        });
-            //        snacbar.Show();
-            //    }
-            //}
+            SongTag songDetails = GetModel<SongTag>();
+            if (songDetails != null)
+            {
+                SongTitle.Text = songDetails.Title;
+                Album.Text = songDetails.Album;
+                Artist.Text = songDetails.Artist;
+                Gendres.Text = songDetails.Gendre;
+                Year.Text = songDetails.Year.ToString();
+                DiscNumber.Text = songDetails.TrackNumber.ToString();
+                Bitrate.Text = songDetails.Bitrate.ToString();
+            }
         }
 
         public override void ReleaseData()

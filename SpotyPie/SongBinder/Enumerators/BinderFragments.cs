@@ -3,6 +3,7 @@
     public enum BinderFragments
     {
         UnBindedSongList,
-        SongDetailsFragment
+        SongDetailsFragment,
+        BindIndividualSongFragment
     }
 }

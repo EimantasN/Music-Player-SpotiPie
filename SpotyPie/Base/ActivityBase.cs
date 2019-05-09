@@ -1,5 +1,6 @@
 ﻿using Android.OS;
 using Android.Support.V7.App;
+using Android.Widget;
 using System.Collections.Generic;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
@@ -10,6 +11,8 @@ namespace SpotyPie.Base
         protected virtual int FirstLayerFragmentHolder { get; set; } = Resource.Id.content_frame;
 
         private Stack<dynamic> FragmentStack { get; set; }
+
+        private FrameLayout FragmentFrame;
 
         protected virtual FragmentBase CurrentFragment { get; set; }
 
@@ -38,6 +41,11 @@ namespace SpotyPie.Base
             else
             {
                 LoadFragmentInner(GetFragmentStack().Pop());
+                if (GetFragmentStack().Count == 0)
+                {
+                    if (FragmentFrame.Visibility == Android.Views.ViewStates.Visible)
+                        FragmentFrame.Visibility = Android.Views.ViewStates.Gone;
+                }
             }
         }
 
@@ -61,6 +69,14 @@ namespace SpotyPie.Base
 
         public void LoadFragmentInner(dynamic switcher, string jsonModel = null)
         {
+            if (FragmentFrame == null)
+            {
+                FragmentFrame = FindViewById<FrameLayout>(FirstLayerFragmentHolder);
+            }
+
+            if (FragmentFrame.Visibility == Android.Views.ViewStates.Gone)
+                FragmentFrame.Visibility = Android.Views.ViewStates.Visible;
+
             if (CurrentFragment != null)
             {
                 CurrentFragment.Hide();

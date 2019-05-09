@@ -189,7 +189,7 @@ namespace Services
             }
         }
 
-        
+
         public async Task<List<AudioBindError>> BindData()
         {
             List<AudioBindError> Errors = new List<AudioBindError>();
@@ -416,7 +416,7 @@ namespace Services
             return null;
         }
 
-        
+
 
         public async Task<Song> SetLenght(int id, long durationMs)
         {
@@ -623,6 +623,25 @@ namespace Services
             }
 
             return SongTags;
+        }
+
+        public async Task<List<Song>> GetSongToBindAsync(string songTitle, int songCof, string album, int albumCof, string artist, int artistCof)
+        {
+            List<Song> filtered = new List<Song>();
+            try
+            {
+                List<Song> songs = await _ctx.Songs.ToListAsync();
+
+                List<Song> SongtitleFiltered = songs.Where(x => FindSimilarName.CheckSimilarity(songTitle, x.Name, songCof)).ToList();
+                List<Song> songAlbumFiltered = SongtitleFiltered.Where(x => FindSimilarName.CheckSimilarity(album, x.AlbumName, albumCof)).ToList();
+                List<Song> songArtistFiltered = songAlbumFiltered.Where(x => FindSimilarName.CheckSimilarity(artist, x.ArtistName, artistCof)).ToList();
+                return songArtistFiltered;
+            }
+            catch (Exception e)
+            {
+            }
+
+            return filtered;
         }
     }
 }

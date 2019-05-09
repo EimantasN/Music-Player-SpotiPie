@@ -149,6 +149,7 @@
     <Compile Include="Services\MediaPlayerService.cs" />
     <Compile Include="SettingsActivity.cs" />
     <Compile Include="SongBinder\Enumerators\BinderFragments.cs" />
+    <Compile Include="SongBinder\Fragments\BindIndividualSongFragment.cs" />
     <Compile Include="SongBinder\Fragments\SongBindList.cs" />
     <Compile Include="SongBinder\Fragments\SongDetailsFragment.cs" />
     <Compile Include="SongBinder\SongBinderActivity.cs" />
@@ -600,6 +601,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\rv_scrool_bar.xml" />
+    <AndroidResource Include="Resources\layout\bind_one_song_layout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
