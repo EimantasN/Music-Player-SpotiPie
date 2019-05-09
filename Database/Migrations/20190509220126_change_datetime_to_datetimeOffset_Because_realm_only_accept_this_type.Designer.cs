@@ -4,14 +4,16 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(SpotyPieIDbContext))]
-    partial class SpotyPieIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190509220126_change_datetime_to_datetimeOffset_Because_realm_only_accept_this_type")]
+    partial class change_datetime_to_datetimeOffset_Because_realm_only_accept_this_type
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,6 +1,7 @@
 ﻿using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
+using SpotyPie.RecycleView;
 using System;
 using System.Threading.Tasks;
 
@@ -27,6 +28,8 @@ namespace SpotyPie.SongBinder.Fragments
         private Switch ArtistSwitch;
 
         private ProgressBar Loading;
+
+        private BaseRecycleView<Songs> Songs { get; set; }
 
         protected override void InitView()
         {
@@ -85,32 +88,51 @@ namespace SpotyPie.SongBinder.Fragments
             Loading.Visibility = Android.Views.ViewStates.Visible;
 
             Task.Run(() => LoadSongsAsync());
-            //throw new NotImplementedException();
         }
 
         private async Task LoadSongsAsync()
         {
-            await Task.Delay(2000);
-            RunOnUiThread(() =>
+            try
             {
-                try
-                {
-                }
-                catch (Exception)
-                {
+                await Task.Delay(2000);
 
-                }
-                finally
+                var songs = await ParentActivity?.GetAPIService().GetSongToBind(
+                    SongText.Text,
+                    SongCof.Progress,
+                    AlbumText.Text,
+                    AlbumCof.Progress,
+                    ArtistText.Text,
+                    ArtistCof.Progress);
+
+                RunOnUiThread(() =>
                 {
-                    Loading.Visibility = Android.Views.ViewStates.Gone;
-                    SongCof.Enabled = true;
-                    AlbumCof.Enabled = true;
-                    ArtistCof.Enabled = true;
-                    SongSwitch.Enabled = true;
-                    AlbumSwitch.Enabled = true;
-                    ArtistSwitch.Enabled = true;
-                }
-            });
+                    try
+                    {
+                        if (songs != null && songs.Count > 0)
+                        {
+
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    finally
+                    {
+                        Loading.Visibility = Android.Views.ViewStates.Gone;
+                        SongCof.Enabled = true;
+                        AlbumCof.Enabled = true;
+                        ArtistCof.Enabled = true;
+                        SongSwitch.Enabled = true;
+                        AlbumSwitch.Enabled = true;
+                        ArtistSwitch.Enabled = true;
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         private void SongCof_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
@@ -136,6 +158,12 @@ namespace SpotyPie.SongBinder.Fragments
                 SongText.Text = songDetails.Title;
                 AlbumText.Text = songDetails.Album;
                 ArtistText.Text = songDetails.Artist;
+            }
+
+            if (Songs == null)
+            {
+                Songs = new BaseRecycleView<Songs>(this, Resource.Id.rv);
+                Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
             }
         }
 

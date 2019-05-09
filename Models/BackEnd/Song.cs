@@ -38,9 +38,9 @@ namespace Models.BackEnd
 
         public bool IsPlayable { get; set; }
 
-        public DateTime LastActiveTime { get; set; }
+        public DateTimeOffset LastActiveTime { get; set; }
 
-        public DateTime UploadTime { get; set; }
+        public DateTimeOffset UploadTime { get; set; }
 
         public long Size { get; set; }
 
@@ -51,7 +51,7 @@ namespace Models.BackEnd
 
         public string AlbumName { get; set; }
 
-        public List<Image> Images { get; set; } 
+        public List<Image> Images { get; set; }
 
         public SongType Type { get; set; }
     }

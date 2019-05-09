@@ -82,6 +82,11 @@ namespace Mobile_Api
             return await GetListAsync<Songs>($"Artists/{artist.Id}");
         }
 
+        public async Task<List<Songs>> GetSongToBind(string songTitle, int songCof, string album, int albumCof, string artist, int artistCof)
+        {
+            return await PostList<Songs>("GetSongToBind", $"songCof={songCof}&albumCof={albumCof}&artistCof={artistCof}&songTitle={songTitle}&album={album}&artist={artist}");
+        }
+
         public async Task<List<Image>> GetNewImageForSong(int id)
         {
             return await GetListAsync<Image>($"GetNewImageForSong/{id}", "Songs");
