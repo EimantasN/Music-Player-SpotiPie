@@ -133,7 +133,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="32dp"
-        android:paddingBottom="64dp"
         android:scrollbarThumbVertical="@drawable/rv_scrool_bar"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"

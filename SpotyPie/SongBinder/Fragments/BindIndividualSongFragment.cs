@@ -1,4 +1,5 @@
-﻿using Android.Widget;
+﻿using Android.Support.Design.Widget;
+using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
@@ -86,7 +87,7 @@ namespace SpotyPie.SongBinder.Fragments
             ArtistSwitch.Enabled = false;
 
             Loading.Visibility = Android.Views.ViewStates.Visible;
-
+            Songs.GetData().AddList(new System.Collections.Generic.List<Songs>());
             Task.Run(() => LoadSongsAsync());
         }
 
@@ -94,8 +95,6 @@ namespace SpotyPie.SongBinder.Fragments
         {
             try
             {
-                await Task.Delay(2000);
-
                 var songs = await ParentActivity?.GetAPIService().GetSongToBind(
                     SongText.Text,
                     SongCof.Progress,
@@ -110,7 +109,7 @@ namespace SpotyPie.SongBinder.Fragments
                     {
                         if (songs != null && songs.Count > 0)
                         {
-
+                            Songs.GetData().AddList(songs);
                         }
                     }
                     catch (Exception)
@@ -131,7 +130,10 @@ namespace SpotyPie.SongBinder.Fragments
             }
             catch (Exception e)
             {
-
+                RunOnUiThread(() =>
+                {
+                    Snackbar.Make(RootView, "Binded list load error", Snackbar.LengthLong).Show();
+                });
             }
         }
 
