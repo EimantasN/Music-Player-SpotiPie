@@ -61,7 +61,7 @@ namespace SpotyPie.Base
             if (ParentActivity == null)
                 ParentActivity = (ActivityBase)Activity;
 
-            return ParentActivity.GetInstance().GetState();
+            return ParentActivity?.GetInstance()?.GetState();
         }
 
         public SupportFragment GetCurrentFragment()

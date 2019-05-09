@@ -417,13 +417,13 @@ namespace SpotyPie
             int heightDiff = RootView.RootView.Height - RootView.Height;
             if (heightDiff > 500)
             {
-                GetState().ToggleBotNav(false);
-                GetState().ToggleMiniPlayer(false);
+                GetState()?.ToggleBotNav(false);
+                GetState()?.ToggleMiniPlayer(false);
             }
             else
             {
-                GetState().ToggleBotNav(true);
-                GetState().ToggleMiniPlayer(true);
+                GetState()?.ToggleBotNav(true);
+                GetState()?.ToggleMiniPlayer(true);
             }
         }
     }

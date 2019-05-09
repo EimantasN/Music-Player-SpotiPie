@@ -1,5 +1,6 @@
 ﻿using Android.OS;
 using Android.Support.V7.App;
+using System.Collections.Generic;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie.Base
@@ -7,6 +8,8 @@ namespace SpotyPie.Base
     public abstract class ActivityBase : AppCompatActivity
     {
         protected virtual int FirstLayerFragmentHolder { get; set; } = Resource.Id.content_frame;
+
+        private Stack<dynamic> FragmentStack { get; set; }
 
         protected virtual FragmentBase CurrentFragment { get; set; }
 
@@ -19,7 +22,7 @@ namespace SpotyPie.Base
         protected abstract void InitFather();
 
 
-            public API GetAPIService()
+        public API GetAPIService()
         {
             if (Api_service == null)
                 return Api_service = new API(new Mobile_Api.Service(), this);
@@ -27,6 +30,34 @@ namespace SpotyPie.Base
         }
 
         protected abstract void LoadFragment(dynamic switcher);
+
+        public override void OnBackPressed()
+        {
+            if (CheckFragments())
+                base.OnBackPressed();
+            else
+            {
+                LoadFragmentInner(GetFragmentStack().Pop());
+            }
+        }
+
+        private bool CheckFragments()
+        {
+            if (GetFragmentStack() == null || GetFragmentStack().Count <= 1)
+                return true;
+
+            dynamic fragmentState = GetFragmentStack().Pop();
+            if (fragmentState == null)
+                return true;
+            return false;
+        }
+
+        private Stack<dynamic> GetFragmentStack()
+        {
+            if (FragmentStack == null)
+                FragmentStack = new Stack<dynamic>();
+            return FragmentStack;
+        }
 
         public void LoadFragmentInner(dynamic switcher, string jsonModel = null)
         {
@@ -37,6 +68,7 @@ namespace SpotyPie.Base
 
             CurrentFragment = null;
 
+            GetFragmentStack().Push(switcher);
             LoadFragment(switcher);
 
             if (CurrentFragment == null)
@@ -62,6 +94,7 @@ namespace SpotyPie.Base
 
         protected override void OnDestroy()
         {
+            FragmentStack = null;
             base.OnDestroy();
         }
 
