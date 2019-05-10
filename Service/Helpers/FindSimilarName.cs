@@ -91,7 +91,7 @@ namespace Service.Helpers
         public static bool CheckSimilarity(string query, string value, int cof)
         {
             double temp = StringSimilarity.CalculateSimilarity(query.ToLower().Trim(), value.ToLower().Trim());
-            temp += cof / 100;
+            temp += (double)(cof * 0.01f);
 
             if (temp >= Barrier)
             {
