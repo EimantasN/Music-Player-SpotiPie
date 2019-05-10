@@ -280,7 +280,7 @@ namespace Services
 
         private async Task<AudioBindError> SaveFileAsync(string filePath, SongType type)
         {
-            SongTag tag = new SongTag(filePath);
+            SongTag tag = new SongTag(filePath, 0);
 
             if (string.IsNullOrEmpty(tag.Album) || string.IsNullOrEmpty(tag.Title) || string.IsNullOrEmpty(tag.Artist))
             {
