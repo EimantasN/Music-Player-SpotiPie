@@ -4,6 +4,7 @@ using Android.Support.V7.Util;
 using Android.Support.V7.Widget;
 using Android.Widget;
 using Mobile_Api.Interfaces;
+using SpotyPie.Base;
 using SpotyPie.RecycleView.Helpers;
 
 namespace SpotyPie.RecycleView
@@ -12,6 +13,7 @@ namespace SpotyPie.RecycleView
     {
         private List<T> mItems;
         private RecyclerView.Adapter mAdapter;
+        private FragmentBase Activity;
 
         public List<T> GetList()
         {
@@ -25,8 +27,9 @@ namespace SpotyPie.RecycleView
             mItems = new List<T>();
         }
 
-        public RvList()
+        public RvList(FragmentBase activity)
         {
+            Activity = activity;
             mItems = new List<T>();
         }
 
@@ -39,7 +42,7 @@ namespace SpotyPie.RecycleView
 
         public void Clear()
         {
-            Application.SynchronizationContext.Post(_ =>
+            Activity.RunOnUiThread(() =>
             {
                 DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, new List<T>()), false);
 
@@ -47,26 +50,27 @@ namespace SpotyPie.RecycleView
                 Erase();
                 mItems.AddRange(new List<T>());
                 result.DispatchUpdatesTo(Adapter);
-            }, null);
+            });
         }
 
         public void AddList(List<T> newData)
         {
-            Application.SynchronizationContext.Post(_ =>
+            Activity.RunOnUiThread(() =>
             {
                 DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, newData), false);
 
                 // Overwrite the old data
                 Erase();
                 mItems.AddRange(newData);
+
+                // Despatch the updates to your RecyclerAdapter
                 result.DispatchUpdatesTo(Adapter);
-            }, null);
-            // Despatch the updates to your RecyclerAdapter
+            });
         }
 
         public void Add(T item)
         {
-            Application.SynchronizationContext.Post(_ =>
+            Activity.RunOnUiThread(() =>
             {
                 if (item == null)
                     LoadingIndex = mItems.Count;
@@ -77,7 +81,7 @@ namespace SpotyPie.RecycleView
                 {
                     Adapter.NotifyItemInserted(Count);
                 }
-            }, null);
+            });
         }
 
         public void Remove(int position)
@@ -107,11 +111,11 @@ namespace SpotyPie.RecycleView
             {
                 if (mItems[mItems.Count - 1] == null)
                 {
-                    Application.SynchronizationContext.Post(_ =>
+                    Activity.RunOnUiThread(() =>
                     {
                         mItems.RemoveAt(mItems.Count - 1);
                         Adapter.NotifyItemRemoved(LoadingIndex);
-                    }, null);
+                    });
                 }
                 else
                 {
@@ -131,11 +135,11 @@ namespace SpotyPie.RecycleView
 
                 if (LoadingIndex > -1)
                 {
-                    Application.SynchronizationContext.Post(_ =>
+                    Activity.RunOnUiThread(() =>
                     {
                         Remove(LoadingIndex);
                         Adapter.NotifyItemRemoved(LoadingIndex);
-                    }, null);
+                    });
                 }
             }
             catch

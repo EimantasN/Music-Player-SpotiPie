@@ -29,7 +29,7 @@ namespace SpotyPie.RecycleView
 
         public BaseRecycleView(FragmentBase Activity, int RvId)
         {
-            RvDataset = new RvList<T>();
+            RvDataset = new RvList<T>(Activity);
 
             this.Activity = Activity;
             this.Id = RvId;

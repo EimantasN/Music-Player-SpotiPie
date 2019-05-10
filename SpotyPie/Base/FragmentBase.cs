@@ -15,8 +15,6 @@ namespace SpotyPie.Base
 
         protected string JsonModel { get; set; }
 
-        public bool IsVisible { get; set; }
-
         protected View RootView;
 
         protected ActivityBase ParentActivity;
@@ -44,7 +42,6 @@ namespace SpotyPie.Base
 
         public void Hide()
         {
-            IsVisible = false;
             RootView.Alpha = 0.0f;
             RootView.TranslationX = 10000;
             ParentActivity = null;
@@ -53,7 +50,6 @@ namespace SpotyPie.Base
 
         public void Show()
         {
-            IsVisible = true;
             RootView.Alpha = 1f;
             RootView.TranslationX = 0;
         }
@@ -78,10 +74,10 @@ namespace SpotyPie.Base
 
         public void InvokeOnMainThread(Action action)
         {
-            Application.SynchronizationContext.Post(_ =>
+            Activity.RunOnUiThread(() =>
             {
                 action.Invoke();
-            }, null);
+            });
         }
 
         protected abstract void InitView();
@@ -115,7 +111,7 @@ namespace SpotyPie.Base
 
         public void RunOnUiThread(Action action)
         {
-            Activity.RunOnUiThread(() =>
+            Activity?.RunOnUiThread(() =>
             {
                 action?.Invoke();
             });

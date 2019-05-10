@@ -85,10 +85,10 @@ namespace SpotyPie
         {
             Current_Album = album;
             //Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Album.Artists).First();
-            Application.SynchronizationContext.Post(_ =>
+            Activity.RunOnUiThread(() =>
             {
                 GetPlayer().Player_playlist_name.Text = Current_Album.Name;
-            }, null);
+            });
         }
 
         public void Player_visiblibity_toggle()

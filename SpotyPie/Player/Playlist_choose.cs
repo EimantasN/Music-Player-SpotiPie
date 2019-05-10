@@ -21,8 +21,8 @@ namespace SpotyPie.Player
         View RootView;
 
         //Album Songs
-        public List<Playlist> PlaylistItem = new List<Playlist>();
-        public RvList<Playlist> Playlist = new RvList<Playlist>();
+        //public List<Playlist> PlaylistItem = new List<Playlist>();
+        //public RvList<Playlist> Playlist = new RvList<Playlist>();
         private RecyclerView.LayoutManager PlaylistsLayoutManager;
         private RecyclerView.Adapter PlaylistsAdapter;
         private RecyclerView PlaylistRecyclerView;
@@ -34,26 +34,26 @@ namespace SpotyPie.Player
         {
             RootView = inflater.Inflate(Resource.Layout.playlist_list_choose, container, false);
 
-            //ALBUM song list
-            PlaylistsLayoutManager = new LinearLayoutManager(this.Activity);
-            PlaylistRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.list_rv);
-            PlaylistRecyclerView.SetLayoutManager(PlaylistsLayoutManager);
-            PlaylistsAdapter = new PlayListChoose(Playlist, Context);
-            Playlist.Adapter = PlaylistsAdapter;
-            PlaylistRecyclerView.SetAdapter(PlaylistsAdapter);
-            PlaylistRecyclerView.NestedScrollingEnabled = false;
+            ////ALBUM song list
+            //PlaylistsLayoutManager = new LinearLayoutManager(this.Activity);
+            //PlaylistRecyclerView = RootView.FindViewById<RecyclerView>(Resource.Id.list_rv);
+            //PlaylistRecyclerView.SetLayoutManager(PlaylistsLayoutManager);
+            ////PlaylistsAdapter = new PlayListChoose(Playlist, Context);
+            ////Playlist.Adapter = PlaylistsAdapter;
+            //PlaylistRecyclerView.SetAdapter(PlaylistsAdapter);
+            //PlaylistRecyclerView.NestedScrollingEnabled = false;
 
-            PlaylistRecyclerView.SetItemClickListener((rv, position, view) =>
-            {
-                if (PlaylistRecyclerView != null && PlaylistRecyclerView.ChildCount != 0)
-                {
-                    if (!Adding)
-                    {
-                        Adding = true;
-                        Task.Run(() => AddToPlaylistAsync(PlaylistItem[position].Id));
-                    }
-                }
-            });
+            //PlaylistRecyclerView.SetItemClickListener((rv, position, view) =>
+            //{
+            //    if (PlaylistRecyclerView != null && PlaylistRecyclerView.ChildCount != 0)
+            //    {
+            //        if (!Adding)
+            //        {
+            //            Adding = true;
+            //            Task.Run(() => AddToPlaylistAsync(PlaylistItem[position].Id));
+            //        }
+            //    }
+            //});
 
             return RootView;
         }
@@ -105,7 +105,7 @@ namespace SpotyPie.Player
             }
             catch
             {
-                Application.SynchronizationContext.Post(_ =>
+                Activity.RunOnUiThread(() =>
                 {
                     Snackbar = Snackbar.Make(RootView, "Something whent wrong.", Snackbar.LengthIndefinite);
                     Snackbar.Show();
@@ -115,50 +115,50 @@ namespace SpotyPie.Player
                         Snackbar.Dismiss();
                         Snackbar.Dispose();
                     });
-                }, null);
+                });
             }
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            Task.Run(() => LoadPlaylistsAsync());
+            //Task.Run(() => LoadPlaylistsAsync());
         }
 
-        public async Task LoadPlaylistsAsync()
-        {
-            try
-            {
-                Playlist.Clear();
-                Playlist.Add(null);
+        //public async Task LoadPlaylistsAsync()
+        //{
+        //    try
+        //    {
+        //        Playlist.Clear();
+        //        Playlist.Add(null);
 
-                RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/api/Playlist/playlists");
-                var request = new RestRequest(Method.GET);
-                IRestResponse response = await Client.ExecuteGetTaskAsync(request);
-                if (response.IsSuccessful)
-                {
-                    var playlists = JsonConvert.DeserializeObject<List<Playlist>>(response.Content);
+        //        RestClient Client = new RestClient("https://pie.pertrauktiestaskas.lt/api/Playlist/playlists");
+        //        var request = new RestRequest(Method.GET);
+        //        IRestResponse response = await Client.ExecuteGetTaskAsync(request);
+        //        if (response.IsSuccessful)
+        //        {
+        //            var playlists = JsonConvert.DeserializeObject<List<Playlist>>(response.Content);
 
-                    PlaylistItem = playlists;
-                    foreach (var x in playlists)
-                    {
-                        Playlist.Add(x);
-                        await Task.Delay(200);
-                    }
-                }
-                else
-                {
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        Toast.MakeText(this.Context, "GetSongsAsync API call error", ToastLength.Short).Show();
-                    }, null);
-                }
-            }
-            catch (Exception)
-            {
+        //            PlaylistItem = playlists;
+        //            foreach (var x in playlists)
+        //            {
+        //                Playlist.Add(x);
+        //                await Task.Delay(200);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Activity.RunOnUiThread(() =>
+        //            {
+        //                Toast.MakeText(this.Context, "GetSongsAsync API call error", ToastLength.Short).Show();
+        //            });
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
 
-            }
-        }
+        //    }
+        //}
 
         public class PlayListChoose : RecyclerView.Adapter
         {

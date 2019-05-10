@@ -8,8 +8,6 @@ using Android.Support.V4.Media;
 using Android.Support.V4.Media.Session;
 using RestSharp;
 using System;
-using System.IO;
-using System.Threading.Tasks;
 using static Android.Support.V4.Media.App.NotificationCompat;
 
 namespace SpotyPie.Services
@@ -71,7 +69,7 @@ namespace SpotyPie.Services
             }, null);
         }
 
-        private async Task Play()
+        private void Play()
         {
             try
             {
@@ -185,7 +183,7 @@ namespace SpotyPie.Services
                 .SetContentTitle(currentTrack.GetString(MediaMetadata.MetadataKeyTitle))
                 .SetContentText(currentTrack.GetString(MediaMetadata.MetadataKeyArtist))
                 .SetContentInfo(currentTrack.GetString(MediaMetadata.MetadataKeyAlbum))
-                .SetSmallIcon(Resource.Drawable.img_loading)
+                .SetSmallIcon(Resource.Drawable.logo_spotify)
                 .SetContentIntent(pendingIntent)
                 .SetLargeIcon(GetLargeImage())
                 .SetColorized(true)

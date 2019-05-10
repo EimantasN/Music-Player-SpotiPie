@@ -1,6 +1,6 @@
 ﻿using Android.OS;
 
-namespace SpotyPie.Services
+namespace SpotyPie.Services.Binders
 {
     public class MusicServiceBinder : Binder
     {

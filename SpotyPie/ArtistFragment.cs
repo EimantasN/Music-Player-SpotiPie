@@ -95,11 +95,11 @@ namespace SpotyPie
             Task.Run(async () =>
             {
                 var data = await GetAPIService().GetArtistSongsAsync(CurrentArtist);
-                Application.SynchronizationContext.Post(_ =>
+                Activity.RunOnUiThread(() =>
                 {
                     GetState().SetSong(data, 0);
                     ShufflePlay.Text = "Playing";
-                }, null);
+                });
             });
         }
 

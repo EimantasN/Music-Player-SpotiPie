@@ -127,7 +127,7 @@ namespace SpotyPie
                 try
                 {
                     var song = await GetAPIService().GetCurrentSong();
-                    Application.SynchronizationContext.Post(_ =>
+                    RunOnUiThread(() =>
                     {
                         if (song != null)
                         {
@@ -135,14 +135,14 @@ namespace SpotyPie
                             ArtistName.Text = song.ArtistName;
                             MiniPlayer.Visibility = ViewStates.Visible;
                         }
-                    }, null);
+                    });
                 }
                 catch (Exception e)
                 {
-                    Application.SynchronizationContext.Post(_ =>
+                    RunOnUiThread(() =>
                     {
                         Toast.MakeText(this.ApplicationContext, "Failed load current state", ToastLength.Long).Show();
-                    }, null);
+                    });
                 }
             });
         }

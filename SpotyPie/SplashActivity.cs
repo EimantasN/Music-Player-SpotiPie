@@ -55,35 +55,34 @@ namespace SpotyPie
                     request.AddHeader("cache-control", "no-cache");
                     IRestResponse response = await client.ExecuteTaskAsync(request);
                     Quote quote = JsonConvert.DeserializeObject<Quote>(response.Content);
-                    Application.SynchronizationContext.Post(_ =>
+                    RunOnUiThread(() =>
                     {
                         Quote.Text = quote.Text;
-                    }, null);
+                    });
 
-                    Application.SynchronizationContext.Post(_ =>
+                    RunOnUiThread(() =>
                     {
                         skip.Visibility = Android.Views.ViewStates.Visible;
-                    }, null);
+                    });
 
                     await Task.Delay(500);
                 }
 
-                Application.SynchronizationContext.Post(_ =>
+                RunOnUiThread(() =>
                 {
                     var intent = new Intent(this, typeof(MainActivity));
                     StartActivity(intent);
-                }, null);
+                });
             }
             catch
             {
                 //IGNORE
-
-                Application.SynchronizationContext.Post(_ =>
+                RunOnUiThread(() =>
                 {
                     Quote.Text = "Now I'm dead inside!";
                     var intent = new Intent(this, typeof(MainActivity));
                     StartActivity(intent);
-                }, null);
+                });
             }
         }
     }

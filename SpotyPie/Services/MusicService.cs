@@ -10,6 +10,8 @@ using Android.Views;
 using Mobile_Api.Models;
 using RestSharp;
 using SpotyPie.Models;
+using SpotyPie.Services.Binders;
+using SpotyPie.Services.Interfaces;
 using SpotyPie.Services.Restarters;
 using System;
 using System.Collections.Generic;

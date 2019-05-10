@@ -313,10 +313,10 @@ namespace SpotyPie
             }
             catch (Exception e)
             {
-                Application.SynchronizationContext.Post(_ =>
+                Activity.RunOnUiThread(() =>
                 {
                     Toast.MakeText(this.Context, e.Message, ToastLength.Short).Show();
-                }, null);
+                });
             }
         }
 
@@ -327,7 +327,7 @@ namespace SpotyPie
 
             if (dataList.Count == 1)
             {
-                Application.SynchronizationContext.Post(_ =>
+                Activity.RunOnUiThread(() =>
                 {
                     if (typeof(T) == typeof(Album))
                     {
@@ -337,7 +337,7 @@ namespace SpotyPie
                     {
                         RvBaseArtist.SetLayoutManager(RecycleView.Enums.LayoutManagers.Linear_vertical);
                     }
-                }, null);
+                });
 
                 if (typeof(T) != typeof(Songs))
                     dataList.First().SetModelType(RvType.BigOne);
@@ -346,7 +346,7 @@ namespace SpotyPie
             }
             else
             {
-                Application.SynchronizationContext.Post(_ =>
+                Activity.RunOnUiThread(() =>
                 {
                     if (typeof(T) == typeof(Album))
                     {
@@ -356,7 +356,7 @@ namespace SpotyPie
                     {
                         RvBaseArtist.SetLayoutManager(RecycleView.Enums.LayoutManagers.Grind_2_col);
                     }
-                }, null);
+                });
 
                 dataList.ForEach(x => x.SetModelType(type));
             }

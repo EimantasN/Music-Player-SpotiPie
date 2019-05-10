@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Android.Media;
 using Mobile_Api.Models;
 
-namespace SpotyPie.Services
+namespace SpotyPie.Services.Interfaces
 {
     public interface ServiceCallbacks
     {
