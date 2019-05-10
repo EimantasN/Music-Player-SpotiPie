@@ -64,6 +64,8 @@ namespace SpotyPie.RecycleView
                 Songs ar = Dataset[position] as Songs;
                 if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongWithImage)
                     return Resource.Layout.song_list_with_image;
+                if (ar.GetModelType() == Mobile_Api.Models.Enums.RvType.SongBindList)
+                    return Resource.Layout.song_detail_list;
                 else
                     return Resource.Layout.song_list_rv;
             }
@@ -153,7 +155,10 @@ namespace SpotyPie.RecycleView
             else if (holder is SongBindList)
             {
                 SongBindList view = holder as SongBindList;
-                view.PrepareView(Dataset[position] as SongTag, Context);
+                if (Dataset[position] is SongTag)
+                    view.PrepareView(Dataset[position] as SongTag, Context);
+                else
+                    view.PrepareView(Dataset[position] as Songs, Context);
                 return;
             }
 

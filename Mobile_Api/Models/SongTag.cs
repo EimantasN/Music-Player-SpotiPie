@@ -1,8 +1,4 @@
-﻿using Mobile_Api.Interfaces;
-using Mobile_Api.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Mobile_Api.Models.Enums;
 
 namespace Mobile_Api.Models
 {

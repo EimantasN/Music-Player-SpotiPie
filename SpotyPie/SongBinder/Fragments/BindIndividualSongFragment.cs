@@ -103,6 +103,8 @@ namespace SpotyPie.SongBinder.Fragments
                     ArtistText.Text,
                     ArtistCof.Progress);
 
+                songs.ForEach(x => x.SetModelType(Mobile_Api.Models.Enums.RvType.SongBindList));
+
                 RunOnUiThread(() =>
                 {
                     try

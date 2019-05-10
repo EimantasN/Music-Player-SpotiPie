@@ -38,9 +38,17 @@ namespace Database
         Task<Song> SetLenght(int id, long lenght);
 
         Task SetCorruptedAsync(int id);
+
         Task<List<Image>> GetNewImageAsync(int id);
 
         List<SongTag> UnbindedSongs();
+
         Task<List<Song>> GetSongToBindAsync(string songTitle, int songCof, string album, int albumCof, string artist, int artistCof);
+
+        Task<dynamic> GetBindingStatistics();
+
+        void DeleteLocalSongFile(string localUrl);
+
+        Task<Song> BindSongWithFile(string localUrl, int songId);
     }
 }

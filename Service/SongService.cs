@@ -594,7 +594,7 @@ namespace Services
                 string newPath;
 
                 int id = 0;
-                foreach (var path in System.IO.Directory.EnumerateFiles(EnviromentPath.GetEnviromentPathMusic()))
+                foreach (var path in Directory.EnumerateFiles(EnviromentPath.GetEnviromentPathMusic()))
                 {
                     try
                     {
@@ -645,6 +645,29 @@ namespace Services
             }
 
             return filtered;
+        }
+
+        public async Task<dynamic> GetBindingStatistics()
+        {
+            List<bool> Songs = await _ctx.Songs.Select(x => x.IsPlayable).ToListAsync();
+            return new
+            {
+                UnbindedCount = Directory.GetFiles(EnviromentPath.GetEnviromentPathMusic()).Count(),
+                BindedCount = Songs.Count(x => x),
+                SongTotal = Songs.Count(x => !x)
+            };
+        }
+
+        public void DeleteLocalSongFile(string localUrl)
+        {
+            //TODO added safe delete in future
+            if (File.Exists(localUrl))
+                File.Delete(localUrl);
+        }
+
+        public Task<Song> BindSongWithFile(string localUrl, int songId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

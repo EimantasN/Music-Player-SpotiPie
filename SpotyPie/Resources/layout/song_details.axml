@@ -335,6 +335,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:text="Set quality"
+            android:textColor="@android:color/darker_gray"
             app:layout_constraintBottom_toTopOf="@+id/delete"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent" />
@@ -349,7 +350,8 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Add image"
+            android:text="Check for image"
+            android:textColor="@android:color/darker_gray"
             app:layout_constraintBottom_toTopOf="@+id/connect"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline" />

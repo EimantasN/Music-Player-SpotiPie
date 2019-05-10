@@ -17,7 +17,7 @@ namespace Service.Helpers
         {
             if (!Environment.OSVersion.ToString().Contains("W"))
             {
-                //Not adding checks for direcotry because is a 
+                //Not adding checks for directory because is a 
                 //wrong place and it will be needed to move everything to another place
                 return
                     Path.DirectorySeparatorChar + "root" +
@@ -34,14 +34,33 @@ namespace Service.Helpers
             string path;
             if (!Environment.OSVersion.ToString().Contains("W"))
             {
-                path = GetBase() + System.IO.Path.DirectorySeparatorChar + "Flac";
+                path = GetBase() + Path.DirectorySeparatorChar + "Flac";
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
                 return path;
             }
             else
             {
-                path = GetBase() + System.IO.Path.DirectorySeparatorChar + "Music";
+                path = GetBase() + Path.DirectorySeparatorChar + "Music";
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
+        public static string GetEnviromentPathDeleted()
+        {
+            string path;
+            if (!Environment.OSVersion.ToString().Contains("W"))
+            {
+                path = GetBase() + Path.DirectorySeparatorChar + "Deleted";
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                return path;
+            }
+            else
+            {
+                path = GetBase() + Path.DirectorySeparatorChar + "Deleted";
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
                 return path;
@@ -63,7 +82,7 @@ namespace Service.Helpers
             }
             else
             {
-                path = GetBase() + System.IO.Path.DirectorySeparatorChar + "Images";
+                path = GetBase() + Path.DirectorySeparatorChar + "Images";
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
                 return path;
@@ -98,7 +117,7 @@ namespace Service.Helpers
 
         public static string GetSongImgDestinationPath(Song song, int width, int height, string imgUrl)
         {
-            var path = EnviromentPath.GetEnviromentPathImages() +
+            var path = GetEnviromentPathImages() +
                 Path.DirectorySeparatorChar +
                 Replacer.RemoveSpecialCharacters(song.ArtistName.ToLower().Trim()) +
                 Path.DirectorySeparatorChar +

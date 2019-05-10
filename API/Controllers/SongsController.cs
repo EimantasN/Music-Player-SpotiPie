@@ -284,5 +284,29 @@ namespace API.Controllers
                 return BadRequest(ex);
             }
         }
+
+
+        [HttpGet("GetBindingStatistics")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> GetBindingStatistics()
+        {
+            return Ok(await _songs.GetBindingStatistics());
+        }
+
+        [HttpPost("DeleteLocalSongFile")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> DeleteLocalSongFile([FromForm] string localUrl)
+        {
+            _songs.DeleteLocalSongFile(localUrl);
+            return Ok();
+        }
+
+        [HttpPost("BindSongWithFile")]
+        [EnableCors("AllowSpecificOrigin")]
+        public async Task<IActionResult> BindSongWithFile([FromForm] string localUrl, [FromForm] int songId)
+        {
+            Song song = await _songs.BindSongWithFile(localUrl, songId);
+            return Ok();
+        }
     }
 }
