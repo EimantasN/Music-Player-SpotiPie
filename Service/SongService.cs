@@ -592,23 +592,26 @@ namespace Services
             {
                 string fileName;
                 string newPath;
+
+                int id = 0;
                 foreach (var path in System.IO.Directory.EnumerateFiles(EnviromentPath.GetEnviromentPathMusic()))
                 {
                     try
                     {
+                        id++;
                         if (path.Contains(".flac"))
                         {
                             fileName = Path.GetFileName(path);
                             newPath = path.Replace(fileName, Replacer.RemoveSpecialCharacters(fileName)).Replace("_flac", ".flac");
                             File.Move(path, newPath);
-                            SongTags.Add(new SongTag(newPath));
+                            SongTags.Add(new SongTag(newPath, id));
                         }
                         else if (path.Contains(".mp3"))
                         {
                             fileName = Path.GetFileName(path);
                             newPath = path.Replace(fileName, Replacer.RemoveSpecialCharacters(fileName)).Replace("_mp3", ".mp3");
                             File.Move(path, newPath);
-                            SongTags.Add(new SongTag(newPath));
+                            SongTags.Add(new SongTag(newPath, id));
                         }
                     }
                     catch (Exception)

@@ -10,6 +10,8 @@ namespace Mobile_Api.Models
     {
         public override int Id { get; set; }
 
+        public string FilePath { get; set; }
+
         public string Artist { get; set; }
 
         public string Album { get; set; }

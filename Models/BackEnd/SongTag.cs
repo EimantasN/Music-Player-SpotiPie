@@ -1,13 +1,11 @@
-﻿using IdSharp.Tagging.VorbisComment;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Models.BackEnd
+﻿namespace Models.BackEnd
 {
     public class SongTag
     {
         public int Id { get; set; }
+
+        public string FilePath { get; set; }
+
         public string Artist { get; set; }
 
         public string Album { get; set; }
@@ -22,8 +20,11 @@ namespace Models.BackEnd
 
         public int TrackNumber { get; set; }
 
-        public SongTag(string path)
+        public SongTag(string path, int id)
         {
+            FilePath = path;
+            Id = id;
+
             var tfile = TagLib.File.Create(path);
             if (!string.IsNullOrEmpty(tfile.Tag.FirstAlbumArtist))
             {
@@ -70,25 +71,5 @@ namespace Models.BackEnd
             catch
             { }
         }
-
-        //public SongTag(string url)
-        //{
-        //    var tfile = TagLib.File.Create(url);
-
-        //    //if (!string.IsNullOrEmpty(tfile.Properties))
-        //    //{
-        //    //    this.Album = tfile.Artist;
-        //    //}
-
-        //    //if (!string.IsNullOrEmpty(tfile.Album))
-        //    //{
-        //    //    this.Album = tfile.Album;
-        //    //}
-
-        //    //if (!string.IsNullOrEmpty(tfile.Title))
-        //    //{
-        //    //    this.Album = tfile.Title;
-        //    //}
-        //}
     }
 }
