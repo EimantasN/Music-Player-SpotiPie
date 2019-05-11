@@ -49,6 +49,6 @@ namespace Database
 
         void DeleteLocalSongFile(string localUrl);
 
-        Task<Song> BindSongWithFile(string localUrl, int songId);
+        Task<Song> BindSongWithFileAsync(string localUrl, int songId);
     }
 }

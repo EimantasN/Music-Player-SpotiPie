@@ -305,7 +305,7 @@ namespace API.Controllers
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> BindSongWithFile([FromForm] string localUrl, [FromForm] int songId)
         {
-            Song song = await _songs.BindSongWithFile(localUrl, songId);
+            Song song = await _songs.BindSongWithFileAsync(localUrl, songId);
             return Ok();
         }
     }

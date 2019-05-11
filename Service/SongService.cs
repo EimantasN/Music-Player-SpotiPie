@@ -416,8 +416,6 @@ namespace Services
             return null;
         }
 
-
-
         public async Task<Song> SetLenght(int id, long durationMs)
         {
             try
@@ -665,9 +663,57 @@ namespace Services
                 File.Delete(localUrl);
         }
 
-        public Task<Song> BindSongWithFile(string localUrl, int songId)
+        public async Task<Song> BindSongWithFileAsync(string localUrl, int songId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (string.IsNullOrEmpty(localUrl) || songId == 0)
+                    return null;
+
+                var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == songId);
+                if (song == null)
+                    return null;
+
+                var album = await _ctx.Albums.FirstAsync(x => x.Id == song.AlbumId);
+
+                SongType type = SongType.Flac;
+                if (!Path.GetExtension(localUrl).ToLower().Contains("flac"))
+                    type = SongType.Mp3;
+
+                string Extension = Path.GetExtension(localUrl);
+                string destinationPath = EnviromentPath.GetEnviromentPathMusic() +
+                    Path.DirectorySeparatorChar +
+                    Replacer.RemoveSpecialCharacters(song.ArtistName.ToLower().Trim()) +
+                    Path.DirectorySeparatorChar +
+                    Replacer.RemoveSpecialCharacters(song.AlbumName.ToLower().Trim()) +
+                    Path.DirectorySeparatorChar +
+                    Replacer.RemoveSpecialCharacters(song.Name.ToLower().Trim()) + Extension;
+
+                File.Copy(localUrl, destinationPath, true);
+
+                if (song.LocalUrl == null || song.LocalUrl != destinationPath)
+                {
+                    song.LocalUrl = destinationPath;
+                    song.IsLocal = true;
+                    song.IsPlayable = true;
+                    song.Type = type;
+                    song.UploadTime = DateTime.Now;
+                    song.Size = new FileInfo(destinationPath).Length;
+                    _ctx.Entry(song).State = EntityState.Modified;
+
+                    if (!album.IsPlayable)
+                    {
+                        album.IsPlayable = true;
+                        _ctx.Entry(album).State = EntityState.Modified;
+                    }
+                    await _ctx.SaveChangesAsync();
+                }
+                return song;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }
