@@ -16,7 +16,10 @@ namespace SpotyPie
     [Activity(Label = "SpotyPie", MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
     public class MainActivity : ActivityBase
     {
+        public override int LayoutId { get; set; } = Resource.Layout.activity_main;
+
         private int LastViewLayer = 0;
+
         private int CurrentViewLayer = 1;
 
         private Current_state APPSTATE;
@@ -57,13 +60,9 @@ namespace SpotyPie
 
         ConstraintLayout HeaderContainer;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override void InitView()
         {
-            base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_main);
-
-            InitFather();
-
+            base.InitView();
             APPSTATE = new Current_state(this);
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
@@ -444,11 +443,6 @@ namespace SpotyPie
         public override dynamic GetInstance()
         {
             return this;
-        }
-
-        protected override void InitFather()
-        {
-            mSupportFragmentManager = SupportFragmentManager;
         }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using Android.App;
-using Android.OS;
-using Android.Support.V7.App;
 using Android.Widget;
 using SpotyPie.Base;
 using SpotyPie.SongBinder.Enumerators;
@@ -10,6 +8,8 @@ namespace SpotyPie.SongBinder
     [Activity(Label = "SongBinderActivity", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Theme = "@style/Theme.SpotyPie")]
     public class SongBinderActivity : ActivityBase
     {
+        public override int LayoutId { get; set; } = Resource.Layout.song_binder_activity;
+
         //Action buttons
         private Button BindSongs;
         private Button Sync;
@@ -18,11 +18,10 @@ namespace SpotyPie.SongBinder
         private Button LoadTorrent;
         private Button SetQuality;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override void InitView()
         {
-            base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.song_binder_activity);
-
+            IsFragmentLoadedAdded = true;
+            base.InitView();
             BindSongs = FindViewById<Button>(Resource.Id.bind_song_btn);
             BindSongs.Click += BindSongs_Click;
 
@@ -47,7 +46,6 @@ namespace SpotyPie.SongBinder
             LoadFragmentInner(BinderFragments.UnBindedSongList);
         }
 
-
         //DO not use this to load fragment
         protected override void LoadFragment(dynamic switcher)
         {
@@ -70,11 +68,6 @@ namespace SpotyPie.SongBinder
         public override dynamic GetInstance()
         {
             return this;
-        }
-
-        protected override void InitFather()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

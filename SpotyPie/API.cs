@@ -108,6 +108,11 @@ namespace SpotyPie
             }
         }
 
+        internal async Task<string> DeleteSongAsync(string filePath)
+        {
+            return await _service.DeleteSongAsync(filePath);
+        }
+
         #endregion
 
         #region MainFragment

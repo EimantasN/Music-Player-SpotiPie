@@ -56,6 +56,12 @@ namespace Mobile_Api
             await Client.PostCustomObject(paramerters);
         }
 
+        public async Task<T> Post<T>(string controller, string endPoint, string paramerters)
+        {
+            CustomRestClient Client = GetClient($"api/{controller}/{endPoint}");
+            return await Client.PostCustomObject<T>(paramerters);
+        }
+
         public async Task<List<T>> PostList<T>(string endPoint, string paramerters)
         {
             CustomRestClient Client = GetClient($"api/{typeof(T).Name}/{endPoint}");

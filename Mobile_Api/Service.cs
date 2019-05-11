@@ -97,6 +97,11 @@ namespace Mobile_Api
             return await Get<dynamic>("Songs", "GetBindingStatistics");
         }
 
+        public async Task<string> DeleteSongAsync(string filePath)
+        {
+            return await Post<dynamic>("Songs", "DeleteLocalSongFile", $"localUrl={filePath}");
+        }
+
         #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Android.OS;
 using Android.Support.V7.App;
+using Android.Views;
 using Android.Widget;
 using System.Collections.Generic;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
@@ -8,11 +9,17 @@ namespace SpotyPie.Base
 {
     public abstract class ActivityBase : AppCompatActivity
     {
+        public abstract int LayoutId { get; set; }
+
         protected virtual int FirstLayerFragmentHolder { get; set; } = Resource.Id.content_frame;
 
         private Stack<dynamic> FragmentStack { get; set; }
 
         private FrameLayout FragmentFrame;
+
+        private ProgressBar FragmentLoading;
+
+        public bool IsFragmentLoadedAdded = false;
 
         protected virtual FragmentBase CurrentFragment { get; set; }
 
@@ -22,7 +29,29 @@ namespace SpotyPie.Base
 
         public abstract dynamic GetInstance();
 
-        protected abstract void InitFather();
+        private int GetLayout()
+        {
+            return LayoutId;
+        }
+
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            SetContentView(GetLayout());
+            InitView();
+        }
+
+        protected virtual void InitView()
+        {
+            mSupportFragmentManager = SupportFragmentManager;
+            if (IsFragmentLoadedAdded)
+            {
+                FragmentFrame = FindViewById<FrameLayout>(FirstLayerFragmentHolder);
+                FragmentFrame.Visibility = ViewStates.Gone;
+                FragmentLoading = FindViewById<ProgressBar>(Resource.Id.fragmentloading);
+                FragmentLoading.Visibility = ViewStates.Gone;
+            }
+        }
 
 
         public API GetAPIService()
@@ -43,8 +72,14 @@ namespace SpotyPie.Base
                 LoadFragmentInner(GetFragmentStack().Pop());
                 if (GetFragmentStack().Count == 0)
                 {
-                    if (FragmentFrame.Visibility == Android.Views.ViewStates.Visible)
-                        FragmentFrame.Visibility = Android.Views.ViewStates.Gone;
+                    if (IsFragmentLoadedAdded)
+                    {
+                        if (FragmentFrame.Visibility == ViewStates.Visible)
+                            FragmentFrame.Visibility = ViewStates.Gone;
+
+                        if (FragmentLoading.Visibility == ViewStates.Visible)
+                            FragmentLoading.Visibility = ViewStates.Gone;
+                    }
                 }
             }
         }
@@ -60,6 +95,14 @@ namespace SpotyPie.Base
             return false;
         }
 
+        public virtual void FragmentLoaded()
+        {
+            if (IsFragmentLoadedAdded && FragmentLoading.Visibility == ViewStates.Visible)
+            {
+                FragmentLoading.Visibility = ViewStates.Gone;
+            }
+        }
+
         private Stack<dynamic> GetFragmentStack()
         {
             if (FragmentStack == null)
@@ -69,13 +112,14 @@ namespace SpotyPie.Base
 
         public void LoadFragmentInner(dynamic switcher, string jsonModel = null)
         {
-            if (FragmentFrame == null)
+            if (IsFragmentLoadedAdded)
             {
-                FragmentFrame = FindViewById<FrameLayout>(FirstLayerFragmentHolder);
-            }
+                if (FragmentFrame.Visibility == ViewStates.Gone)
+                    FragmentFrame.Visibility = ViewStates.Visible;
 
-            if (FragmentFrame.Visibility == Android.Views.ViewStates.Gone)
-                FragmentFrame.Visibility = Android.Views.ViewStates.Visible;
+                if (FragmentLoading.Visibility == ViewStates.Gone)
+                    FragmentLoading.Visibility = ViewStates.Visible;
+            }
 
             if (CurrentFragment != null)
             {
@@ -111,6 +155,7 @@ namespace SpotyPie.Base
         protected override void OnDestroy()
         {
             FragmentStack = null;
+            CurrentFragment = null;
             base.OnDestroy();
         }
 

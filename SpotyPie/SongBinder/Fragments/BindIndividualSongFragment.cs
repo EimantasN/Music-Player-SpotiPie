@@ -115,7 +115,7 @@ namespace SpotyPie.SongBinder.Fragments
             AlbumSwitch.Enabled = false;
             ArtistSwitch.Enabled = false;
 
-            Loading.Visibility = Android.Views.ViewStates.Visible;
+            Loading.Visibility = ViewStates.Visible;
             Songs.GetData().AddList(new System.Collections.Generic.List<Songs>());
             Task.Run(() => LoadSongsAsync());
         }
@@ -151,7 +151,7 @@ namespace SpotyPie.SongBinder.Fragments
                     }
                     finally
                     {
-                        Loading.Visibility = Android.Views.ViewStates.Gone;
+                        Loading.Visibility = ViewStates.Gone;
                         SongCof.Enabled = true;
                         AlbumCof.Enabled = true;
                         ArtistCof.Enabled = true;
@@ -199,12 +199,21 @@ namespace SpotyPie.SongBinder.Fragments
             {
                 Songs = new BaseRecycleView<Songs>(this, Resource.Id.rv);
                 Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                Songs.IgnoreClick = true;
+                Songs.SetClickAction(() =>
+                {
+                    Snackbar.Make(RootView, "Veikia", Snackbar.LengthIndefinite).Show();
+                });
             }
         }
 
         public override void ReleaseData()
         {
-
+            if (Songs != null)
+            {
+                Songs.Dispose();
+                Songs = null;
+            }
         }
     }
 }

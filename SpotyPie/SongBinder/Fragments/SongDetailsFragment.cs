@@ -45,7 +45,7 @@ namespace SpotyPie.SongBinder.Fragments
             Bitrate = RootView.FindViewById<TextView>(Resource.Id.bitrate_value);
 
             Delete = RootView.FindViewById<Button>(Resource.Id.delete);
-            Delete.Enabled = false;
+            Delete.Click += Delete_Song_Click;
 
             AddImage = RootView.FindViewById<Button>(Resource.Id.add_image);
             AddImage.Enabled = false;
@@ -54,12 +54,53 @@ namespace SpotyPie.SongBinder.Fragments
             SetQuality.Enabled = false;
 
             Connect = RootView.FindViewById<Button>(Resource.Id.connect);
-            Connect.Click += Connect_Click;
+            Connect.Click += Connect_Song_Click;
 
             Task.Run(() => LoadInfo());
         }
 
-        private void Connect_Click(object sender, EventArgs e)
+        private void Delete_Song_Click(object sender, EventArgs e)
+        {
+            Delete.Visibility = ViewStates.Gone;
+            Delete.Enabled = false;
+            Task.Run(async () =>
+            {
+                string status = await GetAPIService().DeleteSongAsync(GetModel<SongTag>().FilePath);
+
+                RunOnUiThread(() =>
+                {
+                    Snackbar snackBar;
+                    snackBar = Snackbar.Make(RootView, "File Deleted", Snackbar.LengthIndefinite);
+                    if (status == "Success")
+                    {
+                        snackBar.SetAction("Ok", (view) =>
+                        {
+                            RemoveMe();
+                            snackBar.Dismiss();
+                            snackBar.Dispose();
+                            snackBar = null;
+                        });
+                    }
+                    else
+                    {
+                        snackBar.SetText("Failed To delete file");
+                        snackBar.SetAction("Retry", (view) =>
+                        {
+                            Delete_Song_Click(null, null);
+                            snackBar.Dismiss();
+                            snackBar.Dispose();
+                            snackBar = null;
+                        });
+                    }
+                    snackBar.Show();
+
+                    Delete.Visibility = ViewStates.Visible;
+                    Delete.Enabled = true;
+                });
+            });
+        }
+
+        private void Connect_Song_Click(object sender, EventArgs e)
         {
             ParentActivity?.LoadFragmentInner(Enumerators.BinderFragments.BindIndividualSongFragment, JsonModel);
         }

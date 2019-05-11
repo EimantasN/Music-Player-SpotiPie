@@ -95,7 +95,13 @@ namespace SpotyPie.Base
         public override void OnResume()
         {
             ForceUpdate();
+            ParentActivity?.FragmentLoaded();
             base.OnResume();
+        }
+
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
+        {
+            base.OnViewCreated(view, savedInstanceState);
         }
 
         public override void OnStop()
@@ -115,6 +121,11 @@ namespace SpotyPie.Base
             {
                 action?.Invoke();
             });
+        }
+
+        public void RemoveMe()
+        {
+            ParentActivity?.OnBackPressed();
         }
 
         public void SendData(string data)

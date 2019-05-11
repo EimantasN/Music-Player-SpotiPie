@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	android:fitsSystemWindows="true"
-    android:background="@drawable/gradient_grey">
-
-    <android.support.constraint.ConstraintLayout
+<android.support.constraint.ConstraintLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/MainContainer"
+		android:background="@drawable/gradient_grey"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/HeaderContainer"
@@ -273,4 +268,3 @@
             app:layout_constraintTop_toTopOf="@+id/content_frame" />
 
     </android.support.constraint.ConstraintLayout>
-</android.support.design.widget.CoordinatorLayout>

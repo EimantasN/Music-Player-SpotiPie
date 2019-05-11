@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.Content;
 using Android.Content.Res;
+using Android.Support.Design.Widget;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -22,14 +23,23 @@ namespace SpotyPie.RecycleView.Models
 
         public SongItem(View view, ViewGroup parent) : base(view)
         {
+            EmptyTimeView = view;
+
             Title = view.FindViewById<TextView>(Resource.Id.Title);
             SubTitile = view.FindViewById<TextView>(Resource.Id.subtitle);
             Options = view.FindViewById<ImageButton>(Resource.Id.option);
             SmallIcon = view.FindViewById<ImageView>(Resource.Id.small_img);
 
             IsRecyclable = true;
+
+            Options.Click += Options_Click1;
         }
 
+        private void Options_Click1(object sender, EventArgs e)
+        {
+
+            Snackbar.Make(EmptyTimeView, "Veikia", Snackbar.LengthShort).Show();
+        }
 
         internal void PrepareView(Songs t, Context context)
         {

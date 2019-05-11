@@ -15,24 +15,26 @@ namespace SpotyPie.RecycleView
 {
     public class BaseRecycleView<T> where T : IBaseInterface
     {
-        private bool Disposed = false;
-        private RvList<T> RvDataset;
-        private SpotyPieRv CustomRecyclerView;
-        private LayoutManagers Manager = LayoutManagers.Unseted;
+        private int RvId { get; set; }
+
+        private bool Disposed { get; set; } = false;
+
         public int LastPosition { get; private set; }
 
-        private Action CustomAction;
+        public bool IgnoreClick { get; set; } = false;
 
+        private RvList<T> RvDataset { get; set; }
+        private SpotyPieRv CustomRecyclerView { get; set; }
+        private LayoutManagers Manager { get; set; } = LayoutManagers.Unseted;
+        private Action CustomAction;
         private FragmentBase Activity { get; set; }
 
-        private int Id { get; set; }
-
-        public BaseRecycleView(FragmentBase Activity, int RvId)
+        public BaseRecycleView(FragmentBase activity, int rvId)
         {
-            RvDataset = new RvList<T>(Activity);
+            RvDataset = new RvList<T>(activity);
 
-            this.Activity = Activity;
-            this.Id = RvId;
+            this.Activity = activity;
+            this.RvId = rvId;
         }
 
         internal void SetClickAction(Action p)
@@ -48,7 +50,7 @@ namespace SpotyPie.RecycleView
 
         public void Init(LayoutManagers layout)
         {
-            CustomRecyclerView = new SpotyPieRv(Activity.GetView().FindViewById<RecyclerView>(Id));
+            CustomRecyclerView = new SpotyPieRv(Activity.GetView().FindViewById<RecyclerView>(RvId));
             SetLayoutManager(layout);
             CustomRecyclerView.GetRecycleView().SetAdapter(new BaseRv<T>(RvDataset, CustomRecyclerView.GetRecycleView(), Activity.Context));
             RvDataset.Adapter = CustomRecyclerView.GetRecycleView().GetAdapter();
@@ -104,7 +106,7 @@ namespace SpotyPie.RecycleView
         {
             CustomRecyclerView.GetRecycleView().SetItemClickListener((rv, position, view) =>
             {
-                if (CustomRecyclerView != null && CustomRecyclerView.GetRecycleView().ChildCount != 0)
+                if (!IgnoreClick && CustomRecyclerView != null && CustomRecyclerView.GetRecycleView().ChildCount != 0)
                 {
                     LastPosition = position;
                     if (RvDataset[position].GetType().Name == "Album")
@@ -126,9 +128,8 @@ namespace SpotyPie.RecycleView
                     {
                         Activity.LoadArtist(RvDataset[position] as Artist);
                     }
-
-                    CustomAction?.Invoke();
                 }
+                CustomAction?.Invoke();
             });
         }
 

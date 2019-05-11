@@ -17,6 +17,8 @@ namespace SpotyPie
     [Activity(Label = "SettingsActivity", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Theme = "@style/Theme.SpotyPie")]
     public class SettingsActivity : ActivityBase
     {
+        public override int LayoutId { get; set; } = Resource.Layout.settings;
+
         private API Api_service { get; set; }
 
         private Spinner MusicQualitySpinner;
@@ -39,11 +41,9 @@ namespace SpotyPie
         private TextView SongUnbindedCount;
         private Button LaunchSongBinder;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override void InitView()
         {
-            base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.settings);
-
+            base.InitView();
             Settings settings = InitRealSettings();
 
             InitSpinner();
@@ -76,20 +76,22 @@ namespace SpotyPie
             CellularSwitch.CheckedChange += CellularSwitch_CheckedChange;
             CellularSwitch.Checked = settings.CellularSwitch;
 
-            InitBluetoothSpinner();
-
             //Song binder
             SongBindedText = FindViewById<TextView>(Resource.Id.song_binded_text);
             SongBindedCount = FindViewById<TextView>(Resource.Id.song_binded_count);
 
             SongUnbindedText = FindViewById<TextView>(Resource.Id.song_unbinded_text);
             SongUnbindedCount = FindViewById<TextView>(Resource.Id.song_unbinded_count);
-            GetBindedStatistics();
 
             LaunchSongBinder = FindViewById<Button>(Resource.Id.song_binder_btn);
             LaunchSongBinder.Click += LaunchSongBinder_Click;
+        }
 
-            Task.Run(() => GetBindStatistics());
+        protected override void OnResume()
+        {
+            base.OnResume();
+            GetBindedStatistics();
+            InitBluetoothSpinner();
         }
 
         private void GetBindedStatistics()
@@ -108,13 +110,6 @@ namespace SpotyPie
         private void LaunchSongBinder_Click(object sender, EventArgs e)
         {
             StartActivity(typeof(SongBinder.SongBinderActivity));
-        }
-
-        private void GetBindStatistics()
-        {
-            RunOnUiThread(() =>
-            {
-            });
         }
 
         private void InitBluetoothSpinner()
@@ -318,10 +313,6 @@ namespace SpotyPie
         public override dynamic GetInstance()
         {
             return this;
-        }
-
-        protected override void InitFather()
-        {
         }
     }
 }
