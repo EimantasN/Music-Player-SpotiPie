@@ -1,10 +1,10 @@
 ﻿using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
-using Android.Widget;
 using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using SpotyPie.RecycleView.Models;
+using System;
 
 namespace SpotyPie.RecycleView
 {
@@ -13,12 +13,14 @@ namespace SpotyPie.RecycleView
         protected RvList<T> Dataset;
         protected RecyclerView mRecyclerView;
         protected Context Context;
+        protected Action Action;
 
-        public BaseRv(RvList<T> data, RecyclerView recyclerView, Context context)
+        public BaseRv(RvList<T> data, RecyclerView recyclerView, Context context, Action action = null)
         {
             Dataset = data;
             mRecyclerView = recyclerView;
             Context = context;
+            this.Action = action;
             this.HasStableIds = true;
         }
 
@@ -69,6 +71,10 @@ namespace SpotyPie.RecycleView
                 else
                     return Resource.Layout.song_list_rv;
             }
+            else if (typeof(T) == typeof(SongOptions) || Dataset[position].GetType().Name == "SongOptions")
+            {
+                return Resource.Layout.song_option_list;
+            }
             else if (typeof(T) == typeof(SongTag) || Dataset[position].GetType().Name == "SongTag")
             {
                 return Resource.Layout.song_detail_list;
@@ -85,7 +91,7 @@ namespace SpotyPie.RecycleView
                 case Resource.Layout.big_rv_list:
                     return new BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list, parent, false), parent);
                 case Resource.Layout.song_list_rv:
-                    return new SongItem(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_rv, parent, false), parent);
+                    return new SongItem(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_rv, parent, false), parent, Action);
                 case Resource.Layout.grid_rv:
                     return new BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.grid_rv, parent, false), parent);
                 case Resource.Layout.big_rv_list_one:
@@ -100,8 +106,10 @@ namespace SpotyPie.RecycleView
                     return new ArtistList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.artist_list, parent, false), parent);
                 case Resource.Layout.album_list:
                     return new AlbumList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.album_list, parent, false), parent);
+                case Resource.Layout.song_option_list:
+                    return new SongOption(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_option_list, parent, false), parent);
                 default:
-                    throw new System.Exception("View Id in RV not found");
+                    throw new Exception("View Id in RV not found");
             }
         }
 
@@ -131,7 +139,7 @@ namespace SpotyPie.RecycleView
             else if (holder is SongItem)
             {
                 SongItem view = holder as SongItem;
-                view.PrepareView(Dataset[position] as Songs, Context);
+                view.PrepareView(Dataset[position] as Songs);
                 return;
             }
             else if (holder is ArtistList)
@@ -159,6 +167,12 @@ namespace SpotyPie.RecycleView
                     view.PrepareView(Dataset[position] as SongTag, Context);
                 else
                     view.PrepareView(Dataset[position] as Songs, Context);
+                return;
+            }
+            else if (holder is SongOption)
+            {
+                SongOption view = holder as SongOption;
+                view.PrepareView(Dataset[position] as SongOptions);
                 return;
             }
 

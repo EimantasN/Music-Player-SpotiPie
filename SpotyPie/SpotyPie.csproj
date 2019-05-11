@@ -84,8 +84,10 @@
     <Compile Include="Database\ViewModels\CurrentState.cs" />
     <Compile Include="Database\ViewModels\Settings.cs" />
     <Compile Include="Enums\Activitys\MainActivity.cs" />
+    <Compile Include="Enums\Activitys\Player.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
     <Compile Include="RecycleView\Models\SongBindList.cs" />
+    <Compile Include="RecycleView\Models\SongOption.cs" />
     <Compile Include="RecycleView\SpotyPieRv.cs" />
     <Compile Include="Services\Binders\Bluetooth\BthHelper.cs" />
     <Compile Include="Services\Binders\Bluetooth\Enumerators\BlhStatus.cs" />
@@ -613,6 +615,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\song_layout_background.xml" />
+    <AndroidResource Include="Resources\drawable\song_love.png" />
+    <AndroidResource Include="Resources\drawable\song_unlove.png" />
+    <AndroidResource Include="Resources\drawable\not_visible_song.png" />
+    <AndroidResource Include="Resources\drawable\add_song_interface_symbol.png" />
+    <AndroidResource Include="Resources\drawable\share.png" />
+    <AndroidResource Include="Resources\drawable\group.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

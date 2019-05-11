@@ -27,5 +27,15 @@ namespace SpotyPie.Library.Fragments
         public override void ReleaseData()
         {
         }
+
+        public override int GetParentView()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void LoadFragment(dynamic switcher)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

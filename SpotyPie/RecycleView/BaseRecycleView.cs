@@ -26,13 +26,12 @@ namespace SpotyPie.RecycleView
         private RvList<T> RvDataset { get; set; }
         private SpotyPieRv CustomRecyclerView { get; set; }
         private LayoutManagers Manager { get; set; } = LayoutManagers.Unseted;
-        private Action CustomAction;
+        private Action CustomAction { get; set; }
         private FragmentBase Activity { get; set; }
 
         public BaseRecycleView(FragmentBase activity, int rvId)
         {
             RvDataset = new RvList<T>(activity);
-
             this.Activity = activity;
             this.RvId = rvId;
         }
@@ -42,17 +41,17 @@ namespace SpotyPie.RecycleView
             CustomAction = p;
         }
 
-        public RvList<T> Setup(LayoutManagers layout)
+        public RvList<T> Setup(LayoutManagers layout, Action action = null)
         {
-            Init(layout);
+            Init(layout, action);
             return RvDataset;
         }
 
-        public void Init(LayoutManagers layout)
+        public void Init(LayoutManagers layout, Action action = null)
         {
             CustomRecyclerView = new SpotyPieRv(Activity.GetView().FindViewById<RecyclerView>(RvId));
             SetLayoutManager(layout);
-            CustomRecyclerView.GetRecycleView().SetAdapter(new BaseRv<T>(RvDataset, CustomRecyclerView.GetRecycleView(), Activity.Context));
+            CustomRecyclerView.GetRecycleView().SetAdapter(new BaseRv<T>(RvDataset, CustomRecyclerView.GetRecycleView(), Activity.Context, action));
             RvDataset.Adapter = CustomRecyclerView.GetRecycleView().GetAdapter();
             SetOnClick();
         }
@@ -123,6 +122,10 @@ namespace SpotyPie.RecycleView
                     else if (RvDataset[position].GetType().Name == "SongTag")
                     {
                         //Ignore i sending action only run fragment
+                    }
+                    else if (RvDataset[position].GetType().Name == "SongOptions")
+                    {
+
                     }
                     else if (RvDataset[position].GetType().Name == "Artist")
                     {

@@ -7,4 +7,11 @@
         Library,
         Browse
     }
+
+    public enum HomePage
+    {
+        Artist,
+        Album,
+        Player
+    }
 }

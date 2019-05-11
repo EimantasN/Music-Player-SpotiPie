@@ -1,5 +1,6 @@
-﻿using Android.Support.V7.Widget;
+﻿using Android.Support.Constraints;
 using Android.Views;
+using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.RecycleView;
@@ -12,11 +13,18 @@ namespace SpotyPie.Player
 
         private BaseRecycleView<Songs> RvData { get; set; }
 
+        private FrameLayout SongOptionFragmentLayout;
+
         protected override void InitView()
         {
         }
 
-        public void Update()
+        public override int GetParentView()
+        {
+            return Resource.Id.innerWrapper;
+        }
+
+        private void Update()
         {
             RvData.GetData().AddList(GetState().Current_Song_List);
         }
@@ -26,16 +34,36 @@ namespace SpotyPie.Player
             if (RvData == null)
             {
                 RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
-                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
+                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical, () => { LoadFragmentInner(Enums.Activitys.Player.SongDetails); });
                 RvData.DisableScroolNested();
-                RvData.SetClickAction(() =>
-                {
-                    Player p = (Player)this.ParentFragment;
-                    p.PlayerSongListContainer.Visibility = ViewStates.Gone;
-                    p.CurrentState = 1;
-                });
             }
             Update();
+        }
+
+        //private void LoadOptionFragment()
+        //{
+        //    CheckForLayout();
+        //    if (SongOptionFragmentLayout == null)
+        //    {
+        //        SongOptionFragmentLayout = new FrameLayout(this.Context);
+
+        //        SongOptionFragmentLayout.LayoutParameters = new ConstraintLayout.LayoutParams(
+        //            ConstraintLayout.LayoutParams.MatchParent,
+        //            ConstraintLayout.LayoutParams.MatchParent);
+
+        //        SongOptionFragmentLayout.Id = 10;
+        //        ParentView.AddView(SongOptionFragmentLayout);
+
+        //        SongOptionsFragment SongOptionFragment = new SongOptionsFragment();
+        //        ChildFragmentManager.BeginTransaction()
+        //                .Replace(SongOptionFragmentLayout.Id, SongOptionFragment)
+        //                .Commit();
+        //    }
+        //}
+
+        public bool CheckForLayout()
+        {
+            return true;
         }
 
         public override void ReleaseData()
@@ -45,6 +73,11 @@ namespace SpotyPie.Player
                 RvData.Dispose();
                 RvData = null;
             }
+        }
+
+        public override void LoadFragment(dynamic switcher)
+        {
+            CurrentFragment = new SongOptionsFragment();
         }
     }
 }

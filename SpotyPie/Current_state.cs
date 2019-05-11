@@ -56,10 +56,8 @@ namespace SpotyPie
 
         public void SetSong(List<Songs> songs, int position = 0, bool refresh = false)
         {
+            Id = songs[position].Id;
             GetPlayer().SongChangeStarted(songs, position);
-            //var x = new List<Songs>();
-            //x.AddRange(songs);
-            //Activity.GetAPIService().SetCurrentList(x);
         }
 
         public void SetCurrentSongList(List<Songs> songs)
@@ -78,13 +76,11 @@ namespace SpotyPie
 
         public void SetArtist(Artist art)
         {
-            //Current_Artist = art;
         }
 
         public void SetAlbum(Album album)
         {
             Current_Album = album;
-            //Current_Artist = JsonConvert.DeserializeObject<List<Artist>>(Current_Album.Artists).First();
             Activity.RunOnUiThread(() =>
             {
                 GetPlayer().Player_playlist_name.Text = Current_Album.Name;

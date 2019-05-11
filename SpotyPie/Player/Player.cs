@@ -5,6 +5,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Realms;
+using SpotyPie.Base;
 using SpotyPie.Services;
 using SpotyPie.Services.Binders;
 using SpotyPie.Services.Interfaces;
@@ -12,18 +13,17 @@ using Square.Picasso;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Player
 {
-    public class Player : SupportFragment, View.IOnTouchListener, ServiceCallbacks, IServiceConnection
+    public class Player : FragmentBase, View.IOnTouchListener, ServiceCallbacks, IServiceConnection
     {
-        View RootView;
-
         private int ViewLoadState = 0;
+
         private bool Bound { get; set; } = false;
+
+        protected new MainActivity ParentActivity;
 
         private MusicService MusicService;
 
@@ -37,8 +37,7 @@ namespace SpotyPie.Player
         protected int FragmentWidth = 0;
 
         public int CurrentState { get; set; } = 1;
-
-        PlaylistSongList PlayerSongList;
+        public override int LayoutId { get; set; } = Resource.Layout.player;
 
         TimeSpan CurrentTime = new TimeSpan(0, 0, 0, 0);
         TimeSpan TotalSongTime = new TimeSpan(0, 0, 0, 0);
@@ -68,24 +67,14 @@ namespace SpotyPie.Player
 
         bool Shuffle_state = false;
 
-        MainActivity ParentActivity;
-
         ImageView Save_to_songs;
 
         private int CurrentSongPosition = 0;
+
         private bool SeekActive = false;
 
-        public Current_state GetState()
+        protected override void InitView()
         {
-            return ParentActivity.GetState();
-        }
-
-        public FrameLayout PlayerSongListContainer;
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-        {
-            RootView = inflater.Inflate(Resource.Layout.player, container, false);
-
             ServiceConnection = this;
 
             ParentActivity = (MainActivity)Activity;
@@ -136,29 +125,14 @@ namespace SpotyPie.Player
             SongTimeSeekBar.StartTrackingTouch += SongTimeSeekBar_StartTrackingTouch;
             SongTimeSeekBar.StopTrackingTouch += SongTimeSeekBar_StopTrackingTouch;
             SongTimeSeekBar.ProgressChanged += SongTimeSeekBar_ProgressChanged;
-
-            return RootView;
         }
 
-
-        private void SongTimeSeekBar_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        public override int GetParentView()
         {
-            if (MusicService?.MusicPlayer?.Duration != null)
-                CurrentSongPosition = (int)(MusicService.MusicPlayer.Duration * e.Progress / 100);
+            return Resource.Id.parent_view;
         }
 
-        private void SongTimeSeekBar_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
-        {
-            MusicService?.SeekToPlayer(CurrentSongPosition);
-            SeekActive = false;
-        }
-
-        private void SongTimeSeekBar_StartTrackingTouch(object sender, SeekBar.StartTrackingTouchEventArgs e)
-        {
-            SeekActive = true;
-        }
-
-        public override void OnResume()
+        public override void ForceUpdate()
         {
             if (!IsMyServiceRunning(typeof(MusicService)))
             {
@@ -169,13 +143,11 @@ namespace SpotyPie.Player
             Activity.BindService(intent, this.ServiceConnection, Bind.AutoCreate);
 
             ImgHolder.SetOnTouchListener(this);
-            base.OnResume();
         }
 
-        public override void OnDestroy()
+        public override void ReleaseData()
         {
             ImgHolder.SetOnTouchListener(null);
-            base.OnDestroy();
         }
 
         public override void OnStop()
@@ -189,105 +161,28 @@ namespace SpotyPie.Player
             }
         }
 
-        public bool OnTouch(View v, MotionEvent e)
+        public override void LoadFragment(dynamic switcher)
         {
-            switch (e.Action)
+            switch (switcher)
             {
-                case MotionEventActions.Down:
-                    mLastPosY = e.GetX();
-                    return true;
-
-                case MotionEventActions.Up:
-                    var metrics = Resources.DisplayMetrics;
-                    var widthInDp = metrics.HeightPixels;
-
-                    var transXExit = v.TranslationX;
-                    if (v.TranslationX > 0)
-                    {
-                        if (transXExit < (FragmentWidth / 3))
-                        {
-                            v.Animate().TranslationX(0);
-                            return true;
-                        }
-                        else
-                        {
-                            v.Animate().TranslationX(FragmentWidth);
-                            PreviewSong_Click(null, null);
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        if (Math.Abs(transXExit) < (FragmentWidth / 3))
-                        {
-                            v.Animate().TranslationX(0);
-                            return true;
-                        }
-                        else
-                        {
-                            v.Animate().TranslationX(FragmentWidth);
-                            NextSong_Click(null, null);
-                            return true;
-                        }
-                    }
-
-                case MotionEventActions.Move:
-                    var proc = 90 * v.TranslationX / (FragmentWidth - OffsetContainer);
-                    //Debug.Print(proc.ToString());
-                    if (proc > 90) proc = 90;
-                    var currentPosition = e.GetX();
-                    var deltX = mLastPosY - currentPosition;
-
-                    var transX = v.TranslationX;
-                    transX -= deltX;
-
-                    v.TranslationX = transX;
-                    //v.Animate().TranslationY(transY);
-                    return true;
-
+                case Enums.Activitys.Player.CurrentSongList:
+                    CurrentFragment = new PlaylistSongList();
+                    return;
                 default:
-                    v.Animate().TranslationX(0);
-                    return v.OnTouchEvent(e);
+                    throw new Exception("Failed to find Fragment");
             }
         }
 
-        private PlaylistSongList GetSongListFragment()
+        #region Player events
+        public void Play()
         {
-            if (PlayerSongList == null)
-            {
-                PlayerSongList = new PlaylistSongList();
-
-                PlayerSongListContainer = RootView.FindViewById<FrameLayout>(Resource.Id.player_frame);
-                PlayerSongListContainer.Visibility = ViewStates.Gone;
-            }
-
-            return PlayerSongList;
+            Music_play();
         }
 
         private void SongListButton_Click(object sender, EventArgs ee)
         {
-            try
-            {
-                if (!GetSongListFragment().IsAdded)
-                {
-                    ChildFragmentManager.BeginTransaction()
-                        .Add(Resource.Id.player_frame, GetSongListFragment())
-                        .Commit();
-                }
-                else
-                {
-                    GetSongListFragment()?.Update();
-                }
-                CurrentState = 2;
-                PlayerSongListContainer.TranslationX = 0;
-                PlayerSongListContainer.Visibility = ViewStates.Visible;
-                PlayerSongListContainer.BringToFront();
-            }
-            catch (Exception)
-            {
-            }
+            LoadFragmentInner(Enums.Activitys.Player.CurrentSongList);
         }
-
 
         public void NextSongPlayer()
         {
@@ -313,6 +208,11 @@ namespace SpotyPie.Player
             }));
         }
 
+        private void HidePlayerButton_Click(object sender, EventArgs e)
+        {
+            GetState().Player_visiblibity_toggle();
+        }
+
         private void PreviewSong_Click(object sender, EventArgs e)
         {
             MusicService?.ChangeSong(false);
@@ -323,23 +223,10 @@ namespace SpotyPie.Player
             MusicService?.ChangeSong(true);
         }
 
-
         private void PlayToggle_Click(object sender, EventArgs e)
         {
             Play();
         }
-
-        public void Play()
-        {
-            Music_play();
-        }
-
-        private void HidePlayerButton_Click(object sender, EventArgs e)
-        {
-            GetState().Player_visiblibity_toggle();
-        }
-
-        #region Player events
 
         public void PlayerPrepared(int duration)
         {
@@ -401,7 +288,6 @@ namespace SpotyPie.Player
                 });
             });
         }
-
 
         //This method must be call then song is setted to refresh main UI view
         public void SongLoadStarted(List<Songs> newSongList, int position)
@@ -508,7 +394,22 @@ namespace SpotyPie.Player
             });
         }
 
-        #endregion
+        private void SongTimeSeekBar_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        {
+            if (MusicService?.MusicPlayer?.Duration != null)
+                CurrentSongPosition = (int)(MusicService.MusicPlayer.Duration * e.Progress / 100);
+        }
+
+        private void SongTimeSeekBar_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
+        {
+            MusicService?.SeekToPlayer(CurrentSongPosition);
+            SeekActive = false;
+        }
+
+        private void SongTimeSeekBar_StartTrackingTouch(object sender, SeekBar.StartTrackingTouchEventArgs e)
+        {
+            SeekActive = true;
+        }
 
         private void Repeat_Click(object sender, EventArgs e)
         {
@@ -559,19 +460,21 @@ namespace SpotyPie.Player
             saved_to_songs = !saved_to_songs;
         }
 
-        public bool CheckChildFragments()
-        {
-            if (CurrentState == 1)
-            {
-            }
-            else if (CurrentState == 2)
-            {
-                PlayerSongListContainer.Visibility = ViewStates.Gone;
-                CurrentState = 1;
-                return false;
-            }
-            return true;
-        }
+        #endregion
+
+        //public bool CheckChildFragments()
+        //{
+        //    if (CurrentState == 1)
+        //    {
+        //    }
+        //    else if (CurrentState == 2)
+        //    {
+        //        PlayerSongListContainer.Visibility = ViewStates.Gone;
+        //        CurrentState = 1;
+        //        return false;
+        //    }
+        //    return true;
+        //}
 
         public int? GetSongId()
         {
@@ -633,5 +536,69 @@ namespace SpotyPie.Player
         {
             ViewLoadState = 1;
         }
+
+        #region Lisiners
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                    mLastPosY = e.GetX();
+                    return true;
+
+                case MotionEventActions.Up:
+                    var metrics = Resources.DisplayMetrics;
+                    var widthInDp = metrics.HeightPixels;
+
+                    var transXExit = v.TranslationX;
+                    if (v.TranslationX > 0)
+                    {
+                        if (transXExit < (FragmentWidth / 3))
+                        {
+                            v.Animate().TranslationX(0);
+                            return true;
+                        }
+                        else
+                        {
+                            v.Animate().TranslationX(FragmentWidth);
+                            PreviewSong_Click(null, null);
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        if (Math.Abs(transXExit) < (FragmentWidth / 3))
+                        {
+                            v.Animate().TranslationX(0);
+                            return true;
+                        }
+                        else
+                        {
+                            v.Animate().TranslationX(FragmentWidth);
+                            NextSong_Click(null, null);
+                            return true;
+                        }
+                    }
+
+                case MotionEventActions.Move:
+                    var proc = 90 * v.TranslationX / (FragmentWidth - OffsetContainer);
+                    //Debug.Print(proc.ToString());
+                    if (proc > 90) proc = 90;
+                    var currentPosition = e.GetX();
+                    var deltX = mLastPosY - currentPosition;
+
+                    var transX = v.TranslationX;
+                    transX -= deltX;
+
+                    v.TranslationX = transX;
+                    //v.Animate().TranslationY(transY);
+                    return true;
+
+                default:
+                    v.Animate().TranslationX(0);
+                    return v.OnTouchEvent(e);
+            }
+        }
+        #endregion
     }
 }

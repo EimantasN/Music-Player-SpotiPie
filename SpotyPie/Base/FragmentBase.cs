@@ -1,23 +1,38 @@
 ﻿using Android.App;
 using Android.OS;
+using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Views;
+using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Base
 {
     public abstract class FragmentBase : SupportFragment
     {
+        private static int FrameLayoutId { get; set; } = 1;
+
+        public FragmentBase CurrentFragment;
+
+        public FragmentBase MYParentFragment;
+
+        private Stack<dynamic> FragmentStack { get; set; }
+
         public abstract int LayoutId { get; set; }
+
+        private ViewGroup ParentView { get; set; }
 
         protected string JsonModel { get; set; }
 
         protected View RootView;
 
         protected ActivityBase ParentActivity;
+
+        public FrameLayout FragmentFrame;
 
         public View GetView()
         {
@@ -28,6 +43,25 @@ namespace SpotyPie.Base
         {
             return LayoutId;
         }
+
+        public int GetFragmentId()
+        {
+            return ++FrameLayoutId;
+        }
+
+        private void GetViewToInsert()
+        {
+            if (ParentView == null)
+            {
+                ParentView = RootView.FindViewById<ViewGroup>(GetParentView());
+
+                if (ParentView == null)
+                    throw new Exception("View not found");
+            }
+        }
+
+        //Do not use this for view getting
+        public abstract int GetParentView();
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -153,6 +187,81 @@ namespace SpotyPie.Base
             });
             snacbar.Show();
             return default(T);
+        }
+
+        private Stack<dynamic> GetFragmentStack()
+        {
+            if (FragmentStack == null)
+                FragmentStack = new Stack<dynamic>();
+            return FragmentStack;
+        }
+
+        public abstract void LoadFragment(dynamic switcher);
+
+        public void AddParent(FragmentBase parent)
+        {
+            this.MYParentFragment = parent;
+        }
+
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null)
+        {
+            if (CurrentFragment != null)
+            {
+                CurrentFragment.Hide();
+            }
+
+            CurrentFragment = null;
+
+            GetFragmentStack().Push(switcher);
+            LoadFragment(switcher);
+            CurrentFragment.AddParent(this);
+
+            //Can send data to fragment
+            if (!string.IsNullOrEmpty(jsonModel))
+                CurrentFragment.SendData(jsonModel);
+
+            if (!CurrentFragment.IsAdded)
+            {
+                ChildFragmentManager.BeginTransaction()
+                .Replace(GetFragmentViewId(), CurrentFragment)
+                .Commit();
+
+                ParentActivity?.SetBackBtn(() => { ParentActivity?.RemoveCurrentFragment(ChildFragmentManager, CurrentFragment); });
+            }
+            else
+            {
+                CurrentFragment?.ForceUpdate();
+            }
+        }
+
+        public void ReloadMyParentFragment()
+        {
+            if (MYParentFragment != null)
+                MYParentFragment.ForceUpdate();
+            else
+                ParentActivity?.LoadBaseFragment();
+        }
+
+        public int GetFragmentViewId()
+        {
+            if (FragmentFrame == null)
+            {
+                FragmentFrame = new FrameLayout(this.Context);
+
+                FragmentFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MatchParent,
+                    ConstraintLayout.LayoutParams.MatchParent);
+
+                FragmentFrame.Id = GetFragmentId();
+
+                GetViewToInsert();
+
+                ParentView.AddView(FragmentFrame);
+
+                return FragmentFrame.Id;
+            }
+            else
+                return FragmentFrame.Id;
         }
     }
 }

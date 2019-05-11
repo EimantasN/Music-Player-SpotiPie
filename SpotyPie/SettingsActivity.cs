@@ -305,7 +305,7 @@ namespace SpotyPie
             return devices;
         }
 
-        protected override void LoadFragment(dynamic switcher)
+        protected override void LoadFragment(dynamic switcher, string jsonModel = null)
         {
 
         }
@@ -313,6 +313,11 @@ namespace SpotyPie
         public override dynamic GetInstance()
         {
             return this;
+        }
+
+        public override int GetParentView()
+        {
+            return Resource.Id.parent_view;
         }
     }
 }

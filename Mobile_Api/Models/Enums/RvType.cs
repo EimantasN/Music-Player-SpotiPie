@@ -12,6 +12,7 @@
         AlbumList,
         AlbumGrid,
         ArtistGrid,
-        SongBindList
+        SongBindList,
+        SongOptions
     }
 }

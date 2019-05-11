@@ -1,10 +1,10 @@
 ﻿using Android.App;
-using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
+using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Enums.Activitys;
 using System;
@@ -23,6 +23,8 @@ namespace SpotyPie
         private int CurrentViewLayer = 1;
 
         private Current_state APPSTATE;
+
+        private Main LastMainFragment;
 
         private MainFragment MainFragment;
         private Search Search;
@@ -101,8 +103,6 @@ namespace SpotyPie
             else
                 PlayToggle.SetImageResource(Resource.Drawable.play_button);
 
-
-
             PlayToggle.Click += PlayToggle_Click;
             ShowPlayler.Click += MiniPlayer_Click;
             MiniPlayer.Click += MiniPlayer_Click;
@@ -115,7 +115,7 @@ namespace SpotyPie
             BackHeaderButton.Click += BackHeaderButton_Click;
 
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
-            LoadFragmentInner(Main.Home);
+            LoadFragmentInner(Main.Home, AddToBackButtonStack: false);
         }
 
         private void LoadCurrentState()
@@ -146,61 +146,49 @@ namespace SpotyPie
             });
         }
 
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-        }
-
         public override void OnBackPressed()
         {
-            if (GetState().GetPlayer().CheckChildFragments())
-            {
-
-                switch (CurrentViewLayer)
-                {
-                    case 1:
-                        base.OnBackPressed();
-                        break;
-                    case 2:
-                        {
-                            ToogleSecondLayer(false);
-                            break;
-                        }
-                    case 3:
-                        {
-                            ToogleThirdLayer(false);
-                            if (LastViewLayer != 1)
-                            {
-                                ToogleSecondLayer(true);
-                            }
-                            break;
-                        }
-                    case 4:
-                        {
-                            TogglePlayer(false);
-                            switch (LastViewLayer)
-                            {
-                                case 1:
-                                    break;
-                                case 2:
-                                    {
-                                        ToogleSecondLayer(true);
-                                        break;
-                                    }
-                                case 3:
-                                    {
-                                        ToogleThirdLayer(true);
-                                        break;
-                                    }
-                            }
-                            break;
-                        }
-                }
-            }
-        }
-
-        public static void LoadOptionsMeniu()
-        {
+            base.OnBackPressed();
+            //switch (CurrentViewLayer)
+            //{
+            //    case 1:
+            //        base.OnBackPressed();
+            //        break;
+            //    case 2:
+            //        {
+            //            ToogleSecondLayer(false);
+            //            break;
+            //        }
+            //    case 3:
+            //        {
+            //            ToogleThirdLayer(false);
+            //            if (LastViewLayer != 1)
+            //            {
+            //                ToogleSecondLayer(true);
+            //            }
+            //            break;
+            //        }
+            //    case 4:
+            //        {
+            //            TogglePlayer(false);
+            //            switch (LastViewLayer)
+            //            {
+            //                case 1:
+            //                    break;
+            //                case 2:
+            //                    {
+            //                        ToogleSecondLayer(true);
+            //                        break;
+            //                    }
+            //                case 3:
+            //                    {
+            //                        ToogleThirdLayer(true);
+            //                        break;
+            //                    }
+            //            }
+            //            break;
+            //        }
+            //}
         }
 
         private void BackHeaderButton_Click(object sender, EventArgs e)
@@ -271,7 +259,13 @@ namespace SpotyPie
             return base.OnOptionsItemSelected(item);
         }
 
-        protected override void LoadFragment(dynamic switcher)
+        public override void LoadBaseFragment()
+        {
+            base.LoadBaseFragment();
+            LoadFragmentInner(LastMainFragment);
+        }
+
+        protected override void LoadFragment(dynamic switcher, string jsonModel = null)
         {
             switch (switcher)
             {
@@ -283,36 +277,54 @@ namespace SpotyPie
                             if (MainFragment == null)
                                 MainFragment = new MainFragment();
                             CurrentFragment = MainFragment;
+                            LastMainFragment = main;
                             ActionName.Text = "Home";
 
-                            break;
+                            return;
                         case Main.Browse:
 
                             if (Browse == null)
                                 Browse = new MainArtist();
                             CurrentFragment = Browse;
+                            LastMainFragment = main;
                             ActionName.Text = "Muse";
 
-                            break;
+                            return;
                         case Main.Search:
 
                             if (Search == null)
                                 Search = new Search();
                             CurrentFragment = Search;
+                            LastMainFragment = main;
                             HeaderContainer.Visibility = ViewStates.Gone;
 
-                            break;
+                            return;
                         case Main.Library:
 
                             if (Library == null) Library = new LibraryFragment();
                             CurrentFragment = Library;
+                            LastMainFragment = main;
                             ActionName.Text = "Library";
-
-                            break;
-                        default:
-                            break;
+                            return;
                     }
-                    break;
+                    throw new Exception("Fragment not found in Main enum");
+                case HomePage home:
+                    switch (home)
+                    {
+                        case HomePage.Album:
+                            if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
+                            CurrentFragment = AlbumFragment;
+                            CurrentFragment.SendData(jsonModel);
+                            return;
+                        case HomePage.Artist:
+                            if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
+                            CurrentFragment = ArtistFragment;
+                            return;
+                        case HomePage.Player:
+                            CurrentFragment = new Player.Player();
+                            return;
+                    }
+                    throw new Exception("Fragment not found in HomePage enum");
                 default:
                     throw new Exception("Fragment not found");
             }
@@ -325,20 +337,23 @@ namespace SpotyPie
 
         public void LoadAlbum(Album album)
         {
-            if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
-            GetState().SetAlbum(album);
+            LoadFragmentInner(HomePage.Album, JsonConvert.SerializeObject(album));
+            //GetState().SetAlbum(album);
 
-            if (!AlbumFragment.IsAdded)
-                SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, AlbumFragment).Commit();
-            else
-            {
-                AlbumFragment.Show();
-            }
-            if (ArtistFragment != null)
-                ArtistFragment.Hide();
+            //if (!AlbumFragment.IsAdded)
+            //{
+            //    LoadFragmentInner(SupportFragmentManager, AlbumFragment);
+            //    SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, AlbumFragment).Commit();
+            //}
+            //else
+            //{
+            //    AlbumFragment.Show();
+            //}
+            //if (ArtistFragment != null)
+            //    ArtistFragment.Hide();
 
-            AlbumFragment.SetAlbum(album);
-            ToogleSecondLayer(true);
+            //AlbumFragment.SetAlbum(album);
+            //ToogleSecondLayer(true);
         }
 
         public Current_state GetState()
@@ -386,20 +401,21 @@ namespace SpotyPie
 
         public void TogglePlayer(bool show)
         {
-            //SHOW
-            if (show)
-            {
-                LastViewLayer = CurrentViewLayer;
-                CurrentViewLayer = 4;
-                HideOthers();
-                PlayerContainer.Visibility = ViewStates.Visible;
-                PlayerContainer.BringToFront();
-            }
-            else
-            {
-                bottomNavigation.Visibility = ViewStates.Visible;
-                PlayerContainer.Visibility = ViewStates.Gone;
-            }
+            LoadFragmentInner(HomePage.Player);
+            ////SHOW
+            //if (show)
+            //{
+            //    LastViewLayer = CurrentViewLayer;
+            //    CurrentViewLayer = 4;
+            //    HideOthers();
+            //    PlayerContainer.Visibility = ViewStates.Visible;
+            //    PlayerContainer.BringToFront();
+            //}
+            //else
+            //{
+            //    bottomNavigation.Visibility = ViewStates.Visible;
+            //    PlayerContainer.Visibility = ViewStates.Gone;
+            //}
         }
 
         public void ToogleThirdLayer(bool show)
@@ -443,6 +459,11 @@ namespace SpotyPie
         public override dynamic GetInstance()
         {
             return this;
+        }
+
+        public override int GetParentView()
+        {
+            return Resource.Id.MainContainer;
         }
     }
 }

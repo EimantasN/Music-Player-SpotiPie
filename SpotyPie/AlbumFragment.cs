@@ -13,8 +13,6 @@ namespace SpotyPie
 {
     public class AlbumFragment : FragmentBase
     {
-        public Album CurrentALbum { get; set; }
-
         private BaseRecycleView<Songs> RvData;
 
         ImageView AlbumPhoto;
@@ -70,9 +68,7 @@ namespace SpotyPie
             InnerViewContainer = RootView.FindViewById<ConstraintLayout>(Resource.Id.innerWrapper);
             ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
 
-            ScrollFather.ScrollChange += Scroll_ScrollChange;
-
-            SetAlbum(CurrentALbum);
+            SetAlbum(GetModel<Album>());
         }
 
         public override void OnResume()
@@ -80,41 +76,26 @@ namespace SpotyPie
             base.OnResume();
         }
 
-        private void Scroll_ScrollChange(object sender, NestedScrollView.ScrollChangeEventArgs e)
-        {
-            //Scrolled = ScrollFather.ScrollY;
-            //if (Scrolled < Height) //761 mazdaug
-            //{
-            //    GetState().Activity.ActionName.Alpha = (float)((Scrolled * 100) / Height) / 100;
-            //    ButtonBackGround.Alpha = (float)((Scrolled * 100) / Height) / 100;
-            //    relative.Visibility = ViewStates.Invisible;
-            //}
-            //else
-            //{
-            //    if (isPlayable)
-            //        relative.Visibility = ViewStates.Visible;
-            //}
-        }
-
         public void SetAlbum(Album album = null)
         {
             try
             {
-                CurrentALbum = album;
                 if (Context != null)
                 {
+                    if (album == null)
+                        album = GetModel<Album>();
                     ScrollFather.ScrollTo(0, 0);
-                    GetState().Activity.ActionName.Text = CurrentALbum.Name;
+                    GetState().Activity.ActionName.Text = album.Name;
                     isPlayable = true;
                     IsMeniuActive = false;
                     Scrolled = 0;
 
-                    Picasso.With(Context).Load(CurrentALbum.LargeImage).Into(AlbumPhoto);
+                    Picasso.With(Context).Load(album.LargeImage).Into(AlbumPhoto);
 
-                    AlbumTitle.Text = CurrentALbum.Name;
+                    AlbumTitle.Text = album.Name;
 
                     //TODO connect artist name
-                    AlbumByText.Text = "Coming soon";
+                    AlbumByText.Text = $"Popularity {album.Popularity}";
 
                     ForceUpdate();
                 }
@@ -133,7 +114,7 @@ namespace SpotyPie
                 RvData.DisableScroolNested();
             }
 
-            Task.Run(async () => await GetAPIService().GetSongsByAlbumAsync(CurrentALbum, RvData.GetData(), () => { }));
+            Task.Run(async () => await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>(), RvData.GetData(), () => { }));
         }
 
         public override void ReleaseData()
@@ -142,6 +123,21 @@ namespace SpotyPie
             {
                 RvData.Dispose();
                 RvData = null;
+            }
+        }
+
+        public override int GetParentView()
+        {
+            return Resource.Id.parent_view;
+        }
+
+        public override void LoadFragment(dynamic switcher)
+        {
+            switch (switcher)
+            {
+                case Enums.Activitys.HomePage.Player:
+                    CurrentFragment = new Player.Player();
+                    return;
             }
         }
     }

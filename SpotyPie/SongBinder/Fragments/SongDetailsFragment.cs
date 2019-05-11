@@ -132,5 +132,15 @@ namespace SpotyPie.SongBinder.Fragments
         public override void ReleaseData()
         {
         }
+
+        public override int GetParentView()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void LoadFragment(dynamic switcher)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

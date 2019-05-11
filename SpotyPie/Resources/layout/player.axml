@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
+	        android:id="@+id/parent_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,28 +21,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/play_button"
         tools:ignore="VectorDrawableCompat" />
-
-    <!--<android.support.v7.widget.CardView-->
-        <!--android:id="@+id/img_holder"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:layout_marginStart="16dp"-->
-        <!--android:layout_marginLeft="16dp"-->
-        <!--android:layout_marginTop="16dp"-->
-        <!--android:layout_marginEnd="16dp"-->
-        <!--android:layout_marginRight="16dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--android:backgroundTint="@android:color/transparent"-->
-        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-        <!--android:clipChildren="false"-->
-        <!--android:clipToPadding="false"-->
-        <!--android:elevation="8dp"-->
-        <!--app:cardElevation="10dp"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/song_name"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/playlist_name">-->
 
     <ImageView
         android:id="@+id/img_holder"
@@ -279,13 +258,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/song_name"
         app:srcCompat="@drawable/playlis_add_song" />
-
-    <FrameLayout
-        android:id="@+id/player_frame"
-        android:translationX="1000dp"
-        android:background="@color/greylight"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <SeekBar
         android:id="@+id/seekBar"

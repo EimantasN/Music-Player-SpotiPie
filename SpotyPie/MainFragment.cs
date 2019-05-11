@@ -124,5 +124,15 @@ namespace SpotyPie
                 JumpBack = null;
             }
         }
+
+        public override int GetParentView()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void LoadFragment(dynamic switcher)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

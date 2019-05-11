@@ -47,7 +47,7 @@ namespace SpotyPie.SongBinder
         }
 
         //DO not use this to load fragment
-        protected override void LoadFragment(dynamic switcher)
+        protected override void LoadFragment(dynamic switcher, string jsonModel = null)
         {
             switch (switcher)
             {
@@ -68,6 +68,11 @@ namespace SpotyPie.SongBinder
         public override dynamic GetInstance()
         {
             return this;
+        }
+
+        public override int GetParentView()
+        {
+            return Resource.Id.parent_view;
         }
     }
 }
