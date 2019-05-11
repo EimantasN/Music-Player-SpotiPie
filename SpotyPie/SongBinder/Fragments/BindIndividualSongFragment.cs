@@ -1,4 +1,5 @@
 ﻿using Android.Support.Design.Widget;
+using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
@@ -30,6 +31,9 @@ namespace SpotyPie.SongBinder.Fragments
 
         private ProgressBar Loading;
 
+        private TextView SongBindText;
+        private TextView SongBindCount;
+
         private BaseRecycleView<Songs> Songs { get; set; }
 
         protected override void InitView()
@@ -56,6 +60,10 @@ namespace SpotyPie.SongBinder.Fragments
             AlbumValue = RootView.FindViewById<TextView>(Resource.Id.album_value);
             ArtistValue = RootView.FindViewById<TextView>(Resource.Id.artist_value);
 
+            SongBindText = RootView.FindViewById<TextView>(Resource.Id.song_count);
+            SongBindCount = RootView.FindViewById<TextView>(Resource.Id.soung_found_count);
+            SetSongFound(0);
+
             SongSwitch = RootView.FindViewById<Switch>(Resource.Id.song_switch);
             SongSwitch.Checked = true;
 
@@ -68,6 +76,27 @@ namespace SpotyPie.SongBinder.Fragments
             SongSwitch.CheckedChange += SwitchCheckedChange;
             AlbumSwitch.CheckedChange += SwitchCheckedChange;
             ArtistSwitch.CheckedChange += SwitchCheckedChange;
+        }
+
+        private void SetSongFound(int count)
+        {
+            if (count == 0)
+            {
+                if (SongBindText.Visibility != ViewStates.Gone && SongBindCount.Visibility != ViewStates.Gone)
+                {
+                    SongBindText.Visibility = ViewStates.Gone;
+                    SongBindCount.Visibility = ViewStates.Gone;
+                }
+            }
+            else
+            {
+                if (SongBindText.Visibility != ViewStates.Visible && SongBindCount.Visibility != ViewStates.Visible)
+                {
+                    SongBindText.Visibility = ViewStates.Visible;
+                    SongBindCount.Visibility = ViewStates.Visible;
+                }
+                SongBindCount.Text = count.ToString();
+            }
         }
 
         private void SwitchCheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -104,6 +133,8 @@ namespace SpotyPie.SongBinder.Fragments
                     ArtistCof.Progress);
 
                 songs.ForEach(x => x.SetModelType(Mobile_Api.Models.Enums.RvType.SongBindList));
+
+                RunOnUiThread(() => SetSongFound(songs.Count));
 
                 RunOnUiThread(() =>
                 {

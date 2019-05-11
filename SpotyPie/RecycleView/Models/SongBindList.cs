@@ -1,5 +1,4 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -26,7 +25,6 @@ namespace SpotyPie.RecycleView.Models
             Artist = view.FindViewById<TextView>(Resource.Id.artist);
             DownloadedIcon = view.FindViewById<ImageView>(Resource.Id.downloaded_icon);
         }
-
 
         internal void PrepareView(SongTag song, Context context)
         {

@@ -133,7 +133,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="32dp"
-        android:paddingBottom="64dp"
         android:scrollbarThumbVertical="@drawable/rv_scrool_bar"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -245,13 +244,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/song_cof_seeker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline7"
-        app:layout_constraintTop_toTopOf="@+id/song_cof_seeker" />
+        app:layout_constraintTop_toTopOf="@+id/song_text" />
 
     <Switch
         android:id="@+id/album_switch"
@@ -259,14 +256,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Caption"
-        app:layout_constraintBottom_toBottomOf="@+id/album_cof_seeker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline7"
-        app:layout_constraintTop_toTopOf="@+id/album_cof_seeker" />
+        app:layout_constraintTop_toTopOf="@+id/album_text" />
 
     <Switch
         android:id="@+id/artist_switch"
@@ -274,14 +269,38 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Caption"
-        app:layout_constraintBottom_toBottomOf="@+id/artist_cof_seeker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline7"
-        app:layout_constraintTop_toTopOf="@+id/artist_cof_seeker" />
+        app:layout_constraintTop_toTopOf="@+id/artist_text" />
 
+    <TextView
+        android:id="@+id/soung_found_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="10254"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintBottom_toTopOf="@+id/rv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline7" />
+
+    <TextView
+        android:id="@+id/song_count"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="Song found"
+        android:textColor="@android:color/darker_gray"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintBottom_toTopOf="@+id/soung_found_count"
+        app:layout_constraintEnd_toEndOf="@+id/soung_found_count"
+        app:layout_constraintStart_toStartOf="@+id/soung_found_count" />
 
 </android.support.constraint.ConstraintLayout>
