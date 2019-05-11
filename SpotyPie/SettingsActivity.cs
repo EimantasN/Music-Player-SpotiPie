@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Widget;
 using Realms;
 using System.Collections.Generic;
@@ -82,12 +81,28 @@ namespace SpotyPie
             //Song binder
             SongBindedText = FindViewById<TextView>(Resource.Id.song_binded_text);
             SongBindedCount = FindViewById<TextView>(Resource.Id.song_binded_count);
+
             SongUnbindedText = FindViewById<TextView>(Resource.Id.song_unbinded_text);
             SongUnbindedCount = FindViewById<TextView>(Resource.Id.song_unbinded_count);
+            GetBindedStatistics();
+
             LaunchSongBinder = FindViewById<Button>(Resource.Id.song_binder_btn);
             LaunchSongBinder.Click += LaunchSongBinder_Click;
 
             Task.Run(() => GetBindStatistics());
+        }
+
+        private void GetBindedStatistics()
+        {
+            Task.Run(async () =>
+            {
+                var bindStatistics = await GetAPIService().GetBindedStatisticsAsync();
+                RunOnUiThread(() =>
+                {
+                    SongUnbindedCount.Text = $"{bindStatistics.unbindedCount}";
+                    SongBindedCount.Text = $"{bindStatistics.bindedCount}";
+                });
+            });
         }
 
         private void LaunchSongBinder_Click(object sender, EventArgs e)
@@ -307,7 +322,6 @@ namespace SpotyPie
 
         protected override void InitFather()
         {
-            throw new NotImplementedException();
         }
     }
 }

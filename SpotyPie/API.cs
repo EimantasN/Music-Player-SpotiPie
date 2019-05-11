@@ -146,6 +146,11 @@ namespace SpotyPie
             }
         }
 
+        internal async Task<dynamic> GetBindedStatisticsAsync()
+        {
+            return await _service.GetBindedStatisticsAsync();
+        }
+
         public async Task GetOldAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
         {
             try

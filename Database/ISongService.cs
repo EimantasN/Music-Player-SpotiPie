@@ -47,7 +47,7 @@ namespace Database
 
         Task<dynamic> GetBindingStatistics();
 
-        void DeleteLocalSongFile(string localUrl);
+        string DeleteLocalSongFile(string localUrl);
 
         Task<Song> BindSongWithFileAsync(string localUrl, int songId);
     }

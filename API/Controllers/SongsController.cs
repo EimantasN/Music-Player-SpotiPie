@@ -297,8 +297,7 @@ namespace API.Controllers
         [EnableCors("AllowSpecificOrigin")]
         public async Task<IActionResult> DeleteLocalSongFile([FromForm] string localUrl)
         {
-            _songs.DeleteLocalSongFile(localUrl);
-            return Ok();
+            return Ok(_songs.DeleteLocalSongFile(localUrl));
         }
 
         [HttpPost("BindSongWithFile")]

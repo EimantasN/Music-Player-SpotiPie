@@ -92,6 +92,11 @@ namespace Mobile_Api
             return await GetListAsync<Image>($"GetNewImageForSong/{id}", "Songs");
         }
 
+        public async Task<dynamic> GetBindedStatisticsAsync()
+        {
+            return await Get<dynamic>("Songs", "GetBindingStatistics");
+        }
+
         #endregion
     }
 }

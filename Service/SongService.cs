@@ -656,11 +656,18 @@ namespace Services
             };
         }
 
-        public void DeleteLocalSongFile(string localUrl)
+        public string DeleteLocalSongFile(string localUrl)
         {
             //TODO added safe delete in future
             if (File.Exists(localUrl))
+            {
                 File.Delete(localUrl);
+                return "Success";
+            }
+            else
+            {
+                return "File not found";
+            }
         }
 
         public async Task<Song> BindSongWithFileAsync(string localUrl, int songId)
