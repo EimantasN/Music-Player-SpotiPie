@@ -11,6 +11,7 @@ using System;
 using System.Threading.Tasks;
 using Android.Views;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 
 namespace SpotyPie
 {
@@ -315,9 +316,14 @@ namespace SpotyPie
             return this;
         }
 
-        public override int GetParentView()
+        public override int GetParentView(bool Player = false)
         {
             return Resource.Id.parent_view;
+        }
+
+        public override void SetScreen(Screen screen)
+        {
+            throw new NotImplementedException();
         }
     }
 }

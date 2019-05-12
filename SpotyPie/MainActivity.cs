@@ -6,6 +6,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.Enums.Activitys;
 using System;
 using System.Threading.Tasks;
@@ -50,11 +51,6 @@ namespace SpotyPie
         public TextView ActionName;
         public ConstraintLayout MiniPlayer;
 
-        public FrameLayout Content;
-        public FrameLayout FirstLayer;
-        public FrameLayout SecondLayer;
-        public FrameLayout PlayerContainer;
-
         public FragmentBase FirstLayerFragment;
         public FragmentBase SecondLayerFragment;
 
@@ -69,16 +65,8 @@ namespace SpotyPie
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
 
-            PlayerContainer = FindViewById<FrameLayout>(Resource.Id.player_frame);
-            FirstLayer = FindViewById<FrameLayout>(Resource.Id.first_layer);
-            SecondLayer = FindViewById<FrameLayout>(Resource.Id.second_layer);
-            Content = FindViewById<FrameLayout>(Resource.Id.content_frame);
-
             widthInDp = Resources.DisplayMetrics.WidthPixels;
             HeightInDp = Resources.DisplayMetrics.HeightPixels;
-            PlayerContainer.Visibility = ViewStates.Gone;
-            SecondLayer.Visibility = ViewStates.Gone;
-            FirstLayer.Visibility = ViewStates.Gone;
 
             bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
             ActionName = FindViewById<TextView>(Resource.Id.textView);
@@ -86,12 +74,12 @@ namespace SpotyPie
             #region MINI PLAYER
 
             MiniPlayer = FindViewById<ConstraintLayout>(Resource.Id.PlayerContainer);
-            MiniPlayer.Visibility = ViewStates.Gone;
+            MiniPlayer.Visibility = ViewStates.Visible;
 
             PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             ShowPlayler = FindViewById<ImageButton>(Resource.Id.show_player);
 
-            SongTitle = FindViewById<TextView>(Resource.Id.song_name);
+            SongTitle = FindViewById<TextView>(Resource.Id.song_title);
             SongTitle.Selected = true;
             ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
             ArtistName.Selected = true;
@@ -149,46 +137,6 @@ namespace SpotyPie
         public override void OnBackPressed()
         {
             base.OnBackPressed();
-            //switch (CurrentViewLayer)
-            //{
-            //    case 1:
-            //        base.OnBackPressed();
-            //        break;
-            //    case 2:
-            //        {
-            //            ToogleSecondLayer(false);
-            //            break;
-            //        }
-            //    case 3:
-            //        {
-            //            ToogleThirdLayer(false);
-            //            if (LastViewLayer != 1)
-            //            {
-            //                ToogleSecondLayer(true);
-            //            }
-            //            break;
-            //        }
-            //    case 4:
-            //        {
-            //            TogglePlayer(false);
-            //            switch (LastViewLayer)
-            //            {
-            //                case 1:
-            //                    break;
-            //                case 2:
-            //                    {
-            //                        ToogleSecondLayer(true);
-            //                        break;
-            //                    }
-            //                case 3:
-            //                    {
-            //                        ToogleThirdLayer(true);
-            //                        break;
-            //                    }
-            //            }
-            //            break;
-            //        }
-            //}
         }
 
         private void BackHeaderButton_Click(object sender, EventArgs e)
@@ -266,6 +214,7 @@ namespace SpotyPie
 
         public override void LoadFragment(dynamic switcher, string jsonModel = null)
         {
+            bool NAvBotVisible = true;
             switch (switcher)
             {
                 case Main main:
@@ -278,8 +227,7 @@ namespace SpotyPie
                             GetFManager().SetCurrentFragment(MainFragment);
                             LastMainFragment = main;
                             ActionName.Text = "Home";
-
-                            return;
+                            break;
                         case Main.Browse:
 
                             if (Browse == null)
@@ -287,8 +235,7 @@ namespace SpotyPie
                             GetFManager().SetCurrentFragment(Browse);
                             LastMainFragment = main;
                             ActionName.Text = "Muse";
-
-                            return;
+                            break;
                         case Main.Search:
 
                             if (Search == null)
@@ -297,16 +244,16 @@ namespace SpotyPie
                             LastMainFragment = main;
                             HeaderContainer.Visibility = ViewStates.Gone;
 
-                            return;
+                            break;
                         case Main.Library:
 
                             if (Library == null) Library = new LibraryFragment();
                             GetFManager().SetCurrentFragment(Library);
                             LastMainFragment = main;
                             ActionName.Text = "Library";
-                            return;
+                            break;
                     }
-                    throw new Exception("Fragment not found in Main enum");
+                    break;
                 case HomePage home:
                     switch (home)
                     {
@@ -314,18 +261,17 @@ namespace SpotyPie
                             if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
                             GetFManager().SetCurrentFragment(AlbumFragment);
                             GetFManager().GetCurrentFragment().SendData(jsonModel);
-                            return;
+                            break;
                         case HomePage.Artist:
                             if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
                             GetFManager().SetCurrentFragment(ArtistFragment);
-                            return;
+                            break;
                         case HomePage.Player:
                             GetFManager().SetCurrentFragment(new Player.Player());
-                            return;
+                            NAvBotVisible = false;
+                            break;
                     }
-                    throw new Exception("Fragment not found in HomePage enum");
-                default:
-                    throw new Exception("Fragment not found");
+                    break;
             }
         }
 
@@ -337,22 +283,6 @@ namespace SpotyPie
         public void LoadAlbum(Album album)
         {
             LoadFragmentInner(HomePage.Album, JsonConvert.SerializeObject(album));
-            //GetState().SetAlbum(album);
-
-            //if (!AlbumFragment.IsAdded)
-            //{
-            //    LoadFragmentInner(SupportFragmentManager, AlbumFragment);
-            //    SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, AlbumFragment).Commit();
-            //}
-            //else
-            //{
-            //    AlbumFragment.Show();
-            //}
-            //if (ArtistFragment != null)
-            //    ArtistFragment.Hide();
-
-            //AlbumFragment.SetAlbum(album);
-            //ToogleSecondLayer(true);
         }
 
         public Current_state GetState()
@@ -364,20 +294,7 @@ namespace SpotyPie
 
         public void LoadArtist(Artist artist)
         {
-            if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
-            GetState().SetArtist(artist);
-
-            if (!ArtistFragment.IsAdded)
-                SupportFragmentManager.BeginTransaction().Add(Resource.Id.first_layer, ArtistFragment).Commit();
-            else
-            {
-                ArtistFragment.Show();
-            }
-            if (AlbumFragment != null)
-                AlbumFragment.Hide();
-
-            ArtistFragment.LoadArtist(artist);
-            ToogleSecondLayer(true);
+            LoadFragmentInner(HomePage.Album, JsonConvert.SerializeObject(artist));
         }
 
         public void ToogleSecondLayer(bool show)
@@ -388,33 +305,16 @@ namespace SpotyPie
                 LastViewLayer = CurrentViewLayer;
                 CurrentViewLayer = 2;
                 HideOthers();
-                FirstLayer.Visibility = ViewStates.Visible;
-                FirstLayer.BringToFront();
             }
             else
             {
                 GetFManager().GetCurrentFragment()?.ForceUpdate();
-                FirstLayer.Visibility = ViewStates.Gone;
             }
         }
 
         public void TogglePlayer(bool show)
         {
             LoadFragmentInner(HomePage.Player);
-            ////SHOW
-            //if (show)
-            //{
-            //    LastViewLayer = CurrentViewLayer;
-            //    CurrentViewLayer = 4;
-            //    HideOthers();
-            //    PlayerContainer.Visibility = ViewStates.Visible;
-            //    PlayerContainer.BringToFront();
-            //}
-            //else
-            //{
-            //    bottomNavigation.Visibility = ViewStates.Visible;
-            //    PlayerContainer.Visibility = ViewStates.Gone;
-            //}
         }
 
         public void ToogleThirdLayer(bool show)
@@ -425,12 +325,9 @@ namespace SpotyPie
                 LastViewLayer = CurrentViewLayer;
                 CurrentViewLayer = 3;
                 HideOthers();
-                SecondLayer.Visibility = ViewStates.Visible;
-                SecondLayer.BringToFront();
             }
             else
             {
-                SecondLayer.Visibility = ViewStates.Gone;
             }
         }
 
@@ -460,9 +357,27 @@ namespace SpotyPie
             return this;
         }
 
-        public override int GetParentView()
+        public override int GetParentView(bool Player = false)
         {
-            return Resource.Id.MainContainer;
+            if (Player)
+                return Resource.Id.MainContainer;
+            else
+                return Resource.Id.content_holder;
+        }
+
+        public override void SetScreen(Screen screen)
+        {
+            switch (screen)
+            {
+                case Screen.FullScreen:
+                    if (bottomNavigation.Visibility == ViewStates.Visible)
+                        bottomNavigation.Visibility = ViewStates.Gone;
+                    break;
+                case Screen.Holder:
+                    if (bottomNavigation.Visibility == ViewStates.Gone)
+                        bottomNavigation.Visibility = ViewStates.Visible;
+                    break;
+            }
         }
     }
 }

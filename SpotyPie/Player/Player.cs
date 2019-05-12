@@ -362,10 +362,17 @@ namespace SpotyPie.Player
             {
                 Activity.RunOnUiThread(() =>
                 {
-                    if (Current_Player_Image != newSongList[position].LargeImage)
+                    try
                     {
-                        Current_Player_Image = newSongList[position].LargeImage;
-                        Picasso.With(Activity.ApplicationContext).Load(newSongList[position].LargeImage).Resize(1200, 1200).CenterCrop().Into((ImageView)this.ImgHolder);
+                        if (Current_Player_Image != newSongList[position].LargeImage)
+                        {
+                            Current_Player_Image = newSongList[position].LargeImage;
+                            Picasso.With(Activity.ApplicationContext).Load(newSongList[position].LargeImage).Resize(1200, 1200).CenterCrop().Into((ImageView)this.ImgHolder);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
                     }
                 });
             }

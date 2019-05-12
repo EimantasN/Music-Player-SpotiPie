@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Widget;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.SongBinder.Enumerators;
 
 namespace SpotyPie.SongBinder
@@ -70,9 +71,14 @@ namespace SpotyPie.SongBinder
             return this;
         }
 
-        public override int GetParentView()
+        public override int GetParentView(bool Player = false)
         {
             return Resource.Id.parent_view;
+        }
+
+        public override void SetScreen(Screen screen)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

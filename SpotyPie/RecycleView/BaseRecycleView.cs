@@ -4,6 +4,7 @@ using Microsoft.Win32.SafeHandles;
 using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using SpotyPie.Base;
+using SpotyPie.Enums.Activitys;
 using SpotyPie.Helpers;
 using SpotyPie.RecycleView.Enums;
 using System;
@@ -117,7 +118,9 @@ namespace SpotyPie.RecycleView
                     {
                         Songs song = RvDataset[position] as Songs;
                         if (song.GetModelType() != Mobile_Api.Models.Enums.RvType.SongBindList)
+                        {
                             Activity.GetState().SetSong(RvDataset.GetList() as List<Songs>, position);
+                        }
                     }
                     else if (RvDataset[position].GetType().Name == "SongTag")
                     {

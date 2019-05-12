@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Views;
 using Mobile_Api.Models;
+using SpotyPie.Enums.Activitys;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,8 @@ namespace SpotyPie
 
         public Songs Current_Song { get; set; } = null;
 
+        public int Position { get; set; }
+
         public List<Songs> Current_Song_List { get; set; } = new List<Songs>();
 
         private Player.Player Player { get; set; }
@@ -43,21 +46,25 @@ namespace SpotyPie
         public Current_state(MainActivity activity)
         {
             this.Activity = activity;
-            Player = new Player.Player();
-            activity.mSupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.player_frame, Player)
-                    .Commit();
+            //Player = new Player.Player();
+            //activity.mSupportFragmentManager.BeginTransaction()
+            //        .Replace(Resource.Id.player_frame, Player)
+            //        .Commit();
         }
+
+
 
         public Player.Player GetPlayer()
         {
-            return Player;
+            return Activity.GetPlayer();
         }
 
         public void SetSong(List<Songs> songs, int position = 0, bool refresh = false)
         {
             Id = songs[position].Id;
-            GetPlayer().SongChangeStarted(songs, position);
+            Current_Song_List = songs;
+            Position = position;
+            Activity.LoadFragmentInner(HomePage.Player, screen: Enums.Screen.FullScreen);
         }
 
         public void SetCurrentSongList(List<Songs> songs)

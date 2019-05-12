@@ -37,9 +37,9 @@ namespace SpotyPie.RecycleView.Models
                 case SongOptions.AddToPlaylist:
                     return Resource.Drawable.add_song_interface_symbol;
                 case SongOptions.ViewArtist:
-                    return Resource.Drawable.song_love;
+                    return Resource.Drawable.artist_icon;
                 case SongOptions.ReportError:
-                    return Resource.Drawable.song_love;
+                    return Resource.Drawable.report;
                 case SongOptions.ShowCredits:
                     return Resource.Drawable.group;
                 case SongOptions.Share:

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/MainContainer"
-		android:background="@drawable/gradient_grey"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:background="@drawable/gradient_grey">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/HeaderContainer"
@@ -125,6 +124,17 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <View
+            android:id="@+id/BotNavPlayerDevider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:backgroundTint="#FFF"
+            android:foregroundGravity="bottom"
+            app:layout_constraintBottom_toTopOf="@+id/NavBot"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <android.support.constraint.ConstraintLayout
             android:id="@+id/PlayerContainer"
             android:layout_width="match_parent"
@@ -147,7 +157,7 @@
                 app:srcCompat="@drawable/play_button" />
 
             <TextView
-                android:id="@+id/song_name"
+                android:id="@+id/song_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -204,17 +214,6 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <View
-            android:id="@+id/BotNavPlayerDevider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:backgroundTint="#FFF"
-            android:foregroundGravity="bottom"
-            app:layout_constraintBottom_toTopOf="@+id/NavBot"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/NavBot"
             android:layout_width="match_parent"
@@ -228,43 +227,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/menu_main" />
 
-        <FrameLayout
-            android:id="@+id/content_frame"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/content_holder"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/PlayerContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/HeaderContainer" />
+            app:layout_constraintTop_toBottomOf="@+id/HeaderContainer">
 
-        <FrameLayout
-            android:id="@+id/second_layer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:id="@+id/player_frame"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/colorPrimaryDark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <FrameLayout
-            android:id="@+id/first_layer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/greylight"
-            app:layout_constraintBottom_toTopOf="@+id/PlayerContainer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/content_frame" />
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>

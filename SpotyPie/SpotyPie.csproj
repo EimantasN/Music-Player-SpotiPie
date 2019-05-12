@@ -85,6 +85,7 @@
     <Compile Include="Database\ViewModels\Settings.cs" />
     <Compile Include="Enums\Activitys\MainActivity.cs" />
     <Compile Include="Enums\Activitys\Player.cs" />
+    <Compile Include="Enums\Screen.cs" />
     <Compile Include="Models\FragmentState.cs" />
     <Compile Include="Models\CustomFragmetManager.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
@@ -623,6 +624,8 @@
     <AndroidResource Include="Resources\drawable\add_song_interface_symbol.png" />
     <AndroidResource Include="Resources\drawable\share.png" />
     <AndroidResource Include="Resources\drawable\group.png" />
+    <AndroidResource Include="Resources\drawable\artist_icon.png" />
+    <AndroidResource Include="Resources\drawable\report.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

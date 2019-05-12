@@ -1,4 +1,5 @@
 ﻿using SpotyPie.Base;
+using SpotyPie.Enums;
 using System;
 
 namespace SpotyPie.Models
@@ -12,6 +13,8 @@ namespace SpotyPie.Models
     public class FragmentState
     {
         public int LayoutId { get; set; }
+
+        public Screen ScreenState { get; set; } = Screen.Holder;
 
         public string JsonData { get; set; }
 

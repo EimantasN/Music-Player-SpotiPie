@@ -1,4 +1,5 @@
 ﻿using SpotyPie.Base;
+using SpotyPie.Enums;
 using System;
 using System.Collections.Generic;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
@@ -50,27 +51,18 @@ namespace SpotyPie.Models
             return FragmentHistory?.Peek()?.Fragment;
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, SupportFragmentManager supportFragmentManager = null)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Screen screen = Screen.Holder)
         {
             FragmentHistory.Push(new FragmentState());
             FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
             FragmentHistory.Peek().FatherState = CurrentFragmentState;
+            FragmentHistory.Peek().ScreenState = screen;
 
-            //if (IsFragmentLoadedAdded)
-            //{
-            //    if (FragmentFrame.Visibility == ViewStates.Gone)
-            //        FragmentFrame.Visibility = ViewStates.Visible;
-
-            //    if (FragmentLoading.Visibility == ViewStates.Gone)
-            //        FragmentLoading.Visibility = ViewStates.Visible;
-            //}
 
             if (FragmentHistory.Peek()?.FatherState?.Fragment != null)
             {
                 CurrentFragmentState?.FatherState?.Fragment.Hide();
             }
-
-            //CurrentFragment = null;
 
             GetFragmentStack().Push(switcher);
 
@@ -85,9 +77,6 @@ namespace SpotyPie.Models
             if (!string.IsNullOrEmpty(jsonModel))
                 FragmentHistory?.Peek()?.SendData(jsonModel);
 
-            //if (!FragmentHistory?.Peek()?.IsAdded)
-            //{
-
             if (FragmentHistory.Peek().Fragment is Player.Player)
                 FragmentHistory.Peek().LayoutId = Activity.GetFragmentViewId(true);
             else
@@ -95,11 +84,6 @@ namespace SpotyPie.Models
 
             InsertFragment(FragmentHistory.Peek().LayoutId, FragmentHistory.Peek().Fragment);
             FragmentHistory.Peek().BackButton = () => { Activity.RemoveCurrentFragment(Activity.SupportFragmentManager, FragmentHistory.Peek().Fragment); };
-            //}
-            //else
-            //{
-            //    CurrentFragment.Show();
-            //}
         }
 
         public void InsertFragment(int layoutId, FragmentBase fragment)
@@ -119,40 +103,21 @@ namespace SpotyPie.Models
 
         public bool CheckBackButton()
         {
-            //if (FragmentBackBtn == null || FragmentBackBtn.Count == 0)
-            //    return true;
-            //FragmentBackBtn.Pop()?.Invoke();
-
-            if (FragmentHistory == null && FragmentHistory.Count == 0)
+            if (FragmentHistory == null || FragmentHistory.Count == 0)
             {
                 return true;
             }
 
-            var state = FragmentHistory.Pop();
+            var state = FragmentHistory.Peek();
             state.BackButton?.Invoke();
 
             if (state.LayoutId == int.MaxValue - 1)
                 Activity.RemovePlayerView();
 
+            FragmentHistory.Pop();
             if (FragmentHistory.Count != 0)
-            {
-                if (FragmentHistory.Peek().LayoutId == state.LayoutId)
-                    InsertFragment(FragmentHistory.Peek().LayoutId, FragmentHistory.Peek().Fragment);
-            }
-
+                Activity.SetScreen(FragmentHistory.Peek().ScreenState);
             return false;
-        }
-
-
-
-        public void OnResume()
-        {
-
-        }
-
-        public void OnStop()
-        {
-
         }
     }
 }

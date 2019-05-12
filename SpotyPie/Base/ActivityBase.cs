@@ -4,6 +4,7 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using SpotyPie.Enums;
 using SpotyPie.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace SpotyPie.Base
 {
     public abstract class ActivityBase : AppCompatActivity
     {
+        protected Screen ScreenState { get; set; } = Screen.Holder;
+
         private static int FrameLayoutId { get; set; } = 100000;
 
         public abstract int LayoutId { get; set; }
@@ -26,6 +29,17 @@ namespace SpotyPie.Base
         public Stack<dynamic> FragmentStack { get; set; }
 
         private ViewGroup ParentView { get; set; }
+
+        private ViewGroup PlayerView { get; set; }
+
+        private Player.Player Player { get; set; }
+
+        public Player.Player GetPlayer()
+        {
+            if (Player == null)
+                Player = new Player.Player();
+            return Player;
+        }
 
         private FrameLayout FragmentFrame;
 
@@ -83,6 +97,7 @@ namespace SpotyPie.Base
             }
         }
 
+        public abstract void SetScreen(Screen screen);
 
         public API GetAPIService()
         {
@@ -114,8 +129,11 @@ namespace SpotyPie.Base
 
         public void RemovePlayerView()
         {
-            ParentView.RemoveView(PlayerFrame);
-            PlayerFrame = null;
+            if (PlayerFrame != null)
+            {
+                ParentView.RemoveView(PlayerFrame);
+                PlayerFrame = null;
+            }
         }
 
         public virtual void FragmentLoaded()
@@ -143,15 +161,16 @@ namespace SpotyPie.Base
             return FManager;
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Screen screen = Screen.Holder)
         {
-            GetFManager().LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack);
+            GetFManager().LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
+
+            SetScreen(screen);
         }
 
         protected override void OnDestroy()
         {
             FragmentStack = null;
-            FManager?.OnStop();
             base.OnDestroy();
         }
 
@@ -161,16 +180,27 @@ namespace SpotyPie.Base
         }
 
         //Do not use this for view getting
-        public abstract int GetParentView();
+        public abstract int GetParentView(bool Player = false);
 
-        private void GetViewToInsert()
+        private void GetViewToInsert(bool Player)
         {
-            if (ParentView == null)
+            if (Player)
             {
-                ParentView = FindViewById<ViewGroup>(GetParentView());
-
+                if (PlayerView == null)
+                {
+                    PlayerView = FindViewById<ViewGroup>(GetParentView(true));
+                    if (PlayerView == null)
+                        throw new Exception("Palyer viewgroup not found");
+                }
+            }
+            else
+            {
                 if (ParentView == null)
-                    throw new Exception("View not found");
+                {
+                    ParentView = FindViewById<ViewGroup>(GetParentView());
+                    if (ParentView == null)
+                        throw new Exception("Viewgroup not found");
+                }
             }
         }
 
@@ -188,10 +218,11 @@ namespace SpotyPie.Base
 
                     FragmentFrame.Id = GetFragmentId();
 
-                    GetViewToInsert();
+                    GetViewToInsert(false);
 
                     ParentView.AddView(FragmentFrame);
 
+                    FragmentFrame.BringToFront();
                     return FragmentFrame.Id;
                 }
                 else
@@ -209,10 +240,11 @@ namespace SpotyPie.Base
 
                     PlayerFrame.Id = int.MaxValue - 1;
 
-                    GetViewToInsert();
+                    GetViewToInsert(true);
 
-                    ParentView.AddView(PlayerFrame);
+                    PlayerView.AddView(PlayerFrame);
 
+                    PlayerFrame.BringToFront();
                     return PlayerFrame.Id;
                 }
                 else
@@ -225,15 +257,22 @@ namespace SpotyPie.Base
 
         public void RemoveCurrentFragment(SupportFragmentManager fragmentManager, FragmentBase fragment)
         {
-            if (fragment != null)
+            try
             {
-                fragment.ReleaseData();
-                var transaction = fragmentManager.BeginTransaction();
-                transaction.Remove(fragment);
-                transaction.Commit();
-                transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitFragmentClose);
-                transaction = null;
-                fragment = null;
+                if (fragment != null)
+                {
+                    fragment.ReleaseData();
+                    var transaction = fragmentManager.BeginTransaction();
+                    transaction.Remove(fragment);
+                    transaction.Commit();
+                    transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitFragmentClose);
+                    transaction = null;
+                    fragment = null;
+                }
+            }
+            catch (Exception e)
+            {
+
             }
         }
     }

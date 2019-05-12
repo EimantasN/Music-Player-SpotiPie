@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
+using SpotyPie.Enums;
 using SpotyPie.Models;
 using System;
 using System.Collections.Generic;
@@ -186,42 +187,46 @@ namespace SpotyPie.Base
             return default(T);
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Screen screen = Screen.Holder)
         {
-            ParentActivity.FManager.FragmentHistory.Push(new FragmentState());
-            ParentActivity.FManager.FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
-            ParentActivity.FManager.FragmentHistory.Peek().FatherState = ParentActivity.FManager.CurrentFragmentState;
+            ParentActivity.GetFManager().FragmentHistory.Push(new FragmentState());
+            ParentActivity.GetFManager().FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
+            ParentActivity.GetFManager().FragmentHistory.Peek().FatherState = ParentActivity.FManager.CurrentFragmentState;
 
-            if (ParentActivity.FManager.FragmentHistory.Peek()?.FatherState?.Fragment != null)
+            if (ParentActivity.GetFManager().FragmentHistory.Peek()?.FatherState?.Fragment != null)
             {
-                ParentActivity.FManager.CurrentFragmentState?.FatherState?.Fragment.Hide();
+                ParentActivity.GetFManager().CurrentFragmentState?.FatherState?.Fragment.Hide();
             }
 
-            ParentActivity.FManager.GetFragmentStack().Push(switcher);
+            ParentActivity.GetFManager().GetFragmentStack().Push(switcher);
 
             LoadFragment(switcher);
 
-            if (ParentActivity.FManager.FragmentHistory?.Peek()?.Fragment == null)
+            if (ParentActivity.GetFManager().FragmentHistory?.Peek()?.Fragment == null)
             {
                 throw new Exception("Fragment not founded");
             }
 
             //Can send data to fragment
             if (!string.IsNullOrEmpty(jsonModel))
-                ParentActivity.FManager.FragmentHistory?.Peek()?.SendData(jsonModel);
+                ParentActivity.GetFManager().FragmentHistory?.Peek()?.SendData(jsonModel);
 
-            if (ParentActivity.FManager.FragmentHistory.Peek().Fragment is Player.Player)
-                ParentActivity.FManager.FragmentHistory.Peek().LayoutId = GetFragmentViewId(true);
+            if (ParentActivity.GetFManager().FragmentHistory.Peek().Fragment is Player.Player)
+                ParentActivity.GetFManager().FragmentHistory.Peek().LayoutId = GetFragmentViewId(true);
             else
-                ParentActivity.FManager.FragmentHistory.Peek().LayoutId = GetFragmentViewId();
+                ParentActivity.GetFManager().FragmentHistory.Peek().LayoutId = GetFragmentViewId();
 
-            InsertFragment(ParentActivity.FManager.FragmentHistory.Peek().LayoutId, ParentActivity.FManager.FragmentHistory.Peek().Fragment);
+            InsertFragment(ParentActivity.GetFManager().FragmentHistory.Peek().LayoutId, ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
             ParentActivity.FManager.FragmentHistory.Peek().BackButton =
                 () =>
                 {
-                    ParentActivity.RemoveCurrentFragment(Activity.SupportFragmentManager,
-                        ParentActivity.FManager.FragmentHistory.Peek().Fragment);
+                    ParentView.RemoveView(FragmentFrame);
+                    FragmentFrame = null;
+                    ParentActivity.RemoveCurrentFragment(ChildFragmentManager,
+                        ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
                 };
+
+            SetScreen(screen);
         }
 
         public void InsertFragment(int layoutId, FragmentBase fragment)
@@ -280,6 +285,11 @@ namespace SpotyPie.Base
                     return PlayerFrame.Id;
                 }
             }
+        }
+
+        public virtual void SetScreen(Screen screen)
+        {
+            ParentActivity.SetScreen(screen);
         }
     }
 }
