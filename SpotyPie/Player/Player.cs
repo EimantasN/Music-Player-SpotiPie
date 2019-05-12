@@ -166,7 +166,7 @@ namespace SpotyPie.Player
             switch (switcher)
             {
                 case Enums.Activitys.Player.CurrentSongList:
-                    CurrentFragment = new PlaylistSongList();
+                    ParentActivity.FManager.SetCurrentFragment(new PlaylistSongList());
                     return;
                 default:
                     throw new Exception("Failed to find Fragment");

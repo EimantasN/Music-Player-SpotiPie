@@ -305,7 +305,7 @@ namespace SpotyPie
             return devices;
         }
 
-        protected override void LoadFragment(dynamic switcher, string jsonModel = null)
+        public override void LoadFragment(dynamic switcher, string jsonModel = null)
         {
 
         }

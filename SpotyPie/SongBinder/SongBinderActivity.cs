@@ -47,18 +47,18 @@ namespace SpotyPie.SongBinder
         }
 
         //DO not use this to load fragment
-        protected override void LoadFragment(dynamic switcher, string jsonModel = null)
+        public override void LoadFragment(dynamic switcher, string jsonModel = null)
         {
             switch (switcher)
             {
                 case BinderFragments.UnBindedSongList:
-                    CurrentFragment = new Fragments.SongBindList();
+                    GetFManager().SetCurrentFragment(new Fragments.SongBindList());
                     break;
                 case BinderFragments.SongDetailsFragment:
-                    CurrentFragment = new Fragments.SongDetailsFragment();
+                    GetFManager().SetCurrentFragment(new Fragments.SongDetailsFragment());
                     break;
                 case BinderFragments.BindIndividualSongFragment:
-                    CurrentFragment = new Fragments.BindIndividualSongFragment();
+                    GetFManager().SetCurrentFragment(new Fragments.BindIndividualSongFragment());
                     break;
                 default:
                     break;

@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
+using SpotyPie.Models;
 using System;
 using System.Collections.Generic;
 using SupportFragment = Android.Support.V4.App.Fragment;
@@ -16,15 +17,11 @@ namespace SpotyPie.Base
     {
         private static int FrameLayoutId { get; set; } = 1;
 
-        public FragmentBase CurrentFragment;
-
-        public FragmentBase MYParentFragment;
-
-        private Stack<dynamic> FragmentStack { get; set; }
-
         public abstract int LayoutId { get; set; }
 
         private ViewGroup ParentView { get; set; }
+
+        private FrameLayout PlayerFrame;
 
         protected string JsonModel { get; set; }
 
@@ -189,79 +186,100 @@ namespace SpotyPie.Base
             return default(T);
         }
 
-        private Stack<dynamic> GetFragmentStack()
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true)
         {
-            if (FragmentStack == null)
-                FragmentStack = new Stack<dynamic>();
-            return FragmentStack;
+            ParentActivity.FManager.FragmentHistory.Push(new FragmentState());
+            ParentActivity.FManager.FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
+            ParentActivity.FManager.FragmentHistory.Peek().FatherState = ParentActivity.FManager.CurrentFragmentState;
+
+            if (ParentActivity.FManager.FragmentHistory.Peek()?.FatherState?.Fragment != null)
+            {
+                ParentActivity.FManager.CurrentFragmentState?.FatherState?.Fragment.Hide();
+            }
+
+            ParentActivity.FManager.GetFragmentStack().Push(switcher);
+
+            LoadFragment(switcher);
+
+            if (ParentActivity.FManager.FragmentHistory?.Peek()?.Fragment == null)
+            {
+                throw new Exception("Fragment not founded");
+            }
+
+            //Can send data to fragment
+            if (!string.IsNullOrEmpty(jsonModel))
+                ParentActivity.FManager.FragmentHistory?.Peek()?.SendData(jsonModel);
+
+            if (ParentActivity.FManager.FragmentHistory.Peek().Fragment is Player.Player)
+                ParentActivity.FManager.FragmentHistory.Peek().LayoutId = GetFragmentViewId(true);
+            else
+                ParentActivity.FManager.FragmentHistory.Peek().LayoutId = GetFragmentViewId();
+
+            InsertFragment(ParentActivity.FManager.FragmentHistory.Peek().LayoutId, ParentActivity.FManager.FragmentHistory.Peek().Fragment);
+            ParentActivity.FManager.FragmentHistory.Peek().BackButton =
+                () =>
+                {
+                    ParentActivity.RemoveCurrentFragment(Activity.SupportFragmentManager,
+                        ParentActivity.FManager.FragmentHistory.Peek().Fragment);
+                };
+        }
+
+        public void InsertFragment(int layoutId, FragmentBase fragment)
+        {
+            ChildFragmentManager.BeginTransaction()
+            .Replace(layoutId, fragment)
+            .Commit();
         }
 
         public abstract void LoadFragment(dynamic switcher);
 
-        public void AddParent(FragmentBase parent)
+        public int GetFragmentViewId(bool isPlayer = false)
         {
-            this.MYParentFragment = parent;
-        }
-
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null)
-        {
-            if (CurrentFragment != null)
+            if (!isPlayer)
             {
-                CurrentFragment.Hide();
-            }
+                if (FragmentFrame == null)
+                {
+                    FragmentFrame = new FrameLayout(this.Context);
 
-            CurrentFragment = null;
+                    FragmentFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
+                        ConstraintLayout.LayoutParams.MatchParent,
+                        ConstraintLayout.LayoutParams.MatchParent);
 
-            GetFragmentStack().Push(switcher);
-            LoadFragment(switcher);
-            CurrentFragment.AddParent(this);
+                    FragmentFrame.Id = GetFragmentId();
 
-            //Can send data to fragment
-            if (!string.IsNullOrEmpty(jsonModel))
-                CurrentFragment.SendData(jsonModel);
+                    GetViewToInsert();
 
-            if (!CurrentFragment.IsAdded)
-            {
-                ChildFragmentManager.BeginTransaction()
-                .Replace(GetFragmentViewId(), CurrentFragment)
-                .Commit();
+                    ParentView.AddView(FragmentFrame);
 
-                ParentActivity?.SetBackBtn(() => { ParentActivity?.RemoveCurrentFragment(ChildFragmentManager, CurrentFragment); });
+                    return FragmentFrame.Id;
+                }
+                else
+                    return FragmentFrame.Id;
             }
             else
             {
-                CurrentFragment?.ForceUpdate();
+                if (PlayerFrame == null)
+                {
+                    PlayerFrame = new FrameLayout(this.Context);
+
+                    PlayerFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
+                        ConstraintLayout.LayoutParams.MatchParent,
+                        ConstraintLayout.LayoutParams.MatchParent);
+
+                    PlayerFrame.Id = int.MaxValue - 2;
+
+                    GetViewToInsert();
+
+                    ParentView.AddView(PlayerFrame);
+
+                    return PlayerFrame.Id;
+                }
+                else
+                {
+                    PlayerFrame.BringToFront();
+                    return PlayerFrame.Id;
+                }
             }
-        }
-
-        public void ReloadMyParentFragment()
-        {
-            if (MYParentFragment != null)
-                MYParentFragment.ForceUpdate();
-            else
-                ParentActivity?.LoadBaseFragment();
-        }
-
-        public int GetFragmentViewId()
-        {
-            if (FragmentFrame == null)
-            {
-                FragmentFrame = new FrameLayout(this.Context);
-
-                FragmentFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.MatchParent,
-                    ConstraintLayout.LayoutParams.MatchParent);
-
-                FragmentFrame.Id = GetFragmentId();
-
-                GetViewToInsert();
-
-                ParentView.AddView(FragmentFrame);
-
-                return FragmentFrame.Id;
-            }
-            else
-                return FragmentFrame.Id;
         }
     }
 }

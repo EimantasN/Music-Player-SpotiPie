@@ -77,7 +77,7 @@ namespace SpotyPie.Player
 
         public override void LoadFragment(dynamic switcher)
         {
-            CurrentFragment = new SongOptionsFragment();
+            ParentActivity.FManager.SetCurrentFragment(new SongOptionsFragment());
         }
     }
 }

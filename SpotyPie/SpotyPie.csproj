@@ -85,6 +85,8 @@
     <Compile Include="Database\ViewModels\Settings.cs" />
     <Compile Include="Enums\Activitys\MainActivity.cs" />
     <Compile Include="Enums\Activitys\Player.cs" />
+    <Compile Include="Models\FragmentState.cs" />
+    <Compile Include="Models\CustomFragmetManager.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
     <Compile Include="RecycleView\Models\SongBindList.cs" />
     <Compile Include="RecycleView\Models\SongOption.cs" />

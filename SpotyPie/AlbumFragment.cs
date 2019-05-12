@@ -136,7 +136,7 @@ namespace SpotyPie
             switch (switcher)
             {
                 case Enums.Activitys.HomePage.Player:
-                    CurrentFragment = new Player.Player();
+                    ParentActivity.FManager.SetCurrentFragment(new Player.Player());
                     return;
             }
         }

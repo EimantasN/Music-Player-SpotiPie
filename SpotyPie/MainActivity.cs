@@ -197,7 +197,7 @@ namespace SpotyPie
             {
                 OnBackPressed();
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 if (MainFragment == null)
                     MainFragment = new MainFragment();
@@ -226,7 +226,6 @@ namespace SpotyPie
         private void MiniPlayer_Click(object sender, EventArgs e)
         {
             GetState().SetSong(GetAPIService().GetCurrentListLive(), 0);
-            //GetState().Player_visiblibity_toggle();
         }
 
         private void BottomNavigation_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
@@ -262,10 +261,10 @@ namespace SpotyPie
         public override void LoadBaseFragment()
         {
             base.LoadBaseFragment();
-            LoadFragmentInner(LastMainFragment);
+            //LoadFragmentInner(LastMainFragment);
         }
 
-        protected override void LoadFragment(dynamic switcher, string jsonModel = null)
+        public override void LoadFragment(dynamic switcher, string jsonModel = null)
         {
             switch (switcher)
             {
@@ -276,7 +275,7 @@ namespace SpotyPie
 
                             if (MainFragment == null)
                                 MainFragment = new MainFragment();
-                            CurrentFragment = MainFragment;
+                            GetFManager().SetCurrentFragment(MainFragment);
                             LastMainFragment = main;
                             ActionName.Text = "Home";
 
@@ -285,7 +284,7 @@ namespace SpotyPie
 
                             if (Browse == null)
                                 Browse = new MainArtist();
-                            CurrentFragment = Browse;
+                            GetFManager().SetCurrentFragment(Browse);
                             LastMainFragment = main;
                             ActionName.Text = "Muse";
 
@@ -294,7 +293,7 @@ namespace SpotyPie
 
                             if (Search == null)
                                 Search = new Search();
-                            CurrentFragment = Search;
+                            GetFManager().SetCurrentFragment(Search);
                             LastMainFragment = main;
                             HeaderContainer.Visibility = ViewStates.Gone;
 
@@ -302,7 +301,7 @@ namespace SpotyPie
                         case Main.Library:
 
                             if (Library == null) Library = new LibraryFragment();
-                            CurrentFragment = Library;
+                            GetFManager().SetCurrentFragment(Library);
                             LastMainFragment = main;
                             ActionName.Text = "Library";
                             return;
@@ -313,15 +312,15 @@ namespace SpotyPie
                     {
                         case HomePage.Album:
                             if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
-                            CurrentFragment = AlbumFragment;
-                            CurrentFragment.SendData(jsonModel);
+                            GetFManager().SetCurrentFragment(AlbumFragment);
+                            GetFManager().GetCurrentFragment().SendData(jsonModel);
                             return;
                         case HomePage.Artist:
                             if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
-                            CurrentFragment = ArtistFragment;
+                            GetFManager().SetCurrentFragment(ArtistFragment);
                             return;
                         case HomePage.Player:
-                            CurrentFragment = new Player.Player();
+                            GetFManager().SetCurrentFragment(new Player.Player());
                             return;
                     }
                     throw new Exception("Fragment not found in HomePage enum");
@@ -394,7 +393,7 @@ namespace SpotyPie
             }
             else
             {
-                CurrentFragment?.ForceUpdate();
+                GetFManager().GetCurrentFragment()?.ForceUpdate();
                 FirstLayer.Visibility = ViewStates.Gone;
             }
         }
