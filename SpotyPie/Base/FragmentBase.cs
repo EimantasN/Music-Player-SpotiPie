@@ -138,13 +138,18 @@ namespace SpotyPie.Base
 
         public override void OnStop()
         {
-            ReleaseData();
             base.OnStop();
         }
 
         public override void OnDestroyView()
         {
             base.OnDestroyView();
+        }
+
+        public override void OnDetach()
+        {
+            ReleaseData();
+            base.OnDetach();
         }
 
         public void RunOnUiThread(Action action)

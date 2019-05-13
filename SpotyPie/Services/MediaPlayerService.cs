@@ -444,6 +444,7 @@ namespace SpotyPie.Services
                     mediaPlayer.Stop();
                 }
 
+
                 UpdatePlaybackState(PlaybackStateCompat.StateStopped);
                 mediaPlayer.Reset();
                 StopNotification();

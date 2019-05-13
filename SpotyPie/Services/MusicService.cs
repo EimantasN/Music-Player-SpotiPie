@@ -98,12 +98,16 @@ namespace SpotyPie.Services
         {
             try
             {
-                if (Current_Song == null || Current_Song.Id != Current_Song_List[position].Id)
+                if (!MusicPlayer.IsPlaying || Current_Song == null || Current_Song.Id != Current_Song_List[position].Id)
                 {
                     SetCurrentSong(position);
 
                     //if (serviceCallbacks == null)
-                    Notification($"Now playing {Current_Song.Name}", $"{Current_Song.AlbumName} - by {Current_Song.ArtistName}", Current_Song.MediumImage);
+                    //Notification($"Now playing {Current_Song.Name}", $"{Current_Song.AlbumName} - by {Current_Song.ArtistName}", Current_Song.MediumImage);
+                }
+                else if (!MusicPlayer.IsPlaying)
+                {
+                    MusicPlayer.Start();
                 }
             }
             catch (Exception e)
@@ -116,7 +120,8 @@ namespace SpotyPie.Services
         {
             try
             {
-                if (SetNewSongActive(position))
+                //Need to resume song not so set it again
+                if (SetNewSongActive(position) || !MusicPlayer.IsPlaying)
                 {
                     serviceCallbacks?.SetViewLoadState();
                     InformUiSongChanged(Current_Song_List, position);
@@ -187,6 +192,11 @@ namespace SpotyPie.Services
                     Task.Run(async () =>
                     {
                         await GetAPIService().SetState(songId: Current_Song.Id);
+
+                        Application.SynchronizationContext.Post(_ =>
+                        {
+                            LockScreenPlayer?.SetStatePlaying();
+                        }, null);
                     });
                 }
             });
@@ -301,7 +311,14 @@ namespace SpotyPie.Services
             {
                 serviceCallbacks?.Music_pause();
                 LockScreenPlayer?.SetStateStopped();
+                //LockScreenPlayer?.mediaControllerCompat.GetTransportControls().Stop();
                 MusicPlayer.Stop();
+            }
+            else
+            {
+                LockScreenPlayer?.SetStateBuffering();
+                //LockScreenPlayer?.mediaControllerCompat.GetTransportControls().Play();
+                serviceCallbacks?.Music_play();
             }
         }
 
@@ -470,7 +487,7 @@ namespace SpotyPie.Services
                 {
                     Application.SynchronizationContext.Post(_ =>
                     {
-                        song.SetModelType(Mobile_Api.Models.Enums.RvType.SongWithImage);
+                        song.SetModelType(Mobile_Api.Models.Enums.RvType.Song);
                         song.IsPlaying = true;
                         Current_Song_List.Add(song);
                         SetSong(Current_Song_List.Count - 1);
