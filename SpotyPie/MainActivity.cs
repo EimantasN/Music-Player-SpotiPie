@@ -69,6 +69,7 @@ namespace SpotyPie
             HeightInDp = Resources.DisplayMetrics.HeightPixels;
 
             bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
+
             ActionName = FindViewById<TextView>(Resource.Id.textView);
 
             #region MINI PLAYER
@@ -178,6 +179,9 @@ namespace SpotyPie
 
         private void BottomNavigation_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
+            GetFManager().Reset();
+            FManager = null;
+
             switch (e.Item.ItemId)
             {
                 case Resource.Id.home:
@@ -221,7 +225,6 @@ namespace SpotyPie
                     switch (main)
                     {
                         case Main.Home:
-
                             if (MainFragment == null)
                                 MainFragment = new MainFragment();
                             GetFManager().SetCurrentFragment(MainFragment);
@@ -229,7 +232,6 @@ namespace SpotyPie
                             ActionName.Text = "Home";
                             break;
                         case Main.Browse:
-
                             if (Browse == null)
                                 Browse = new MainArtist();
                             GetFManager().SetCurrentFragment(Browse);
@@ -237,7 +239,6 @@ namespace SpotyPie
                             ActionName.Text = "Muse";
                             break;
                         case Main.Search:
-
                             if (Search == null)
                                 Search = new Search();
                             GetFManager().SetCurrentFragment(Search);
@@ -246,7 +247,6 @@ namespace SpotyPie
 
                             break;
                         case Main.Library:
-
                             if (Library == null) Library = new LibraryFragment();
                             GetFManager().SetCurrentFragment(Library);
                             LastMainFragment = main;
@@ -294,7 +294,7 @@ namespace SpotyPie
 
         public void LoadArtist(Artist artist)
         {
-            LoadFragmentInner(HomePage.Album, JsonConvert.SerializeObject(artist));
+            LoadFragmentInner(HomePage.Artist, JsonConvert.SerializeObject(artist));
         }
 
         public void ToogleSecondLayer(bool show)
@@ -371,11 +371,17 @@ namespace SpotyPie
             {
                 case Screen.FullScreen:
                     if (bottomNavigation.Visibility == ViewStates.Visible)
+                    {
                         bottomNavigation.Visibility = ViewStates.Gone;
+                        MiniPlayer.Visibility = ViewStates.Gone;
+                    }
                     break;
                 case Screen.Holder:
                     if (bottomNavigation.Visibility == ViewStates.Gone)
+                    {
                         bottomNavigation.Visibility = ViewStates.Visible;
+                        MiniPlayer.Visibility = ViewStates.Visible;
+                    }
                     break;
             }
         }

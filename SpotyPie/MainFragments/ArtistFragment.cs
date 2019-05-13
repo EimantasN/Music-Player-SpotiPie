@@ -193,7 +193,7 @@ namespace SpotyPie
         {
             try
             {
-                CurrentArtist = artist;
+                CurrentArtist = GetModel<Artist>();
                 if (Context != null)
                 {
                     ScrollFather.ScrollTo(0, 0);

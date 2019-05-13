@@ -192,6 +192,7 @@ namespace SpotyPie.Base
             ParentActivity.GetFManager().FragmentHistory.Push(new FragmentState());
             ParentActivity.GetFManager().FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
             ParentActivity.GetFManager().FragmentHistory.Peek().FatherState = ParentActivity.FManager.CurrentFragmentState;
+            ParentActivity.GetFManager().FragmentHistory.Peek().ScreenState = screen;
 
             if (ParentActivity.GetFManager().FragmentHistory.Peek()?.FatherState?.Fragment != null)
             {

@@ -14,6 +14,9 @@ namespace SpotyPie
 {
     public class MainFragment : FragmentBase
     {
+
+        public override int LayoutId { get; set; } = Resource.Layout.home_layout;
+
         //Best artists
         //public RvList<Album> BestArtists;
 
@@ -37,8 +40,6 @@ namespace SpotyPie
         private ProgressBar Loading;
 
         private ImageButton Settings;
-
-        public override int LayoutId { get; set; } = Resource.Layout.home_layout;
 
         protected override void InitView()
         {

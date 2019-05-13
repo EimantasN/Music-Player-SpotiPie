@@ -43,6 +43,8 @@ namespace SpotyPie.Models
 
         public void SetCurrentFragment(FragmentBase fragment)
         {
+            if (FragmentHistory.Count == 0)
+                FragmentHistory.Push(new FragmentState());
             FragmentHistory.Peek().Fragment = fragment;
         }
 
@@ -108,16 +110,29 @@ namespace SpotyPie.Models
                 return true;
             }
 
-            var state = FragmentHistory.Peek();
+            FragmentState state = FragmentHistory.Peek();
             state.BackButton?.Invoke();
+
+            FragmentHistory.Pop();
+
+            if (FragmentHistory.Count != 0)
+                Activity.SetScreen(FragmentHistory.Peek().ScreenState);
+
+            if (FragmentHistory.Count != 0 && state.LayoutId == FragmentHistory.Peek().LayoutId)
+                InsertFragment(FragmentHistory.Peek().LayoutId, FragmentHistory.Peek().Fragment);
 
             if (state.LayoutId == int.MaxValue - 1)
                 Activity.RemovePlayerView();
 
-            FragmentHistory.Pop();
-            if (FragmentHistory.Count != 0)
-                Activity.SetScreen(FragmentHistory.Peek().ScreenState);
             return false;
+        }
+
+        public void Reset()
+        {
+            CurrentFragmentState = null;
+            FragmentHistory = new Stack<FragmentState>();
+            FragmentStack = new Stack<dynamic>();
+            FragmentBackBtn = new Stack<Action>();
         }
     }
 }

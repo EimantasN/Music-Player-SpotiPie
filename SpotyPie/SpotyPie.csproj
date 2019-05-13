@@ -44,6 +44,7 @@
     <AotAssemblies>true</AotAssemblies>
     <EnableLLVM>true</EnableLLVM>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
@@ -77,7 +78,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlbumFragment.cs" />
+    <Compile Include="MainFragments\AlbumFragment.cs" />
     <Compile Include="API.cs" />
     <Compile Include="Base\ActivityBase.cs" />
     <Compile Include="Base\FragmentBase.cs" />
@@ -99,7 +100,7 @@
     <Compile Include="Helpers\Enums\Search_status.cs" />
     <Compile Include="Helpers\ConvertFileToByteArray.cs" />
     <Compile Include="Helpers\Screen.cs" />
-    <Compile Include="MainFragment.cs" />
+    <Compile Include="MainFragments\MainFragment.cs" />
     <Compile Include="Current_state.cs" />
     <Compile Include="Helpers\BluetoothHelper.cs" />
     <Compile Include="Helpers\Caster.cs" />
@@ -118,15 +119,15 @@
     <Compile Include="Helpers\Rv_OnTouch.cs" />
     <Compile Include="Helpers\TabAdapter.cs" />
     <Compile Include="Helpers\VerticalRV.cs" />
-    <Compile Include="MainArtist.cs" />
-    <Compile Include="Library\Fragments\Albums.cs" />
-    <Compile Include="Library\Fragments\Artists.cs" />
-    <Compile Include="Library\Fragments\Playlist.cs" />
-    <Compile Include="Library\LibraryFragment.cs" />
+    <Compile Include="MainFragments\MainArtist.cs" />
+    <Compile Include="MainFragments\Library\Fragments\Albums.cs" />
+    <Compile Include="MainFragments\Library\Fragments\Artists.cs" />
+    <Compile Include="MainFragments\Library\Fragments\Playlist.cs" />
+    <Compile Include="MainFragments\Library\LibraryFragment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Player\Player.cs" />
-    <Compile Include="ArtistFragment.cs" />
+    <Compile Include="MainFragments\ArtistFragment.cs" />
     <Compile Include="Player\PlaylistSongList.cs" />
     <Compile Include="Player\PlaylistFragment.cs" />
     <Compile Include="Player\Playlist_choose.cs" />
@@ -145,7 +146,7 @@
     <Compile Include="RecycleView\RvList.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Search.cs" />
+    <Compile Include="MainFragments\Search.cs" />
     <Compile Include="Services\MediaPlayerServiceBinder.cs" />
     <Compile Include="Services\MediaSessionCustomCallback.cs" />
     <Compile Include="Services\MusicService.cs" />
@@ -158,7 +159,7 @@
     <Compile Include="SongBinder\Fragments\SongBindList.cs" />
     <Compile Include="SongBinder\Fragments\SongDetailsFragment.cs" />
     <Compile Include="SongBinder\SongBinderActivity.cs" />
-    <Compile Include="SongOptionsFragment.cs" />
+    <Compile Include="Player\SongOptionsFragment.cs" />
     <Compile Include="SplashActivity.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -626,6 +627,7 @@
     <AndroidResource Include="Resources\drawable\group.png" />
     <AndroidResource Include="Resources\drawable\artist_icon.png" />
     <AndroidResource Include="Resources\drawable\report.png" />
+    <AndroidResource Include="Resources\drawable\album_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -112,6 +112,7 @@ namespace SpotyPie
                 RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
                 RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 RvData.DisableScroolNested();
+                RvData.GetData().AddList(new System.Collections.Generic.List<Songs>() { null });
             }
 
             Task.Run(async () => await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>(), RvData.GetData(), () => { }));

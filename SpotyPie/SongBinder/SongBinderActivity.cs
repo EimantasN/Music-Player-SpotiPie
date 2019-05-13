@@ -78,7 +78,7 @@ namespace SpotyPie.SongBinder
 
         public override void SetScreen(Screen screen)
         {
-            throw new System.NotImplementedException();
+
         }
     }
 }

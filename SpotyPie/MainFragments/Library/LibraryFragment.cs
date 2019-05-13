@@ -10,27 +10,36 @@ namespace SpotyPie
     {
         TabLayout Tabs;
         ViewPager ViewPager;
+        TabAdapter Adapter;
+
+        private int[] tabIcons = { Resource.Drawable.artist_icon, Resource.Drawable.album_icon };
 
         public override int LayoutId { get; set; } = Resource.Layout.library_layout;
 
         protected override void InitView()
         {
-            GetState().Activity.ActionName.Text = "Library";
-            GetState().Activity.ActionName.Alpha = 1.0f;
-
             Tabs = RootView.FindViewById<TabLayout>(Resource.Id.tabs);
             ViewPager = RootView.FindViewById<ViewPager>(Resource.Id.viewpager);
 
             SetUpViewPager(ViewPager);
-            Tabs.SetupWithViewPager(ViewPager);
         }
 
         private void SetUpViewPager(ViewPager viewPager)
         {
-            TabAdapter adapter = new TabAdapter(ChildFragmentManager);
-            adapter.AddFragment(new Artists(), "Artists");
-            adapter.AddFragment(new Albums(), "Albums");
-            viewPager.Adapter = adapter;
+            Adapter = new TabAdapter(ChildFragmentManager);
+            Adapter.AddFragment(new Artists(), "");
+            Adapter.AddFragment(new Albums(), "");
+            viewPager.Adapter = Adapter;
+
+            Tabs.SetupWithViewPager(ViewPager);
+
+            SetupTabIcons();
+
+            void SetupTabIcons()
+            {
+                Tabs.GetTabAt(0).SetIcon(tabIcons[0]);
+                Tabs.GetTabAt(1).SetIcon(tabIcons[1]);
+            }
         }
 
         public override void ForceUpdate()
@@ -40,7 +49,17 @@ namespace SpotyPie
 
         public override void ReleaseData()
         {
+            //if (Tabs != null)
+            //{
+            //    Tabs.Dispose();
+            //    Tabs = null;
 
+            //    ViewPager.Dispose();
+            //    ViewPager = null;
+
+            //    Adapter.Dispose();
+            //    Adapter = null;
+            //}
         }
 
         public override int GetParentView()
@@ -50,7 +69,6 @@ namespace SpotyPie
 
         public override void LoadFragment(dynamic switcher)
         {
-            throw new System.NotImplementedException();
         }
     }
 }

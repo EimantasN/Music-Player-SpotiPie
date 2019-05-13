@@ -26,7 +26,7 @@ namespace SpotyPie.Services.Interfaces
 
         void Music_pause();
 
-        void SongChangeStarted(List<Songs> song, int position = 0);
+        void SongChangeStarted();
 
         void SongLoadStarted(List<Songs> newSongList, int position);
 

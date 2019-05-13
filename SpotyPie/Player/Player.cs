@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
@@ -181,7 +182,7 @@ namespace SpotyPie.Player
 
         private void SongListButton_Click(object sender, EventArgs ee)
         {
-            LoadFragmentInner(Enums.Activitys.Player.CurrentSongList);
+            LoadFragmentInner(Enums.Activitys.Player.CurrentSongList, screen: Enums.Screen.FullScreen);
         }
 
         public void NextSongPlayer()
@@ -245,7 +246,18 @@ namespace SpotyPie.Player
 
         public void Music_play()
         {
-            PlayToggle.SetImageResource(Resource.Drawable.pause);
+            if (MusicService?.MusicPlayer == null)
+            {
+                var snack = Snackbar.Make(RootView, "Music service is not active", Snackbar.LengthIndefinite);
+                snack.SetAction("Dismiss", (view) =>
+                {
+                    snack.Dismiss();
+                    snack.Dispose();
+                });
+                snack.Show();
+            }
+            PlayToggle.SetImageResource(Resource.Drawable.play_loading);
+            SongChangeStarted();
         }
 
         public void Music_pause()
@@ -316,7 +328,6 @@ namespace SpotyPie.Player
                         ParentActivity.MiniPlayer.Visibility = ViewStates.Visible;
 
                     ViewLoadState = 2;
-
                 });
             });
         }
@@ -389,15 +400,15 @@ namespace SpotyPie.Player
             });
         }
 
-        public void SongChangeStarted(List<Songs> song, int position)
+        public void SongChangeStarted()
         {
             Task.Run(() =>
             {
                 Activity.RunOnUiThread(() =>
                 {
-                    ParentActivity.TogglePlayer(true);
+                    //ParentActivity.TogglePlayer(true);
                 });
-                MusicService?.SongChangeStarted(song, position);
+                MusicService?.SongChangeStarted(GetState().Current_Song_List, GetState().Position);
             });
         }
 
@@ -468,20 +479,6 @@ namespace SpotyPie.Player
         }
 
         #endregion
-
-        //public bool CheckChildFragments()
-        //{
-        //    if (CurrentState == 1)
-        //    {
-        //    }
-        //    else if (CurrentState == 2)
-        //    {
-        //        PlayerSongListContainer.Visibility = ViewStates.Gone;
-        //        CurrentState = 1;
-        //        return false;
-        //    }
-        //    return true;
-        //}
 
         public int? GetSongId()
         {

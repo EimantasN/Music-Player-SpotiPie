@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Graphics;
 using Android.Media;
 using Android.OS;
@@ -178,18 +179,30 @@ namespace SpotyPie.Services
             style.SetShowCancelButton(true);
             style.SetCancelButtonIntent(pendingCancelIntent);
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(_musicService.ApplicationContext)
-                .SetStyle(style)
-                .SetContentTitle(currentTrack.GetString(MediaMetadata.MetadataKeyTitle))
-                .SetContentText(currentTrack.GetString(MediaMetadata.MetadataKeyArtist))
-                .SetContentInfo(currentTrack.GetString(MediaMetadata.MetadataKeyAlbum))
-                .SetSmallIcon(Resource.Drawable.logo_spotify)
-                .SetContentIntent(pendingIntent)
-                .SetLargeIcon(GetLargeImage())
-                .SetColorized(true)
-                .SetShowWhen(false)
-                .SetOngoing(MediaPlayerState == PlaybackStateCompat.StatePlaying)
-                .SetVisibility(NotificationCompat.VisibilityPublic);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(_musicService.ApplicationContext);
+
+           // if (Android.OS.Build.VERSION.SdkInt >= Build.VERSION_CODES.Lollipop)
+           // {
+           //     builder.SetSmallIcon(Re.drawable.icon_transperent);
+            //    builder.SetColor(Resources.GetColor(Resource.Color.notification_color));
+           // }
+            //else
+            //{
+                //builder.SetSmallIcon(Resource.Drawable.logo_spotify);
+            //}
+
+            builder.SetSmallIcon(Resource.Drawable.logo_spotify);
+
+            builder.SetStyle(style);
+            builder.SetContentTitle(currentTrack.GetString(MediaMetadata.MetadataKeyTitle));
+            builder.SetContentText(currentTrack.GetString(MediaMetadata.MetadataKeyArtist));
+            builder.SetContentInfo(currentTrack.GetString(MediaMetadata.MetadataKeyAlbum));
+            builder.SetContentIntent(pendingIntent);
+            builder.SetLargeIcon(GetLargeImage());
+            builder.SetColorized(true);
+            builder.SetShowWhen(false);
+            builder.SetOngoing(MediaPlayerState == PlaybackStateCompat.StatePlaying);
+            builder.SetVisibility(NotificationCompat.VisibilityPublic);
 
             builder.AddAction(GenerateActionCompat(Android.Resource.Drawable.IcMediaPrevious, "Previous", ActionPrevious));
             AddPlayPauseActionCompat(builder);

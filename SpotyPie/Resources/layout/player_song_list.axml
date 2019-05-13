@@ -11,36 +11,30 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/shuffle_sticky"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-    </include>
-
     <TextView
         android:id="@+id/download_text"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:background="#222222"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:gravity="start|center"
-        android:paddingStart="16dp"
-        android:paddingLeft="16dp"
-        android:paddingEnd="16dp"
-        android:paddingRight="16dp"
         android:text="Download"
-        android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintEnd_toStartOf="@+id/download_switch"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
         android:id="@+id/download_switch"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:background="#222222"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:paddingRight="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/download_text"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +44,6 @@
         android:id="@+id/song_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#222222"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
