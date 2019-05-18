@@ -9,6 +9,7 @@ using Android.Support.V4.Media;
 using Android.Support.V4.Media.Session;
 using RestSharp;
 using System;
+using System.Threading;
 using static Android.Support.V4.Media.App.NotificationCompat;
 
 namespace SpotyPie.Services
@@ -88,8 +89,11 @@ namespace SpotyPie.Services
 
         private void UpdatePlaybackState(int state)
         {
-            if (mediaSessionCompat == null || _musicService.GetMediaPlayer() == null)
-                return;
+            //while (_musicService == null)
+            //    Thread.Sleep(250);
+
+            if (mediaSessionCompat == null)
+                InitMediaSession();
 
             try
             {
@@ -126,7 +130,7 @@ namespace SpotyPie.Services
 
                 if (state == PlaybackStateCompat.StatePlaying || state == PlaybackStateCompat.StatePaused)
                 {
-                    StartNotification();
+                    //StartNotification();
                 }
             }
             catch (Exception ex)
@@ -163,53 +167,60 @@ namespace SpotyPie.Services
 
         private void StartNotification()
         {
-            if (mediaSessionCompat == null)
-                return;
+            try
+            {
+                if (mediaSessionCompat == null)
+                    return;
 
-            var pendingIntent = PendingIntent.GetActivity(_musicService.ApplicationContext, 0, new Intent(_musicService.ApplicationContext, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
-            MediaMetadataCompat currentTrack = mediaControllerCompat.Metadata;
+                var pendingIntent = PendingIntent.GetActivity(_musicService.ApplicationContext, 0, new Intent(_musicService.ApplicationContext, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
+                MediaMetadataCompat currentTrack = mediaControllerCompat.Metadata;
 
-            var style = new MediaStyle();
-            style.SetMediaSession(mediaSessionCompat.SessionToken);
+                var style = new MediaStyle();
+                style.SetMediaSession(mediaSessionCompat.SessionToken);
 
-            Intent intent = new Intent(_musicService.ApplicationContext, typeof(MusicService));
-            intent.SetAction(ActionStop);
-            PendingIntent pendingCancelIntent = PendingIntent.GetService(_musicService.ApplicationContext, 1, intent, PendingIntentFlags.CancelCurrent);
+                Intent intent = new Intent(_musicService.ApplicationContext, typeof(MusicService));
+                intent.SetAction(ActionStop);
+                PendingIntent pendingCancelIntent = PendingIntent.GetService(_musicService.ApplicationContext, 1, intent, PendingIntentFlags.CancelCurrent);
 
-            style.SetShowCancelButton(true);
-            style.SetCancelButtonIntent(pendingCancelIntent);
+                style.SetShowCancelButton(true);
+                style.SetCancelButtonIntent(pendingCancelIntent);
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(_musicService.ApplicationContext);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(_musicService.ApplicationContext);
 
-           // if (Android.OS.Build.VERSION.SdkInt >= Build.VERSION_CODES.Lollipop)
-           // {
-           //     builder.SetSmallIcon(Re.drawable.icon_transperent);
-            //    builder.SetColor(Resources.GetColor(Resource.Color.notification_color));
-           // }
-            //else
-            //{
+                // if (Android.OS.Build.VERSION.SdkInt >= Build.VERSION_CODES.Lollipop)
+                // {
+                //     builder.SetSmallIcon(Re.drawable.icon_transperent);
+                //    builder.SetColor(Resources.GetColor(Resource.Color.notification_color));
+                // }
+                //else
+                //{
                 //builder.SetSmallIcon(Resource.Drawable.logo_spotify);
-            //}
+                //}
 
-            builder.SetSmallIcon(Resource.Drawable.logo_spotify);
+                builder.SetSmallIcon(Resource.Drawable.logo_spotify);
 
-            builder.SetStyle(style);
-            builder.SetContentTitle(currentTrack.GetString(MediaMetadata.MetadataKeyTitle));
-            builder.SetContentText(currentTrack.GetString(MediaMetadata.MetadataKeyArtist));
-            builder.SetContentInfo(currentTrack.GetString(MediaMetadata.MetadataKeyAlbum));
-            builder.SetContentIntent(pendingIntent);
-            builder.SetLargeIcon(GetLargeImage());
-            builder.SetColorized(true);
-            builder.SetShowWhen(false);
-            builder.SetOngoing(MediaPlayerState == PlaybackStateCompat.StatePlaying);
-            builder.SetVisibility(NotificationCompat.VisibilityPublic);
+                builder.SetStyle(style);
+                builder.SetContentTitle(currentTrack.GetString(MediaMetadata.MetadataKeyTitle));
+                builder.SetContentText(currentTrack.GetString(MediaMetadata.MetadataKeyArtist));
+                builder.SetContentInfo(currentTrack.GetString(MediaMetadata.MetadataKeyAlbum));
+                builder.SetContentIntent(pendingIntent);
+                builder.SetLargeIcon(GetLargeImage());
+                builder.SetColorized(true);
+                builder.SetShowWhen(false);
+                builder.SetOngoing(MediaPlayerState == PlaybackStateCompat.StatePlaying);
+                builder.SetVisibility(NotificationCompat.VisibilityPublic);
 
-            builder.AddAction(GenerateActionCompat(Android.Resource.Drawable.IcMediaPrevious, "Previous", ActionPrevious));
-            AddPlayPauseActionCompat(builder);
-            builder.AddAction(GenerateActionCompat(Android.Resource.Drawable.IcMediaNext, "Next", ActionNext));
-            style.SetShowActionsInCompactView(0, 1, 2);
+                builder.AddAction(GenerateActionCompat(Android.Resource.Drawable.IcMediaPrevious, "Previous", ActionPrevious));
+                AddPlayPauseActionCompat(builder);
+                builder.AddAction(GenerateActionCompat(Android.Resource.Drawable.IcMediaNext, "Next", ActionNext));
+                style.SetShowActionsInCompactView(0, 1, 2);
 
-            NotificationManagerCompat.From(_musicService.ApplicationContext).Notify(NotificationId, builder.Build());
+                NotificationManagerCompat.From(_musicService.ApplicationContext).Notify(NotificationId, builder.Build());
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         public Bitmap GetLargeImage()
