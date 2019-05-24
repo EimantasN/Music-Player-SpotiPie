@@ -75,7 +75,7 @@ namespace SpotyPie
             #region MINI PLAYER
 
             MiniPlayer = FindViewById<ConstraintLayout>(Resource.Id.PlayerContainer);
-            MiniPlayer.Visibility = ViewStates.Visible;
+            MiniPlayer.Visibility = ViewStates.Gone;
 
             PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
             ShowPlayler = FindViewById<ImageButton>(Resource.Id.show_player);
@@ -148,12 +148,12 @@ namespace SpotyPie
             }
             catch (Exception)
             {
-                if (MainFragment == null)
-                    MainFragment = new MainFragment();
+                //if (MainFragment == null)
+                //    MainFragment = new MainFragment();
 
-                SupportFragmentManager.BeginTransaction()
-                    .Replace(Resource.Id.content_frame, MainFragment)
-                    .Commit();
+                //SupportFragmentManager.BeginTransaction()
+                //    .Replace(Resource.Id.content_frame, MainFragment)
+                //    .Commit();
             }
         }
 

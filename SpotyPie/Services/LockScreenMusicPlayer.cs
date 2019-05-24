@@ -204,7 +204,9 @@ namespace SpotyPie.Services
                 builder.SetContentText(currentTrack.GetString(MediaMetadata.MetadataKeyArtist));
                 builder.SetContentInfo(currentTrack.GetString(MediaMetadata.MetadataKeyAlbum));
                 builder.SetContentIntent(pendingIntent);
-                builder.SetLargeIcon(GetLargeImage());
+                var image = GetLargeImage();
+                if(image != null)
+                    builder.SetLargeIcon(image);
                 builder.SetColorized(true);
                 builder.SetShowWhen(false);
                 builder.SetOngoing(MediaPlayerState == PlaybackStateCompat.StatePlaying);
@@ -225,10 +227,17 @@ namespace SpotyPie.Services
 
         public Bitmap GetLargeImage()
         {
-            RestClient client = new RestClient(_musicService.Current_Song.LargeImage);
-            RestRequest request = new RestRequest(Method.GET);
-            byte[] image = client.DownloadData(request);
-            return BitmapFactory.DecodeByteArray(image, 0, image.Length);
+            try
+            {
+                RestClient client = new RestClient(_musicService.Current_Song.LargeImage);
+                RestRequest request = new RestRequest(Method.GET);
+                byte[] image = client.DownloadData(request);
+                return BitmapFactory.DecodeByteArray(image, 0, image.Length);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         private NotificationCompat.Action GenerateActionCompat(int icon, String title, String intentAction)

@@ -227,10 +227,16 @@ namespace SpotyPie.Base
             ParentActivity.FManager.FragmentHistory.Peek().BackButton =
                 () =>
                 {
-                    ParentView.RemoveView(FragmentFrame);
-                    FragmentFrame = null;
-                    ParentActivity.RemoveCurrentFragment(ChildFragmentManager,
-                        ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
+                    try
+                    {
+                        ParentView.RemoveView(FragmentFrame);
+                        FragmentFrame = null;
+                        ParentActivity.RemoveCurrentFragment(ChildFragmentManager,
+                            ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
+                    }
+                    catch (Exception e)
+                    {
+                    }
                 };
 
             SetScreen(screen);

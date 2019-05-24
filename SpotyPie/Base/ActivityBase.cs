@@ -22,7 +22,7 @@ namespace SpotyPie.Base
 
         public abstract int LayoutId { get; set; }
 
-        protected virtual int FirstLayerFragmentHolder { get; set; } = Resource.Id.content_frame;
+        //protected virtual int FirstLayerFragmentHolder { get; set; } = Resource.Id.content_frame;
 
         public CustomFragmetManager FManager { get; set; }
 
@@ -92,10 +92,10 @@ namespace SpotyPie.Base
             mSupportFragmentManager = SupportFragmentManager;
             if (IsFragmentLoadedAdded)
             {
-                FragmentFrame = FindViewById<FrameLayout>(FirstLayerFragmentHolder);
-                FragmentFrame.Visibility = ViewStates.Gone;
-                FragmentLoading = FindViewById<ProgressBar>(Resource.Id.fragmentloading);
-                FragmentLoading.Visibility = ViewStates.Gone;
+                //FragmentFrame = FindViewById<FrameLayout>(FirstLayerFragmentHolder);
+                //FragmentFrame.Visibility = ViewStates.Gone;
+                //FragmentLoading = FindViewById<ProgressBar>(Resource.Id.fragmentloading);
+                //FragmentLoading.Visibility = ViewStates.Gone;
             }
         }
 
@@ -140,10 +140,10 @@ namespace SpotyPie.Base
 
         public virtual void FragmentLoaded()
         {
-            if (IsFragmentLoadedAdded && FragmentLoading.Visibility == ViewStates.Visible)
-            {
-                FragmentLoading.Visibility = ViewStates.Gone;
-            }
+            //if (IsFragmentLoadedAdded && FragmentLoading.Visibility == ViewStates.Visible)
+            //{
+            //    FragmentLoading.Visibility = ViewStates.Gone;
+            //}
         }
 
         public virtual void LoadFragment(dynamic switcher, string jsonModel = null)
@@ -206,7 +206,7 @@ namespace SpotyPie.Base
             }
         }
 
-        public int GetFragmentViewId(bool isPlayer = false)
+        public virtual int GetFragmentViewId(bool isPlayer = false)
         {
             if (!isPlayer)
             {

@@ -41,7 +41,7 @@ namespace SpotyPie.SongBinder.Fragments
                 List<SongTag> unbindedSongs = await ParentActivity.GetAPIService().GetUnbindedSongList();
                 if (unbindedSongs != null && unbindedSongs.Count != 0)
                 {
-                    Songs.GetData().AddList(unbindedSongs);
+                    Songs?.GetData()?.AddList(unbindedSongs);
                 }
             }
             catch (Exception e)
@@ -66,7 +66,6 @@ namespace SpotyPie.SongBinder.Fragments
 
         public override void LoadFragment(dynamic switcher)
         {
-            throw new NotImplementedException();
         }
     }
 }
