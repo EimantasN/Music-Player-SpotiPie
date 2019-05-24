@@ -16,9 +16,4 @@
     android:id="@+id/library"
     android:title=""
     android:icon="@drawable/library"/>
-
-  <item
-      android:id="@+id/browse"
-      android:title=""
-      android:icon="@drawable/muse_logo"/>
 </menu>

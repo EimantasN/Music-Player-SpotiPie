@@ -1,6 +1,8 @@
-﻿using Android.OS;
+﻿using Android.Content.Res;
+using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -14,7 +16,7 @@ namespace SpotyPie.Base
 {
     public abstract class ActivityBase : AppCompatActivity
     {
-        protected Screen ScreenState { get; set; } = Screen.Holder;
+        protected Enums.Screen ScreenState { get; set; } = Enums.Screen.Holder;
 
         private static int FrameLayoutId { get; set; } = 100000;
 
@@ -97,7 +99,7 @@ namespace SpotyPie.Base
             }
         }
 
-        public abstract void SetScreen(Screen screen);
+        public abstract void SetScreen(Enums.Screen screen);
 
         public API GetAPIService()
         {
@@ -161,7 +163,7 @@ namespace SpotyPie.Base
             return FManager;
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Screen screen = Screen.Holder)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Enums.Screen screen = Enums.Screen.Holder)
         {
             GetFManager().LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
 
@@ -273,6 +275,48 @@ namespace SpotyPie.Base
             catch (Exception e)
             {
 
+            }
+        }
+
+        public void SetNavigationBarColor(NavigationColorStates state)
+        {
+            try
+            {
+                //var a = Android.Graphics.Color.ParseColor("#1db954");
+                //ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#1db954"))
+                //var a = ContextCompat.GetColor(
+                //                this.ApplicationContext,
+                //                Resource.Color.NavMain);
+                switch (state)
+                {
+                    case NavigationColorStates.Main:
+                        Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#1db954"));
+                        break;
+                    case NavigationColorStates.Player:
+                        Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#000000"));
+                        break;
+                    case NavigationColorStates.Settings:
+                        Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#FFFFFF"));
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            base.OnWindowFocusChanged(hasFocus);
+            if (hasFocus)
+            {
+                Window.DecorView.SystemUiVisibility = StatusBarVisibility.Hidden;
+                //View.SystemUiFlagLayoutStable;
+                //| View.SystemUiFlagLayoutHideNavigation
+                //| View.SystemUiFlagLayoutFullscreen
+                //| View.SystemUiFlagLayoutHideNavigation
+                //| View.SystemUiFlagFullscreen
+                //| View.SystemUiFlagImmersiveSticky);
             }
         }
     }

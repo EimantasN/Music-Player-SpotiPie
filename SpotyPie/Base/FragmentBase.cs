@@ -70,6 +70,7 @@ namespace SpotyPie.Base
         }
 
         public abstract void ForceUpdate();
+
         public abstract void ReleaseData();
 
         public void Hide()

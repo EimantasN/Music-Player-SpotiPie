@@ -12,4 +12,9 @@
   <color name="InactiveBottomNavIconColor">#727377</color>
 
   <color name="greylight">#616767</color>
+
+  <color name="NavMain">@color/BottomNavBarColor</color>
+  <color name="NavSettings">#616767</color>
+  <color name="NavBarPlayer">#000000</color>
+  
 </resources>

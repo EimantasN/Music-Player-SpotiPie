@@ -187,9 +187,9 @@ namespace SpotyPie
                 case Resource.Id.home:
                     LoadFragmentInner(Main.Home);
                     break;
-                case Resource.Id.browse:
-                    LoadFragmentInner(Main.Browse);
-                    break;
+                //case Resource.Id.browse:
+                //    LoadFragmentInner(Main.Browse);
+                //    break;
                 case Resource.Id.search:
                     LoadFragmentInner(Main.Search);
                     break;
