@@ -76,7 +76,7 @@ namespace SpotyPie.SongBinder
             return Resource.Id.parent_view;
         }
 
-        public override void SetScreen(Screen screen)
+        public override void SetScreen(ImmersiveBottomBtnsScreen screen)
         {
 
         }

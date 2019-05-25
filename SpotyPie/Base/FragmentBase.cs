@@ -18,6 +18,8 @@ namespace SpotyPie.Base
     {
         private static int FrameLayoutId { get; set; } = 1;
 
+        protected virtual Enums.ImmersiveBottomBtnsScreen ScreenState { get; set; } = ImmersiveBottomBtnsScreen.Default;
+
         public abstract int LayoutId { get; set; }
 
         private ViewGroup ParentView { get; set; }
@@ -193,7 +195,7 @@ namespace SpotyPie.Base
             return default(T);
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Screen screen = Screen.Holder)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, ImmersiveBottomBtnsScreen screen = ImmersiveBottomBtnsScreen.Holder)
         {
             ParentActivity.GetFManager().FragmentHistory.Push(new FragmentState());
             ParentActivity.GetFManager().FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
@@ -300,7 +302,7 @@ namespace SpotyPie.Base
             }
         }
 
-        public virtual void SetScreen(Screen screen)
+        public virtual void SetScreen(ImmersiveBottomBtnsScreen screen)
         {
             ParentActivity.SetScreen(screen);
         }

@@ -16,13 +16,11 @@ namespace SpotyPie.Base
 {
     public abstract class ActivityBase : AppCompatActivity
     {
-        protected Enums.Screen ScreenState { get; set; } = Enums.Screen.Holder;
-
         private static int FrameLayoutId { get; set; } = 100000;
 
-        public abstract int LayoutId { get; set; }
+        protected virtual ImmersiveBottomBtnsScreen ScreenState { get; set; } = ImmersiveBottomBtnsScreen.Default;
 
-        //protected virtual int FirstLayerFragmentHolder { get; set; } = Resource.Id.content_frame;
+        public abstract int LayoutId { get; set; }
 
         public CustomFragmetManager FManager { get; set; }
 
@@ -99,7 +97,7 @@ namespace SpotyPie.Base
             }
         }
 
-        public abstract void SetScreen(Enums.Screen screen);
+        public abstract void SetScreen(Enums.ImmersiveBottomBtnsScreen screen);
 
         public API GetAPIService()
         {
@@ -163,7 +161,7 @@ namespace SpotyPie.Base
             return FManager;
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Enums.Screen screen = Enums.Screen.Holder)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Enums.ImmersiveBottomBtnsScreen screen = Enums.ImmersiveBottomBtnsScreen.Holder)
         {
             GetFManager().LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
 

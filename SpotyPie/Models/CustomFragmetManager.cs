@@ -53,7 +53,7 @@ namespace SpotyPie.Models
             return FragmentHistory?.Peek()?.Fragment;
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Screen screen = Screen.Holder)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, ImmersiveBottomBtnsScreen screen = ImmersiveBottomBtnsScreen.Holder)
         {
             FragmentHistory.Push(new FragmentState());
             FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;

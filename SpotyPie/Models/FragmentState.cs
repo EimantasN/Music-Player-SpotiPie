@@ -14,7 +14,7 @@ namespace SpotyPie.Models
     {
         public int LayoutId { get; set; }
 
-        public Screen ScreenState { get; set; } = Screen.Holder;
+        public ImmersiveBottomBtnsScreen ScreenState { get; set; } = ImmersiveBottomBtnsScreen.Holder;
 
         public string JsonData { get; set; }
 

@@ -183,7 +183,7 @@ namespace SpotyPie.Player
 
         private void SongListButton_Click(object sender, EventArgs ee)
         {
-            LoadFragmentInner(Enums.Activitys.Player.CurrentSongList, screen: Enums.Screen.FullScreen);
+            LoadFragmentInner(Enums.Activitys.Player.CurrentSongList, screen: Enums.ImmersiveBottomBtnsScreen.FullScreen);
         }
 
         public void NextSongPlayer()

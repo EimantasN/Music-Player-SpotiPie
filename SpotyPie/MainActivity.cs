@@ -365,18 +365,18 @@ namespace SpotyPie
                 return Resource.Id.content_holder;
         }
 
-        public override void SetScreen(Screen screen)
+        public override void SetScreen(ImmersiveBottomBtnsScreen screen)
         {
             switch (screen)
             {
-                case Screen.FullScreen:
+                case ImmersiveBottomBtnsScreen.FullScreen:
                     if (bottomNavigation.Visibility == ViewStates.Visible)
                     {
                         bottomNavigation.Visibility = ViewStates.Gone;
                         MiniPlayer.Visibility = ViewStates.Gone;
                     }
                     break;
-                case Screen.Holder:
+                case ImmersiveBottomBtnsScreen.Holder:
                     if (bottomNavigation.Visibility == ViewStates.Gone)
                     {
                         bottomNavigation.Visibility = ViewStates.Visible;

@@ -34,7 +34,7 @@ namespace SpotyPie.Player
             if (RvData == null)
             {
                 RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
-                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical, () => { LoadFragmentInner(Enums.Activitys.Player.SongDetails, screen: Enums.Screen.FullScreen); });
+                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical, () => { LoadFragmentInner(Enums.Activitys.Player.SongDetails, screen: Enums.ImmersiveBottomBtnsScreen.FullScreen); });
                 RvData.DisableScroolNested();
             }
             Update();

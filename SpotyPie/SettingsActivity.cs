@@ -321,7 +321,7 @@ namespace SpotyPie
             return Resource.Id.parent_view;
         }
 
-        public override void SetScreen(Screen screen)
+        public override void SetScreen(ImmersiveBottomBtnsScreen screen)
         {
             throw new NotImplementedException();
         }

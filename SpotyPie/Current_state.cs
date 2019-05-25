@@ -64,7 +64,7 @@ namespace SpotyPie
             Id = songs[position].Id;
             Current_Song_List = songs;
             Position = position;
-            Activity.LoadFragmentInner(HomePage.Player, screen: Enums.Screen.FullScreen);
+            Activity.LoadFragmentInner(HomePage.Player, screen: Enums.ImmersiveBottomBtnsScreen.FullScreen);
         }
 
         public void SetCurrentSongList(List<Songs> songs)
