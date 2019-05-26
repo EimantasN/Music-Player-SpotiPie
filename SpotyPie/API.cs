@@ -400,14 +400,15 @@ namespace SpotyPie
         {
             try
             {
-                var realm = Realm.GetInstance();
-                songs.ForEach(x =>
-                {
-                    realm.Write(() =>
-                            {
-                                realm.Add<Songs>(x);
-                            });
-                });
+                //TODO ADD MODEL CASTING
+                //var realm = Realm.GetInstance();
+                //songs.ForEach(x =>
+                //{
+                //    realm.Write(() =>
+                //            {
+                //                realm.Add<Realm_Songs>(x);
+                //            });
+                //});
             }
             catch (Exception e)
             {
@@ -418,9 +419,10 @@ namespace SpotyPie
         {
             try
             {
-                var realm = Realm.GetInstance();
-                var songs = realm.All<Songs>().ToList();
-                return songs;
+                //TODO add song list getting from database
+                //var realm = Realm.GetInstance();
+                //var songs = realm.All<Songs>().ToList();
+                return new List<Songs>();
             }
             catch (Exception e)
             {

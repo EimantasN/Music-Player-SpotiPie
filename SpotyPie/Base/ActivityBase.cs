@@ -17,7 +17,8 @@ namespace SpotyPie.Base
     {
         private static int FrameLayoutId { get; set; } = 100000;
 
-        protected virtual ImmersiveBottomBtnsScreen ScreenState { get; set; } = ImmersiveBottomBtnsScreen.Default;
+        public abstract NavigationColorState NavigationBtnColorState { get; set; }
+        public abstract LayoutScreenState ScreenState { get; set; }
 
         public abstract int LayoutId { get; set; }
 
@@ -64,6 +65,12 @@ namespace SpotyPie.Base
 
         }
 
+        protected override void OnResume()
+        {
+            SetNavigationBarColor();
+            base.OnResume();
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -84,6 +91,17 @@ namespace SpotyPie.Base
             snack.Show();
         }
 
+        public void ShowMessage(string text)
+        {
+            var snack = Snackbar.Make(Window.DecorView.RootView, text, Snackbar.LengthShort);
+            snack.SetAction("Ok", (view) =>
+            {
+                snack.Dismiss();
+                snack.Dispose();
+            });
+            snack.Show();
+        }
+
         protected virtual void InitView()
         {
             mSupportFragmentManager = SupportFragmentManager;
@@ -95,8 +113,6 @@ namespace SpotyPie.Base
                 //FragmentLoading.Visibility = ViewStates.Gone;
             }
         }
-
-        public abstract void SetScreen(Enums.ImmersiveBottomBtnsScreen screen);
 
         public API GetAPIService()
         {
@@ -160,7 +176,7 @@ namespace SpotyPie.Base
             return FManager;
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Enums.ImmersiveBottomBtnsScreen screen = Enums.ImmersiveBottomBtnsScreen.Holder)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Enums.LayoutScreenState screen = Enums.LayoutScreenState.Holder)
         {
             GetFManager().LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
 
@@ -275,40 +291,22 @@ namespace SpotyPie.Base
             }
         }
 
-        public void SetNavigationBarColor(NavigationColorStates state)
+        public void SetNavigationBarColor()
         {
-            try
+            switch (NavigationBtnColorState)
             {
-                //var a = Android.Graphics.Color.ParseColor("#1db954");
-                //ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#1db954"))
-                //var a = ContextCompat.GetColor(
-                //                this.ApplicationContext,
-                //                Resource.Color.NavMain);
-                switch (state)
-                {
-                    case NavigationColorStates.Main:
-                        Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#1db954"));
-                        break;
-                    case NavigationColorStates.Player:
-                        Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#000000"));
-                        break;
-                    case NavigationColorStates.Settings:
-                        Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#FFFFFF"));
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
+                case NavigationColorState.Main:
+                    Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#1db954"));
+                    break;
+                case NavigationColorState.Player:
+                    Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#000000"));
+                    break;
+                case NavigationColorState.Settings:
+                    Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#FFFFFF"));
+                    break;
             }
         }
 
-        public override void OnWindowFocusChanged(bool hasFocus)
-        {
-            base.OnWindowFocusChanged(hasFocus);
-            if (hasFocus)
-            {
-                Window.DecorView.SystemUiVisibility = StatusBarVisibility.Hidden;
-            }
-        }
+        public abstract void SetScreen(LayoutScreenState screen);
     }
 }

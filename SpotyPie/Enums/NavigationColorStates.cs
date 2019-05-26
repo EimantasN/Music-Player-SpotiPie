@@ -1,6 +1,6 @@
 ﻿namespace SpotyPie.Enums
 {
-    public enum NavigationColorStates
+    public enum NavigationColorState
     {
         Main,
         Player,

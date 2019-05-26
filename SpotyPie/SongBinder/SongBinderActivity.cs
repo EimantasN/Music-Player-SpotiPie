@@ -10,6 +10,8 @@ namespace SpotyPie.SongBinder
     public class SongBinderActivity : ActivityBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.song_binder_activity;
+        public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Main;
+        public override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.FullScreen;
 
         //Action buttons
         private Button BindSongs;
@@ -76,7 +78,7 @@ namespace SpotyPie.SongBinder
             return Resource.Id.parent_view;
         }
 
-        public override void SetScreen(ImmersiveBottomBtnsScreen screen)
+        public override void SetScreen(LayoutScreenState screen)
         {
 
         }

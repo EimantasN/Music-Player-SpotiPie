@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Songs : BaseModel, IBaseInterface, IDisposable
+    public class Realm_Songs : RealmObject
     {
-        public override int Id { get; set; }
+        public int Id { get; set; }
 
         public string SpotifyId { get; set; }
 
@@ -52,29 +52,9 @@ namespace Mobile_Api.Models
 
         public int ArtistId { get; set; }
 
-        public List<Image> Images { get; set; }
+        public IList<Realm_Image> Images { get; }
 
-        protected override RvType Type { get; set; } = RvType.Song;
+        public int Type { get; set; }
 
-        public bool IsPlayingNow() { return IsPlaying; }
-
-        public void SetIsPlaying(bool state) { IsPlaying = state; }
-
-        public Songs()
-        {
-        }
-
-        public void Dispose()
-        {
-            Images = null;
-            SpotifyId = null;
-            Name = null;
-            LargeImage = null;
-            MediumImage = null;
-            SmallImage = null;
-            LocalUrl = null;
-            ArtistName = null;
-            AlbumName = null;
-        }
     }
 }

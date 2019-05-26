@@ -1,6 +1,6 @@
 ﻿namespace SpotyPie.Enums
 {
-    public enum ImmersiveBottomBtnsScreen
+    public enum LayoutScreenState
     {
         Default,
         FullScreen,

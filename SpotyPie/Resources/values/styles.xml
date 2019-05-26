@@ -6,7 +6,7 @@
     <item name="colorAccent">#03a49e</item>
     <item name="android:windowTranslucentStatus">true</item>
     <item name="android:windowTranslucentNavigation">false</item>
-    <item name="android:navigationBarColor">#222222</item>
+    <item name="android:navigationBarColor">@color/BottomNavBarColor</item>
   </style>
 
   <!-- Base application theme. -->

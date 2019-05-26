@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.Enums.Activitys;
+using SpotyPie.Helpers;
 using System;
 using System.Threading.Tasks;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
@@ -18,6 +19,9 @@ namespace SpotyPie
     public class MainActivity : ActivityBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.activity_main;
+
+        public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Main;
+        public override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Holder;
 
         private int LastViewLayer = 0;
 
@@ -62,6 +66,9 @@ namespace SpotyPie
         {
             base.InitView();
             APPSTATE = new Current_state(this);
+
+            var layout = FindViewById<ConstraintLayout>(Resource.Id.MainContainer);
+            GradientBG.SetBacground(layout);
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
 
@@ -365,18 +372,18 @@ namespace SpotyPie
                 return Resource.Id.content_holder;
         }
 
-        public override void SetScreen(ImmersiveBottomBtnsScreen screen)
+        public override void SetScreen(LayoutScreenState screen)
         {
             switch (screen)
             {
-                case ImmersiveBottomBtnsScreen.FullScreen:
+                case LayoutScreenState.FullScreen:
                     if (bottomNavigation.Visibility == ViewStates.Visible)
                     {
                         bottomNavigation.Visibility = ViewStates.Gone;
                         MiniPlayer.Visibility = ViewStates.Gone;
                     }
                     break;
-                case ImmersiveBottomBtnsScreen.Holder:
+                case LayoutScreenState.Holder:
                     if (bottomNavigation.Visibility == ViewStates.Gone)
                     {
                         bottomNavigation.Visibility = ViewStates.Visible;

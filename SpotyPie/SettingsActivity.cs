@@ -21,6 +21,8 @@ namespace SpotyPie
         public override int LayoutId { get; set; } = Resource.Layout.settings;
 
         private API Api_service { get; set; }
+        public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Settings;
+        public override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.FullScreen;
 
         private Spinner MusicQualitySpinner;
         private Spinner BluetoothDeviceSpinner;
@@ -321,9 +323,9 @@ namespace SpotyPie
             return Resource.Id.parent_view;
         }
 
-        public override void SetScreen(ImmersiveBottomBtnsScreen screen)
+        public override void SetScreen(LayoutScreenState screen)
         {
-            throw new NotImplementedException();
+            ShowMessage("SetScreen not implemented");
         }
     }
 }

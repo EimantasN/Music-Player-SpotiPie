@@ -1,4 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="fab_margin">16dp</dimen>
+  <dimen name="home_layout_header_title">17dp</dimen>
   <dimen name="fast_scroll_overlay_text_size">100dp</dimen>
 </resources>
