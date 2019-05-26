@@ -1,4 +1,5 @@
-﻿using SpotyPie.Base;
+﻿using Android.App;
+using SpotyPie.Base;
 using SpotyPie.Enums;
 using System;
 using System.Collections.Generic;
@@ -90,9 +91,17 @@ namespace SpotyPie.Models
 
         public void InsertFragment(int layoutId, FragmentBase fragment)
         {
-            Activity.SupportFragmentManager.BeginTransaction()
-            .Replace(layoutId, fragment)
-            .Commit();
+            if (Activity?.SupportFragmentManager != null)
+            {
+                var transaction = Activity.SupportFragmentManager.BeginTransaction();
+                if (transaction != null)
+                {
+                    transaction.SetCustomAnimations(Resource.Animation.enter_from_right, Resource.Animation.exit_to_left);
+                    transaction.Replace(layoutId, fragment);
+                    //transaction.AddToBackStack(null);
+                    transaction.Commit();
+                }
+            }
         }
 
         public void SetBackBtn(Action action)

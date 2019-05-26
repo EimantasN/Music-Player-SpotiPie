@@ -24,6 +24,8 @@ namespace SpotyPie
     {
         public override int LayoutId { get; set; } = Resource.Layout.search_layout;
 
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+
         public const int SongLimit = 6;
         public const int AlbumLimit = 6;
         public const int ArtistLimit = 6;

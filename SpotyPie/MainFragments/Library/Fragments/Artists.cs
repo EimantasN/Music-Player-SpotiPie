@@ -3,6 +3,7 @@ using Android.Support.V7.Widget;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 
 namespace SpotyPie.Library.Fragments
@@ -10,6 +11,8 @@ namespace SpotyPie.Library.Fragments
     public class Artists : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.library_artist_layout;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private BaseRecycleView<Artist> RvData { get; set; }
 

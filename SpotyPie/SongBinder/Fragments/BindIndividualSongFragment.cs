@@ -3,6 +3,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using System;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace SpotyPie.SongBinder.Fragments
     public class BindIndividualSongFragment : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.bind_one_song_layout;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private SeekBar SongCof;
         private SeekBar AlbumCof;

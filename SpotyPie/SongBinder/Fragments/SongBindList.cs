@@ -2,6 +2,7 @@
 using Mobile_Api.Models.Enums;
 using Newtonsoft.Json;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using SpotyPie.SongBinder.Enumerators;
 using System;
@@ -13,6 +14,8 @@ namespace SpotyPie.SongBinder.Fragments
     public class SongBindList : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.song_bind_list;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private BaseRecycleView<SongTag> Songs { get; set; }
 

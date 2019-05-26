@@ -4,6 +4,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using Square.Picasso;
 using System.Threading.Tasks;
@@ -13,6 +14,10 @@ namespace SpotyPie
 {
     public class AlbumFragment : FragmentBase
     {
+        public override int LayoutId { get; set; } = Resource.Layout.Album_layout;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+
         private BaseRecycleView<Songs> RvData;
 
         ImageView AlbumPhoto;
@@ -38,8 +43,6 @@ namespace SpotyPie
         private int Scrolled;
         private bool isPlayable;
         private bool IsMeniuActive = false;
-
-        public override int LayoutId { get; set; } = Resource.Layout.Album_layout;
 
         protected override void InitView()
         {

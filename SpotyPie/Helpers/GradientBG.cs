@@ -18,7 +18,7 @@ namespace SpotyPie.Helpers
     {
         public static void SetBacground(View view)
         {
-            int[] colors = { Android.Graphics.Color.ParseColor("#008000"), Android.Graphics.Color.ParseColor("#ADFF2F") };
+            int[] colors = { Android.Graphics.Color.ParseColor("#222222"), Android.Graphics.Color.ParseColor("#222222") };
 
             //create a new gradient color
             GradientDrawable gd = new GradientDrawable(

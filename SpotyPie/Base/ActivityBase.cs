@@ -280,7 +280,7 @@ namespace SpotyPie.Base
                     var transaction = fragmentManager.BeginTransaction();
                     transaction.Remove(fragment);
                     transaction.Commit();
-                    transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitFragmentClose);
+                    transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitNone);
                     transaction = null;
                     fragment = null;
                 }
@@ -291,18 +291,20 @@ namespace SpotyPie.Base
             }
         }
 
-        public void SetNavigationBarColor()
+        public void SetNavigationBarColor(NavigationColorState state = NavigationColorState.Default)
         {
+            if (state != NavigationColorState.Default)
+                NavigationBtnColorState = state;
             switch (NavigationBtnColorState)
             {
                 case NavigationColorState.Main:
-                    Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#1db954"));
+                    Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#222327"));
                     break;
                 case NavigationColorState.Player:
                     Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#000000"));
                     break;
                 case NavigationColorState.Settings:
-                    Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#FFFFFF"));
+                    Window.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#222222"));
                     break;
             }
         }

@@ -1,6 +1,7 @@
 ﻿using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using System.Collections.Generic;
 
@@ -9,6 +10,7 @@ namespace SpotyPie
     public class SongOptionsFragment : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.song_option_layout;
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private ImageView SongImage;
         private TextView SongTitle;

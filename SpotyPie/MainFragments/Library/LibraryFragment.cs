@@ -1,6 +1,7 @@
 ﻿using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.Helpers;
 using SpotyPie.Library.Fragments;
 
@@ -8,6 +9,8 @@ namespace SpotyPie
 {
     public class LibraryFragment : FragmentBase
     {
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+
         TabLayout Tabs;
         ViewPager ViewPager;
         TabAdapter Adapter;

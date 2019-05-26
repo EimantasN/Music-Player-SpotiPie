@@ -7,6 +7,7 @@ using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using Square.Picasso;
 using System;
@@ -19,6 +20,8 @@ namespace SpotyPie
     public class ArtistFragment : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.Artist_layout;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private TextView SongListTitle { get; set; }
         private TextView AlbumListTitle { get; set; }

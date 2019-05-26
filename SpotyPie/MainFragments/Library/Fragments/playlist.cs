@@ -2,6 +2,7 @@
 using Android.Support.V7.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 
 namespace SpotyPie.Library.Fragments
@@ -15,6 +16,8 @@ namespace SpotyPie.Library.Fragments
         //private RecyclerView PlaylistsSongsRecyclerView;
 
         public override int LayoutId { get; set; } = Resource.Layout.library_playlist_layout;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         protected override void InitView()
         {

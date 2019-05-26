@@ -3,6 +3,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 
 namespace SpotyPie.Player
@@ -10,6 +11,8 @@ namespace SpotyPie.Player
     public class PlaylistSongList : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.player_song_list;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private BaseRecycleView<Songs> RvData { get; set; }
 

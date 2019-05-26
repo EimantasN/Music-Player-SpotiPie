@@ -3,6 +3,7 @@ using Mobile_Api;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace SpotyPie.Library.Fragments
     public class Albums : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.library_album_layout;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private BaseRecycleView<Album> RvData { get; set; }
 

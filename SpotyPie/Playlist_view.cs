@@ -5,6 +5,7 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
 using System;
@@ -16,6 +17,8 @@ namespace SpotyPie.Player
     public class Playlist_view : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.player_song_list;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         ////Album Songs
         //public List<Songs> AlbumSongsItem = new List<Songs>(this);

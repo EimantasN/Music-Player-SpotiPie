@@ -79,6 +79,18 @@ namespace SpotyPie
 			// aapt resource value: 0x7f05000f
 			public const int design_snackbar_out = 2131034127;
 			
+			// aapt resource value: 0x7f050010
+			public const int enter_from_left = 2131034128;
+			
+			// aapt resource value: 0x7f050011
+			public const int enter_from_right = 2131034129;
+			
+			// aapt resource value: 0x7f050012
+			public const int exit_to_left = 2131034130;
+			
+			// aapt resource value: 0x7f050013
+			public const int exit_to_right = 2131034131;
+			
 			static Animation()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

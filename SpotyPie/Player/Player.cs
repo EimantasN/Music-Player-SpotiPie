@@ -7,6 +7,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Realms;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.Services;
 using SpotyPie.Services.Binders;
 using SpotyPie.Services.Interfaces;
@@ -20,6 +21,9 @@ namespace SpotyPie.Player
 {
     public class Player : FragmentBase, View.IOnTouchListener, ServiceCallbacks, IServiceConnection
     {
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+        public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Player;
+
         private int ViewLoadState = 0;
 
         private bool Bound { get; set; } = false;

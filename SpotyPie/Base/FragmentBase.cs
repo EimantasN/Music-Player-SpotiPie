@@ -18,7 +18,9 @@ namespace SpotyPie.Base
     {
         private static int FrameLayoutId { get; set; } = 1;
 
-        protected virtual Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+        protected abstract Enums.LayoutScreenState ScreenState { get; set; }
+
+        public virtual NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Default;
 
         public abstract int LayoutId { get; set; }
 
@@ -131,6 +133,7 @@ namespace SpotyPie.Base
         {
             ForceUpdate();
             ParentActivity?.FragmentLoaded();
+            ParentActivity?.SetNavigationBarColor(NavigationBtnColorState);
             base.OnResume();
         }
 

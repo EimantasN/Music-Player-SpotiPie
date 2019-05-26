@@ -5,6 +5,7 @@ using Mobile_Api;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace SpotyPie
 {
     public class MainArtist : FragmentBase
     {
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+
         //main_rv
         private BaseRecycleView<Songs> RvData { get; set; }
 

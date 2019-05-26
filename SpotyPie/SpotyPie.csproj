@@ -37,9 +37,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
     <AndroidSupportedAbis />
@@ -643,6 +643,10 @@
     <AndroidResource Include="Resources\drawable\artist_icon.png" />
     <AndroidResource Include="Resources\drawable\report.png" />
     <AndroidResource Include="Resources\drawable\album_icon.png" />
+    <AndroidResource Include="Resources\anim\enter_from_left.xml" />
+    <AndroidResource Include="Resources\anim\enter_from_right.xml" />
+    <AndroidResource Include="Resources\anim\exit_to_left.xml" />
+    <AndroidResource Include="Resources\anim\exit_to_right.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -5,6 +5,7 @@ using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
+using SpotyPie.Enums;
 using System;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ namespace SpotyPie.SongBinder.Fragments
     public class SongDetailsFragment : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.song_details;
+
+        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private ConstraintLayout InfoHolder;
         private ProgressBar Loading;
