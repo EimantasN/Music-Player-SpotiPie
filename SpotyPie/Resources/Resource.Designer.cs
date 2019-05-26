@@ -80,16 +80,22 @@ namespace SpotyPie
 			public const int design_snackbar_out = 2131034127;
 			
 			// aapt resource value: 0x7f050010
-			public const int enter_from_left = 2131034128;
+			public const int enter_from_bottom = 2131034128;
 			
 			// aapt resource value: 0x7f050011
-			public const int enter_from_right = 2131034129;
+			public const int enter_from_left = 2131034129;
 			
 			// aapt resource value: 0x7f050012
-			public const int exit_to_left = 2131034130;
+			public const int enter_from_right = 2131034130;
 			
 			// aapt resource value: 0x7f050013
-			public const int exit_to_right = 2131034131;
+			public const int exit_to_bottom = 2131034131;
+			
+			// aapt resource value: 0x7f050014
+			public const int exit_to_left = 2131034132;
+			
+			// aapt resource value: 0x7f050015
+			public const int exit_to_right = 2131034133;
 			
 			static Animation()
 			{

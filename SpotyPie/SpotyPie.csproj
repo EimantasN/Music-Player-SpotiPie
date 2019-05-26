@@ -100,6 +100,7 @@
     <Compile Include="Enums\Screen.cs" />
     <Compile Include="Models\FragmentState.cs" />
     <Compile Include="Models\CustomFragmetManager.cs" />
+    <Compile Include="Models\FragmentTransitions.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
     <Compile Include="RecycleView\Models\SongBindList.cs" />
     <Compile Include="RecycleView\Models\SongOption.cs" />
@@ -647,6 +648,8 @@
     <AndroidResource Include="Resources\anim\enter_from_right.xml" />
     <AndroidResource Include="Resources\anim\exit_to_left.xml" />
     <AndroidResource Include="Resources\anim\exit_to_right.xml" />
+    <AndroidResource Include="Resources\anim\enter_from_bottom.xml" />
+    <AndroidResource Include="Resources\anim\exit_to_bottom.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

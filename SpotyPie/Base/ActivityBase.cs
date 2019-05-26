@@ -176,7 +176,7 @@ namespace SpotyPie.Base
             return FManager;
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, Enums.LayoutScreenState screen = Enums.LayoutScreenState.Holder)
+        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, LayoutScreenState screen = LayoutScreenState.Holder)
         {
             GetFManager().LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
 
@@ -272,22 +272,15 @@ namespace SpotyPie.Base
 
         public void RemoveCurrentFragment(SupportFragmentManager fragmentManager, FragmentBase fragment)
         {
-            try
+            if (fragment != null)
             {
-                if (fragment != null)
-                {
-                    fragment.ReleaseData();
-                    var transaction = fragmentManager.BeginTransaction();
-                    transaction.Remove(fragment);
-                    transaction.Commit();
-                    transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitNone);
-                    transaction = null;
-                    fragment = null;
-                }
-            }
-            catch (Exception e)
-            {
-
+                fragment.ReleaseData();
+                var transaction = fragmentManager.BeginTransaction();
+                transaction.Remove(fragment);
+                transaction.Commit();
+                transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitNone);
+                transaction = null;
+                fragment = null;
             }
         }
 

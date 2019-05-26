@@ -96,7 +96,7 @@ namespace SpotyPie.Models
                 var transaction = Activity.SupportFragmentManager.BeginTransaction();
                 if (transaction != null)
                 {
-                    transaction.SetCustomAnimations(Resource.Animation.enter_from_right, Resource.Animation.exit_to_left);
+                    FragmentTransitions.SetCustomTransitions(ref transaction, fragment);
                     transaction.Replace(layoutId, fragment);
                     //transaction.AddToBackStack(null);
                     transaction.Commit();

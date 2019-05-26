@@ -232,16 +232,10 @@ namespace SpotyPie.Base
             ParentActivity.FManager.FragmentHistory.Peek().BackButton =
                 () =>
                 {
-                    try
-                    {
-                        ParentView.RemoveView(FragmentFrame);
-                        FragmentFrame = null;
-                        ParentActivity.RemoveCurrentFragment(ChildFragmentManager,
-                            ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    ParentView.RemoveView(FragmentFrame);
+                    FragmentFrame = null;
+                    ParentActivity.RemoveCurrentFragment(ChildFragmentManager,
+                        ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
                 };
 
             SetScreen(screen);
@@ -249,9 +243,17 @@ namespace SpotyPie.Base
 
         public void InsertFragment(int layoutId, FragmentBase fragment)
         {
-            ChildFragmentManager.BeginTransaction()
-            .Replace(layoutId, fragment)
-            .Commit();
+            if (ChildFragmentManager != null)
+            {
+                var transaction = ChildFragmentManager.BeginTransaction();
+                if (transaction != null)
+                {
+                    FragmentTransitions.SetCustomTransitions(ref transaction, fragment);
+                    transaction.Replace(layoutId, fragment);
+                    //transaction.AddToBackStack(null);
+                    transaction.Commit();
+                }
+            }
         }
 
         public abstract void LoadFragment(dynamic switcher);
