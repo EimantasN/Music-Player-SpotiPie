@@ -1,8 +1,7 @@
-﻿using Android.Content.Res;
+﻿using Android.App;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
-using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -74,7 +73,7 @@ namespace SpotyPie.Base
             InitView();
         }
 
-        private void SupportFragmentManager_BackStackChanged(object sender, System.EventArgs e)
+        private void SupportFragmentManager_BackStackChanged(object sender, EventArgs e)
         {
             var snack = Snackbar.Make(Window.DecorView.RootView, $"BackStack - {SupportFragmentManager.BackStackEntryCount}", Snackbar.LengthIndefinite);
             snack.SetAction("Ok", (view) =>
@@ -309,12 +308,6 @@ namespace SpotyPie.Base
             if (hasFocus)
             {
                 Window.DecorView.SystemUiVisibility = StatusBarVisibility.Hidden;
-                //View.SystemUiFlagLayoutStable;
-                //| View.SystemUiFlagLayoutHideNavigation
-                //| View.SystemUiFlagLayoutFullscreen
-                //| View.SystemUiFlagLayoutHideNavigation
-                //| View.SystemUiFlagFullscreen
-                //| View.SystemUiFlagImmersiveSticky);
             }
         }
     }

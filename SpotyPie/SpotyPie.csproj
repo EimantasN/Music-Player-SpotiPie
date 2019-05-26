@@ -38,7 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
-    <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
@@ -47,11 +47,12 @@
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
-    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidUseAapt2>false</AndroidUseAapt2>
     <AndroidLinkTool>r8</AndroidLinkTool>
-    <AndroidDexTool>dx</AndroidDexTool>
+    <AndroidDexTool>d8</AndroidDexTool>
+    <EnableProguard>false</EnableProguard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
