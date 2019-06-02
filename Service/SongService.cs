@@ -365,21 +365,13 @@ namespace Services
                     Path.DirectorySeparatorChar +
                     Replacer.RemoveSpecialCharacters(SongName) + Extension;
 
-                if (type == SongType.Flac && (tag.Bitrate == 0 || tag.Bitrate > 1000))
-                {
-                    Ffmpeg.ConvertFile(filePath);
-                }
+                //if (type == SongType.Flac && (tag.Bitrate == 0 || tag.Bitrate > 1000))
+                //{
+                //    Ffmpeg.ConvertFile(filePath);
+                //}
 
                 long newFileSize = new FileInfo(filePath).Length;
 
-                //For now i have to turn it off
-                //if (File.Exists(destinationPath) && song.Size > new FileInfo(filePath).Length)
-                //{
-                //    File.Delete(filePath);
-                //    return new AudioBindError(destinationPath, flacTag.Artist, flacTag.Album, flacTag.Title, "Size is bigger current Song " + song.Size + " new song - " + new FileInfo(filePath).Length);
-                //}
-                //else
-                //{
                 File.Copy(filePath,
                 destinationPath,
                 true);
@@ -401,7 +393,6 @@ namespace Services
                     }
                     await _ctx.SaveChangesAsync();
                 }
-                //}
             }
 
             if (!string.IsNullOrEmpty(destinationPath) && !File.Exists(destinationPath))
