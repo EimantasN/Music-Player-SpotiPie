@@ -366,11 +366,11 @@ namespace Services
             return double.TryParse(output, out double dPercent) ? Convert.ToInt32(dPercent) : -1;
         }
 
-        public int GetCPUTemperature()
+        public string GetCPUTemperature()
         {
-            var output = @"cat /sys/class/thermal/thermal_zone0/temp | awk '{print $1/1000}'"
+            var output = @"sh /root/commands/temp.sh"
                   .Bash();
-            return (int)(double.TryParse(output, out double dPercent) ? dPercent : -1);
+            return output;
         }
 
         public int GetUsedStorage()

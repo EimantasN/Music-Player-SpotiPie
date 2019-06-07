@@ -7,6 +7,12 @@
   <color name="black">#161618</color>
   <color name="bottomNav">#000</color>
 
+  <color name="white">#FFFFFF</color>
+
+  <color name="ram_color">#ee9911</color>
+
+  <color name="transparent">@android:color/transparent</color>
+
   <color name="BottomNavBarColor">#222327</color>
   <color name="bottom_nav_icon_color_selector">#ffffff</color>
   <color name="InactiveBottomNavIconColor">#727377</color>

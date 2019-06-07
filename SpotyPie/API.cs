@@ -78,6 +78,11 @@ namespace SpotyPie
             return await GetSongAsync((int)State.songId);
         }
 
+        public async Task<dynamic> GetSystemInfo()
+        {
+            return await _service.Get<dynamic>("Info", "SystemInformation");
+        }
+
         #endregion
 
         #region Library

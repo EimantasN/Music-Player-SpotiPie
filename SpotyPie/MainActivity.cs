@@ -114,7 +114,7 @@ namespace SpotyPie
             BackHeaderButton.Click += BackHeaderButton_Click;
 
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
-            LoadFragmentInner(Main.Home, AddToBackButtonStack: false);
+            LoadFragmentInner(Main.Performance, AddToBackButtonStack: false);
 
 
             this.StartService(new Intent(this, typeof(MusicService)));
