@@ -24,7 +24,7 @@ namespace Database
         Task<List<Album>> GetAlbumsByArtist(int id);
         int GetCPUUsage();
         int GetRAMUsage();
-        int GetCPUTemperature();
+        string GetCPUTemperature();
         Task<string> GetLibraryInfo();
         int GetUsedStorage();
         Task<long> TotalSongLength();
