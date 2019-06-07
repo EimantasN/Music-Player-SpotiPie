@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Android.Widget;
 using MikePhil.Charting.Charts;
 using MikePhil.Charting.Data;
+using MikePhil.Charting.Highlight;
 using MikePhil.Charting.Interfaces.Datasets;
 using MikePhil.Charting.Util;
 using SpotyPie.Base;
@@ -38,7 +39,7 @@ namespace SpotyPie.MainFragments
         {
             try
             {
-                UpdateTemperatureValue(m.rU.ToString());
+                UpdateTemperatureValue(m.cT.ToString());
                 RunOnUiThread(() =>
                 {
                     UpdateCPUData((float)m.cU);
@@ -103,8 +104,8 @@ namespace SpotyPie.MainFragments
 
             RAMPieChart.SetUsePercentValues(true);
 
-            RAMPieChart.MaxAngle = 180f; // HALF CHART
-            RAMPieChart.RotationAngle = 180f;
+            //RAMPieChart.MaxAngle = 180f; // HALF CHART
+            //RAMPieChart.RotationAngle = 180f;
 
             UpdateRamData(0);
         }
@@ -132,6 +133,9 @@ namespace SpotyPie.MainFragments
                 PieData data = new PieData(RAMDataSet);
                 RAMPieChart.Data = data;
 
+                Highlight h = new Highlight(0f, 0, 0); // dataset index for piechart is always 0
+                RAMPieChart.HighlightValues(new Highlight[] { h });
+
                 RAMPieChart.AnimateXY(1000, 1000);
             }
             else
@@ -153,7 +157,7 @@ namespace SpotyPie.MainFragments
         {
             RunOnUiThread(() =>
             {
-                TempValue.Text = value;
+                TempValue.Text = value.Replace("°C", "").Replace("+", "").Trim();
             });
         }
 
