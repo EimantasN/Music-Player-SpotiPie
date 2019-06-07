@@ -5,7 +5,8 @@
         Home,
         Search,
         Library,
-        Browse
+        Browse,
+        Performance
     }
 
     public enum HomePage

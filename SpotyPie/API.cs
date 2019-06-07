@@ -1,5 +1,4 @@
-﻿using Android.App;
-using Android.Support.V4.App;
+﻿using Android.Support.V4.App;
 using Android.Support.V7.App;
 using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
@@ -9,7 +8,6 @@ using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SpotyPie
@@ -29,7 +27,9 @@ namespace SpotyPie
         private AppCompatActivity _activity;
 
         private List<Album> _Albums { get; set; }
+
         private List<Artist> _Artists { get; set; }
+
         private List<Songs> _Songs { get; set; }
 
         #region Locks
@@ -386,6 +386,11 @@ namespace SpotyPie
         }
         #endregion
 
+        public void debug()
+        {
+
+        }
+
         public async Task<List<Songs>> GetSongToBind(string songTitle, int songCof, string album, int albumCof, string artist, int artistCof)
         {
             return await _service.GetSongToBind(songTitle, songCof, album, albumCof, artist, artistCof);
@@ -401,17 +406,18 @@ namespace SpotyPie
             try
             {
                 //TODO ADD MODEL CASTING
-                //var realm = Realm.GetInstance();
-                //songs.ForEach(x =>
-                //{
-                //    realm.Write(() =>
-                //            {
-                //                realm.Add<Realm_Songs>(x);
-                //            });
-                //});
+                var realm = Realm.GetInstance();
+                songs.ForEach(x =>
+                {
+                    realm.Write(() =>
+                    {
+                       //realm.Add<Realm_Songs>(x);
+                    });
+                });
             }
             catch (Exception e)
             {
+
             }
         }
 
@@ -444,10 +450,10 @@ namespace SpotyPie
 
         private void InvokeOnMainThread(Action action)
         {
-            Application.SynchronizationContext.Post(_ =>
+            _activity.RunOnUiThread(() =>
             {
                 action.Invoke();
-            }, null);
+            });
         }
 
         internal async Task<List<Image>> GetNewImageForSongAsync(int id)

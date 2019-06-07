@@ -16,4 +16,9 @@
     android:id="@+id/library"
     android:title=""
     android:icon="@drawable/library"/>
+
+  <item
+    android:id="@+id/performance"
+    android:title=""
+    android:icon="@drawable/performance"/>
 </menu>

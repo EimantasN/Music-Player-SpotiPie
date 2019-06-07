@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Views;
@@ -9,6 +10,8 @@ using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.Enums.Activitys;
 using SpotyPie.Helpers;
+using SpotyPie.MainFragments;
+using SpotyPie.Music;
 using System;
 using System.Threading.Tasks;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
@@ -33,7 +36,7 @@ namespace SpotyPie
 
         private MainFragment MainFragment;
         private Search Search;
-        private MainArtist Browse;
+        private HostStats Performance;
         private LibraryFragment Library;
         private AlbumFragment AlbumFragment;
         private ArtistFragment ArtistFragment;
@@ -112,6 +115,9 @@ namespace SpotyPie
 
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragmentInner(Main.Home, AddToBackButtonStack: false);
+
+
+            this.StartService(new Intent(this, typeof(MusicService)));
         }
 
         private void LoadCurrentState()
@@ -194,14 +200,14 @@ namespace SpotyPie
                 case Resource.Id.home:
                     LoadFragmentInner(Main.Home);
                     break;
-                //case Resource.Id.browse:
-                //    LoadFragmentInner(Main.Browse);
-                //    break;
                 case Resource.Id.search:
                     LoadFragmentInner(Main.Search);
                     break;
                 case Resource.Id.library:
                     LoadFragmentInner(Main.Library);
+                    break;
+                case Resource.Id.performance:
+                    LoadFragmentInner(Main.Performance);
                     break;
             }
         }
@@ -238,13 +244,6 @@ namespace SpotyPie
                             LastMainFragment = main;
                             ActionName.Text = "Home";
                             break;
-                        case Main.Browse:
-                            if (Browse == null)
-                                Browse = new MainArtist();
-                            GetFManager().SetCurrentFragment(Browse);
-                            LastMainFragment = main;
-                            ActionName.Text = "Muse";
-                            break;
                         case Main.Search:
                             if (Search == null)
                                 Search = new Search();
@@ -258,6 +257,13 @@ namespace SpotyPie
                             GetFManager().SetCurrentFragment(Library);
                             LastMainFragment = main;
                             ActionName.Text = "Library";
+                            break;
+                        case Main.Performance:
+                            if (Performance == null)
+                                Performance = new HostStats();
+                            GetFManager().SetCurrentFragment(Performance);
+                            LastMainFragment = main;
+                            ActionName.Text = "Performance for host";
                             break;
                     }
                     break;

@@ -37,9 +37,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
     <AndroidSupportedAbis />
@@ -88,7 +88,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\NavigationColorStates.cs" />
+    <Compile Include="HelperFragments\ConnectionLostWithServer.cs" />
+    <Compile Include="HelperFragments\NoInternet.cs" />
     <Compile Include="Helpers\GradientBG.cs" />
+    <Compile Include="Helpers\InternetConnection.cs" />
     <Compile Include="MainFragments\AlbumFragment.cs" />
     <Compile Include="API.cs" />
     <Compile Include="Base\ActivityBase.cs" />
@@ -98,9 +101,26 @@
     <Compile Include="Enums\Activitys\MainActivity.cs" />
     <Compile Include="Enums\Activitys\Player.cs" />
     <Compile Include="Enums\Screen.cs" />
+    <Compile Include="MainFragments\HostStats.cs" />
     <Compile Include="Models\FragmentState.cs" />
     <Compile Include="Models\CustomFragmetManager.cs" />
     <Compile Include="Models\FragmentTransitions.cs" />
+    <Compile Include="Music\DelayedStopHandler.cs" />
+    <Compile Include="Music\Helpers\BitmapHelper.cs" />
+    <Compile Include="Music\Helpers\CarHelper.cs" />
+    <Compile Include="Music\Helpers\MediaIDHelper.cs" />
+    <Compile Include="Music\Helpers\QueueHelper.cs" />
+    <Compile Include="Music\Helpers\LogHelper.cs" />
+    <Compile Include="Music\Helpers\ResourceHelper.cs" />
+    <Compile Include="Music\Interface\MusicControlInterface.cs" />
+    <Compile Include="Music\MediaNotificationManager.cs" />
+    <Compile Include="Music\MediaSessionCallback.cs" />
+    <Compile Include="Music\Models\MutableMediaMetadata.cs" />
+    <Compile Include="Music\Models\MusicProvider.cs" />
+    <Compile Include="Music\MusicService.cs" />
+    <Compile Include="Music\PackageValidator.cs" />
+    <Compile Include="Music\Playback.cs" />
+    <Compile Include="Music\SpotyPieCallback.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
     <Compile Include="RecycleView\Models\SongBindList.cs" />
     <Compile Include="RecycleView\Models\SongOption.cs" />
@@ -220,8 +240,17 @@
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.5.0</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Net.Http">
+      <Version>2.2.29</Version>
+    </PackageReference>
+    <PackageReference Include="MPAndroidChart">
+      <Version>3.0.3</Version>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="Reachability.Net">
+      <Version>1.0.6</Version>
     </PackageReference>
     <PackageReference Include="Realm">
       <Version>3.4.0</Version>
@@ -234,6 +263,9 @@
     </PackageReference>
     <PackageReference Include="Square.Picasso">
       <Version>2.5.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xam.Plugin.Connectivity">
+      <Version>3.2.0</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Compat">
       <Version>28.0.0.1</Version>
@@ -650,6 +682,14 @@
     <AndroidResource Include="Resources\anim\exit_to_right.xml" />
     <AndroidResource Include="Resources\anim\enter_from_bottom.xml" />
     <AndroidResource Include="Resources\anim\exit_to_bottom.xml" />
+    <AndroidResource Include="Resources\drawable\offline_cloud.png" />
+    <AndroidResource Include="Resources\layout\no_internet.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\performance.png" />
+    <AndroidResource Include="Resources\layout\performance_layout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
