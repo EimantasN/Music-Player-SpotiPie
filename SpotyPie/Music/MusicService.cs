@@ -373,6 +373,7 @@ namespace SpotyPie.Music
                 InitNotification = false;
             }
 
+
             var state = playback.State;
 
             // If there is an error message, send it to the playback state:
@@ -479,6 +480,14 @@ namespace SpotyPie.Music
         public void OnPlaybackStatusChanged(int state)
         {
             UpdatePlaybackState(null);
+        }
+
+        public void OnPlaybackMetaDataChanged(MediaMetadataCompat meta)
+        {
+            if (mediaNotificationManager != null)
+            {
+                mediaNotificationManager.metadata = meta;
+            }
         }
 
         public void OnError(string error)

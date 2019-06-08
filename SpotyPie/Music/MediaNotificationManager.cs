@@ -10,6 +10,7 @@ using RestSharp;
 using Android.Support.V4.Media.App;
 using Android.Support.V4.Media.Session;
 using Android.Support.V4.Media;
+using System.Threading.Tasks;
 
 namespace SpotyPie.Music
 {
@@ -35,7 +36,7 @@ namespace SpotyPie.Music
         MediaControllerCompat.TransportControls transportControls;
 
         PlaybackStateCompat playbackState;
-        MediaMetadataCompat metadata;
+        public MediaMetadataCompat metadata;
 
         readonly Android.Support.V4.App.NotificationManagerCompat notificationManager;
 
@@ -162,7 +163,7 @@ namespace SpotyPie.Music
             }
             else
             {
-                metadata = controller.Metadata;
+                //metadata = controller.Metadata;
                 Notification notification = CreateNotification();
                 NotificationManager.FromContext(service.ApplicationContext).Notify(NotificationId, notification);
                 playbackState = controller.PlaybackState;
@@ -284,7 +285,15 @@ namespace SpotyPie.Music
                 .SetContentTitle(metadata.Description.Title)
                 .SetContentText(metadata.Description.Subtitle);
 
-            //GetLargeImage(GetNotificationBuilder());
+            Task.Run(() =>
+            {
+                var id = metadata.Description.MediaId;
+                GetLargeImage(GetNotificationBuilder());
+                if (id == metadata.Description.MediaId)
+                {
+                    NotificationManager.FromContext(service.ApplicationContext).Notify(NotificationId, GetNotificationBuilder().Build());
+                }
+            });
 
             SetNotificationPlaybackState(GetNotificationBuilder());
 

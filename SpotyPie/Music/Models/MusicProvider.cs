@@ -37,6 +37,7 @@ namespace SpotyPie.Music.Models
         public async Task GetNextSongAsync()
         {
             CurrentSong = await GetApiService().GetNextSong();
+            BuildMetadata();
         }
 
         public string CurrentSongSource()
@@ -96,9 +97,13 @@ namespace SpotyPie.Music.Models
             }
         }
 
-        public MediaMetadataCompat GetMetadata()
+        private MediaMetadataCompat MetaData;
+
+        public MediaMetadataCompat GetMetadata() => MetaData;
+
+        public void BuildMetadata()
         {
-            return new MediaMetadataCompat.Builder()
+            MetaData = new MediaMetadataCompat.Builder()
                 .PutString(MediaMetadataCompat.MetadataKeyMediaId, CurrentSong.Id.ToString())
                 .PutString(MediaMetadataCompat.MetadataKeyAlbum, CurrentSong.AlbumName)
                 .PutString(MediaMetadataCompat.MetadataKeyArtist, CurrentSong.ArtistName)

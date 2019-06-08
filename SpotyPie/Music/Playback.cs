@@ -117,6 +117,8 @@ namespace SpotyPie.Music
 
         public void Play(Android.Support.V4.Media.Session.MediaSessionCompat.QueueItem item)
         {
+            Callback?.OnPlaybackMetaDataChanged(musicProvider.GetMetadata());
+
             playOnFocusGain = true;
             TryToGetAudioFocus();
             RegisterAudioNoisyReceiver();
@@ -442,6 +444,7 @@ namespace SpotyPie.Music
         {
             void OnCompletion();
             void OnPlaybackStatusChanged(int state);
+            void OnPlaybackMetaDataChanged(Android.Support.V4.Media.MediaMetadataCompat meta);
             void OnError(string error);
         }
     }

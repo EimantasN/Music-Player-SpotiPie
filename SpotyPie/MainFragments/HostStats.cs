@@ -9,6 +9,7 @@ using MikePhil.Charting.Interfaces.Datasets;
 using MikePhil.Charting.Util;
 using SpotyPie.Base;
 using SpotyPie.Enums;
+using SpotyPie.Monitoring;
 
 namespace SpotyPie.MainFragments
 {
@@ -20,6 +21,8 @@ namespace SpotyPie.MainFragments
 
         protected override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Holder;
 
+        private SystemInfo Info;
+
         private LineChart Chart;
 
         private PieChart RAMPieChart;
@@ -30,36 +33,35 @@ namespace SpotyPie.MainFragments
 
         private TextView TempValue;
 
-        public void Subscribe(SystemInfo m)
+        public void SubscribeForSystemInfo(SystemInfo m)
         {
-            m.Tick += HeardIt;
+            m.Handler += SendSystemInfoData;
         }
 
-        private void HeardIt(dynamic m, EventArgs e)
+        private void UnSubscribeFromSystemInfo()
         {
-            try
-            {
-                UpdateTemperatureValue(m.cT.ToString());
-                RunOnUiThread(() =>
-                {
-                    UpdateCPUData((float)m.cU);
-                });
+            Info?.Stop();
+            Info.Handler -= SendSystemInfoData;
+        }
 
-                RunOnUiThread(() =>
-                {
-                    UpdateRamData((float)m.rU);
-                });
-            }
-            catch (Exception ex)
+        private void SendSystemInfoData(dynamic m, EventArgs e)
+        {
+            UpdateTemperatureValue(m.cT.ToString());
+            RunOnUiThread(() =>
             {
+                UpdateCPUData((float)m.cU);
+            });
 
-            }
+            RunOnUiThread(() =>
+            {
+                UpdateRamData((float)m.rU);
+            });
         }
 
         protected override void InitView()
         {
-            SystemInfo l = new SystemInfo(GetAPIService());
-            Subscribe(l);
+            Info = new SystemInfo(GetAPIService());
+            SubscribeForSystemInfo(Info);
 
             TempValue = RootView.FindViewById<TextView>(Resource.Id.temp_value);
             RamValue = RootView.FindViewById<TextView>(Resource.Id.ram_value);
@@ -114,42 +116,52 @@ namespace SpotyPie.MainFragments
 
         private void UpdateRamData(float value)
         {
-            if (RAMDataSet == null || RAMDataSet.EntryCount == 0)
+            try
             {
-                IList<PieEntry> NoOfEmp = new List<PieEntry>();
-                NoOfEmp.Add(new PieEntry(0f, 0));
-                NoOfEmp.Add(new PieEntry(100f, 1));
-                RAMDataSet = new PieDataSet(NoOfEmp, "RAM USAGE");
+                if (RAMPieChart == null)
+                    SetupRamUsage();
 
-                IList<Java.Lang.Integer> colors = new List<Java.Lang.Integer>()
+                if (RAMDataSet == null || RAMDataSet.EntryCount == 0)
+                {
+                    IList<PieEntry> NoOfEmp = new List<PieEntry>();
+                    NoOfEmp.Add(new PieEntry(0f, 0));
+                    NoOfEmp.Add(new PieEntry(100f, 1));
+                    RAMDataSet = new PieDataSet(NoOfEmp, "RAM USAGE");
+
+                    IList<Java.Lang.Integer> colors = new List<Java.Lang.Integer>()
                 {
                     (Java.Lang.Integer)ColorTemplate.Rgb("#EE9911"),
                     (Java.Lang.Integer)ColorTemplate.Rgb("#373B40")
                 };
 
-                RAMDataSet.Colors = colors;
-                RAMDataSet.SetDrawValues(false);
+                    RAMDataSet.Colors = colors;
+                    RAMDataSet.SetDrawValues(false);
 
-                PieData data = new PieData(RAMDataSet);
-                RAMPieChart.Data = data;
+                    PieData data = new PieData(RAMDataSet);
+                    RAMPieChart.Data = data;
 
-                Highlight h = new Highlight(0f, 0, 0); // dataset index for piechart is always 0
-                RAMPieChart.HighlightValues(new Highlight[] { h });
+                    Highlight h = new Highlight(0f, 0, 0); // dataset index for piechart is always 0
+                    RAMPieChart.HighlightValues(new Highlight[] { h });
 
-                RAMPieChart.AnimateXY(1000, 1000);
-            }
-            else
-            {
-                RAMDataSet.Values = new List<PieEntry>()
+                    RAMPieChart.AnimateXY(1000, 1000);
+                }
+                else
+                {
+                    RAMDataSet.Values = new List<PieEntry>()
                 {
                     new PieEntry(value, 0),
-                    new PieEntry(100 - value, 0)
+                    new PieEntry(100 - value, 1)
                 };
-                RAMDataSet.NotifyDataSetChanged();
-                RAMPieChart.Data.NotifyDataChanged();
-                RAMPieChart.NotifyDataSetChanged();
-                RAMPieChart.Invalidate();
-                RamValue.Text = $"{value}.0";
+                    RAMDataSet?.NotifyDataSetChanged();
+                    RAMPieChart?.Data?.NotifyDataChanged();
+                    RAMPieChart?.NotifyDataSetChanged();
+                    RAMPieChart?.Invalidate();
+                    RamValue.Text = $"{value}.0";
+                }
+            }
+            catch //Ignored
+            {
+
             }
         }
 
@@ -247,38 +259,6 @@ namespace SpotyPie.MainFragments
             else
             {
                 InitCpuDataset();
-            }
-        }
-    }
-
-    public class SystemInfo
-    {
-        public delegate void TickHandler(dynamic systemInfo, EventArgs e);
-
-        public TickHandler Tick;
-
-        public EventArgs e = null;
-
-        private API _api;
-
-        private dynamic Data;
-
-        public SystemInfo(API api)
-        {
-            _api = api;
-            Task.Run(() => StartAsync());
-        }
-
-        public async Task StartAsync()
-        {
-            while (true)
-            {
-                Data = await _api.GetSystemInfo();
-                if (Tick != null)
-                {
-                    Tick(Data, e);
-                }
-                await Task.Delay(500);
             }
         }
     }
