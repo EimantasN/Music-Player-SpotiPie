@@ -1,8 +1,6 @@
 ﻿using System;
 using Android.Content;
 using Android.App;
-using Android.Media.Session;
-using Android.Media;
 using Android.Graphics;
 using SpotyPie.Music.Helpers;
 using Android.OS;
@@ -153,6 +151,8 @@ namespace SpotyPie.Music
                     filter.AddAction(ActionPause);
                     filter.AddAction(ActionPlay);
                     filter.AddAction(ActionPrev);
+                    filter.AddAction(ActionFavorite);
+                    filter.AddAction(ActionTrash);
                     service.RegisterReceiver(this, filter);
 
                     service.StartForeground(NotificationId, notification);
@@ -232,9 +232,10 @@ namespace SpotyPie.Music
         PendingIntent CreateContentIntent()
         {
             var openUI = new Intent(service, typeof(MainActivity));
+
             openUI.SetFlags(ActivityFlags.SingleTop);
-            return PendingIntent.GetActivity(service, RequestCode, openUI,
-                PendingIntentFlags.CancelCurrent);
+
+            return PendingIntent.GetActivity(service, RequestCode, openUI, PendingIntentFlags.CancelCurrent);
         }
 
         private Android.Support.V4.App.NotificationCompat.Builder NotificationBuilder;

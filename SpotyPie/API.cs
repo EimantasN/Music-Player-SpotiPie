@@ -39,10 +39,42 @@ namespace SpotyPie
 
         #endregion
 
+        public async Task<Songs> GetNextSongAsync()
+        {
+            return UpdateCurrentSongList(await _service.GetNextSong());
+        }
+
+        private Songs UpdateCurrentSongList(Songs song)
+        {
+            Task.Run(() =>
+            {
+                var realm = Realm.GetInstance();
+                var songs = realm.All<Realm_Songs>().AsRealmCollection();
+                var old = songs.FirstOrDefault(x => x.IsPlaying == true);
+                var real_song = new Realm_Songs(song);
+                real_song.IsPlaying = true;
+                realm.Write(() =>
+                {
+                    if (old != null)
+                    {
+                        old.IsPlaying = false;
+                    }
+                    realm.Add(real_song);
+                });
+            });
+            return song;
+        }
+
         public API(Mobile_Api.Service service, AppCompatActivity activity)
         {
             _service = service;
             _activity = activity;
+            TryToGetRealm();
+        }
+
+        public API()
+        {
+            _service = new Mobile_Api.Service();
             TryToGetRealm();
         }
 

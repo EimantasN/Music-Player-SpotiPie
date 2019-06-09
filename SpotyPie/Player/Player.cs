@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
@@ -78,6 +77,10 @@ namespace SpotyPie.Player
 
         private bool SeekActive = false;
 
+
+        private Realm Realm;
+        private IRealmCollection<Realm_Songs> Songs;
+
         protected override void InitView()
         {
             ServiceConnection = this;
@@ -133,6 +136,12 @@ namespace SpotyPie.Player
             Play();
         }
 
+        private void Songs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            var song = new Songs((Realm_Songs)e.NewItems[0]);
+            SongLoadStarted(new List<Songs>() { song }, 0);
+        }
+
         public override int GetParentView()
         {
             return Resource.Id.parent_view;
@@ -140,19 +149,26 @@ namespace SpotyPie.Player
 
         public override void ForceUpdate()
         {
-            if (!IsMyServiceRunning(typeof(MusicService)))
-            {
-                this.Activity.StartService(new Intent(this.Activity, typeof(MusicService)));
-            }
+            //if (!IsMyServiceRunning(typeof(MusicService)))
+            //{
+            //    this.Activity.StartService(new Intent(this.Activity, typeof(MusicService)));
+            //}
 
-            Intent intent = new Intent(this.Activity, typeof(MusicService));
-            Activity.BindService(intent, this.ServiceConnection, Bind.AutoCreate);
+            //Intent intent = new Intent(this.Activity, typeof(MusicService));
+            //Activity.BindService(intent, this.ServiceConnection, Bind.AutoCreate);
+
+            Realm = Realm.GetInstance();
+
+            Songs = Realm.All<Realm_Songs>().AsRealmCollection();
+            Songs.CollectionChanged += Songs_CollectionChanged;
 
             ImgHolder.SetOnTouchListener(this);
         }
 
         public override void ReleaseData()
         {
+            Songs.CollectionChanged -= Songs_CollectionChanged;
+            Realm.Dispose();
             ImgHolder.SetOnTouchListener(null);
         }
 
@@ -226,6 +242,19 @@ namespace SpotyPie.Player
 
         private void NextSong_Click(object sender, EventArgs e)
         {
+            var intent = new Intent("com.spotypie.adnroid.musicservice.next");
+            ParentActivity.SendBroadcast(intent);
+
+            if (ParentActivity != null)
+            {
+                if (ParentActivity.GetMediaController() != null)
+                {
+                    if (ParentActivity.GetMediaController().GetTransportControls() != null)
+                    {
+                        ParentActivity.GetMediaController().GetTransportControls().SkipToNext();
+                    }
+                }
+            }
             MusicService?.ChangeSong(true);
         }
 

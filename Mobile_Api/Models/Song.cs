@@ -64,6 +64,34 @@ namespace Mobile_Api.Models
         {
         }
 
+        public Songs(Realm_Songs song)
+        {
+            Id = song.Id;
+            SpotifyId = song.SpotifyId;
+            DiscNumber = song.DiscNumber;
+            DurationMs = song.DurationMs;
+            Explicit = song.Explicit;
+            IsLocal = song.IsLocal;
+            Name = song.Name;
+            TrackNumber = song.TrackNumber;
+            LargeImage = song.LargeImage;
+            MediumImage = song.MediumImage;
+            SmallImage = song.SmallImage;
+            LocalUrl = song.LocalUrl;
+            Popularity = song.Popularity;
+            IsPlayable = song.IsPlayable;
+            LastActiveTime = song.LastActiveTime;
+            UploadTime = song.UploadTime;
+            Size = song.Size;
+            IsPlaying = song.IsPlaying;
+            ArtistName = song.ArtistName;
+            AlbumName = song.AlbumName;
+            AlbumId = song.AlbumId;
+            ArtistId = song.ArtistId;
+            Type = RvType.Song;
+            Images = new List<Image>();
+        }
+
         public void Dispose()
         {
             Images = null;

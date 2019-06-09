@@ -116,7 +116,6 @@ namespace SpotyPie
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragmentInner(Main.Performance, AddToBackButtonStack: false);
 
-
             this.StartService(new Intent(this, typeof(MusicService)));
         }
 

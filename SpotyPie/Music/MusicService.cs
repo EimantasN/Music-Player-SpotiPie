@@ -62,12 +62,14 @@ namespace SpotyPie.Music
             SessionToken = session.SessionToken;
             mediaCallback = new MediaSessionCallback();
 
+            //MUSIC PLAYER PLAY ACTION
             mediaCallback.OnPlayImpl = () =>
             {
                 Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
                 HandlePlayRequest();
             };
 
+            //MUSIC PLAYER SKIP TO QUEUE ITEM ACTION
             mediaCallback.OnSkipToQueueItemImpl = (id) =>
             {
                 LogHelper.Debug(Tag, "OnSkipToQueueItem:" + id);
@@ -79,11 +81,13 @@ namespace SpotyPie.Music
                 }
             };
 
+            //MUSIC PLAYER SEEEK TO ACTION
             mediaCallback.OnSeekToImpl = (pos) =>
             {
                 playback.SeekTo((int)pos);
             };
 
+            //MUSIC PLAYER PLAY FROM MEDIA ID ACTION
             mediaCallback.OnPlayFromMediaIdImpl = (mediaId, extras) =>
             {
                 Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
@@ -113,18 +117,21 @@ namespace SpotyPie.Music
                 }
             };
 
+            //MUSIC PLAYER PAUSE ACTION
             mediaCallback.OnPauseImpl = () =>
             {
                 Toast.MakeText(ApplicationContext, "OnPauseImpl", ToastLength.Long).Show();
                 HandlePauseRequest();
             };
 
+            //MUSIC PLAYER STOP ACTION
             mediaCallback.OnStopImpl = () =>
             {
                 Toast.MakeText(ApplicationContext, "OnStopImpl", ToastLength.Long).Show();
                 HandleStopRequest(null);
             };
 
+            //MUSIC PLAYER SKIP TO NEXT ACTION
             mediaCallback.OnSkipToNextImpl = () =>
             {
                 Toast.MakeText(ApplicationContext, "OnSkipToNextImpl", ToastLength.Long).Show();
@@ -142,6 +149,7 @@ namespace SpotyPie.Music
                 return;
             };
 
+            //MUSIC PLAYER SKIP TO PREVIUOS ACTION
             mediaCallback.OnSkipToPreviousImpl = () =>
             {
                 Toast.MakeText(ApplicationContext, "OnSkipToPreviousImpl", ToastLength.Long).Show();
@@ -159,6 +167,7 @@ namespace SpotyPie.Music
                 return;
             };
 
+            //MUSIC PLAYER CUSTOM ACTION
             mediaCallback.OnCustomActionImpl = (action, extras) =>
             {
                 if (CustomActionThumbsUp == action)
@@ -177,6 +186,7 @@ namespace SpotyPie.Music
                 }
             };
 
+            //MUSIC PLAYER PLAYSEARCH ACTION
             mediaCallback.OnPlayFromSearchImpl = (query, extras) =>
             {
                 LogHelper.Debug(Tag, "playFromSearch  query=", query);
@@ -215,9 +225,8 @@ namespace SpotyPie.Music
             playback.Callback = this;
             playback.Start();
 
-            Context context = ApplicationContext;
-            var intent = new Intent(context, typeof(MainActivity));
-            var pi = PendingIntent.GetActivity(context, 99 /*request code*/, intent, PendingIntentFlags.UpdateCurrent);
+            var intent = new Intent(ApplicationContext, typeof(MainActivity));
+            var pi = PendingIntent.GetActivity(ApplicationContext, 99 /*request code*/, intent, PendingIntentFlags.UpdateCurrent);
             session.SetSessionActivity(pi);
 
             var extraBundle = new Bundle();
@@ -373,20 +382,15 @@ namespace SpotyPie.Music
                 InitNotification = false;
             }
 
-
             var state = playback.State;
 
-            // If there is an error message, send it to the playback state:
             if (error != null)
             {
-                // Error states are really only supposed to be used for errors that cause playback to
-                // stop unexpectedly and persist until the user takes action to fix it.
                 stateBuilder.SetErrorMessage(error);
                 state = Android.Support.V4.Media.Session.PlaybackStateCompat.StateError;
             }
             stateBuilder.SetState(state, position, 1.0f, SystemClock.ElapsedRealtime());
 
-            // Set the activeQueueItemId if the current index is valid.
             if (QueueHelper.isIndexPlayable(currentIndexOnQueue, PlayingQueue))
             {
                 var item = PlayingQueue[currentIndexOnQueue];
@@ -406,7 +410,6 @@ namespace SpotyPie.Music
             MediaMetadataCompat currentMusic = GetCurrentPlayingMusic();
             if (currentMusic != null)
             {
-                // Set appropriate "Favorite" icon on Custom action:
                 var musicId = currentMusic.GetString(MediaMetadata.MetadataKeyMediaId);
                 //TODO
                 var favoriteIcon = Resource.Drawable.abc_ic_star_black_16dp;
@@ -415,17 +418,13 @@ namespace SpotyPie.Music
                     //TODO
                     favoriteIcon = Resource.Drawable.abc_ic_star_half_black_16dp;
                 }
-                LogHelper.Debug(Tag, "updatePlaybackState, setting Favorite custom action of music ",
-                    musicId, " current favorite=", musicProvider.IsFavorite(musicId));
-                stateBuilder.AddCustomAction(CustomActionThumbsUp, "Favorite",
-                    favoriteIcon);
+                stateBuilder.AddCustomAction(CustomActionThumbsUp, "Favorite", favoriteIcon);
             }
         }
 
         long GetAvailableActions()
         {
-            long actions = PlaybackState.ActionPlay | PlaybackState.ActionPlayFromMediaId |
-                           PlaybackState.ActionPlayFromSearch;
+            long actions = PlaybackState.ActionPlay | PlaybackState.ActionPlayFromMediaId | PlaybackState.ActionPlayFromSearch;
             if (PlayingQueue == null || PlayingQueue.Count == 0)
             {
                 return actions;

@@ -8,7 +8,7 @@ namespace SpotyPie.Music.Models
 {
     public class MusicProvider
     {
-        private Mobile_Api.Service API { get; set; }
+        private API API { get; set; }
 
         private Songs CurrentSong { get; set; } = new Songs();
 
@@ -19,10 +19,10 @@ namespace SpotyPie.Music.Models
             Initialized
         };
 
-        private Mobile_Api.Service GetApiService()
+        private API GetApiService()
         {
             if (API == null)
-                API = new Mobile_Api.Service();
+                API = new API();
             return API;
         }
 
@@ -36,7 +36,7 @@ namespace SpotyPie.Music.Models
 
         public async Task GetNextSongAsync()
         {
-            CurrentSong = await GetApiService().GetNextSong();
+            CurrentSong = await GetApiService().GetNextSongAsync();
             BuildMetadata();
         }
 

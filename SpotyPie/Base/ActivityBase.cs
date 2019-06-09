@@ -284,6 +284,11 @@ namespace SpotyPie.Base
             }
         }
 
+        public Android.Media.Session.MediaController GetMediaController()
+        {
+            return MediaController;
+        }
+
         public void SetNavigationBarColor(NavigationColorState state = NavigationColorState.Default)
         {
             if (state != NavigationColorState.Default)
