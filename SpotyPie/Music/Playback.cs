@@ -117,17 +117,20 @@ namespace SpotyPie.Music
 
         public void Play(Android.Support.V4.Media.Session.MediaSessionCompat.QueueItem item)
         {
-            Callback?.OnPlaybackMetaDataChanged(musicProvider.GetMetadata());
-
             playOnFocusGain = true;
             TryToGetAudioFocus();
             RegisterAudioNoisyReceiver();
-            string mediaId = musicProvider.GetCurrentSongId;
+            string mediaId = musicProvider.GetCurrentSong();
+            Callback?.OnPlaybackMetaDataChanged(musicProvider.GetMetadata());
             bool mediaHasChanged = mediaId != currentMediaId;
             if (mediaHasChanged)
             {
                 currentPosition = 0;
                 currentMediaId = mediaId;
+            }
+            else
+            {
+                musicProvider.SongResumed();
             }
 
             if (State == Android.Support.V4.Media.Session.PlaybackStateCompat.StatePaused && !mediaHasChanged && MediaPlayer != null)
@@ -232,6 +235,7 @@ namespace SpotyPie.Music
 
         public void Pause()
         {
+            musicProvider.SongPaused();
             if (State == Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying)
             {
                 if (MediaPlayer != null && MediaPlayer.IsPlaying)
@@ -384,7 +388,7 @@ namespace SpotyPie.Music
 
         public void OnPrepared(MediaPlayer mp)
         {
-            Toast.MakeText(service.ApplicationContext, "onPrepared from MediaPlayer", ToastLength.Long).Show();
+            //Toast.MakeText(service.ApplicationContext, "onPrepared from MediaPlayer", ToastLength.Long).Show();
 
             ConfigMediaPlayerState();
         }

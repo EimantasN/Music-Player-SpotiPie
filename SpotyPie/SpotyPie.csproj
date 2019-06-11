@@ -87,6 +87,8 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataManagement\CurrentSongsManager.cs" />
+    <Compile Include="DataManagement\DataManager.cs" />
     <Compile Include="Enums\NavigationColorStates.cs" />
     <Compile Include="HelperFragments\ConnectionLostWithServer.cs" />
     <Compile Include="HelperFragments\NoInternet.cs" />
@@ -94,7 +96,7 @@
     <Compile Include="Helpers\InternetConnection.cs" />
     <Compile Include="Helpers\Retry.cs" />
     <Compile Include="MainFragments\AlbumFragment.cs" />
-    <Compile Include="API.cs" />
+    <Compile Include="DataManagement\API.cs" />
     <Compile Include="Base\ActivityBase.cs" />
     <Compile Include="Base\FragmentBase.cs" />
     <Compile Include="Database\ViewModels\CurrentState.cs" />
@@ -124,6 +126,7 @@
     <Compile Include="Music\PackageValidator.cs" />
     <Compile Include="Music\Playback.cs" />
     <Compile Include="Music\SpotyPieCallback.cs" />
+    <Compile Include="Player\Interfaces\IMusicPlayerUiControls.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
     <Compile Include="RecycleView\Models\SongBindList.cs" />
     <Compile Include="RecycleView\Models\SongOption.cs" />

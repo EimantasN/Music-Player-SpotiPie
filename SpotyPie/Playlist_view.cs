@@ -65,7 +65,7 @@ namespace SpotyPie.Player
                     //AlbumSongs.Clear();
                     Application.SynchronizationContext.Post(_ =>
                     {
-                        GetState().Current_Song_List = album.Songs;
+                        GetState().CurrentSongList = album.Songs;
                         foreach (var x in album.Songs)
                         {
                             //AlbumSongs.Add(x);

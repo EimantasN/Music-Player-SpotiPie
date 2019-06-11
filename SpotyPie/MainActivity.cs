@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
+using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.Enums.Activitys;

@@ -29,7 +29,7 @@ namespace SpotyPie.Player
 
         private void Update()
         {
-            RvData.GetData().AddList(GetState().Current_Song_List);
+            RvData.GetData().AddList(GetState().CurrentSongList);
         }
 
         public override void ForceUpdate()

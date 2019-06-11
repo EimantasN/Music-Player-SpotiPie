@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.Support.V4.Media;
 using Mobile_Api.Models;
+using Realms;
 
 namespace SpotyPie.Music.Models
 {
@@ -32,22 +34,138 @@ namespace SpotyPie.Music.Models
         {
         }
 
+        public string GetCurrentSong()
+        {
+            Realm realm = Realm.GetInstance();
+            var song = realm.All<Realm_Songs>().FirstOrDefault(x => x.IsPlaying == true);
+            if (song == null)
+            {
+                song = realm.All<Realm_Songs>().FirstOrDefault();
+                if (CurrentSong == null)
+                {
+                    CurrentSong = new Songs();
+                }
+                CurrentSong = new Songs(song);
+                BuildMetadata();
+            }
+            else
+            {
+                CurrentSong = new Songs(song);
+                BuildMetadata();
+            }
+            realm.Dispose();
+            return CurrentSong.Id.ToString();
+        }
+
         public string GetCurrentSongId => CurrentSong.Id.ToString();
 
         public async Task GetNextSongAsync()
         {
-            CurrentSong = await GetApiService().GetNextSongAsync();
             BuildMetadata();
+        }
+
+        public void SongPaused()
+        {
+            GetApiService().SongPaused();
+        }
+
+        public void SongResumed()
+        {
+            GetApiService().SongResumed();
         }
 
         public string CurrentSongSource()
         {
-            return $"https://pie.pertrauktiestaskas.lt/api/stream/play/{CurrentSong.Id}";
+            return $"https://pie.pertrauktiestaskas.lt/api/stream/play/{GetCurrentSong()}";
         }
 
         public void SetFavorite(string musicId, bool favorite)
         {
 
+        }
+
+        public async Task ChangeSongAsync(bool Foward)
+        {
+            Realm realm = Realm.GetInstance();
+            try
+            {
+                var Current_Song_List = realm.All<Realm_Songs>().AsQueryable().ToList();
+                if (Current_Song_List == null) return;
+
+                for (int i = 0; i < Current_Song_List.Count; i++)
+                {
+                    if (Current_Song_List[i].IsPlaying)
+                    {
+                        UpdateCurrentSong(Current_Song_List[i], false);
+                        if (Foward)
+                        {
+                            if ((i + 1) == Current_Song_List.Count)
+                            {
+                                var r_song = await SongListEndCheckForAutoPlayAsync();
+
+                                using (Realm innerRealm = Realm.GetInstance())
+                                {
+                                    innerRealm.Write(() =>
+                                    {
+                                        r_song.IsPlaying = true;
+                                        innerRealm.Add<Realm_Songs>(r_song);
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                UpdateCurrentSong(Current_Song_List[i + 1]);
+                            }
+                        }
+                        else
+                        {
+                            if (i == 0)
+                            {
+                                UpdateCurrentSong(Current_Song_List[0]);
+                            }
+                            else
+                            {
+                                UpdateCurrentSong(Current_Song_List[i - 1]);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                realm.Dispose();
+                BuildMetadata();
+            }
+
+            void UpdateCurrentSong(Realm_Songs song, bool status = true)
+            {
+                if (realm != null)
+                {
+                    realm.Write(() =>
+                    {
+                        song.IsPlaying = status;
+                    });
+                }
+            }
+        }
+
+        private async Task<Realm_Songs> SongListEndCheckForAutoPlayAsync()
+        {
+            try
+            {
+                Songs song = await GetApiService().GetNextSongAsync();
+                song.SetModelType(Mobile_Api.Models.Enums.RvType.Song);
+                song.IsPlaying = true;
+                return new Realm_Songs(song);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public bool IsFavorite(string musicId)
@@ -114,6 +232,7 @@ namespace SpotyPie.Music.Models
                 .PutLong(MediaMetadataCompat.MetadataKeyTrackNumber, CurrentSong.TrackNumber)
                 .PutLong(MediaMetadataCompat.MetadataKeyNumTracks, 10)
                 .PutLong(MediaMetadataCompat.MetadataKeyDiscNumber, CurrentSong.DiscNumber)
+                .PutString("SpotyPieImgUrl", CurrentSong.MediumImage)
                 .Build();
         }
 

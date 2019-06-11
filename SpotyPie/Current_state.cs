@@ -1,6 +1,8 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Views;
 using Mobile_Api.Models;
+using Realms;
 using SpotyPie.Enums.Activitys;
 using System;
 using System.Collections.Generic;
@@ -39,7 +41,7 @@ namespace SpotyPie
 
         public int Position { get; set; }
 
-        public List<Songs> Current_Song_List { get; set; } = new List<Songs>();
+        public List<Songs> CurrentSongList { get; set; } = new List<Songs>();
 
         private Player.Player Player { get; set; }
 
@@ -61,10 +63,41 @@ namespace SpotyPie
 
         public void SetSong(List<Songs> songs, int position = 0, bool refresh = false)
         {
+            UpdateRealSongList(songs, position);
             Id = songs[position].Id;
-            Current_Song_List = songs;
+            CurrentSongList = songs;
             Position = position;
             Activity.LoadFragmentInner(HomePage.Player, screen: Enums.LayoutScreenState.FullScreen);
+        }
+
+        private void UpdateRealSongList(List<Songs> songs, int position = 0)
+        {
+            Task.Run(() =>
+            {
+                Realm realm = Realm.GetInstance();
+                RemoveOldSongList(realm);
+                songs[position].IsPlaying = true;
+                realm.Write(() =>
+                {
+                    foreach (var x in songs)
+                    {
+                        realm.Add(new Realm_Songs(x));
+                    }
+                });
+                realm.Dispose();
+
+                Activity.RunOnUiThread(() =>
+                {
+                    Activity.SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.play"));
+                });
+            });
+        }
+
+        private void RemoveOldSongList(Realm realm = null)
+        {
+            if(realm == null)
+                realm = Realm.GetInstance();
+            realm.Write(() => { realm.RemoveAll<Realm_Songs>(); });
         }
 
         public void SetCurrentSongList(List<Songs> songs)
@@ -72,13 +105,13 @@ namespace SpotyPie
             if (songs != null && songs.Count > 0)
             {
                 songs.First().SetIsPlaying(true);
-                Current_Song_List.AddRange(songs);
+                CurrentSongList.AddRange(songs);
             }
         }
 
         public void UpdateSongList(Songs song)
         {
-            Current_Song_List.First(x => x.Id == Current_Song.Id).SetIsPlaying(true);
+            CurrentSongList.First(x => x.Id == Current_Song.Id).SetIsPlaying(true);
         }
 
         public void SetArtist(Artist art)
@@ -90,7 +123,7 @@ namespace SpotyPie
             Current_Album = album;
             Activity.RunOnUiThread(() =>
             {
-                GetPlayer().Player_playlist_name.Text = Current_Album.Name;
+                GetPlayer().PlayerPlaylistName.Text = Current_Album.Name;
             });
         }
 

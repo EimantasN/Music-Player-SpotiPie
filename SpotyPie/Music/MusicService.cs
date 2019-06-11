@@ -65,7 +65,7 @@ namespace SpotyPie.Music
             //MUSIC PLAYER PLAY ACTION
             mediaCallback.OnPlayImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
                 HandlePlayRequest();
             };
 
@@ -90,7 +90,7 @@ namespace SpotyPie.Music
             //MUSIC PLAYER PLAY FROM MEDIA ID ACTION
             mediaCallback.OnPlayFromMediaIdImpl = (mediaId, extras) =>
             {
-                Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
                 return;
 
                 LogHelper.Debug(Tag, "playFromMediaId mediaId:", mediaId, "  extras=", extras);
@@ -120,27 +120,27 @@ namespace SpotyPie.Music
             //MUSIC PLAYER PAUSE ACTION
             mediaCallback.OnPauseImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnPauseImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnPauseImpl", ToastLength.Long).Show();
                 HandlePauseRequest();
             };
 
             //MUSIC PLAYER STOP ACTION
             mediaCallback.OnStopImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnStopImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnStopImpl", ToastLength.Long).Show();
                 HandleStopRequest(null);
             };
 
             //MUSIC PLAYER SKIP TO NEXT ACTION
             mediaCallback.OnSkipToNextImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnSkipToNextImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnSkipToNextImpl", ToastLength.Long).Show();
                 mediaNotificationManager.CountSkip++;
                 playback.Skip(null);
 
                 Task.Run(async () =>
                 {
-                    await musicProvider.GetNextSongAsync();
+                    await musicProvider.ChangeSongAsync(true);
                     Application.SynchronizationContext.Post(_ =>
                     {
                         playback.Play(null);
@@ -152,13 +152,13 @@ namespace SpotyPie.Music
             //MUSIC PLAYER SKIP TO PREVIUOS ACTION
             mediaCallback.OnSkipToPreviousImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnSkipToPreviousImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnSkipToPreviousImpl", ToastLength.Long).Show();
                 mediaNotificationManager.CountSkip--;
                 playback.Skip(null);
 
                 Task.Run(async () =>
                 {
-                    await musicProvider.GetNextSongAsync();
+                    await musicProvider.ChangeSongAsync(false);
                     Application.SynchronizationContext.Post(_ =>
                     {
                         playback.Play(null);
@@ -182,7 +182,7 @@ namespace SpotyPie.Music
                 }
                 else
                 {
-                    LogHelper.Error(Tag, "Unsupported action: ", action);
+                    Toast.MakeText(ApplicationContext, $"Unsuported action {action}", ToastLength.Short).Show();
                 }
             };
 
