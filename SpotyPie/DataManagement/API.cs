@@ -33,11 +33,47 @@ namespace SpotyPie
         private List<Songs> _Songs { get; set; }
 
         #region Locks
+
         private Object _album_Lock { get; } = new Object();
         private Object _artist_Lock { get; } = new Object();
         private Object _song_Lock { get; } = new Object();
 
         #endregion
+
+        internal void SongPaused()
+        {
+            Task.Run(() =>
+            {
+                var realm = Realm.GetInstance();
+                var songs = realm.All<Realm_Songs>().AsRealmCollection();
+                var old = songs.FirstOrDefault(x => x.IsPlaying == true);
+                realm.Write(() =>
+                {
+                    if (old != null)
+                    {
+                        old.IsPlaying = false;
+                        old.LastActiveTime = DateTime.Now;
+                    }
+                });
+            });
+        }
+
+        internal void SongResumed()
+        {
+            Task.Run(() =>
+            {
+                var realm = Realm.GetInstance();
+                var songs = realm.All<Realm_Songs>().AsRealmCollection();
+                var old = songs.OrderByDescending(x => x.LastActiveTime).FirstOrDefault();
+                realm.Write(() =>
+                {
+                    if (old != null)
+                    {
+                        old.IsPlaying = true;
+                    }
+                });
+            });
+        }
 
         public async Task<Songs> GetNextSongAsync()
         {
@@ -422,11 +458,6 @@ namespace SpotyPie
             }
         }
         #endregion
-
-        public void debug()
-        {
-
-        }
 
         public async Task<List<Songs>> GetSongToBind(string songTitle, int songCof, string album, int albumCof, string artist, int artistCof)
         {
