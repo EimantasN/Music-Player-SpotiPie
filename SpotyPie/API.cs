@@ -154,7 +154,7 @@ namespace SpotyPie
 
         #region MainFragment
 
-        public async Task GetRecentAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
+        public async Task<List<Album>> GetRecentAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
         {
             try
             {
@@ -448,7 +448,7 @@ namespace SpotyPie
                 {
                     realm.Write(() =>
                     {
-                       //realm.Add<Realm_Songs>(x);
+                        //realm.Add<Realm_Songs>(x);
                     });
                 });
             }

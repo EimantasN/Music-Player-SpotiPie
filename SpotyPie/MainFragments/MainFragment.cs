@@ -1,21 +1,20 @@
-﻿using Android.Content;
-using Android.Support.Constraints;
-using Android.Support.V7.Widget;
+﻿using Android.Support.Constraints;
 using Android.Widget;
-using Mobile_Api;
 using Mobile_Api.Models;
-using Mobile_Api.Models.Enums;
+using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie
 {
     public class MainFragment : FragmentBase
     {
-        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+        protected override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
         public override int LayoutId { get; set; } = Resource.Layout.home_layout;
 
         //Best artists
@@ -79,7 +78,6 @@ namespace SpotyPie
         public override void ForceUpdate()
         {
             Toggle(false, PlaylistHolder);
-            Toggle(false, RecentHolder);
             Toggle(false, BestHolder);
             Toggle(false, JumpBackHolder);
 
@@ -100,10 +98,34 @@ namespace SpotyPie
                 JumpBack = new BaseRecycleView<Album>(this, Resource.Id.albums_old_rv);
                 JumpBack.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
             }
-
-            Task.Run(() => GetAPIService().GetRecentAlbumsAsync(RecentAlbums.GetData(), () => { Toggle(true, RecentHolder); }, this.Activity));
             Task.Run(() => GetAPIService().GetPolularAlbumsAsync(BestAlbums.GetData(), () => { Toggle(true, BestHolder); }, this.Activity));
             Task.Run(() => GetAPIService().GetOldAlbumsAsync(JumpBack.GetData(), () => { Toggle(true, JumpBackHolder); }, this.Activity));
+        }
+
+        private void LoadRecentAlbums()
+        {
+            try
+            {
+                Realm realm = Realm.GetInstance();
+                var albums = realm.All<Realm_Album>().OrderBy(x => x.LastActiveTime).Take(8).ToList();
+                if (albums != null && albums.Count != 0)
+                {
+                    List<Album> OrginalAlbums = new List<Album>();
+                    foreach (var x in albums)
+                    {
+                        OrginalAlbums.Add(new Album(x));
+                    }
+                }
+                else
+                {
+                    Toggle(false, RecentHolder);
+                }
+
+                Task.Run(() => GetAPIService().GetRecentAlbumsAsync(RecentAlbums.GetData(), () => { Toggle(true, RecentHolder); }, this.Activity));
+            }
+            catch (Exception e)
+            {
+            }
         }
 
         public override void ReleaseData()

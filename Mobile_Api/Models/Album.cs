@@ -38,16 +38,33 @@ namespace Mobile_Api.Models
         public bool IsPlayable { get; set; }
 
         [JsonProperty("lastActiveTime")]
-        public DateTime LastActiveTime { get; set; }
+        public DateTimeOffset LastActiveTime { get; set; }
 
         [JsonProperty("tracks")]
         public int Tracks { get; set; }
 
-        protected override RvType Type { get; set; } = RvType.Album;
+        public override RvType Type { get; set; } = RvType.Album;
 
         public Album()
         {
 
+        }
+
+        public Album(Realm_Album album)
+        {
+            Id = album.Id;
+            SpotifyId = album.SpotifyId;
+            LargeImage = album.LargeImage;
+            MediumImage = album.MediumImage;
+            SmallImage = album.SmallImage;
+            Name = album.Name;
+            ReleaseDate = album.ReleaseDate;
+            Songs = new List<Songs>();
+            Popularity = album.Popularity;
+            IsPlayable = album.IsPlayable;
+            LastActiveTime = album.LastActiveTime.ToUniversalTime();
+            Tracks = album.Tracks;
+            Type = (RvType)album.Type;
         }
 
         public void Dispose()
