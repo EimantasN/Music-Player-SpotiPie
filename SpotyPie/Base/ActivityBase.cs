@@ -5,6 +5,7 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Realms;
 using SpotyPie.Enums;
 using SpotyPie.Models;
 using System;
@@ -53,23 +54,17 @@ namespace SpotyPie.Base
 
         public SupportFragmentManager mSupportFragmentManager;
 
+        public delegate void DatabaseInfoHandler(dynamic databaseInfo, EventArgs e);
+
+        public DatabaseInfoHandler Handler;
+
+        public EventArgs e = null;
+
+        private Realm realm;
+
         public abstract dynamic GetInstance();
 
-        private int GetLayout()
-        {
-            return LayoutId;
-        }
-
-        public virtual void LoadBaseFragment()
-        {
-
-        }
-
-        protected override void OnResume()
-        {
-            SetNavigationBarColor();
-            base.OnResume();
-        }
+        private int GetLayout() { return LayoutId; }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -78,6 +73,43 @@ namespace SpotyPie.Base
 
             SupportFragmentManager.BackStackChanged += SupportFragmentManager_BackStackChanged;
             InitView();
+        }
+
+        public virtual void LoadBaseFragment()
+        {
+
+        }
+
+        private void InitRealChangeLisiner()
+        {
+            if (realm == null || realm.IsClosed)
+            {
+                realm = Realm.GetInstance();
+                realm.RealmChanged += Realm_RealmChanged;
+            }
+        }
+
+        private void Realm_RealmChanged(object sender, EventArgs e)
+        {
+            Handler?.Invoke(sender, e);
+        }
+
+        protected override void OnResume()
+        {
+            SetNavigationBarColor();
+            InitRealChangeLisiner();
+            base.OnResume();
+        }
+
+        protected override void OnStop()
+        {
+            if (realm != null)
+            {
+                realm.RealmChanged -= Realm_RealmChanged;
+                if (!realm.IsClosed)
+                    realm.Dispose();
+            }
+            base.OnStop();
         }
 
         private void SupportFragmentManager_BackStackChanged(object sender, EventArgs e)
