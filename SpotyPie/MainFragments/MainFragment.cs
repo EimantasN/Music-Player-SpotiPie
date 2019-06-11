@@ -5,10 +5,13 @@ using Android.Widget;
 using Mobile_Api;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Enums;
+using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie
@@ -45,6 +48,7 @@ namespace SpotyPie
         protected override void InitView()
         {
             Loading = RootView.FindViewById<ProgressBar>(Resource.Id.Loading);
+            Loading.Visibility = Android.Views.ViewStates.Gone;
 
             PlaylistHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.top_playlist_holder);
             RecentHolder = RootView.FindViewById<ConstraintLayout>(Resource.Id.recent_albums_holder);
@@ -78,16 +82,11 @@ namespace SpotyPie
 
         public override void ForceUpdate()
         {
+            LoadRecentData();
+
             Toggle(false, PlaylistHolder);
-            Toggle(false, RecentHolder);
             Toggle(false, BestHolder);
             Toggle(false, JumpBackHolder);
-
-            if (RecentAlbums == null)
-            {
-                RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv);
-                RecentAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
-            }
 
             if (BestAlbums == null)
             {
@@ -101,9 +100,47 @@ namespace SpotyPie
                 JumpBack.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
             }
 
-            Task.Run(() => GetAPIService().GetRecentAlbumsAsync(RecentAlbums.GetData(), () => { Toggle(true, RecentHolder); }, this.Activity));
             Task.Run(() => GetAPIService().GetPolularAlbumsAsync(BestAlbums.GetData(), () => { Toggle(true, BestHolder); }, this.Activity));
             Task.Run(() => GetAPIService().GetOldAlbumsAsync(JumpBack.GetData(), () => { Toggle(true, JumpBackHolder); }, this.Activity));
+        }
+
+        private void LoadRecentData()
+        {
+            if (RecentAlbums == null)
+            {
+                RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv);
+                RecentAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+            }
+
+            using (Realm realm = Realm.GetInstance())
+            {
+                var albums = realm.All<Realm_Album>().Where(x => x.Type == 3).ToList();
+                if (albums == null || albums.Count == 0)
+                {
+                    Toggle(false, RecentHolder);
+                }
+                else
+                {
+                    List<Album> list = new List<Album>();
+                    foreach (var x in albums.Take(8))
+                    {
+                        list.Add(new Album(x));
+                    }
+                    RecentAlbums.GetData().AddList(list);
+                }
+            }
+            Task.Run(async () =>
+            {
+                await Task.Delay(750);
+                var albums = await GetAPIService().GetRecentAlbumsAsync();
+                LoadData(RecentAlbums.GetData(), albums, () => { Toggle(true, RecentHolder); });
+            });
+        }
+
+        private void LoadData(RvList<Album> list, List<Album> AlbumsData, Action action)
+        {
+            RunOnUiThread(() => { action?.Invoke(); });
+            list.AddList(AlbumsData);
         }
 
         public override void ReleaseData()

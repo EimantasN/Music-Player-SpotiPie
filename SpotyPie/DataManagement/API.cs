@@ -190,16 +190,22 @@ namespace SpotyPie
 
         #region MainFragment
 
-        public async Task GetRecentAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
+        public async Task<List<Album>> GetRecentAlbumsAsync()
         {
             try
             {
                 List<Album> AlbumData = await _service.GetRecent<Album>();
-                activity.RunOnUiThread(() =>
+                using (Realm realm = Realm.GetInstance())
                 {
-                    action?.Invoke();
-                });
-                RvList.AddList(AlbumData);
+                    foreach (var x in AlbumData)
+                    {
+                        realm.Write(() =>
+                        {
+                            realm.Add(new Realm_Album(x), true);
+                        });
+                    }
+                }
+                return AlbumData;
             }
             catch (Exception e)
             {
@@ -211,6 +217,7 @@ namespace SpotyPie
         {
             try
             {
+                await Task.Delay(750);
                 List<Album> AlbumData = await _service.GetPopular<Album>();
                 activity.RunOnUiThread(() =>
                 {
@@ -233,6 +240,7 @@ namespace SpotyPie
         {
             try
             {
+                await Task.Delay(750);
                 List<Album> AlbumData = await _service.GetOld<Album>();
                 InvokeOnMainThread(() =>
                 {

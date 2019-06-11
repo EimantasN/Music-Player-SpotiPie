@@ -47,7 +47,23 @@ namespace Mobile_Api.Models
 
         public Album()
         {
+        }
 
+        public Album(Realm_Album x)
+        {
+            Id = x.Id;
+            SpotifyId = x.SpotifyId;
+            LargeImage = x.LargeImage;
+            MediumImage = x.MediumImage;
+            SmallImage = x.SmallImage;
+            Name = x.Name;
+            ReleaseDate = x.ReleaseDate;
+            Songs = new List<Songs>();
+            Popularity = x.Popularity;
+            IsPlayable = x.IsPlayable;
+            LastActiveTime = x.LastActiveTime.DateTime;
+            Tracks = x.Tracks;
+            Type = (RvType)x.Type;
         }
 
         public void Dispose()
