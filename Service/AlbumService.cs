@@ -110,8 +110,7 @@ namespace Services
                 return await _ctx.Albums
                     .AsNoTracking()
                     .Where(x => x.IsPlayable)
-                    .OrderByDescending(x => x.LastActiveTime).ThenBy(x => x.Popularity)
-                    .OrderByDescending(x => x.LastActiveTime)
+                    .OrderBy(x => x.LastActiveTime)
                     .Take(6)
                     .ToListAsync();
             }
