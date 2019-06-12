@@ -1,12 +1,14 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.V4.Media;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
+using SpotyPie.Music;
 using SpotyPie.Player.Interfaces;
 using SpotyPie.Services;
 using SpotyPie.Services.Binders;
@@ -19,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace SpotyPie.Player
 {
-    public class Player : FragmentBase, View.IOnTouchListener, IMusicPlayerUiControls
+    public class Player : FragmentBase, View.IOnTouchListener, IMusicPlayerUiControls, Playback.ICallback, IServiceConnection
     {
         protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
         public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Player;
@@ -30,7 +32,7 @@ namespace SpotyPie.Player
 
         protected new MainActivity ParentActivity;
 
-        private MusicService MusicService;
+        //private MusicService MusicService;
 
         private IServiceConnection ServiceConnection;
 
@@ -117,6 +119,8 @@ namespace SpotyPie.Player
 
         protected override void InitView()
         {
+            ServiceConnection = this;
+
             RealmInit();
 
             GetActivity().Handler += SendSystemInfoData;
@@ -299,6 +303,8 @@ namespace SpotyPie.Player
             }
 
             ImgHolder.SetOnTouchListener(this);
+
+            GetActivity().BindService(new Intent(this.Context, typeof(Music.MusicService)), ServiceConnection, Bind.AutoCreate);
         }
 
         private void RealmInit()
@@ -402,29 +408,29 @@ namespace SpotyPie.Player
             {
                 Activity.RunOnUiThread(() =>
                 {
-                    TotalSongTime = new TimeSpan(0, 0, (int)MusicService.MusicPlayer.Duration / 1000);
-                    string totalTime = TotalSongTime.Minutes + ":" + (TotalSongTime.Seconds > 9 ? TotalSongTime.Seconds.ToString() : "0" + TotalSongTime.Seconds);
-                    TotalSongTimeText.Text = totalTime;
-                    TotalSongTimeText.Visibility = ViewStates.Visible;
-                    PlayToggle.SetImageResource(Resource.Drawable.pause);
-                    PlayToggle.Tag = Resource.Drawable.pause;
+                    //TotalSongTime = new TimeSpan(0, 0, (int)MusicService.MusicPlayer.Duration / 1000);
+                    //string totalTime = TotalSongTime.Minutes + ":" + (TotalSongTime.Seconds > 9 ? TotalSongTime.Seconds.ToString() : "0" + TotalSongTime.Seconds);
+                    //TotalSongTimeText.Text = totalTime;
+                    //TotalSongTimeText.Visibility = ViewStates.Visible;
+                    //PlayToggle.SetImageResource(Resource.Drawable.pause);
+                    //PlayToggle.Tag = Resource.Drawable.pause;
                 });
             });
         }
 
         public void Music_play()
         {
-            Task.Run(async () =>
-            {
-                while (MusicService?.MusicPlayer == null)
-                    await Task.Delay(250);
+            //Task.Run(async () =>
+            //{
+            //    while (MusicService?.MusicPlayer == null)
+            //        await Task.Delay(250);
 
-                Activity.RunOnUiThread(() =>
-                {
-                    PlayToggle.SetImageResource(Resource.Drawable.play_loading);
-                    PlayToggle.Tag = Resource.Drawable.play_loading;
-                });
-            });
+            //    Activity.RunOnUiThread(() =>
+            //    {
+            //        PlayToggle.SetImageResource(Resource.Drawable.play_loading);
+            //        PlayToggle.Tag = Resource.Drawable.play_loading;
+            //    });
+            //});
         }
 
         public void Music_pause()
@@ -538,13 +544,13 @@ namespace SpotyPie.Player
 
         private void SongTimeSeekBar_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-            if (MusicService?.MusicPlayer?.Duration != null)
-                CurrentSongPosition = (int)(MusicService.MusicPlayer.Duration * e.Progress / 100);
+            //if (MusicService?.MusicPlayer?.Duration != null)
+            //    CurrentSongPosition = (int)(MusicService.MusicPlayer.Duration * e.Progress / 100);
         }
 
         private void SongTimeSeekBar_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
-            MusicService?.SeekToPlayer(CurrentSongPosition);
+            //MusicService?.SeekToPlayer(CurrentSongPosition);
             SeekActive = false;
         }
 
@@ -555,29 +561,29 @@ namespace SpotyPie.Player
 
         private void Repeat_Click(object sender, EventArgs e)
         {
-            if (MusicService == null) return;
-            switch (MusicService.Repeat_state)
-            {
-                case 0:
-                    {
-                        Repeat.SetImageResource(Resource.Drawable.repeat);
-                        MusicService.Repeat_state = 1;
-                        if (MusicService != null) MusicService.MusicPlayer.Looping = true;
-                        break;
-                    }
-                case 1:
-                    {
-                        Repeat.SetImageResource(Resource.Drawable.repeat_once);
-                        MusicService.Repeat_state = 2;
-                        break;
-                    }
-                case 2:
-                    {
-                        Repeat.SetImageResource(Resource.Drawable.repeat_off);
-                        MusicService.Repeat_state = 0;
-                        break;
-                    }
-            }
+            //if (MusicService == null) return;
+            //switch (MusicService.Repeat_state)
+            //{
+            //    case 0:
+            //        {
+            //            Repeat.SetImageResource(Resource.Drawable.repeat);
+            //            MusicService.Repeat_state = 1;
+            //            if (MusicService != null) MusicService.MusicPlayer.Looping = true;
+            //            break;
+            //        }
+            //    case 1:
+            //        {
+            //            Repeat.SetImageResource(Resource.Drawable.repeat_once);
+            //            MusicService.Repeat_state = 2;
+            //            break;
+            //        }
+            //    case 2:
+            //        {
+            //            Repeat.SetImageResource(Resource.Drawable.repeat_off);
+            //            MusicService.Repeat_state = 0;
+            //            break;
+            //        }
+            //}
         }
 
         private void Shuffle_Click(object sender, EventArgs e)
@@ -665,6 +671,45 @@ namespace SpotyPie.Player
                     v.Animate().TranslationX(0);
                     return v.OnTouchEvent(e);
             }
+        }
+
+        public void OnPositionChanged(int miliseconds, TimeSpan currentTime)
+        {
+            RunOnUiThread(() =>
+            {
+                Toast.MakeText(this.Context, $"{miliseconds} {currentTime.ToString(@"mm\:ss")}", ToastLength.Short).Show();
+            });
+        }
+
+        public void OnCompletion()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnPlaybackStatusChanged(int state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnPlaybackMetaDataChanged(MediaMetadataCompat meta)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnError(string error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnServiceConnected(ComponentName name, IBinder service)
+        {
+            var binder = service as Music.MusicServiceBinder;
+            binder.SetMusicServiceUpdateCallback(this);
+        }
+
+        public void OnServiceDisconnected(ComponentName name)
+        {
+            //throw new NotImplementedException();
         }
         #endregion
     }

@@ -74,11 +74,6 @@ namespace SpotyPie
             SetAlbum(GetModel<Album>());
         }
 
-        public override void OnResume()
-        {
-            base.OnResume();
-        }
-
         public void SetAlbum(Album album = null)
         {
             try

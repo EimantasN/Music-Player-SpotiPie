@@ -15,11 +15,12 @@ using MediaSessionCompat = Android.Support.V4.Media.Session.MediaSessionCompat;
 using Android.Widget;
 using System.Threading.Tasks;
 using System.Threading;
+using Java.IO;
 
 namespace SpotyPie.Music
 {
     [Service(Exported = true)]
-    public class MusicService : MediaBrowserServiceCompat, Playback.ICallback, MusicControlInterface
+    public class MusicService : MediaBrowserServiceCompat, Playback.ICallback
     {
         public bool InitNotification = true;
 
@@ -34,6 +35,8 @@ namespace SpotyPie.Music
         int currentIndexOnQueue;
         bool serviceStarted;
 
+        public Playback.ICallback CallBack;
+
         MediaSessionCompat session;
         List<MediaSessionCompat.QueueItem> PlayingQueue;
         MusicProvider musicProvider;
@@ -42,6 +45,16 @@ namespace SpotyPie.Music
         DelayedStopHandler delayedStopHandler;
         PackageValidator packageValidator;
         MediaSessionCallback mediaCallback;
+
+        public IBinder Binder { get; private set; }
+
+        public MusicService GetService() { return this; }
+
+        public override IBinder OnBind(Intent intent)
+        {
+            this.Binder = new MusicServiceBinder(this);
+            return this.Binder;
+        }
 
         public MusicService()
         {
@@ -135,17 +148,7 @@ namespace SpotyPie.Music
             mediaCallback.OnSkipToNextImpl = () =>
             {
                 //Toast.MakeText(ApplicationContext, "OnSkipToNextImpl", ToastLength.Long).Show();
-                mediaNotificationManager.CountSkip++;
-                playback.Skip(null);
-
-                Task.Run(async () =>
-                {
-                    await musicProvider.ChangeSongAsync(true);
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        playback.Play(null);
-                    }, null);
-                });
+                OnNextSong();
                 return;
             };
 
@@ -238,6 +241,21 @@ namespace SpotyPie.Music
             UpdatePlaybackState(null);
         }
 
+        private void OnNextSong()
+        {
+            mediaNotificationManager.CountSkip++;
+            playback.Skip(null);
+
+            Task.Run(async () =>
+            {
+                await musicProvider.ChangeSongAsync(true);
+                Application.SynchronizationContext.Post(_ =>
+                {
+                    playback.Play(null);
+                }, null);
+            });
+        }
+
         [Obsolete("deprecated")]
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
@@ -259,10 +277,17 @@ namespace SpotyPie.Music
             return StartCommandResult.Sticky;
         }
 
+        private Music.MusicService myServiceBinder;
+
+        public string InterfaceDescriptor => throw new NotImplementedException();
+
+        public bool IsBinderAlive => throw new NotImplementedException();
+
         public override void OnDestroy()
         {
-            HandleStopRequest(null);
+            Binder = null;
 
+            HandleStopRequest(null);
             delayedStopHandler.RemoveCallbacksAndMessages(null);
             session.Release();
         }
@@ -318,7 +343,7 @@ namespace SpotyPie.Music
 
         void HandlePlayRequest()
         {
-            delayedStopHandler.RemoveCallbacksAndMessages(null);
+            delayedStopHandler?.RemoveCallbacksAndMessages(null);
             if (!serviceStarted)
             {
                 StartService(new Intent(ApplicationContext, typeof(MusicService)));
@@ -459,21 +484,22 @@ namespace SpotyPie.Music
 
         public void OnCompletion()
         {
-            if (PlayingQueue != null && PlayingQueue.Count != 0)
-            {
-                // In this sample, we restart the playing queue when it gets to the end:
-                currentIndexOnQueue++;
-                if (currentIndexOnQueue >= PlayingQueue.Count)
-                {
-                    currentIndexOnQueue = 0;
-                }
-                HandlePlayRequest();
-            }
-            else
-            {
-                // If there is nothing to play, we stop and release the resources:
-                HandleStopRequest(null);
-            }
+            OnNextSong();
+            //if (PlayingQueue != null && PlayingQueue.Count != 0)
+            //{
+            //    // In this sample, we restart the playing queue when it gets to the end:
+            //    currentIndexOnQueue++;
+            //    if (currentIndexOnQueue >= PlayingQueue.Count)
+            //    {
+            //        currentIndexOnQueue = 0;
+            //    }
+            //HandlePlayRequest();
+            //}
+            //else
+            //{
+            //    // If there is nothing to play, we stop and release the resources:
+            //    HandleStopRequest(null);
+            //}
         }
 
         public void OnPlaybackStatusChanged(int state)
@@ -492,6 +518,16 @@ namespace SpotyPie.Music
         public void OnError(string error)
         {
             UpdatePlaybackState(error);
+        }
+
+        public void OnPositionChanged(int miliseconds, TimeSpan currentTime)
+        {
+            CallBack?.OnPositionChanged(miliseconds, currentTime);
+        }
+
+        internal void SetCallback(Player.Player player)
+        {
+            CallBack = player;
         }
     }
 }

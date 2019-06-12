@@ -289,18 +289,18 @@ namespace SpotyPie.Music
                     .SetContentTitle(metadata.Description.Title)
                     .SetContentText(metadata.Description.Subtitle);
 
-                //Task.Run(() =>
-                //{
-                    //if (LastImgUrl == null || LastImgUrl != metadata.GetString("SpotyPieImgUrl"))
-                    //{
-                    //    var id = metadata.Description.MediaId;
-                    //    GetLargeImage(GetNotificationBuilder());
-                    //    if (id == metadata.Description.MediaId)
-                    //    {
-                    //       //NotificationManager.FromContext(service.ApplicationContext).Notify(NotificationId, GetNotificationBuilder().Build());
-                    //    }
-                    //}
-                //});
+                Task.Run(() =>
+                {
+                    if (LastImgUrl == null || LastImgUrl != metadata.GetString("SpotyPieImgUrl"))
+                    {
+                        var id = metadata.Description.MediaId;
+                        GetLargeImage(NotificationBuilder);
+                        if (id == metadata.Description.MediaId && NotificationBuilder != null)
+                        {
+                            NotificationManager.FromContext(service.ApplicationContext).Notify(NotificationId, NotificationBuilder.Build());
+                        }
+                    }
+                });
 
                 SetNotificationPlaybackState(NotificationBuilder);
 

@@ -109,6 +109,7 @@
     <Compile Include="Models\CustomFragmetManager.cs" />
     <Compile Include="Models\FragmentTransitions.cs" />
     <Compile Include="Monitoring\SystemInfo.cs" />
+    <Compile Include="Music\MusicServiceBinder.cs" />
     <Compile Include="Music\DelayedStopHandler.cs" />
     <Compile Include="Music\Helpers\BitmapHelper.cs" />
     <Compile Include="Music\Helpers\CarHelper.cs" />
