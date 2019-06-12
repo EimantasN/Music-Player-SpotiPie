@@ -8,6 +8,7 @@
     android:background="@drawable/gradient_grey_reverse">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/parent_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="60dp">
@@ -164,7 +165,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/best_artist_subtitle2" />
 
         </android.support.constraint.ConstraintLayout>
-
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"

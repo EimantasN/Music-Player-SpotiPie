@@ -190,19 +190,25 @@ namespace SpotyPie
 
         #region MainFragment
 
-        public async Task<List<Album>> GetRecentAlbumsAsync()
+        public async Task<List<Album>> GetOldAlbumsAsync()
         {
             try
             {
-                List<Album> AlbumData = await _service.GetRecent<Album>();
+                List<Album> AlbumData = await _service.GetOld<Album>();
                 using (Realm realm = Realm.GetInstance())
                 {
-                    foreach (var x in AlbumData)
+                    Realm_Album temp;
+                    foreach (var newAblum in AlbumData)
                     {
-                        realm.Write(() =>
+                        temp = realm.All<Realm_Album>().FirstOrDefault(x => x.Id == newAblum.Id);
+                        if (temp == null)
                         {
-                            realm.Add(new Realm_Album(x), true);
-                        });
+                            realm.Write(() => { realm.Add(new Realm_Album(newAblum, 1)); });
+                        }
+                        else
+                        {
+                            realm.Write(() => { temp.Update(newAblum, 1); });
+                        }
                     }
                 }
                 return AlbumData;
@@ -213,17 +219,63 @@ namespace SpotyPie
             }
         }
 
-        public async Task GetPolularAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
+        public async Task<List<Album>> GetRecentAlbumsAsync()
         {
             try
             {
-                await Task.Delay(750);
-                List<Album> AlbumData = await _service.GetPopular<Album>();
-                activity.RunOnUiThread(() =>
+                List<Album> AlbumData = await _service.GetRecent<Album>();
+                using (Realm realm = Realm.GetInstance())
                 {
-                    action?.Invoke();
-                });
-                RvList.AddList(AlbumData);
+                    Realm_Album temp;
+                    foreach (var newAblum in AlbumData)
+                    {
+                        temp = realm.All<Realm_Album>().FirstOrDefault(x => x.Id == newAblum.Id);
+                        if (temp == null)
+                        {
+                            realm.Write(() => { realm.Add(new Realm_Album(newAblum, 1)); });
+                        }
+                        else
+                        {
+                            realm.Write(() => { temp.Update(newAblum, 1); });
+                        }
+                    }
+                }
+                return AlbumData;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<List<Album>> GetPolularAlbumsAsync()
+        {
+            try
+            {
+                List<Album> AlbumData = await _service.GetPopular<Album>();
+                using (Realm realm = Realm.GetInstance())
+                {
+                    Realm_Album temp;
+                    foreach (var newAblum in AlbumData)
+                    {
+                        temp = realm.All<Realm_Album>().FirstOrDefault(x => x.Id == newAblum.Id);
+                        if (temp == null)
+                        {
+                            realm.Write(() =>
+                            {
+                                realm.Add(new Realm_Album(newAblum, 2));
+                            });
+                        }
+                        else
+                        {
+                            realm.Write(() =>
+                            {
+                                temp.Update(newAblum, 2);
+                            });
+                        }
+                    }
+                }
+                return AlbumData;
             }
             catch (Exception e)
             {
@@ -234,24 +286,6 @@ namespace SpotyPie
         internal async Task<dynamic> GetBindedStatisticsAsync()
         {
             return await _service.GetBindedStatisticsAsync();
-        }
-
-        public async Task GetOldAlbumsAsync(RvList<Album> RvList, Action action, FragmentActivity activity)
-        {
-            try
-            {
-                await Task.Delay(750);
-                List<Album> AlbumData = await _service.GetOld<Album>();
-                InvokeOnMainThread(() =>
-                {
-                    action?.Invoke();
-                });
-                RvList.AddList(AlbumData);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
         }
 
         internal async Task SetSongDurationAsync(int id, int duration)
@@ -487,7 +521,7 @@ namespace SpotyPie
                 {
                     realm.Write(() =>
                     {
-                       //realm.Add<Realm_Songs>(x);
+                        //realm.Add<Realm_Songs>(x);
                     });
                 });
             }

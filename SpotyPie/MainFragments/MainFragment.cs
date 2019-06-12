@@ -83,25 +83,74 @@ namespace SpotyPie
         public override void ForceUpdate()
         {
             LoadRecentData();
+            LoadPopularAlbums();
+            LoadOldAlbums();
 
-            Toggle(false, PlaylistHolder);
-            Toggle(false, BestHolder);
-            Toggle(false, JumpBackHolder);
+            //Toggle(false, PlaylistHolder);
+        }
 
-            if (BestAlbums == null)
-            {
-                BestAlbums = new BaseRecycleView<Album>(this, Resource.Id.best_albums_rv);
-                BestAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
-            }
-
+        private void LoadOldAlbums()
+        {
             if (JumpBack == null)
             {
                 JumpBack = new BaseRecycleView<Album>(this, Resource.Id.albums_old_rv);
                 JumpBack.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
             }
 
-            Task.Run(() => GetAPIService().GetPolularAlbumsAsync(BestAlbums.GetData(), () => { Toggle(true, BestHolder); }, this.Activity));
-            Task.Run(() => GetAPIService().GetOldAlbumsAsync(JumpBack.GetData(), () => { Toggle(true, JumpBackHolder); }, this.Activity));
+            using (Realm realm = Realm.GetInstance())
+            {
+                var albums = realm.All<Realm_Album>().Where(x => x.AlbumListType == 3).ToList();
+                if (albums == null || albums.Count == 0)
+                {
+                    Toggle(false, JumpBackHolder);
+                }
+                else
+                {
+                    List<Album> list = new List<Album>();
+                    foreach (var x in albums.Take(8))
+                    {
+                        list.Add(new Album(x));
+                    }
+                    JumpBack.GetData().AddList(list);
+                }
+            }
+            Task.Run(async () =>
+            {
+                var albums = await GetAPIService().GetOldAlbumsAsync();
+                LoadData(JumpBack.GetData(), albums, () => { Toggle(true, JumpBackHolder); });
+            });
+        }
+
+        private void LoadPopularAlbums()
+        {
+            if (BestAlbums == null)
+            {
+                BestAlbums = new BaseRecycleView<Album>(this, Resource.Id.best_albums_rv);
+                BestAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+            }
+
+            using (Realm realm = Realm.GetInstance())
+            {
+                var albums = realm.All<Realm_Album>().Where(x => x.AlbumListType == 2).ToList();
+                if (albums == null || albums.Count == 0)
+                {
+                    Toggle(false, BestHolder);
+                }
+                else
+                {
+                    List<Album> list = new List<Album>();
+                    foreach (var x in albums.Take(8))
+                    {
+                        list.Add(new Album(x));
+                    }
+                    BestAlbums.GetData().AddList(list);
+                }
+            }
+            Task.Run(async () =>
+            {
+                var albums = await GetAPIService().GetPolularAlbumsAsync();
+                LoadData(BestAlbums.GetData(), albums, () => { Toggle(true, BestHolder); });
+            });
         }
 
         private void LoadRecentData()
@@ -114,7 +163,7 @@ namespace SpotyPie
 
             using (Realm realm = Realm.GetInstance())
             {
-                var albums = realm.All<Realm_Album>().Where(x => x.Type == 3).ToList();
+                List<Realm_Album> albums = realm.All<Realm_Album>().Where(x => x.AlbumListType == 1).ToList();
                 if (albums == null || albums.Count == 0)
                 {
                     Toggle(false, RecentHolder);
@@ -131,16 +180,15 @@ namespace SpotyPie
             }
             Task.Run(async () =>
             {
-                await Task.Delay(750);
-                var albums = await GetAPIService().GetRecentAlbumsAsync();
-                LoadData(RecentAlbums.GetData(), albums, () => { Toggle(true, RecentHolder); });
+                List<Album> Albums = await GetAPIService().GetRecentAlbumsAsync();
+                LoadData(RecentAlbums.GetData(), Albums, () => { Toggle(true, RecentHolder); });
             });
         }
 
-        private void LoadData(RvList<Album> list, List<Album> AlbumsData, Action action)
+        private void LoadData(RvList<Album> list, List<Album> albumsData, Action action)
         {
             RunOnUiThread(() => { action?.Invoke(); });
-            list.AddList(AlbumsData);
+            list.AddList(albumsData);
         }
 
         public override void ReleaseData()
@@ -166,12 +214,12 @@ namespace SpotyPie
 
         public override int GetParentView()
         {
-            throw new NotImplementedException();
+            return Resource.Id.parent_view;
         }
 
         public override void LoadFragment(dynamic switcher)
         {
-            throw new NotImplementedException();
+            return;
         }
     }
 }

@@ -32,12 +32,14 @@ namespace Mobile_Api.Models
 
         public int Type { get; set; }
 
+        public int AlbumListType { get; set; }
+
         public Realm_Album()
         {
 
         }
 
-        public Realm_Album(Album x)
+        public Realm_Album(Album x, int type)
         {
             Id = x.Id;
             SpotifyId = x.SpotifyId;
@@ -52,7 +54,23 @@ namespace Mobile_Api.Models
             LastActiveTime = x.LastActiveTime;
             Tracks = x.Tracks;
             Type = (int)x.GetModelType();
+            AlbumListType = type;
         }
 
+        public void Update(Album x, int type)
+        {
+            SpotifyId = x.SpotifyId;
+            LargeImage = x.LargeImage;
+            MediumImage = x.MediumImage;
+            SmallImage = x.SmallImage;
+            Name = x.Name;
+            ReleaseDate = x.ReleaseDate;
+            Popularity = x.Popularity;
+            IsPlayable = x.IsPlayable;
+            LastActiveTime = x.LastActiveTime;
+            Tracks = x.Tracks;
+            Type = (int)x.GetModelType();
+            AlbumListType = type;
+        }
     }
 }
