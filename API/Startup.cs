@@ -34,7 +34,7 @@ namespace API
                 options.SwaggerDoc("v1",
                     new Info
                     {
-                        Title = "SpotyPie API V 1.0",
+                        Title = "SpotyPie API V 1.1",
                         Version = "v1",
                         Description = "For development purpose",
                         TermsOfService = "WTFPL",
