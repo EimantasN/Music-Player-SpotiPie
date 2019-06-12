@@ -3,10 +3,14 @@ using Android.Support.V4.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
+using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using Square.Picasso;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static Android.Views.ViewGroup;
 
@@ -110,10 +114,43 @@ namespace SpotyPie
                 RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
                 RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 RvData.DisableScroolNested();
-                RvData.GetData().AddList(new System.Collections.Generic.List<Songs>() { null });
+                LoadAlbumSongs();
             }
+        }
 
-            Task.Run(async () => await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>(), RvData.GetData(), () => { }));
+        private void LoadAlbumSongs()
+        {
+            Album CurrentAlbum = GetModel<Album>();
+            DataBaseSongLoad(CurrentAlbum);
+            Task.Run(async () =>
+            {
+                var songs = await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>());
+                RunOnUiThread(() =>
+                {
+                    RvData.GetData().AddList(songs);
+                });
+            });
+        }
+
+        private void DataBaseSongLoad(Album currentAlbum)
+        {
+            using (Realm realm = Realm.GetInstance())
+            {
+                var dbAlbums = realm.All<Realm_Songs>().Where(x => x.AlbumId == currentAlbum.Id).ToList();
+                if (dbAlbums != null && dbAlbums.Count != 0)
+                {
+                    List<Songs> albums = new List<Songs>();
+                    foreach (var x in dbAlbums)
+                    {
+                        albums.Add(new Songs(x));
+                    }
+                    RvData.GetData().AddList(albums);
+                }
+                else
+                {
+                    RvData.GetData().AddList(new List<Songs>() { null });
+                }
+            }
         }
 
         public override void ReleaseData()

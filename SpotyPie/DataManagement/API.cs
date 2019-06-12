@@ -302,25 +302,41 @@ namespace SpotyPie
 
         #region AlbumView
 
-        internal async Task GetSongsByAlbumAsync(Album currentALbum, RvList<Songs> rvData, Action p)
+        internal async Task<List<Songs>> GetSongsByAlbumAsync(Album currentALbum)
         {
             try
             {
                 if (currentALbum == null)
                     throw new Exception("Album can't be null");
-                List<Songs> songs = await GetSongsByAlbumAsync(currentALbum);
-                InvokeOnMainThread(() =>
+
+                Album album = await GetAlbumByIdAsync(currentALbum.Id);
+                using (Realm realm = Realm.GetInstance())
                 {
-                    rvData.AddList(songs);
-                    if (p != null)
+                    Realm_Songs temp;
+                    foreach (var song in album.Songs)
                     {
-                        p.Invoke();
+                        temp = realm.All<Realm_Songs>().FirstOrDefault(x => x.Id == song.Id);
+                        if (temp == null)
+                        {
+                            realm.Write(() =>
+                            {
+                                realm.Add(new Realm_Songs(song));
+                            });
+                        }
+                        else
+                        {
+                            realm.Write(() =>
+                            {
+                                temp.Update(song);
+                            });
+                        }
                     }
-                });
+                }
+                return album.Songs;
             }
             catch (Exception e)
             {
-
+                throw e;
             }
         }
 
@@ -357,19 +373,19 @@ namespace SpotyPie
         #endregion
 
         #region Getters
-        private async Task<List<Songs>> GetSongsByAlbumAsync(Album al)
-        {
-            if (_Albums == null)
-                _Albums = new List<Album>() { al };
+        //private async Task<List<Songs>> GetSongsByAlbumAsync(Album al)
+        //{
+        //    if (_Albums == null)
+        //        _Albums = new List<Album>() { al };
 
-            if (al.Songs != null && al.Songs.Count != 0)
-                return al.Songs;
-            else
-            {
-                al = await GetAlbumByIdAsync(al.Id);
-                return al.Songs;
-            }
-        }
+        //    if (al.Songs != null && al.Songs.Count != 0)
+        //        return al.Songs;
+        //    else
+        //    {
+        //        al = await GetAlbumByIdAsync(al.Id);
+        //        return al.Songs;
+        //    }
+        //}
 
         private async Task<Album> GetAlbumByIdAsync(int id)
         {
