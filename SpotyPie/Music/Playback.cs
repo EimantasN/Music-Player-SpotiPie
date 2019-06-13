@@ -251,6 +251,7 @@ namespace SpotyPie.Music
 
         public void SeekTo(int position)
         {
+            position = MediaPlayer.Duration * position / 100;
             if (MediaPlayer == null)
             {
                 currentPosition = position;
@@ -375,13 +376,16 @@ namespace SpotyPie.Music
             //Toast.MakeText(service.ApplicationContext, "onPrepared from MediaPlayer", ToastLength.Long).Show();
 
             ConfigMediaPlayerState();
+            IsUpdating = false;
             MediaPlayerPositionWacher();
+            Callback?.OnDurationChanged(MediaPlayer.Duration);
         }
 
         private void MediaPlayerPositionWacher()
         {
             new Thread(() =>
             {
+                int audioSession = MediaPlayer.AudioSessionId;
                 if (MediaPlayer != null && MediaPlayer.IsPlaying && !IsUpdating)
                 {
                     IsUpdating = true;
@@ -391,6 +395,9 @@ namespace SpotyPie.Music
                     int sleepTime;
                     while (MediaPlayer.IsPlaying)
                     {
+                        if (MediaPlayer.AudioSessionId != audioSession)
+                            break;
+
                         try
                         {
                             Progress = (int)(MediaPlayer.CurrentPosition * 100) / MediaPlayer.Duration;
@@ -415,12 +422,13 @@ namespace SpotyPie.Music
                         }
                     }
                 }
+                IsUpdating = false;
             }).Start();
         }
 
         public void OnSeekComplete(MediaPlayer mp)
         {
-            Toast.MakeText(service.ApplicationContext, "OnSeekComplete", ToastLength.Long).Show();
+            //Toast.MakeText(service.ApplicationContext, "OnSeekComplete", ToastLength.Long).Show();
 
             currentPosition = mp.CurrentPosition;
             if (State == Android.Support.V4.Media.Session.PlaybackStateCompat.StateBuffering)
@@ -468,7 +476,8 @@ namespace SpotyPie.Music
 
         public interface ICallback
         {
-            void OnPositionChanged(int miliseconds, TimeSpan currentTime);
+            void OnDurationChanged(int miliseconds);
+            void OnPositionChanged(int progress, TimeSpan currentTime);
             void OnCompletion();
             void OnPlaybackStatusChanged(int state);
             void OnPlaybackMetaDataChanged(Android.Support.V4.Media.MediaMetadataCompat meta);

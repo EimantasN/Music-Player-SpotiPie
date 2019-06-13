@@ -23,6 +23,8 @@ namespace SpotyPie.Player
 {
     public class Player : FragmentBase, View.IOnTouchListener, IMusicPlayerUiControls, Playback.ICallback, IServiceConnection
     {
+        private bool IsBinded = false;
+
         protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
         public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Player;
 
@@ -148,6 +150,7 @@ namespace SpotyPie.Player
             PlayerPlaylistName = RootView.FindViewById<TextView>(Resource.Id.playlist_name);
 
             CurretSongTimeText = RootView.FindViewById<TextView>(Resource.Id.current_song_time);
+            CurretSongTimeText.Text = "00:00";
             TotalSongTimeText = RootView.FindViewById<TextView>(Resource.Id.total_song_time);
             TotalSongTimeText.Visibility = ViewStates.Invisible;
 
@@ -244,7 +247,7 @@ namespace SpotyPie.Player
                     PlayerSongName.Text = song.Name;
                     PlayerArtistName.Text = song.ArtistName;
 
-                    CurretSongTimeText.Text = "0.00";
+                    CurretSongTimeText.Text = "00:00";
                     SongTimeSeekBar.Progress = 0;
                     PlayerSongName.Text = song.Name;
 
@@ -282,9 +285,9 @@ namespace SpotyPie.Player
 
         public override void ForceUpdate()
         {
-            //if (!IsMyServiceRunning(typeof(MusicService)))
+            //if (!IsMyServiceRunning(typeof(Music.MusicService)))
             //{
-            //    this.Activity.StartService(new Intent(this.Activity, typeof(MusicService)));
+            //    this.Activity.StartService(new Intent(this.Activity, typeof(Music.MusicService)));
             //}
 
             //Intent intent = new Intent(this.Activity, typeof(MusicService));
@@ -320,6 +323,11 @@ namespace SpotyPie.Player
             Realm?.Dispose();
             Realm = null;
             ImgHolder.SetOnTouchListener(null);
+
+            if (IsBinded)
+            {
+                GetActivity().UnbindService(ServiceConnection);
+            }
         }
 
         public override void LoadFragment(dynamic switcher)
@@ -458,7 +466,7 @@ namespace SpotyPie.Player
             {
                 Activity.RunOnUiThread(() =>
                 {
-                    CurretSongTimeText.Text = "0:00";
+                    CurretSongTimeText.Text = "00:00";
                     SongTimeSeekBar.Progress = 0;
                 });
             });
@@ -544,13 +552,13 @@ namespace SpotyPie.Player
 
         private void SongTimeSeekBar_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-            //if (MusicService?.MusicPlayer?.Duration != null)
-            //    CurrentSongPosition = (int)(MusicService.MusicPlayer.Duration * e.Progress / 100);
         }
 
         private void SongTimeSeekBar_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
-            //MusicService?.SeekToPlayer(CurrentSongPosition);
+            Intent intent = new Intent("com.spotypie.adnroid.musicservice.seek");
+            intent.PutExtra("PLAYER_SEEK",  e.SeekBar.Progress.ToString());
+            GetActivity().SendBroadcast(intent);
             SeekActive = false;
         }
 
@@ -611,6 +619,7 @@ namespace SpotyPie.Player
         #endregion
 
         #region Lisiners
+
         public bool OnTouch(View v, MotionEvent e)
         {
             switch (e.Action)
@@ -673,11 +682,26 @@ namespace SpotyPie.Player
             }
         }
 
+        #endregion
+
+        #region MediaSession Callback
+
+        public void OnDurationChanged(int miliseconds)
+        {
+            RunOnUiThread(() =>
+            {
+                TotalSongTimeText.Text = new TimeSpan(0,0,0,0, miliseconds).ToString(@"mm\:ss");
+                TotalSongTimeText.Visibility = ViewStates.Visible;
+            });
+        }
+
         public void OnPositionChanged(int miliseconds, TimeSpan currentTime)
         {
             RunOnUiThread(() =>
             {
-                Toast.MakeText(this.Context, $"{miliseconds} {currentTime.ToString(@"mm\:ss")}", ToastLength.Short).Show();
+                SongTimeSeekBar.Progress = miliseconds;
+                CurretSongTimeText.Text = currentTime.ToString(@"mm\:ss");
+                //Toast.MakeText(this.Context, $"{miliseconds} {currentTime.ToString(@"mm\:ss")}", ToastLength.Short).Show();
             });
         }
 
@@ -701,16 +725,26 @@ namespace SpotyPie.Player
             throw new NotImplementedException();
         }
 
+        #endregion
+
+        #region Music service connection
+
         public void OnServiceConnected(ComponentName name, IBinder service)
         {
-            var binder = service as Music.MusicServiceBinder;
-            binder.SetMusicServiceUpdateCallback(this);
+            if (!IsBinded)
+            {
+                var binder = service as Music.MusicServiceBinder;
+                binder.SetMusicServiceUpdateCallback(this);
+                IsBinded = true;
+            }
         }
 
         public void OnServiceDisconnected(ComponentName name)
         {
+            GetActivity().ShowMessage("Service unbinded");
             //throw new NotImplementedException();
         }
+
         #endregion
     }
 }

@@ -529,5 +529,10 @@ namespace SpotyPie.Music
         {
             CallBack = player;
         }
+
+        public void OnDurationChanged(int miliseconds)
+        {
+            CallBack?.OnDurationChanged(miliseconds);
+        }
     }
 }

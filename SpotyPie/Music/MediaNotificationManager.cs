@@ -31,6 +31,7 @@ namespace SpotyPie.Music
         public const string ActionNext = "com.spotypie.adnroid.musicservice.next";
         public const string ActionFavorite = "com.spotypie.adnroid.musicservice.favorite";
         public const string ActionTrash = "com.spotypie.adnroid.musicservice.trash";
+        public const string ActionSeek = "com.spotypie.adnroid.musicservice.seek";
 
         readonly MusicService service;
         MediaSessionCompat.Token sessionToken;
@@ -48,6 +49,7 @@ namespace SpotyPie.Music
         private PendingIntent NextIntent { get; set; }
         private PendingIntent FavoriteIntent { get; set; }
         private PendingIntent TrashIntent { get; set; }
+        private PendingIntent SeekIntent { get; set; }
 
         MediaController mCb = new MediaController();
 
@@ -73,6 +75,7 @@ namespace SpotyPie.Music
             NextIntent = PendingIntent.GetBroadcast(service, RequestCode, new Intent(ActionNext).SetPackage(pkg), PendingIntentFlags.CancelCurrent);
             FavoriteIntent = PendingIntent.GetBroadcast(service, RequestCode, new Intent(ActionFavorite).SetPackage(pkg), PendingIntentFlags.CancelCurrent);
             TrashIntent = PendingIntent.GetBroadcast(service, RequestCode, new Intent(ActionTrash).SetPackage(pkg), PendingIntentFlags.CancelCurrent);
+            SeekIntent = PendingIntent.GetBroadcast(service, RequestCode, new Intent(ActionSeek).SetPackage(pkg), PendingIntentFlags.CancelCurrent);
 
             notificationManager.CancelAll();
 
@@ -141,6 +144,7 @@ namespace SpotyPie.Music
                 filter.AddAction(ActionPrev);
                 filter.AddAction(ActionFavorite);
                 filter.AddAction(ActionTrash);
+                filter.AddAction(ActionSeek);
                 service.RegisterReceiver(this, filter);
                 Notification notification = CreateNotification();
                 if (notification != null)
@@ -201,12 +205,21 @@ namespace SpotyPie.Music
                 case ActionTrash:
                     transportControls?.SendCustomAction(ActionTrash, null);
                     break;
+                case ActionSeek:
+                    {
+                        var data = intent.GetStringExtra("PLAYER_SEEK");
+                        if (!string.IsNullOrEmpty(data))
+                        {
+                            transportControls?.SeekTo(int.Parse(data));
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
         }
 
-        void UpdateSessionToken()
+        void UpdateSessionToken(bool ignore = false)
         {
             var freshToken = service.SessionToken;
             if (sessionToken == null || sessionToken != freshToken)
@@ -218,7 +231,7 @@ namespace SpotyPie.Music
                 sessionToken = freshToken;
                 controller = new MediaControllerCompat(service, sessionToken);
                 transportControls = controller.GetTransportControls();
-                if (started)
+                if (started || ignore)
                 {
                     controller.RegisterCallback(mCb);
                 }

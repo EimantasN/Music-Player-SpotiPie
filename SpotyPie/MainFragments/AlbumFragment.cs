@@ -125,10 +125,7 @@ namespace SpotyPie
             Task.Run(async () =>
             {
                 var songs = await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>());
-                RunOnUiThread(() =>
-                {
-                    RvData.GetData().AddList(songs);
-                });
+                RvData.GetData().AddList(songs);
             });
         }
 

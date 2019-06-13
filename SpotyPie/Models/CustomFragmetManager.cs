@@ -96,7 +96,8 @@ namespace SpotyPie.Models
                 var transaction = Activity.SupportFragmentManager.BeginTransaction();
                 if (transaction != null)
                 {
-                    FragmentTransitions.SetCustomTransitions(ref transaction, fragment);
+                    transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitEnterMask);
+                    //FragmentTransitions.SetCustomTransitions(ref transaction, fragment);
                     transaction.Replace(layoutId, fragment);
                     //transaction.AddToBackStack(null);
                     transaction.Commit();

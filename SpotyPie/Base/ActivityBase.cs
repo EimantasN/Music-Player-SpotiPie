@@ -310,7 +310,7 @@ namespace SpotyPie.Base
                 var transaction = fragmentManager.BeginTransaction();
                 transaction.Remove(fragment);
                 transaction.Commit();
-                transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitNone);
+                transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitExitMask);
                 transaction = null;
                 fragment = null;
             }
