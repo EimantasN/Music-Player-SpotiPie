@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Views;
 using Mobile_Api.Models;
+using Mobile_Api.Models.Realm;
 using Realms;
 using SpotyPie.Enums.Activitys;
 using System;
@@ -75,15 +76,11 @@ namespace SpotyPie
             Task.Run(() =>
             {
                 Realm realm = Realm.GetInstance();
-                RemoveOldSongList(realm);
-                songs[position].IsPlaying = true;
-                realm.Write(() =>
-                {
-                    foreach (var x in songs)
-                    {
-                        realm.Add(new Realm_Songs(x));
-                    }
-                });
+                ApplicationSongList songList = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
+                if (songList == null)
+                    return;
+
+                songList.Rewrite(realm, songs, position);
                 realm.Dispose();
 
                 Activity.RunOnUiThread(() =>
@@ -91,13 +88,6 @@ namespace SpotyPie
                     Activity.SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.play"));
                 });
             });
-        }
-
-        private void RemoveOldSongList(Realm realm = null)
-        {
-            if(realm == null)
-                realm = Realm.GetInstance();
-            realm.Write(() => { realm.RemoveAll<Realm_Songs>(); });
         }
 
         public void SetCurrentSongList(List<Songs> songs)
@@ -125,20 +115,6 @@ namespace SpotyPie
             {
                 GetPlayer().PlayerPlaylistName.Text = Current_Album.Name;
             });
-        }
-
-        public void Player_visiblibity_toggle()
-        {
-            if (PlayerIsVisible)
-            {
-                PlayerIsVisible = false;
-                Activity.TogglePlayer(false);
-            }
-            else
-            {
-                Activity.TogglePlayer(true);
-                PlayerIsVisible = true;
-            }
         }
 
         internal void Dispose()
@@ -176,11 +152,11 @@ namespace SpotyPie
         {
             if (show)
             {
-                this.Activity.bottomNavigation.Visibility = ViewStates.Visible;
+                this.Activity.BottomNavigation.Visibility = ViewStates.Visible;
             }
             else
             {
-                this.Activity.bottomNavigation.Visibility = ViewStates.Gone;
+                this.Activity.BottomNavigation.Visibility = ViewStates.Gone;
             }
         }
 

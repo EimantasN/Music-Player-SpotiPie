@@ -6,7 +6,6 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
-using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.Enums.Activitys;
@@ -15,7 +14,6 @@ using SpotyPie.MainFragments;
 using SpotyPie.Music;
 using System;
 using System.Threading.Tasks;
-using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie
 {
@@ -43,7 +41,7 @@ namespace SpotyPie
         private ArtistFragment ArtistFragment;
 
 
-        public BottomNavigationView bottomNavigation;
+        public BottomNavigationView BottomNavigation;
         public ImageButton PlayToggle;
 
         public TextView ArtistName;
@@ -51,7 +49,7 @@ namespace SpotyPie
         public ImageButton BackHeaderButton;
         public ImageButton OptionsHeaderButton;
 
-        public int widthInDp = 0;
+        public int WidthInDp = 0;
         public int HeightInDp = 0;
         public bool PlayerVisible = false;
         public ImageButton ShowPlayler;
@@ -71,15 +69,15 @@ namespace SpotyPie
             base.InitView();
             APPSTATE = new Current_state(this);
 
-            var layout = FindViewById<ConstraintLayout>(Resource.Id.MainContainer);
+            ConstraintLayout layout = FindViewById<ConstraintLayout>(Resource.Id.MainContainer);
             GradientBG.SetBacground(layout);
 
             HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
 
-            widthInDp = Resources.DisplayMetrics.WidthPixels;
+            WidthInDp = Resources.DisplayMetrics.WidthPixels;
             HeightInDp = Resources.DisplayMetrics.HeightPixels;
 
-            bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
+            BottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
 
             ActionName = FindViewById<TextView>(Resource.Id.textView);
 
@@ -114,10 +112,20 @@ namespace SpotyPie
 
             BackHeaderButton.Click += BackHeaderButton_Click;
 
-            bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
+            BottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragmentInner(Main.Home, AddToBackButtonStack: false);
 
             this.StartService(new Intent(this, typeof(MusicService)));
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+        }
+
+        public override void OnBackPressed()
+        {
+            base.OnBackPressed();
         }
 
         private void LoadCurrentState()
@@ -148,11 +156,6 @@ namespace SpotyPie
             });
         }
 
-        public override void OnBackPressed()
-        {
-            base.OnBackPressed();
-        }
-
         private void BackHeaderButton_Click(object sender, EventArgs e)
         {
             try
@@ -168,11 +171,6 @@ namespace SpotyPie
                 //    .Replace(Resource.Id.content_frame, MainFragment)
                 //    .Commit();
             }
-        }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
         }
 
         private void PlayToggle_Click(object sender, EventArgs e)
@@ -226,7 +224,6 @@ namespace SpotyPie
         public override void LoadBaseFragment()
         {
             base.LoadBaseFragment();
-            //LoadFragmentInner(LastMainFragment);
         }
 
         public override void LoadFragment(dynamic switcher, string jsonModel = null)
@@ -288,11 +285,6 @@ namespace SpotyPie
             }
         }
 
-        public void RemoveSplash(FragmentBase fr)
-        {
-            SupportFragmentManager.BeginTransaction().Remove(fr).CommitAllowingStateLoss();
-        }
-
         public void LoadAlbum(Album album)
         {
             LoadFragmentInner(HomePage.Album, JsonConvert.SerializeObject(album));
@@ -308,61 +300,6 @@ namespace SpotyPie
         public void LoadArtist(Artist artist)
         {
             LoadFragmentInner(HomePage.Artist, JsonConvert.SerializeObject(artist));
-        }
-
-        public void ToogleSecondLayer(bool show)
-        {
-            //SHOW
-            if (show)
-            {
-                LastViewLayer = CurrentViewLayer;
-                CurrentViewLayer = 2;
-                HideOthers();
-            }
-            else
-            {
-                GetFManager().GetCurrentFragment()?.ForceUpdate();
-            }
-        }
-
-        public void TogglePlayer(bool show)
-        {
-            LoadFragmentInner(HomePage.Player);
-        }
-
-        public void ToogleThirdLayer(bool show)
-        {
-            //SHOW
-            if (show)
-            {
-                LastViewLayer = CurrentViewLayer;
-                CurrentViewLayer = 3;
-                HideOthers();
-            }
-            else
-            {
-            }
-        }
-
-        public void HideOthers()
-        {
-            if (CurrentViewLayer != 2)
-                ToogleSecondLayer(false);
-
-            if (CurrentViewLayer != 3)
-                ToogleThirdLayer(false);
-
-            if (CurrentViewLayer != 4)
-                TogglePlayer(false);
-
-            if (CurrentViewLayer == 2)
-            {
-                bottomNavigation.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                bottomNavigation.Visibility = ViewStates.Gone;
-            }
         }
 
         public override dynamic GetInstance()
@@ -383,16 +320,16 @@ namespace SpotyPie
             switch (screen)
             {
                 case LayoutScreenState.FullScreen:
-                    if (bottomNavigation.Visibility == ViewStates.Visible)
+                    if (BottomNavigation.Visibility == ViewStates.Visible)
                     {
-                        bottomNavigation.Visibility = ViewStates.Gone;
+                        BottomNavigation.Visibility = ViewStates.Gone;
                         MiniPlayer.Visibility = ViewStates.Gone;
                     }
                     break;
                 case LayoutScreenState.Holder:
-                    if (bottomNavigation.Visibility == ViewStates.Gone)
+                    if (BottomNavigation.Visibility == ViewStates.Gone)
                     {
-                        bottomNavigation.Visibility = ViewStates.Visible;
+                        BottomNavigation.Visibility = ViewStates.Visible;
                         MiniPlayer.Visibility = ViewStates.Visible;
                     }
                     break;

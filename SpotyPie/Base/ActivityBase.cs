@@ -5,11 +5,14 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
+using Mobile_Api.Models.Realm;
 using Realms;
 using SpotyPie.Enums;
 using SpotyPie.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 
 namespace SpotyPie.Base
@@ -19,6 +22,7 @@ namespace SpotyPie.Base
         private static int FrameLayoutId { get; set; } = 100000;
 
         public abstract NavigationColorState NavigationBtnColorState { get; set; }
+
         public abstract LayoutScreenState ScreenState { get; set; }
 
         public abstract int LayoutId { get; set; }
@@ -54,13 +58,23 @@ namespace SpotyPie.Base
 
         public SupportFragmentManager mSupportFragmentManager;
 
+        public EventArgs e = null;
+
+        private Realm Realm;
+
+        private ApplicationSongList SongList;
+
         public delegate void DatabaseInfoHandler(dynamic databaseInfo, EventArgs e);
 
         public DatabaseInfoHandler Handler;
 
-        public EventArgs e = null;
+        public delegate void SongListChangeHandler(List<Realm_Songs> songListInfo, EventArgs e);
 
-        private Realm realm;
+        public SongListChangeHandler SongListHandler;
+
+        public delegate void CurrentSongStateChangeHandler(Realm_Songs currentSong, EventArgs e);
+
+        public DatabaseInfoHandler CurrentSongHandler;
 
         public abstract dynamic GetInstance();
 
@@ -82,11 +96,56 @@ namespace SpotyPie.Base
 
         private void InitRealChangeLisiner()
         {
-            if (realm == null || realm.IsClosed)
+            if (Realm == null || Realm.IsClosed)
             {
-                realm = Realm.GetInstance();
-                realm.RealmChanged += Realm_RealmChanged;
+                Realm = Realm.GetInstance();
+                Realm.RealmChanged += Realm_RealmChanged;
+
+                Realm.Write(() => { Realm.RemoveAll<ApplicationSongList>(); });
+                if (SongList == null)
+                {
+                    Realm.Write(() => { Realm.Add(new ApplicationSongList()); });
+                    SongList = Realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
+                }
+                SongList.PropertyChanged += SongList_PropertyChanged;
             }
+        }
+
+        private void SongList_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "CurrentCount":
+                    {
+                        break;
+                    }
+                case "LastCount":
+                    {
+                        break;
+                    }
+                case "PlayingSong":
+                    {
+                        CurrentSongHandler?.Invoke(new Songs(SongList.PlayingSong), e);
+                        break;
+                    }
+                case "IsPlaying":
+                    {
+                        break;
+                    }
+                case "UpdatedAt":
+                    {
+                        break;
+                    }
+                case "Songs":
+                    {
+                        break;
+                    }
+            }
+        }
+
+        private void Song_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            CurrentSongHandler?.Invoke(sender, e);
         }
 
         private void Realm_RealmChanged(object sender, EventArgs e)
@@ -103,11 +162,11 @@ namespace SpotyPie.Base
 
         protected override void OnStop()
         {
-            if (realm != null)
+            if (Realm != null)
             {
-                realm.RealmChanged -= Realm_RealmChanged;
-                if (!realm.IsClosed)
-                    realm.Dispose();
+                Realm.RealmChanged -= Realm_RealmChanged;
+                if (!Realm.IsClosed)
+                    Realm.Dispose();
             }
             base.OnStop();
         }

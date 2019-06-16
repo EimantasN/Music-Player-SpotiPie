@@ -89,34 +89,40 @@ namespace SpotyPie.Player
 
         private void SendSystemInfoData(dynamic m, EventArgs e)
         {
-            if (Realm == null)
-                Realm = Realm.GetInstance();
+            //if (Realm == null)
+            //    Realm = Realm.GetInstance();
 
-            var songList = Realm.All<Realm_Songs>().AsQueryable().ToList();
+            //var songList = Realm.All<Realm_Songs>().AsQueryable().ToList();
 
-            if (RealObject != null)
-            {
-                RealObject.PropertyChanged -= RealObject_PropertyChanged;
-            }
-            if (songList.Count == 1)
-                RealObject = (Realm_Songs)songList[0];
-            else
-            {
-                foreach (var x in songList)
-                {
-                    if (x.IsPlaying == true)
-                    {
-                        RealObject = x;
-                        break;
-                    }
-                }
-                if (RealObject == null)
-                {
-                    RealObject = songList[0];
-                }
-            }
-            RealObject.PropertyChanged += RealObject_PropertyChanged;
+            //if (RealObject != null)
+            //{
+            //    RealObject.PropertyChanged -= RealObject_PropertyChanged;
+            //}
+            //if (songList.Count == 1)
+            //    RealObject = (Realm_Songs)songList[0];
+            //else
+            //{
+            //    foreach (var x in songList)
+            //    {
+            //        if (x.IsPlaying == true)
+            //        {
+            //            RealObject = x;
+            //            break;
+            //        }
+            //    }
+            //    if (RealObject == null)
+            //    {
+            //        RealObject = songList[0];
+            //    }
+            //}
+            //RealObject.PropertyChanged += RealObject_PropertyChanged;
             Start(RealObject);
+        }
+
+
+        private void SongChanged(dynamic currentSong, EventArgs e)
+        {
+            Start(new Realm_Songs((Songs)currentSong));
         }
 
         protected override void InitView()
@@ -124,6 +130,8 @@ namespace SpotyPie.Player
             ServiceConnection = this;
 
             RealmInit();
+
+            GetActivity().CurrentSongHandler += SongChanged;
 
             GetActivity().Handler += SendSystemInfoData;
 
@@ -326,7 +334,7 @@ namespace SpotyPie.Player
 
             if (IsBinded)
             {
-                GetActivity().UnbindService(ServiceConnection);
+                //GetActivity().UnbindService(ServiceConnection);
             }
         }
 
@@ -377,7 +385,6 @@ namespace SpotyPie.Player
 
         private void HidePlayerButton_Click(object sender, EventArgs e)
         {
-            GetState().Player_visiblibity_toggle();
         }
 
         private void PreviewSong_Click(object sender, EventArgs e)
@@ -466,8 +473,8 @@ namespace SpotyPie.Player
             {
                 Activity.RunOnUiThread(() =>
                 {
-                    CurretSongTimeText.Text = "00:00";
-                    SongTimeSeekBar.Progress = 0;
+                    //CurretSongTimeText.Text = "00:00";
+                    //SongTimeSeekBar.Progress = 0;
                 });
             });
         }
@@ -557,7 +564,7 @@ namespace SpotyPie.Player
         private void SongTimeSeekBar_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
             Intent intent = new Intent("com.spotypie.adnroid.musicservice.seek");
-            intent.PutExtra("PLAYER_SEEK",  e.SeekBar.Progress.ToString());
+            intent.PutExtra("PLAYER_SEEK", e.SeekBar.Progress.ToString());
             GetActivity().SendBroadcast(intent);
             SeekActive = false;
         }
@@ -690,7 +697,7 @@ namespace SpotyPie.Player
         {
             RunOnUiThread(() =>
             {
-                TotalSongTimeText.Text = new TimeSpan(0,0,0,0, miliseconds).ToString(@"mm\:ss");
+                TotalSongTimeText.Text = new TimeSpan(0, 0, 0, 0, miliseconds).ToString(@"mm\:ss");
                 TotalSongTimeText.Visibility = ViewStates.Visible;
             });
         }

@@ -30,16 +30,16 @@
     <AndroidSigningKeyPass>password</AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
     <AndroidSupportedAbis />
@@ -51,7 +51,7 @@
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidUseAapt2>false</AndroidUseAapt2>
     <AndroidLinkTool>proguard</AndroidLinkTool>
-    <AndroidDexTool>dx</AndroidDexTool>
+    <AndroidDexTool>d8</AndroidDexTool>
     <AndroidHttpClientHandlerType>System.Net.Http.HttpClientHandler</AndroidHttpClientHandlerType>
     <EnableProguard>false</EnableProguard>
   </PropertyGroup>
@@ -109,7 +109,6 @@
     <Compile Include="Models\CustomFragmetManager.cs" />
     <Compile Include="Models\FragmentTransitions.cs" />
     <Compile Include="Monitoring\SystemInfo.cs" />
-    <Compile Include="Music\MusicServiceBinder.cs" />
     <Compile Include="Music\DelayedStopHandler.cs" />
     <Compile Include="Music\Helpers\BitmapHelper.cs" />
     <Compile Include="Music\Helpers\CarHelper.cs" />
@@ -124,6 +123,7 @@
     <Compile Include="Music\Models\MutableMediaMetadata.cs" />
     <Compile Include="Music\Models\MusicProvider.cs" />
     <Compile Include="Music\MusicService.cs" />
+    <Compile Include="Music\MusicServiceBinder.cs" />
     <Compile Include="Music\PackageValidator.cs" />
     <Compile Include="Music\Playback.cs" />
     <Compile Include="Music\SpotyPieCallback.cs" />
@@ -844,6 +844,27 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_delete_forever_black_24.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_delete_forever_black_36.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_delete_forever_black_48.png" />
+    <AndroidResource Include="Resources\drawable\baseline_loop_24.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\baseline_loop_black_18.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\baseline_loop_black_24.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\baseline_loop_black_36.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\baseline_loop_black_48.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\baseline_loop_black_18.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\baseline_loop_black_24.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\baseline_loop_black_36.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\baseline_loop_black_48.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\baseline_loop_black_18.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\baseline_loop_black_24.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\baseline_loop_black_36.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\baseline_loop_black_48.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\baseline_loop_black_18.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\baseline_loop_black_24.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\baseline_loop_black_36.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\baseline_loop_black_48.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_loop_black_18.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_loop_black_24.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_loop_black_36.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_loop_black_48.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

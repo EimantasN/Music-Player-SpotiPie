@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Android.Support.V4.Media;
 using Mobile_Api.Models;
+using Mobile_Api.Models.Realm;
 using Realms;
 
 namespace SpotyPie.Music.Models
@@ -36,24 +37,12 @@ namespace SpotyPie.Music.Models
 
         public string GetCurrentSong()
         {
-            Realm realm = Realm.GetInstance();
-            var song = realm.All<Realm_Songs>().FirstOrDefault(x => x.IsPlaying == true);
-            if (song == null)
+            using (Realm realm = Realm.GetInstance())
             {
-                song = realm.All<Realm_Songs>().FirstOrDefault();
-                if (CurrentSong == null)
-                {
-                    CurrentSong = new Songs();
-                }
-                CurrentSong = new Songs(song);
+                ApplicationSongList songList = realm.All<ApplicationSongList>().First(x => x.Id == 1);
+                CurrentSong = new Songs(songList.GetCurrentSong());
                 BuildMetadata();
             }
-            else
-            {
-                CurrentSong = new Songs(song);
-                BuildMetadata();
-            }
-            realm.Dispose();
             return CurrentSong.Id.ToString();
         }
 
@@ -86,69 +75,76 @@ namespace SpotyPie.Music.Models
 
         public async Task ChangeSongAsync(bool Foward)
         {
-            Realm realm = Realm.GetInstance();
-            try
+            using (Realm realm = Realm.GetInstance())
             {
-                var Current_Song_List = realm.All<Realm_Songs>().AsQueryable().ToList();
-                if (Current_Song_List == null) return;
-
-                for (int i = 0; i < Current_Song_List.Count; i++)
+                ApplicationSongList songList = realm.All<ApplicationSongList>().First(x => x.Id == 1);
+                try
                 {
-                    if (Current_Song_List[i].IsPlaying)
-                    {
-                        UpdateCurrentSong(Current_Song_List[i], false);
-                        if (Foward)
-                        {
-                            if ((i + 1) == Current_Song_List.Count)
-                            {
-                                var r_song = await SongListEndCheckForAutoPlayAsync();
+                    IList<Realm_Songs> CurrentSongList = songList.Songs;
+                    if (CurrentSongList == null) return;
 
-                                using (Realm innerRealm = Realm.GetInstance())
+                    for (int i = 0; i < CurrentSongList.Count; i++)
+                    {
+                        if (CurrentSongList[i].IsPlaying)
+                        {
+                            UpdateCurrentSong(CurrentSongList[i], false);
+                            if (Foward)
+                            {
+                                if ((i + 1) == CurrentSongList.Count)
                                 {
-                                    innerRealm.Write(() =>
+                                    var r_song = await SongListEndCheckForAutoPlayAsync();
+
+                                    using (Realm innerRealm = Realm.GetInstance())
                                     {
-                                        r_song.IsPlaying = true;
-                                        innerRealm.Add<Realm_Songs>(r_song);
-                                    });
+                                        ApplicationSongList innerSongList = realm.All<ApplicationSongList>().First(x => x.Id == 1);
+                                        innerRealm.Write(() =>
+                                        {
+                                            innerSongList.Add(innerRealm, r_song);
+                                        });
+                                    }
+                                }
+                                else
+                                {
+                                    UpdateCurrentSong(CurrentSongList[i + 1]);
                                 }
                             }
                             else
                             {
-                                UpdateCurrentSong(Current_Song_List[i + 1]);
+                                if (i == 0)
+                                {
+                                    UpdateCurrentSong(CurrentSongList[0]);
+                                }
+                                else
+                                {
+                                    UpdateCurrentSong(CurrentSongList[i - 1]);
+                                }
                             }
+                            break;
                         }
-                        else
-                        {
-                            if (i == 0)
-                            {
-                                UpdateCurrentSong(Current_Song_List[0]);
-                            }
-                            else
-                            {
-                                UpdateCurrentSong(Current_Song_List[i - 1]);
-                            }
-                        }
-                        break;
                     }
                 }
-            }
-            catch (Exception e)
-            {
-            }
-            finally
-            {
-                realm.Dispose();
-                BuildMetadata();
-            }
-
-            void UpdateCurrentSong(Realm_Songs song, bool status = true)
-            {
-                if (realm != null)
+                catch (Exception e)
                 {
-                    realm.Write(() =>
+                }
+                finally
+                {
+                    realm.Dispose();
+                    BuildMetadata();
+                }
+
+                void UpdateCurrentSong(Realm_Songs song, bool status = true)
+                {
+                    if (realm != null)
                     {
-                        song.IsPlaying = status;
-                    });
+                        realm.Write(() =>
+                        {
+                            song.IsPlaying = status;
+                        });
+                        if (status == true)
+                        {
+                            songList.UpdateCurrentSong(realm, song);
+                        }
+                    }
                 }
             }
         }
@@ -159,7 +155,6 @@ namespace SpotyPie.Music.Models
             {
                 Songs song = await GetApiService().GetNextSongAsync();
                 song.SetModelType(Mobile_Api.Models.Enums.RvType.Song);
-                song.IsPlaying = true;
                 return new Realm_Songs(song);
             }
             catch (Exception e)

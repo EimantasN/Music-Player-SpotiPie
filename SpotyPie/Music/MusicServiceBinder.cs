@@ -1,6 +1,4 @@
-﻿using System;
-using Android.OS;
-using SpotyPie.Player;
+﻿using Android.OS;
 
 namespace SpotyPie.Music
 {

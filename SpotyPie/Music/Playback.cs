@@ -68,7 +68,7 @@ namespace SpotyPie.Music
                     LogHelper.Debug(Tag, "Headphones disconnected.");
                     if (IsPlaying)
                     {
-                        var i = new Intent(context, typeof(MusicService));
+                        var i = new Intent(context, typeof(Music.MusicService));
                         i.SetAction(MusicService.ActionCmd);
                         i.PutExtra(MusicService.CmdName, MusicService.CmdPause);
                         service.StartService(i);
@@ -225,10 +225,16 @@ namespace SpotyPie.Music
             }
         }
 
-        public void Skip(object p)
+        public void Skip(bool foward)
         {
-            State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateSkippingToNext;
-            Callback?.OnPlaybackStatusChanged(State);
+            Task.Run(async () =>
+            {
+                await musicProvider.ChangeSongAsync(foward);
+                Application.SynchronizationContext.Post(_ =>
+                {
+                    Play(null);
+                }, null);
+            });
         }
 
         public void Pause()

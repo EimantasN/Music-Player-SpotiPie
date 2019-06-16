@@ -105,29 +105,6 @@ namespace SpotyPie.Music
             {
                 //Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
                 return;
-
-                LogHelper.Debug(Tag, "playFromMediaId mediaId:", mediaId, "  extras=", extras);
-
-                PlayingQueue = QueueHelper.GetPlayingQueue(mediaId, musicProvider);
-                session.SetQueue(PlayingQueue);
-                var queueTitle = GetString(Resource.String.browse_musics_by_genre_subtitle,
-                                     MediaIDHelper.ExtractBrowseCategoryValueFromMediaID(mediaId));
-                session.SetQueueTitle(queueTitle);
-
-                if (PlayingQueue != null && PlayingQueue.Count != 0)
-                {
-                    currentIndexOnQueue = QueueHelper.GetMusicIndexOnQueue(PlayingQueue, mediaId);
-
-                    if (currentIndexOnQueue < 0)
-                    {
-                        LogHelper.Error(Tag, "playFromMediaId: media ID ", mediaId,
-                            " could not be found on queue. Ignoring.");
-                    }
-                    else
-                    {
-                        HandlePlayRequest();
-                    }
-                }
             };
 
             //MUSIC PLAYER PAUSE ACTION
@@ -157,16 +134,7 @@ namespace SpotyPie.Music
             {
                 //Toast.MakeText(ApplicationContext, "OnSkipToPreviousImpl", ToastLength.Long).Show();
                 mediaNotificationManager.CountSkip--;
-                playback.Skip(null);
-
-                Task.Run(async () =>
-                {
-                    await musicProvider.ChangeSongAsync(false);
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        playback.Play(null);
-                    }, null);
-                });
+                playback.Skip(false);
                 return;
             };
 
@@ -196,11 +164,11 @@ namespace SpotyPie.Music
 
                 if (string.IsNullOrEmpty(query))
                 {
-                    PlayingQueue = new List<Android.Support.V4.Media.Session.MediaSessionCompat.QueueItem>(QueueHelper.GetRandomQueue(musicProvider));
+                    PlayingQueue = new List<MediaSessionCompat.QueueItem>(QueueHelper.GetRandomQueue(musicProvider));
                 }
                 else
                 {
-                    PlayingQueue = new List<Android.Support.V4.Media.Session.MediaSessionCompat.QueueItem>(QueueHelper.GetPlayingQueueFromSearch(query, musicProvider));
+                    PlayingQueue = new List<MediaSessionCompat.QueueItem>(QueueHelper.GetPlayingQueueFromSearch(query, musicProvider));
                 }
 
                 LogHelper.Debug(Tag, "playFromSearch  playqueue.length=" + PlayingQueue.Count);
@@ -244,16 +212,7 @@ namespace SpotyPie.Music
         private void OnNextSong()
         {
             mediaNotificationManager.CountSkip++;
-            playback.Skip(null);
-
-            Task.Run(async () =>
-            {
-                await musicProvider.ChangeSongAsync(true);
-                Application.SynchronizationContext.Post(_ =>
-                {
-                    playback.Play(null);
-                }, null);
-            });
+            playback.Skip(true);
         }
 
         [Obsolete("deprecated")]
@@ -277,11 +236,7 @@ namespace SpotyPie.Music
             return StartCommandResult.Sticky;
         }
 
-        private Music.MusicService myServiceBinder;
-
-        public string InterfaceDescriptor => throw new NotImplementedException();
-
-        public bool IsBinderAlive => throw new NotImplementedException();
+        private MusicService myServiceBinder;
 
         public override void OnDestroy()
         {
@@ -289,6 +244,7 @@ namespace SpotyPie.Music
 
             HandleStopRequest(null);
             delayedStopHandler.RemoveCallbacksAndMessages(null);
+            delayedStopHandler = null;
             session.Release();
         }
 
@@ -511,7 +467,7 @@ namespace SpotyPie.Music
         {
             if (mediaNotificationManager != null)
             {
-                mediaNotificationManager.metadata = meta;
+                mediaNotificationManager.Metadata = meta;
             }
         }
 
