@@ -103,7 +103,7 @@ namespace SpotyPie
         {
             if (search.IsFocused)
             {
-                GetState().ToggleMiniPlayer(false);
+                //GetState().ToggleMiniPlayer(false);
                 if (search.Text.Contains("Search"))
                     search.Text = "";
             }
@@ -420,12 +420,12 @@ namespace SpotyPie
             if (heightDiff > 500)
             {
                 GetState()?.ToggleBotNav(false);
-                GetState()?.ToggleMiniPlayer(false);
+                //GetState()?.ToggleMiniPlayer(false);
             }
             else
             {
                 GetState()?.ToggleBotNav(true);
-                GetState()?.ToggleMiniPlayer(true);
+                //GetState()?.ToggleMiniPlayer(true);
             }
         }
 

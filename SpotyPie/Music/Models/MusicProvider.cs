@@ -77,7 +77,7 @@ namespace SpotyPie.Music.Models
         {
             using (Realm realm = Realm.GetInstance())
             {
-                ApplicationSongList songList = realm.All<ApplicationSongList>().First(x => x.Id == 1);
+                ApplicationSongList songList = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
                 try
                 {
                     IList<Realm_Songs> CurrentSongList = songList.Songs;

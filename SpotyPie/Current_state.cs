@@ -73,16 +73,15 @@ namespace SpotyPie
 
         private void UpdateRealSongList(List<Songs> songs, int position = 0)
         {
-            Task.Run(() =>
+            using (Realm realm = Realm.GetInstance())
             {
-                Realm realm = Realm.GetInstance();
                 ApplicationSongList songList = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
                 if (songList == null)
                     return;
-
                 songList.Rewrite(realm, songs, position);
-                realm.Dispose();
-
+            }
+            Task.Run(() =>
+            {
                 Activity.RunOnUiThread(() =>
                 {
                     Activity.SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.play"));
@@ -157,18 +156,6 @@ namespace SpotyPie
             else
             {
                 this.Activity.BottomNavigation.Visibility = ViewStates.Gone;
-            }
-        }
-
-        public void ToggleMiniPlayer(bool show)
-        {
-            if (show)
-            {
-                this.Activity.MiniPlayer.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                this.Activity.MiniPlayer.Visibility = ViewStates.Gone;
             }
         }
     }

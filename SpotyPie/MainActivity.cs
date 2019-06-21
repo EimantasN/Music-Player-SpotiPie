@@ -42,17 +42,13 @@ namespace SpotyPie
 
 
         public BottomNavigationView BottomNavigation;
-        public ImageButton PlayToggle;
 
-        public TextView ArtistName;
-        public TextView SongTitle;
         public ImageButton BackHeaderButton;
         public ImageButton OptionsHeaderButton;
 
         public int WidthInDp = 0;
         public int HeightInDp = 0;
         public bool PlayerVisible = false;
-        public ImageButton ShowPlayler;
 
         public TextView ActionName;
         public ConstraintLayout MiniPlayer;
@@ -81,32 +77,6 @@ namespace SpotyPie
 
             ActionName = FindViewById<TextView>(Resource.Id.textView);
 
-            #region MINI PLAYER
-
-            MiniPlayer = FindViewById<ConstraintLayout>(Resource.Id.PlayerContainer);
-            MiniPlayer.Visibility = ViewStates.Gone;
-
-            PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
-            ShowPlayler = FindViewById<ImageButton>(Resource.Id.show_player);
-
-            SongTitle = FindViewById<TextView>(Resource.Id.song_title);
-            SongTitle.Selected = true;
-            ArtistName = FindViewById<TextView>(Resource.Id.artist_name);
-            ArtistName.Selected = true;
-
-            LoadCurrentState();
-
-            if (GetState().IsPlaying)
-                PlayToggle.SetImageResource(Resource.Drawable.pause);
-            else
-                PlayToggle.SetImageResource(Resource.Drawable.play_button);
-
-            PlayToggle.Click += PlayToggle_Click;
-            ShowPlayler.Click += MiniPlayer_Click;
-            MiniPlayer.Click += MiniPlayer_Click;
-
-            #endregion
-
             BackHeaderButton = FindViewById<ImageButton>(Resource.Id.back);
             OptionsHeaderButton = FindViewById<ImageButton>(Resource.Id.options);
 
@@ -120,40 +90,18 @@ namespace SpotyPie
 
         protected override void OnResume()
         {
+            LoadMiniPlayer();
             base.OnResume();
+        }
+
+        private void LoadMiniPlayer()
+        {
+            GetFManager().InsertFragment(Resource.Id.mini_player_holder, new NowPlayingFragment());
         }
 
         public override void OnBackPressed()
         {
             base.OnBackPressed();
-        }
-
-        private void LoadCurrentState()
-        {
-            //TODO make more maintanable
-            Task.Run(async () =>
-            {
-                try
-                {
-                    var song = await GetAPIService().GetCurrentSong();
-                    RunOnUiThread(() =>
-                    {
-                        if (song != null)
-                        {
-                            SongTitle.Text = song.Name;
-                            ArtistName.Text = song.ArtistName;
-                            MiniPlayer.Visibility = ViewStates.Visible;
-                        }
-                    });
-                }
-                catch (Exception e)
-                {
-                    RunOnUiThread(() =>
-                    {
-                        Toast.MakeText(this.ApplicationContext, "Failed load current state", ToastLength.Long).Show();
-                    });
-                }
-            });
         }
 
         private void BackHeaderButton_Click(object sender, EventArgs e)
@@ -171,21 +119,6 @@ namespace SpotyPie
                 //    .Replace(Resource.Id.content_frame, MainFragment)
                 //    .Commit();
             }
-        }
-
-        private void PlayToggle_Click(object sender, EventArgs e)
-        {
-            if (GetState().IsPlaying)
-                GetState().GetPlayer().Music_pause();
-            else
-            {
-                GetState().GetPlayer().Music_play();
-            }
-        }
-
-        private void MiniPlayer_Click(object sender, EventArgs e)
-        {
-            GetState().SetSong(GetAPIService().GetCurrentListLive(), 0);
         }
 
         private void BottomNavigation_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)

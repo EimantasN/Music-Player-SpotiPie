@@ -105,6 +105,7 @@
     <Compile Include="Enums\Activitys\Player.cs" />
     <Compile Include="Enums\Screen.cs" />
     <Compile Include="MainFragments\HostStats.cs" />
+    <Compile Include="MainFragments\NowPlayingFragment.cs" />
     <Compile Include="Models\FragmentState.cs" />
     <Compile Include="Models\CustomFragmetManager.cs" />
     <Compile Include="Models\FragmentTransitions.cs" />
@@ -865,6 +866,12 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_loop_black_24.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_loop_black_36.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_loop_black_48.png" />
+    <AndroidResource Include="Resources\layout\now_playing_layout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\font\montserrat.xml" />
+    <AndroidResource Include="Resources\font\montserrat_bold.xml" />
+    <AndroidResource Include="Resources\values\font_certs.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

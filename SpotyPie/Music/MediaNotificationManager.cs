@@ -10,6 +10,7 @@ using Android.Support.V4.Media.Session;
 using Android.Support.V4.Media;
 using System.Threading.Tasks;
 using Android.Support.V4.App;
+using System.Threading;
 
 namespace SpotyPie.Music
 {
@@ -185,38 +186,54 @@ namespace SpotyPie.Music
 
         public override void OnReceive(Context context, Intent intent)
         {
-            var action = intent.Action;
-            switch (action)
+            int retry = 0;
+            bool tryagain = true;
+            while (tryagain)
             {
-                case ActionPause:
-                    transportControls?.Pause();
-                    break;
-                case ActionPlay:
-                    transportControls?.Play();
-                    break;
-                case ActionNext:
-                    transportControls?.SkipToNext();
-                    break;
-                case ActionPrev:
-                    transportControls?.SkipToPrevious();
-                    break;
-                case ActionFavorite:
-                    transportControls?.SendCustomAction(ActionFavorite, null);
-                    break;
-                case ActionTrash:
-                    transportControls?.SendCustomAction(ActionTrash, null);
-                    break;
-                case ActionSeek:
+                tryagain = false;
+                retry++;
+                try
+                {
+                    var action = intent.Action;
+                    switch (action)
                     {
-                        var data = intent.GetStringExtra("PLAYER_SEEK");
-                        if (!string.IsNullOrEmpty(data))
-                        {
-                            transportControls?.SeekTo(int.Parse(data));
-                        }
+                        case ActionPause:
+                            transportControls?.Pause();
+                            break;
+                        case ActionPlay:
+                            transportControls?.Play();
+                            break;
+                        case ActionNext:
+                            transportControls?.SkipToNext();
+                            break;
+                        case ActionPrev:
+                            transportControls?.SkipToPrevious();
+                            break;
+                        case ActionFavorite:
+                            transportControls?.SendCustomAction(ActionFavorite, null);
+                            break;
+                        case ActionTrash:
+                            transportControls?.SendCustomAction(ActionTrash, null);
+                            break;
+                        case ActionSeek:
+                            {
+                                var data = intent.GetStringExtra("PLAYER_SEEK");
+                                if (!string.IsNullOrEmpty(data))
+                                {
+                                    transportControls?.SeekTo(int.Parse(data));
+                                }
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    break;
-                default:
-                    break;
+                }
+                catch (ObjectDisposedException e)
+                {
+                    if (retry <= 3)
+                        tryagain = true;
+                    Thread.Sleep(250);
+                }
             }
         }
 
@@ -343,7 +360,7 @@ namespace SpotyPie.Music
             }
             else if (playbackState.State == PlaybackStateCompat.StateBuffering)
             {
-                builder.AddAction(new Android.Support.V4.App.NotificationCompat.Action(Resource.Drawable.baseline_loop_black_36, "Loading", null));
+                builder.AddAction(new Android.Support.V4.App.NotificationCompat.Action(Resource.Drawable.baseline_loop_black_18, "Loading", null));
             }
             else
             {
