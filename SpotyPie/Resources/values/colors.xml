@@ -22,5 +22,8 @@
   <color name="NavMain">@color/BottomNavBarColor</color>
   <color name="NavSettings">#616767</color>
   <color name="NavBarPlayer">#000000</color>
+
+  <color name="home_gradient_corner">#835164</color>
+  <color name="home_gradient_whole">#121212</color>
   
 </resources>

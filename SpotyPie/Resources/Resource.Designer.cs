@@ -1885,44 +1885,44 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0e0063
 			public const int NavSettings = 2131624035;
 			
-			// aapt resource value: 0x7f0e0066
-			public const int abc_background_cache_hint_selector_material_dark = 2131624038;
-			
-			// aapt resource value: 0x7f0e0067
-			public const int abc_background_cache_hint_selector_material_light = 2131624039;
-			
 			// aapt resource value: 0x7f0e0068
-			public const int abc_btn_colored_borderless_text_material = 2131624040;
+			public const int abc_background_cache_hint_selector_material_dark = 2131624040;
 			
 			// aapt resource value: 0x7f0e0069
-			public const int abc_btn_colored_text_material = 2131624041;
+			public const int abc_background_cache_hint_selector_material_light = 2131624041;
 			
 			// aapt resource value: 0x7f0e006a
-			public const int abc_color_highlight_material = 2131624042;
+			public const int abc_btn_colored_borderless_text_material = 2131624042;
 			
 			// aapt resource value: 0x7f0e006b
-			public const int abc_hint_foreground_material_dark = 2131624043;
+			public const int abc_btn_colored_text_material = 2131624043;
 			
 			// aapt resource value: 0x7f0e006c
-			public const int abc_hint_foreground_material_light = 2131624044;
+			public const int abc_color_highlight_material = 2131624044;
+			
+			// aapt resource value: 0x7f0e006d
+			public const int abc_hint_foreground_material_dark = 2131624045;
+			
+			// aapt resource value: 0x7f0e006e
+			public const int abc_hint_foreground_material_light = 2131624046;
 			
 			// aapt resource value: 0x7f0e0004
 			public const int abc_input_method_navigation_guard = 2131623940;
 			
-			// aapt resource value: 0x7f0e006d
-			public const int abc_primary_text_disable_only_material_dark = 2131624045;
-			
-			// aapt resource value: 0x7f0e006e
-			public const int abc_primary_text_disable_only_material_light = 2131624046;
-			
 			// aapt resource value: 0x7f0e006f
-			public const int abc_primary_text_material_dark = 2131624047;
+			public const int abc_primary_text_disable_only_material_dark = 2131624047;
 			
 			// aapt resource value: 0x7f0e0070
-			public const int abc_primary_text_material_light = 2131624048;
+			public const int abc_primary_text_disable_only_material_light = 2131624048;
 			
 			// aapt resource value: 0x7f0e0071
-			public const int abc_search_url_text = 2131624049;
+			public const int abc_primary_text_material_dark = 2131624049;
+			
+			// aapt resource value: 0x7f0e0072
+			public const int abc_primary_text_material_light = 2131624050;
+			
+			// aapt resource value: 0x7f0e0073
+			public const int abc_search_url_text = 2131624051;
 			
 			// aapt resource value: 0x7f0e0005
 			public const int abc_search_url_text_normal = 2131623941;
@@ -1933,29 +1933,29 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0e0007
 			public const int abc_search_url_text_selected = 2131623943;
 			
-			// aapt resource value: 0x7f0e0072
-			public const int abc_secondary_text_material_dark = 2131624050;
-			
-			// aapt resource value: 0x7f0e0073
-			public const int abc_secondary_text_material_light = 2131624051;
-			
 			// aapt resource value: 0x7f0e0074
-			public const int abc_tint_btn_checkable = 2131624052;
+			public const int abc_secondary_text_material_dark = 2131624052;
 			
 			// aapt resource value: 0x7f0e0075
-			public const int abc_tint_default = 2131624053;
+			public const int abc_secondary_text_material_light = 2131624053;
 			
 			// aapt resource value: 0x7f0e0076
-			public const int abc_tint_edittext = 2131624054;
+			public const int abc_tint_btn_checkable = 2131624054;
 			
 			// aapt resource value: 0x7f0e0077
-			public const int abc_tint_seek_thumb = 2131624055;
+			public const int abc_tint_default = 2131624055;
 			
 			// aapt resource value: 0x7f0e0078
-			public const int abc_tint_spinner = 2131624056;
+			public const int abc_tint_edittext = 2131624056;
 			
 			// aapt resource value: 0x7f0e0079
-			public const int abc_tint_switch_track = 2131624057;
+			public const int abc_tint_seek_thumb = 2131624057;
+			
+			// aapt resource value: 0x7f0e007a
+			public const int abc_tint_spinner = 2131624058;
+			
+			// aapt resource value: 0x7f0e007b
+			public const int abc_tint_switch_track = 2131624059;
 			
 			// aapt resource value: 0x7f0e0008
 			public const int accent_material_dark = 2131623944;
@@ -2038,8 +2038,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0e0043
 			public const int design_default_color_primary_dark = 2131624003;
 			
-			// aapt resource value: 0x7f0e007a
-			public const int design_error = 2131624058;
+			// aapt resource value: 0x7f0e007c
+			public const int design_error = 2131624060;
 			
 			// aapt resource value: 0x7f0e0044
 			public const int design_fab_shadow_end_color = 2131624004;
@@ -2065,8 +2065,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0e004b
 			public const int design_snackbar_background_color = 2131624011;
 			
-			// aapt resource value: 0x7f0e007b
-			public const int design_tint_password_toggle = 2131624059;
+			// aapt resource value: 0x7f0e007d
+			public const int design_tint_password_toggle = 2131624061;
 			
 			// aapt resource value: 0x7f0e0016
 			public const int dim_foreground_disabled_material_dark = 2131623958;
@@ -2102,7 +2102,13 @@ namespace SpotyPie
 			public const int highlighted_text_material_light = 2131623967;
 			
 			// aapt resource value: 0x7f0e0065
-			public const int ic_launcher_background = 2131624037;
+			public const int home_gradient_corner = 2131624037;
+			
+			// aapt resource value: 0x7f0e0066
+			public const int home_gradient_whole = 2131624038;
+			
+			// aapt resource value: 0x7f0e0067
+			public const int ic_launcher_background = 2131624039;
 			
 			// aapt resource value: 0x7f0e0020
 			public const int material_blue_grey_800 = 2131623968;
@@ -2140,71 +2146,71 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0e002b
 			public const int material_grey_900 = 2131623979;
 			
-			// aapt resource value: 0x7f0e007c
-			public const int mtrl_bottom_nav_colored_item_tint = 2131624060;
+			// aapt resource value: 0x7f0e007e
+			public const int mtrl_bottom_nav_colored_item_tint = 2131624062;
 			
-			// aapt resource value: 0x7f0e007d
-			public const int mtrl_bottom_nav_item_tint = 2131624061;
+			// aapt resource value: 0x7f0e007f
+			public const int mtrl_bottom_nav_item_tint = 2131624063;
 			
 			// aapt resource value: 0x7f0e004c
 			public const int mtrl_btn_bg_color_disabled = 2131624012;
 			
-			// aapt resource value: 0x7f0e007e
-			public const int mtrl_btn_bg_color_selector = 2131624062;
-			
-			// aapt resource value: 0x7f0e007f
-			public const int mtrl_btn_ripple_color = 2131624063;
-			
 			// aapt resource value: 0x7f0e0080
-			public const int mtrl_btn_stroke_color_selector = 2131624064;
+			public const int mtrl_btn_bg_color_selector = 2131624064;
 			
 			// aapt resource value: 0x7f0e0081
-			public const int mtrl_btn_text_btn_ripple_color = 2131624065;
+			public const int mtrl_btn_ripple_color = 2131624065;
+			
+			// aapt resource value: 0x7f0e0082
+			public const int mtrl_btn_stroke_color_selector = 2131624066;
+			
+			// aapt resource value: 0x7f0e0083
+			public const int mtrl_btn_text_btn_ripple_color = 2131624067;
 			
 			// aapt resource value: 0x7f0e004d
 			public const int mtrl_btn_text_color_disabled = 2131624013;
 			
-			// aapt resource value: 0x7f0e0082
-			public const int mtrl_btn_text_color_selector = 2131624066;
+			// aapt resource value: 0x7f0e0084
+			public const int mtrl_btn_text_color_selector = 2131624068;
 			
 			// aapt resource value: 0x7f0e004e
 			public const int mtrl_btn_transparent_bg_color = 2131624014;
 			
-			// aapt resource value: 0x7f0e0083
-			public const int mtrl_chip_background_color = 2131624067;
-			
-			// aapt resource value: 0x7f0e0084
-			public const int mtrl_chip_close_icon_tint = 2131624068;
-			
 			// aapt resource value: 0x7f0e0085
-			public const int mtrl_chip_ripple_color = 2131624069;
+			public const int mtrl_chip_background_color = 2131624069;
 			
 			// aapt resource value: 0x7f0e0086
-			public const int mtrl_chip_text_color = 2131624070;
+			public const int mtrl_chip_close_icon_tint = 2131624070;
 			
 			// aapt resource value: 0x7f0e0087
-			public const int mtrl_fab_ripple_color = 2131624071;
+			public const int mtrl_chip_ripple_color = 2131624071;
+			
+			// aapt resource value: 0x7f0e0088
+			public const int mtrl_chip_text_color = 2131624072;
+			
+			// aapt resource value: 0x7f0e0089
+			public const int mtrl_fab_ripple_color = 2131624073;
 			
 			// aapt resource value: 0x7f0e004f
 			public const int mtrl_scrim_color = 2131624015;
 			
-			// aapt resource value: 0x7f0e0088
-			public const int mtrl_tabs_colored_ripple_color = 2131624072;
-			
-			// aapt resource value: 0x7f0e0089
-			public const int mtrl_tabs_icon_color_selector = 2131624073;
-			
 			// aapt resource value: 0x7f0e008a
-			public const int mtrl_tabs_icon_color_selector_colored = 2131624074;
+			public const int mtrl_tabs_colored_ripple_color = 2131624074;
 			
 			// aapt resource value: 0x7f0e008b
-			public const int mtrl_tabs_legacy_text_color_selector = 2131624075;
+			public const int mtrl_tabs_icon_color_selector = 2131624075;
 			
 			// aapt resource value: 0x7f0e008c
-			public const int mtrl_tabs_ripple_color = 2131624076;
+			public const int mtrl_tabs_icon_color_selector_colored = 2131624076;
 			
 			// aapt resource value: 0x7f0e008d
-			public const int mtrl_text_btn_text_color_selector = 2131624077;
+			public const int mtrl_tabs_legacy_text_color_selector = 2131624077;
+			
+			// aapt resource value: 0x7f0e008e
+			public const int mtrl_tabs_ripple_color = 2131624078;
+			
+			// aapt resource value: 0x7f0e008f
+			public const int mtrl_text_btn_text_color_selector = 2131624079;
 			
 			// aapt resource value: 0x7f0e0050
 			public const int mtrl_textinput_default_box_stroke_color = 2131624016;
@@ -2278,11 +2284,11 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0e003b
 			public const int switch_thumb_disabled_material_light = 2131623995;
 			
-			// aapt resource value: 0x7f0e008e
-			public const int switch_thumb_material_dark = 2131624078;
+			// aapt resource value: 0x7f0e0090
+			public const int switch_thumb_material_dark = 2131624080;
 			
-			// aapt resource value: 0x7f0e008f
-			public const int switch_thumb_material_light = 2131624079;
+			// aapt resource value: 0x7f0e0091
+			public const int switch_thumb_material_light = 2131624081;
 			
 			// aapt resource value: 0x7f0e003c
 			public const int switch_thumb_normal_material_dark = 2131623996;
@@ -4322,11 +4328,11 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0039
 			public const int ALT = 2131361849;
 			
-			// aapt resource value: 0x7f0a0189
-			public const int AlbumsTitle = 2131362185;
+			// aapt resource value: 0x7f0a0185
+			public const int AlbumsTitle = 2131362181;
 			
-			// aapt resource value: 0x7f0a0162
-			public const int BotNavPlayerDevider = 2131362146;
+			// aapt resource value: 0x7f0a015e
+			public const int BotNavPlayerDevider = 2131362142;
 			
 			// aapt resource value: 0x7f0a003a
 			public const int CTRL = 2131361850;
@@ -4334,11 +4340,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a003b
 			public const int FUNCTION = 2131361851;
 			
-			// aapt resource value: 0x7f0a00ab
-			public const int HeaderContainer = 2131361963;
-			
-			// aapt resource value: 0x7f0a0116
-			public const int Loading = 2131362070;
+			// aapt resource value: 0x7f0a0112
+			public const int Loading = 2131362066;
 			
 			// aapt resource value: 0x7f0a003c
 			public const int META = 2131361852;
@@ -4346,14 +4349,14 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a00aa
 			public const int MainContainer = 2131361962;
 			
-			// aapt resource value: 0x7f0a00f1
-			public const int MainImage = 2131362033;
+			// aapt resource value: 0x7f0a00ec
+			public const int MainImage = 2131362028;
 			
-			// aapt resource value: 0x7f0a00b5
-			public const int NavBot = 2131361973;
+			// aapt resource value: 0x7f0a00b0
+			public const int NavBot = 2131361968;
 			
-			// aapt resource value: 0x7f0a0161
-			public const int PlayerContainer = 2131362145;
+			// aapt resource value: 0x7f0a015d
+			public const int PlayerContainer = 2131362141;
 			
 			// aapt resource value: 0x7f0a003d
 			public const int SHIFT = 2131361853;
@@ -4361,17 +4364,17 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a003e
 			public const int SYM = 2131361854;
 			
-			// aapt resource value: 0x7f0a00b0
-			public const int SearchContainer = 2131361968;
+			// aapt resource value: 0x7f0a00ab
+			public const int SearchContainer = 2131361963;
 			
-			// aapt resource value: 0x7f0a0187
-			public const int SongsTitle = 2131362183;
+			// aapt resource value: 0x7f0a0183
+			public const int SongsTitle = 2131362179;
 			
-			// aapt resource value: 0x7f0a01da
-			public const int Title = 2131362266;
+			// aapt resource value: 0x7f0a01d8
+			public const int Title = 2131362264;
 			
-			// aapt resource value: 0x7f0a0151
-			public const int action0 = 2131362129;
+			// aapt resource value: 0x7f0a014d
+			public const int action0 = 2131362125;
 			
 			// aapt resource value: 0x7f0a009a
 			public const int action_bar = 2131361946;
@@ -4394,17 +4397,17 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0076
 			public const int action_bar_title = 2131361910;
 			
-			// aapt resource value: 0x7f0a014e
-			public const int action_container = 2131362126;
+			// aapt resource value: 0x7f0a014a
+			public const int action_container = 2131362122;
 			
 			// aapt resource value: 0x7f0a009b
 			public const int action_context_bar = 2131361947;
 			
-			// aapt resource value: 0x7f0a0155
-			public const int action_divider = 2131362133;
+			// aapt resource value: 0x7f0a0151
+			public const int action_divider = 2131362129;
 			
-			// aapt resource value: 0x7f0a014f
-			public const int action_image = 2131362127;
+			// aapt resource value: 0x7f0a014b
+			public const int action_image = 2131362123;
 			
 			// aapt resource value: 0x7f0a0003
 			public const int action_menu_divider = 2131361795;
@@ -4421,11 +4424,11 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0078
 			public const int action_mode_close_button = 2131361912;
 			
-			// aapt resource value: 0x7f0a0150
-			public const int action_text = 2131362128;
+			// aapt resource value: 0x7f0a014c
+			public const int action_text = 2131362124;
 			
-			// aapt resource value: 0x7f0a015e
-			public const int actions = 2131362142;
+			// aapt resource value: 0x7f0a015a
+			public const int actions = 2131362138;
 			
 			// aapt resource value: 0x7f0a0079
 			public const int activity_chooser_view_content = 2131361913;
@@ -4433,65 +4436,65 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a002e
 			public const int add = 2131361838;
 			
-			// aapt resource value: 0x7f0a01c3
-			public const int add_artist_btn = 2131362243;
+			// aapt resource value: 0x7f0a01c1
+			public const int add_artist_btn = 2131362241;
 			
-			// aapt resource value: 0x7f0a01d9
-			public const int add_image = 2131362265;
+			// aapt resource value: 0x7f0a01d7
+			public const int add_image = 2131362263;
 			
-			// aapt resource value: 0x7f0a017c
-			public const int add_to_album = 2131362172;
-			
-			// aapt resource value: 0x7f0a017e
-			public const int add_to_favorite = 2131362174;
+			// aapt resource value: 0x7f0a0178
+			public const int add_to_album = 2131362168;
 			
 			// aapt resource value: 0x7f0a017a
-			public const int add_to_playlist = 2131362170;
+			public const int add_to_favorite = 2131362170;
 			
-			// aapt resource value: 0x7f0a01c8
-			public const int album = 2131362248;
+			// aapt resource value: 0x7f0a0176
+			public const int add_to_playlist = 2131362166;
 			
-			// aapt resource value: 0x7f0a00b9
-			public const int album_by_title = 2131361977;
+			// aapt resource value: 0x7f0a01c6
+			public const int album = 2131362246;
 			
-			// aapt resource value: 0x7f0a00da
-			public const int album_cof_seeker = 2131362010;
+			// aapt resource value: 0x7f0a00b4
+			public const int album_by_title = 2131361972;
+			
+			// aapt resource value: 0x7f0a00d5
+			public const int album_cof_seeker = 2131362005;
+			
+			// aapt resource value: 0x7f0a010f
+			public const int album_old_title = 2131362063;
+			
+			// aapt resource value: 0x7f0a00b1
+			public const int album_photo = 2131361969;
+			
+			// aapt resource value: 0x7f0a00e1
+			public const int album_switch = 2131362017;
+			
+			// aapt resource value: 0x7f0a00db
+			public const int album_text = 2131362011;
+			
+			// aapt resource value: 0x7f0a00b2
+			public const int album_title = 2131361970;
+			
+			// aapt resource value: 0x7f0a00e8
+			public const int album_title_left = 2131362024;
+			
+			// aapt resource value: 0x7f0a00e9
+			public const int album_title_right = 2131362025;
+			
+			// aapt resource value: 0x7f0a00de
+			public const int album_value = 2131362014;
 			
 			// aapt resource value: 0x7f0a0113
-			public const int album_old_title = 2131362067;
+			public const int albums = 2131362067;
 			
-			// aapt resource value: 0x7f0a00b6
-			public const int album_photo = 2131361974;
+			// aapt resource value: 0x7f0a00c7
+			public const int albums_list_title = 2131361991;
 			
-			// aapt resource value: 0x7f0a00e6
-			public const int album_switch = 2131362022;
+			// aapt resource value: 0x7f0a0111
+			public const int albums_old_rv = 2131362065;
 			
-			// aapt resource value: 0x7f0a00e0
-			public const int album_text = 2131362016;
-			
-			// aapt resource value: 0x7f0a00b7
-			public const int album_title = 2131361975;
-			
-			// aapt resource value: 0x7f0a00ed
-			public const int album_title_left = 2131362029;
-			
-			// aapt resource value: 0x7f0a00ee
-			public const int album_title_right = 2131362030;
-			
-			// aapt resource value: 0x7f0a00e3
-			public const int album_value = 2131362019;
-			
-			// aapt resource value: 0x7f0a0117
-			public const int albums = 2131362071;
-			
-			// aapt resource value: 0x7f0a00cc
-			public const int albums_list_title = 2131361996;
-			
-			// aapt resource value: 0x7f0a0115
-			public const int albums_old_rv = 2131362069;
-			
-			// aapt resource value: 0x7f0a018a
-			public const int albums_rv = 2131362186;
+			// aapt resource value: 0x7f0a0186
+			public const int albums_rv = 2131362182;
 			
 			// aapt resource value: 0x7f0a008c
 			public const int alertTitle = 2131361932;
@@ -4502,41 +4505,41 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a003f
 			public const int always = 2131361855;
 			
-			// aapt resource value: 0x7f0a0194
-			public const int app_name = 2131362196;
+			// aapt resource value: 0x7f0a0190
+			public const int app_name = 2131362192;
 			
-			// aapt resource value: 0x7f0a0119
-			public const int appbar = 2131362073;
+			// aapt resource value: 0x7f0a0115
+			public const int appbar = 2131362069;
 			
-			// aapt resource value: 0x7f0a01c9
-			public const int artist = 2131362249;
+			// aapt resource value: 0x7f0a01c7
+			public const int artist = 2131362247;
 			
-			// aapt resource value: 0x7f0a00cd
-			public const int artist_albums_list = 2131361997;
+			// aapt resource value: 0x7f0a00c8
+			public const int artist_albums_list = 2131361992;
+			
+			// aapt resource value: 0x7f0a00d7
+			public const int artist_cof_seeker = 2131362007;
+			
+			// aapt resource value: 0x7f0a0161
+			public const int artist_name = 2131362145;
+			
+			// aapt resource value: 0x7f0a00e2
+			public const int artist_switch = 2131362018;
 			
 			// aapt resource value: 0x7f0a00dc
-			public const int artist_cof_seeker = 2131362012;
+			public const int artist_text = 2131362012;
 			
-			// aapt resource value: 0x7f0a0165
-			public const int artist_name = 2131362149;
+			// aapt resource value: 0x7f0a00d4
+			public const int artist_title = 2131362004;
 			
-			// aapt resource value: 0x7f0a00e7
-			public const int artist_switch = 2131362023;
+			// aapt resource value: 0x7f0a00df
+			public const int artist_value = 2131362015;
 			
-			// aapt resource value: 0x7f0a00e1
-			public const int artist_text = 2131362017;
+			// aapt resource value: 0x7f0a0114
+			public const int artists = 2131362068;
 			
-			// aapt resource value: 0x7f0a00d9
-			public const int artist_title = 2131362009;
-			
-			// aapt resource value: 0x7f0a00e4
-			public const int artist_value = 2131362020;
-			
-			// aapt resource value: 0x7f0a0118
-			public const int artists = 2131362072;
-			
-			// aapt resource value: 0x7f0a018b
-			public const int artists_rv = 2131362187;
+			// aapt resource value: 0x7f0a0187
+			public const int artists_rv = 2131362183;
 			
 			// aapt resource value: 0x7f0a0072
 			public const int async = 2131361906;
@@ -4544,26 +4547,23 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a004d
 			public const int auto = 2131361869;
 			
-			// aapt resource value: 0x7f0a01b7
-			public const int auto_headset_switch = 2131362231;
+			// aapt resource value: 0x7f0a01b3
+			public const int auto_headset_switch = 2131362227;
 			
-			// aapt resource value: 0x7f0a01b0
-			public const int autoplay_switch = 2131362224;
+			// aapt resource value: 0x7f0a01ac
+			public const int autoplay_switch = 2131362220;
 			
-			// aapt resource value: 0x7f0a00ae
-			public const int back = 2131361966;
+			// aapt resource value: 0x7f0a00c2
+			public const int backViewContainer = 2131361986;
 			
-			// aapt resource value: 0x7f0a00c7
-			public const int backViewContainer = 2131361991;
+			// aapt resource value: 0x7f0a0175
+			public const int back_button = 2131362165;
 			
-			// aapt resource value: 0x7f0a0179
-			public const int back_button = 2131362169;
+			// aapt resource value: 0x7f0a00be
+			public const int backgroundHalf = 2131361982;
 			
-			// aapt resource value: 0x7f0a00c3
-			public const int backgroundHalf = 2131361987;
-			
-			// aapt resource value: 0x7f0a00bc
-			public const int backgroundHalfInner = 2131361980;
+			// aapt resource value: 0x7f0a00b7
+			public const int backgroundHalfInner = 2131361975;
 			
 			// aapt resource value: 0x7f0a006d
 			public const int barrier = 2131361901;
@@ -4571,29 +4571,29 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0036
 			public const int beginning = 2131361846;
 			
-			// aapt resource value: 0x7f0a010f
-			public const int best_albums_holder = 2131362063;
+			// aapt resource value: 0x7f0a0107
+			public const int best_albums_holder = 2131362055;
 			
-			// aapt resource value: 0x7f0a0112
-			public const int best_albums_rv = 2131362066;
+			// aapt resource value: 0x7f0a010e
+			public const int best_albums_rv = 2131362062;
 			
-			// aapt resource value: 0x7f0a0111
-			public const int best_artist_subtitle2 = 2131362065;
+			// aapt resource value: 0x7f0a010d
+			public const int best_artist_subtitle2 = 2131362061;
 			
-			// aapt resource value: 0x7f0a01bf
-			public const int bind_song_btn = 2131362239;
+			// aapt resource value: 0x7f0a01bd
+			public const int bind_song_btn = 2131362237;
 			
-			// aapt resource value: 0x7f0a01d5
-			public const int bitrate = 2131362261;
+			// aapt resource value: 0x7f0a01d3
+			public const int bitrate = 2131362259;
 			
-			// aapt resource value: 0x7f0a01d1
-			public const int bitrate_value = 2131362257;
+			// aapt resource value: 0x7f0a01cf
+			public const int bitrate_value = 2131362255;
 			
 			// aapt resource value: 0x7f0a0073
 			public const int blocking = 2131361907;
 			
-			// aapt resource value: 0x7f0a019c
-			public const int bluetooth_device_spinner = 2131362204;
+			// aapt resource value: 0x7f0a0198
+			public const int bluetooth_device_spinner = 2131362200;
 			
 			// aapt resource value: 0x7f0a0044
 			public const int bottom = 2131361860;
@@ -4601,17 +4601,17 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a007f
 			public const int buttonPanel = 2131361919;
 			
-			// aapt resource value: 0x7f0a00c4
-			public const int button_text = 2131361988;
+			// aapt resource value: 0x7f0a00bf
+			public const int button_text = 2131361983;
 			
-			// aapt resource value: 0x7f0a00bd
-			public const int button_text2 = 2131361981;
+			// aapt resource value: 0x7f0a00b8
+			public const int button_text2 = 2131361976;
 			
-			// aapt resource value: 0x7f0a0152
-			public const int cancel_action = 2131362130;
+			// aapt resource value: 0x7f0a014e
+			public const int cancel_action = 2131362126;
 			
-			// aapt resource value: 0x7f0a01bb
-			public const int cellular_switch = 2131362235;
+			// aapt resource value: 0x7f0a01b7
+			public const int cellular_switch = 2131362231;
 			
 			// aapt resource value: 0x7f0a004c
 			public const int center = 2131361868;
@@ -4625,17 +4625,17 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a006e
 			public const int chains = 2131361902;
 			
-			// aapt resource value: 0x7f0a0166
-			public const int chart1 = 2131362150;
+			// aapt resource value: 0x7f0a0162
+			public const int chart1 = 2131362146;
 			
 			// aapt resource value: 0x7f0a0093
 			public const int checkbox = 2131361939;
 			
-			// aapt resource value: 0x7f0a0180
-			public const int choose_playlist = 2131362176;
+			// aapt resource value: 0x7f0a017c
+			public const int choose_playlist = 2131362172;
 			
-			// aapt resource value: 0x7f0a015a
-			public const int chronometer = 2131362138;
+			// aapt resource value: 0x7f0a0156
+			public const int chronometer = 2131362134;
 			
 			// aapt resource value: 0x7f0a0061
 			public const int clip_horizontal = 2131361889;
@@ -4646,17 +4646,17 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0040
 			public const int collapseActionView = 2131361856;
 			
-			// aapt resource value: 0x7f0a01d7
-			public const int connect = 2131362263;
+			// aapt resource value: 0x7f0a01d5
+			public const int connect = 2131362261;
 			
-			// aapt resource value: 0x7f0a0107
-			public const int constraintLayout = 2131362055;
+			// aapt resource value: 0x7f0a0102
+			public const int constraintLayout = 2131362050;
 			
-			// aapt resource value: 0x7f0a00f3
-			public const int constraintLayout2 = 2131362035;
+			// aapt resource value: 0x7f0a00ee
+			public const int constraintLayout2 = 2131362030;
 			
-			// aapt resource value: 0x7f0a00fb
-			public const int container = 2131362043;
+			// aapt resource value: 0x7f0a00f6
+			public const int container = 2131362038;
 			
 			// aapt resource value: 0x7f0a008f
 			public const int content = 2131361935;
@@ -4664,20 +4664,20 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0082
 			public const int contentPanel = 2131361922;
 			
-			// aapt resource value: 0x7f0a00b3
-			public const int content_holder = 2131361971;
+			// aapt resource value: 0x7f0a00ae
+			public const int content_holder = 2131361966;
 			
-			// aapt resource value: 0x7f0a00fc
-			public const int coordinator = 2131362044;
+			// aapt resource value: 0x7f0a00f7
+			public const int coordinator = 2131362039;
 			
-			// aapt resource value: 0x7f0a00c1
-			public const int copyrights = 2131361985;
+			// aapt resource value: 0x7f0a00bc
+			public const int copyrights = 2131361980;
 			
-			// aapt resource value: 0x7f0a017d
-			public const int create_album = 2131362173;
+			// aapt resource value: 0x7f0a0179
+			public const int create_album = 2131362169;
 			
-			// aapt resource value: 0x7f0a0175
-			public const int current_song_time = 2131362165;
+			// aapt resource value: 0x7f0a0171
+			public const int current_song_time = 2131362161;
 			
 			// aapt resource value: 0x7f0a0089
 			public const int custom = 2131361929;
@@ -4685,11 +4685,11 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0088
 			public const int customPanel = 2131361928;
 			
-			// aapt resource value: 0x7f0a01ba
-			public const int custom_images_switch = 2131362234;
+			// aapt resource value: 0x7f0a01b6
+			public const int custom_images_switch = 2131362230;
 			
-			// aapt resource value: 0x7f0a01a6
-			public const int data_saver_switch = 2131362214;
+			// aapt resource value: 0x7f0a01a2
+			public const int data_saver_switch = 2131362210;
 			
 			// aapt resource value: 0x7f0a0098
 			public const int decor_content_parent = 2131361944;
@@ -4697,29 +4697,29 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a007c
 			public const int default_activity_button = 2131361916;
 			
-			// aapt resource value: 0x7f0a01d6
-			public const int delete = 2131362262;
+			// aapt resource value: 0x7f0a01d4
+			public const int delete = 2131362260;
 			
-			// aapt resource value: 0x7f0a01c0
-			public const int delete_song_btn = 2131362240;
+			// aapt resource value: 0x7f0a01be
+			public const int delete_song_btn = 2131362238;
+			
+			// aapt resource value: 0x7f0a00f9
+			public const int design_bottom_sheet = 2131362041;
 			
 			// aapt resource value: 0x7f0a00fe
-			public const int design_bottom_sheet = 2131362046;
+			public const int design_menu_item_action_area = 2131362046;
 			
-			// aapt resource value: 0x7f0a0103
-			public const int design_menu_item_action_area = 2131362051;
+			// aapt resource value: 0x7f0a00fd
+			public const int design_menu_item_action_area_stub = 2131362045;
 			
-			// aapt resource value: 0x7f0a0102
-			public const int design_menu_item_action_area_stub = 2131362050;
+			// aapt resource value: 0x7f0a00fc
+			public const int design_menu_item_text = 2131362044;
 			
-			// aapt resource value: 0x7f0a0101
-			public const int design_menu_item_text = 2131362049;
+			// aapt resource value: 0x7f0a00fb
+			public const int design_navigation_view = 2131362043;
 			
-			// aapt resource value: 0x7f0a0100
-			public const int design_navigation_view = 2131362048;
-			
-			// aapt resource value: 0x7f0a01bd
-			public const int device_connected_status = 2131362237;
+			// aapt resource value: 0x7f0a01b9
+			public const int device_connected_status = 2131362233;
 			
 			// aapt resource value: 0x7f0a006f
 			public const int dimensions = 2131361903;
@@ -4730,23 +4730,23 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0027
 			public const int disableHome = 2131361831;
 			
-			// aapt resource value: 0x7f0a01d4
-			public const int disc_number = 2131362260;
+			// aapt resource value: 0x7f0a01d2
+			public const int disc_number = 2131362258;
 			
-			// aapt resource value: 0x7f0a01d0
-			public const int disc_number_value = 2131362256;
+			// aapt resource value: 0x7f0a01ce
+			public const int disc_number_value = 2131362254;
 			
-			// aapt resource value: 0x7f0a00bf
-			public const int download_switch = 2131361983;
+			// aapt resource value: 0x7f0a00ba
+			public const int download_switch = 2131361978;
 			
-			// aapt resource value: 0x7f0a00be
-			public const int download_text = 2131361982;
+			// aapt resource value: 0x7f0a00b9
+			public const int download_text = 2131361977;
 			
-			// aapt resource value: 0x7f0a00d2
-			public const int download_text3 = 2131362002;
+			// aapt resource value: 0x7f0a00cd
+			public const int download_text3 = 2131361997;
 			
-			// aapt resource value: 0x7f0a01c7
-			public const int downloaded_icon = 2131362247;
+			// aapt resource value: 0x7f0a01c5
+			public const int downloaded_icon = 2131362245;
 			
 			// aapt resource value: 0x7f0a009c
 			public const int edit_query = 2131361948;
@@ -4754,8 +4754,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0037
 			public const int end = 2131361847;
 			
-			// aapt resource value: 0x7f0a0160
-			public const int end_padder = 2131362144;
+			// aapt resource value: 0x7f0a015c
+			public const int end_padder = 2131362140;
 			
 			// aapt resource value: 0x7f0a0046
 			public const int enterAlways = 2131361862;
@@ -4772,11 +4772,11 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0092
 			public const int expanded_menu = 2131361938;
 			
-			// aapt resource value: 0x7f0a01a8
-			public const int explicit_content_switch = 2131362216;
+			// aapt resource value: 0x7f0a01a4
+			public const int explicit_content_switch = 2131362212;
 			
-			// aapt resource value: 0x7f0a00ba
-			public const int fatherScrool = 2131361978;
+			// aapt resource value: 0x7f0a00b5
+			public const int fatherScrool = 2131361973;
 			
 			// aapt resource value: 0x7f0a005e
 			public const int fill = 2131361886;
@@ -4796,14 +4796,14 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0074
 			public const int forever = 2131361908;
 			
-			// aapt resource value: 0x7f0a01c5
-			public const int fragmentloading = 2131362245;
+			// aapt resource value: 0x7f0a01c3
+			public const int fragmentloading = 2131362243;
 			
-			// aapt resource value: 0x7f0a01d2
-			public const int gendres = 2131362258;
+			// aapt resource value: 0x7f0a01d0
+			public const int gendres = 2131362256;
 			
-			// aapt resource value: 0x7f0a01ce
-			public const int gendres_value = 2131362254;
+			// aapt resource value: 0x7f0a01cc
+			public const int gendres_value = 2131362252;
 			
 			// aapt resource value: 0x7f0a000a
 			public const int ghost_view = 2131361802;
@@ -4814,29 +4814,29 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a008e
 			public const int group_divider = 2131361934;
 			
-			// aapt resource value: 0x7f0a00ea
-			public const int guideline = 2131362026;
+			// aapt resource value: 0x7f0a00e5
+			public const int guideline = 2131362021;
 			
-			// aapt resource value: 0x7f0a00c8
-			public const int guideline2 = 2131361992;
+			// aapt resource value: 0x7f0a00c3
+			public const int guideline2 = 2131361987;
 			
-			// aapt resource value: 0x7f0a01cd
-			public const int guideline3 = 2131362253;
+			// aapt resource value: 0x7f0a01cb
+			public const int guideline3 = 2131362251;
 			
-			// aapt resource value: 0x7f0a00f2
-			public const int guideline4 = 2131362034;
+			// aapt resource value: 0x7f0a00ed
+			public const int guideline4 = 2131362029;
 			
-			// aapt resource value: 0x7f0a01e4
-			public const int guideline5 = 2131362276;
+			// aapt resource value: 0x7f0a01e2
+			public const int guideline5 = 2131362274;
 			
-			// aapt resource value: 0x7f0a01e3
-			public const int guideline6 = 2131362275;
+			// aapt resource value: 0x7f0a01e1
+			public const int guideline6 = 2131362273;
 			
-			// aapt resource value: 0x7f0a00db
-			public const int guideline7 = 2131362011;
+			// aapt resource value: 0x7f0a00d6
+			public const int guideline7 = 2131362006;
 			
-			// aapt resource value: 0x7f0a00c2
-			public const int hide = 2131361986;
+			// aapt resource value: 0x7f0a00bd
+			public const int hide = 2131361981;
 			
 			// aapt resource value: 0x7f0a0005
 			public const int home = 2131361797;
@@ -4847,8 +4847,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a007e
 			public const int icon = 2131361918;
 			
-			// aapt resource value: 0x7f0a015f
-			public const int icon_group = 2131362143;
+			// aapt resource value: 0x7f0a015b
+			public const int icon_group = 2131362139;
 			
 			// aapt resource value: 0x7f0a0041
 			public const int ifRoom = 2131361857;
@@ -4856,32 +4856,32 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a007b
 			public const int image = 2131361915;
 			
-			// aapt resource value: 0x7f0a01e1
-			public const int imageView3 = 2131362273;
+			// aapt resource value: 0x7f0a01df
+			public const int imageView3 = 2131362271;
 			
-			// aapt resource value: 0x7f0a00f6
-			public const int imageView4 = 2131362038;
+			// aapt resource value: 0x7f0a00f1
+			public const int imageView4 = 2131362033;
 			
-			// aapt resource value: 0x7f0a014d
-			public const int img = 2131362125;
+			// aapt resource value: 0x7f0a0149
+			public const int img = 2131362121;
 			
-			// aapt resource value: 0x7f0a016e
-			public const int img_holder = 2131362158;
+			// aapt resource value: 0x7f0a016a
+			public const int img_holder = 2131362154;
 			
-			// aapt resource value: 0x7f0a00c6
-			public const int include = 2131361990;
+			// aapt resource value: 0x7f0a00c1
+			public const int include = 2131361985;
 			
-			// aapt resource value: 0x7f0a00d1
-			public const int include2 = 2131362001;
+			// aapt resource value: 0x7f0a00cc
+			public const int include2 = 2131361996;
 			
-			// aapt resource value: 0x7f0a015b
-			public const int info = 2131362139;
+			// aapt resource value: 0x7f0a0157
+			public const int info = 2131362135;
 			
-			// aapt resource value: 0x7f0a01ca
-			public const int info_holder = 2131362250;
+			// aapt resource value: 0x7f0a01c8
+			public const int info_holder = 2131362248;
 			
-			// aapt resource value: 0x7f0a00c5
-			public const int innerWrapper = 2131361989;
+			// aapt resource value: 0x7f0a00c0
+			public const int innerWrapper = 2131361984;
 			
 			// aapt resource value: 0x7f0a0066
 			public const int invisible = 2131361894;
@@ -4895,23 +4895,23 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a004e
 			public const int labeled = 2131361870;
 			
-			// aapt resource value: 0x7f0a00fa
-			public const int largeLabel = 2131362042;
+			// aapt resource value: 0x7f0a00f5
+			public const int largeLabel = 2131362037;
 			
 			// aapt resource value: 0x7f0a0054
 			public const int left = 2131361876;
 			
-			// aapt resource value: 0x7f0a018d
-			public const int left_guideline = 2131362189;
+			// aapt resource value: 0x7f0a0189
+			public const int left_guideline = 2131362185;
 			
-			// aapt resource value: 0x7f0a00eb
-			public const int left_image = 2131362027;
+			// aapt resource value: 0x7f0a00e6
+			public const int left_image = 2131362022;
 			
-			// aapt resource value: 0x7f0a00ef
-			public const int left_subtitle = 2131362031;
+			// aapt resource value: 0x7f0a00ea
+			public const int left_subtitle = 2131362026;
 			
-			// aapt resource value: 0x7f0a01ea
-			public const int library = 2131362282;
+			// aapt resource value: 0x7f0a01e8
+			public const int library = 2131362280;
 			
 			// aapt resource value: 0x7f0a001c
 			public const int line1 = 2131361820;
@@ -4919,11 +4919,11 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a001d
 			public const int line3 = 2131361821;
 			
-			// aapt resource value: 0x7f0a00f5
-			public const int lisiner_count = 2131362037;
+			// aapt resource value: 0x7f0a00f0
+			public const int lisiner_count = 2131362032;
 			
-			// aapt resource value: 0x7f0a00f4
-			public const int lisiner_text = 2131362036;
+			// aapt resource value: 0x7f0a00ef
+			public const int lisiner_text = 2131362031;
 			
 			// aapt resource value: 0x7f0a0024
 			public const int listMode = 2131361828;
@@ -4931,29 +4931,29 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a007d
 			public const int list_item = 2131361917;
 			
-			// aapt resource value: 0x7f0a0181
-			public const int list_rv = 2131362177;
+			// aapt resource value: 0x7f0a017d
+			public const int list_rv = 2131362173;
 			
-			// aapt resource value: 0x7f0a01c4
-			public const int load_torrent_btn = 2131362244;
+			// aapt resource value: 0x7f0a01c2
+			public const int load_torrent_btn = 2131362242;
 			
-			// aapt resource value: 0x7f0a00de
-			public const int loading = 2131362014;
+			// aapt resource value: 0x7f0a00d9
+			public const int loading = 2131362009;
 			
-			// aapt resource value: 0x7f0a0193
-			public const int logo = 2131362195;
+			// aapt resource value: 0x7f0a018f
+			public const int logo = 2131362191;
 			
-			// aapt resource value: 0x7f0a0105
-			public const int main_rv = 2131362053;
+			// aapt resource value: 0x7f0a0100
+			public const int main_rv = 2131362048;
 			
-			// aapt resource value: 0x7f0a017f
-			public const int mark_song = 2131362175;
+			// aapt resource value: 0x7f0a017b
+			public const int mark_song = 2131362171;
 			
-			// aapt resource value: 0x7f0a01e8
-			public const int masked = 2131362280;
+			// aapt resource value: 0x7f0a01e6
+			public const int masked = 2131362278;
 			
-			// aapt resource value: 0x7f0a0154
-			public const int media_actions = 2131362132;
+			// aapt resource value: 0x7f0a0150
+			public const int media_actions = 2131362128;
 			
 			// aapt resource value: 0x7f0a00a9
 			public const int message = 2131361961;
@@ -4964,146 +4964,146 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0059
 			public const int mini = 2131361881;
 			
-			// aapt resource value: 0x7f0a00b4
-			public const int mini_player_holder = 2131361972;
-			
-			// aapt resource value: 0x7f0a013a
-			public const int mr_art = 2131362106;
-			
-			// aapt resource value: 0x7f0a012b
-			public const int mr_cast_checkbox = 2131362091;
-			
-			// aapt resource value: 0x7f0a0124
-			public const int mr_cast_close_button = 2131362084;
-			
-			// aapt resource value: 0x7f0a011f
-			public const int mr_cast_group_icon = 2131362079;
-			
-			// aapt resource value: 0x7f0a0120
-			public const int mr_cast_group_name = 2131362080;
-			
-			// aapt resource value: 0x7f0a011e
-			public const int mr_cast_list = 2131362078;
-			
-			// aapt resource value: 0x7f0a0123
-			public const int mr_cast_meta = 2131362083;
-			
-			// aapt resource value: 0x7f0a0125
-			public const int mr_cast_meta_art = 2131362085;
-			
-			// aapt resource value: 0x7f0a0127
-			public const int mr_cast_meta_subtitle = 2131362087;
-			
-			// aapt resource value: 0x7f0a0126
-			public const int mr_cast_meta_title = 2131362086;
-			
-			// aapt resource value: 0x7f0a0129
-			public const int mr_cast_route_icon = 2131362089;
-			
-			// aapt resource value: 0x7f0a012a
-			public const int mr_cast_route_name = 2131362090;
-			
-			// aapt resource value: 0x7f0a0128
-			public const int mr_cast_stop_button = 2131362088;
-			
-			// aapt resource value: 0x7f0a012c
-			public const int mr_cast_volume_layout = 2131362092;
-			
-			// aapt resource value: 0x7f0a012d
-			public const int mr_cast_volume_slider = 2131362093;
-			
-			// aapt resource value: 0x7f0a012f
-			public const int mr_chooser_list = 2131362095;
-			
-			// aapt resource value: 0x7f0a0132
-			public const int mr_chooser_route_desc = 2131362098;
-			
-			// aapt resource value: 0x7f0a0130
-			public const int mr_chooser_route_icon = 2131362096;
-			
-			// aapt resource value: 0x7f0a0131
-			public const int mr_chooser_route_name = 2131362097;
-			
-			// aapt resource value: 0x7f0a012e
-			public const int mr_chooser_title = 2131362094;
-			
-			// aapt resource value: 0x7f0a0137
-			public const int mr_close = 2131362103;
-			
-			// aapt resource value: 0x7f0a013d
-			public const int mr_control_divider = 2131362109;
-			
-			// aapt resource value: 0x7f0a0148
-			public const int mr_control_playback_ctrl = 2131362120;
-			
-			// aapt resource value: 0x7f0a014b
-			public const int mr_control_subtitle = 2131362123;
-			
-			// aapt resource value: 0x7f0a014a
-			public const int mr_control_title = 2131362122;
-			
-			// aapt resource value: 0x7f0a0149
-			public const int mr_control_title_container = 2131362121;
-			
-			// aapt resource value: 0x7f0a0138
-			public const int mr_custom_control = 2131362104;
-			
-			// aapt resource value: 0x7f0a0139
-			public const int mr_default_control = 2131362105;
-			
-			// aapt resource value: 0x7f0a0134
-			public const int mr_dialog_area = 2131362100;
-			
-			// aapt resource value: 0x7f0a0143
-			public const int mr_dialog_header_name = 2131362115;
-			
-			// aapt resource value: 0x7f0a0133
-			public const int mr_expandable_area = 2131362099;
-			
-			// aapt resource value: 0x7f0a014c
-			public const int mr_group_expand_collapse = 2131362124;
-			
-			// aapt resource value: 0x7f0a0121
-			public const int mr_group_volume_route_name = 2131362081;
-			
-			// aapt resource value: 0x7f0a0122
-			public const int mr_group_volume_slider = 2131362082;
-			
-			// aapt resource value: 0x7f0a013b
-			public const int mr_media_main_control = 2131362107;
+			// aapt resource value: 0x7f0a00af
+			public const int mini_player_holder = 2131361967;
 			
 			// aapt resource value: 0x7f0a0136
-			public const int mr_name = 2131362102;
+			public const int mr_art = 2131362102;
+			
+			// aapt resource value: 0x7f0a0127
+			public const int mr_cast_checkbox = 2131362087;
+			
+			// aapt resource value: 0x7f0a0120
+			public const int mr_cast_close_button = 2131362080;
+			
+			// aapt resource value: 0x7f0a011b
+			public const int mr_cast_group_icon = 2131362075;
+			
+			// aapt resource value: 0x7f0a011c
+			public const int mr_cast_group_name = 2131362076;
+			
+			// aapt resource value: 0x7f0a011a
+			public const int mr_cast_list = 2131362074;
+			
+			// aapt resource value: 0x7f0a011f
+			public const int mr_cast_meta = 2131362079;
+			
+			// aapt resource value: 0x7f0a0121
+			public const int mr_cast_meta_art = 2131362081;
+			
+			// aapt resource value: 0x7f0a0123
+			public const int mr_cast_meta_subtitle = 2131362083;
+			
+			// aapt resource value: 0x7f0a0122
+			public const int mr_cast_meta_title = 2131362082;
+			
+			// aapt resource value: 0x7f0a0125
+			public const int mr_cast_route_icon = 2131362085;
+			
+			// aapt resource value: 0x7f0a0126
+			public const int mr_cast_route_name = 2131362086;
+			
+			// aapt resource value: 0x7f0a0124
+			public const int mr_cast_stop_button = 2131362084;
+			
+			// aapt resource value: 0x7f0a0128
+			public const int mr_cast_volume_layout = 2131362088;
+			
+			// aapt resource value: 0x7f0a0129
+			public const int mr_cast_volume_slider = 2131362089;
+			
+			// aapt resource value: 0x7f0a012b
+			public const int mr_chooser_list = 2131362091;
+			
+			// aapt resource value: 0x7f0a012e
+			public const int mr_chooser_route_desc = 2131362094;
+			
+			// aapt resource value: 0x7f0a012c
+			public const int mr_chooser_route_icon = 2131362092;
+			
+			// aapt resource value: 0x7f0a012d
+			public const int mr_chooser_route_name = 2131362093;
+			
+			// aapt resource value: 0x7f0a012a
+			public const int mr_chooser_title = 2131362090;
+			
+			// aapt resource value: 0x7f0a0133
+			public const int mr_close = 2131362099;
+			
+			// aapt resource value: 0x7f0a0139
+			public const int mr_control_divider = 2131362105;
 			
 			// aapt resource value: 0x7f0a0144
-			public const int mr_picker_close_button = 2131362116;
-			
-			// aapt resource value: 0x7f0a0145
-			public const int mr_picker_list = 2131362117;
-			
-			// aapt resource value: 0x7f0a0146
-			public const int mr_picker_route_icon = 2131362118;
+			public const int mr_control_playback_ctrl = 2131362116;
 			
 			// aapt resource value: 0x7f0a0147
-			public const int mr_picker_route_name = 2131362119;
+			public const int mr_control_subtitle = 2131362119;
 			
-			// aapt resource value: 0x7f0a013c
-			public const int mr_playback_control = 2131362108;
+			// aapt resource value: 0x7f0a0146
+			public const int mr_control_title = 2131362118;
+			
+			// aapt resource value: 0x7f0a0145
+			public const int mr_control_title_container = 2131362117;
+			
+			// aapt resource value: 0x7f0a0134
+			public const int mr_custom_control = 2131362100;
 			
 			// aapt resource value: 0x7f0a0135
-			public const int mr_title_bar = 2131362101;
+			public const int mr_default_control = 2131362101;
 			
-			// aapt resource value: 0x7f0a013e
-			public const int mr_volume_control = 2131362110;
+			// aapt resource value: 0x7f0a0130
+			public const int mr_dialog_area = 2131362096;
 			
 			// aapt resource value: 0x7f0a013f
-			public const int mr_volume_group_list = 2131362111;
+			public const int mr_dialog_header_name = 2131362111;
+			
+			// aapt resource value: 0x7f0a012f
+			public const int mr_expandable_area = 2131362095;
+			
+			// aapt resource value: 0x7f0a0148
+			public const int mr_group_expand_collapse = 2131362120;
+			
+			// aapt resource value: 0x7f0a011d
+			public const int mr_group_volume_route_name = 2131362077;
+			
+			// aapt resource value: 0x7f0a011e
+			public const int mr_group_volume_slider = 2131362078;
+			
+			// aapt resource value: 0x7f0a0137
+			public const int mr_media_main_control = 2131362103;
+			
+			// aapt resource value: 0x7f0a0132
+			public const int mr_name = 2131362098;
+			
+			// aapt resource value: 0x7f0a0140
+			public const int mr_picker_close_button = 2131362112;
 			
 			// aapt resource value: 0x7f0a0141
-			public const int mr_volume_item_icon = 2131362113;
+			public const int mr_picker_list = 2131362113;
 			
 			// aapt resource value: 0x7f0a0142
-			public const int mr_volume_slider = 2131362114;
+			public const int mr_picker_route_icon = 2131362114;
+			
+			// aapt resource value: 0x7f0a0143
+			public const int mr_picker_route_name = 2131362115;
+			
+			// aapt resource value: 0x7f0a0138
+			public const int mr_playback_control = 2131362104;
+			
+			// aapt resource value: 0x7f0a0131
+			public const int mr_title_bar = 2131362097;
+			
+			// aapt resource value: 0x7f0a013a
+			public const int mr_volume_control = 2131362106;
+			
+			// aapt resource value: 0x7f0a013b
+			public const int mr_volume_group_list = 2131362107;
+			
+			// aapt resource value: 0x7f0a013d
+			public const int mr_volume_item_icon = 2131362109;
+			
+			// aapt resource value: 0x7f0a013e
+			public const int mr_volume_slider = 2131362110;
 			
 			// aapt resource value: 0x7f0a0014
 			public const int mtrl_child_content_container = 2131361812;
@@ -5114,20 +5114,20 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a002f
 			public const int multiply = 2131361839;
 			
-			// aapt resource value: 0x7f0a019e
-			public const int music_quality_spinner = 2131362206;
+			// aapt resource value: 0x7f0a019a
+			public const int music_quality_spinner = 2131362202;
 			
-			// aapt resource value: 0x7f0a00ff
-			public const int navigation_header_container = 2131362047;
+			// aapt resource value: 0x7f0a00fa
+			public const int navigation_header_container = 2131362042;
 			
-			// aapt resource value: 0x7f0a0183
-			public const int nestedScrollView = 2131362179;
+			// aapt resource value: 0x7f0a017f
+			public const int nestedScrollView = 2131362175;
 			
 			// aapt resource value: 0x7f0a0042
 			public const int never = 2131361858;
 			
-			// aapt resource value: 0x7f0a0174
-			public const int next_song = 2131362164;
+			// aapt resource value: 0x7f0a0170
+			public const int next_song = 2131362160;
 			
 			// aapt resource value: 0x7f0a0029
 			public const int none = 2131361833;
@@ -5135,26 +5135,23 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0025
 			public const int normal = 2131361829;
 			
-			// aapt resource value: 0x7f0a015d
-			public const int notification_background = 2131362141;
+			// aapt resource value: 0x7f0a0159
+			public const int notification_background = 2131362137;
 			
-			// aapt resource value: 0x7f0a0157
-			public const int notification_main_column = 2131362135;
+			// aapt resource value: 0x7f0a0153
+			public const int notification_main_column = 2131362131;
 			
-			// aapt resource value: 0x7f0a0156
-			public const int notification_main_column_container = 2131362134;
+			// aapt resource value: 0x7f0a0152
+			public const int notification_main_column_container = 2131362130;
 			
-			// aapt resource value: 0x7f0a0114
-			public const int old_artist_subtitle = 2131362068;
+			// aapt resource value: 0x7f0a0110
+			public const int old_artist_subtitle = 2131362064;
 			
-			// aapt resource value: 0x7f0a01db
-			public const int option = 2131362267;
+			// aapt resource value: 0x7f0a01d9
+			public const int option = 2131362265;
 			
-			// aapt resource value: 0x7f0a01e0
-			public const int option_image = 2131362272;
-			
-			// aapt resource value: 0x7f0a00ad
-			public const int options = 2131361965;
+			// aapt resource value: 0x7f0a01de
+			public const int option_image = 2131362270;
 			
 			// aapt resource value: 0x7f0a0060
 			public const int outline = 2131361888;
@@ -5174,50 +5171,50 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a000b
 			public const int parent_matrix = 2131361803;
 			
-			// aapt resource value: 0x7f0a00bb
-			public const int parent_view = 2131361979;
+			// aapt resource value: 0x7f0a00b6
+			public const int parent_view = 2131361974;
 			
 			// aapt resource value: 0x7f0a0068
 			public const int percent = 2131361896;
 			
-			// aapt resource value: 0x7f0a01eb
-			public const int performance = 2131362283;
+			// aapt resource value: 0x7f0a01e9
+			public const int performance = 2131362281;
 			
-			// aapt resource value: 0x7f0a016b
-			public const int piechart = 2131362155;
+			// aapt resource value: 0x7f0a0167
+			public const int piechart = 2131362151;
 			
 			// aapt resource value: 0x7f0a0058
 			public const int pin = 2131361880;
 			
-			// aapt resource value: 0x7f0a0163
-			public const int play_stop = 2131362147;
+			// aapt resource value: 0x7f0a015f
+			public const int play_stop = 2131362143;
 			
-			// aapt resource value: 0x7f0a00b8
-			public const int playable_button = 2131361976;
+			// aapt resource value: 0x7f0a00b3
+			public const int playable_button = 2131361971;
 			
-			// aapt resource value: 0x7f0a011c
-			public const int playlist = 2131362076;
+			// aapt resource value: 0x7f0a0118
+			public const int playlist = 2131362072;
 			
-			// aapt resource value: 0x7f0a0170
-			public const int playlist_name = 2131362160;
+			// aapt resource value: 0x7f0a016c
+			public const int playlist_name = 2131362156;
 			
-			// aapt resource value: 0x7f0a010a
-			public const int playlist_rv = 2131362058;
+			// aapt resource value: 0x7f0a0105
+			public const int playlist_rv = 2131362053;
 			
-			// aapt resource value: 0x7f0a0109
-			public const int playlist_subtitle = 2131362057;
+			// aapt resource value: 0x7f0a0104
+			public const int playlist_subtitle = 2131362052;
 			
-			// aapt resource value: 0x7f0a0108
-			public const int playlist_title = 2131362056;
+			// aapt resource value: 0x7f0a0103
+			public const int playlist_title = 2131362051;
 			
-			// aapt resource value: 0x7f0a00f7
-			public const int popular_header = 2131362039;
+			// aapt resource value: 0x7f0a00f2
+			public const int popular_header = 2131362034;
 			
-			// aapt resource value: 0x7f0a0172
-			public const int preview_song = 2131362162;
+			// aapt resource value: 0x7f0a016e
+			public const int preview_song = 2131362158;
 			
-			// aapt resource value: 0x7f0a011d
-			public const int progressBar2 = 2131362077;
+			// aapt resource value: 0x7f0a0119
+			public const int progressBar2 = 2131362073;
 			
 			// aapt resource value: 0x7f0a0006
 			public const int progress_circular = 2131361798;
@@ -5225,65 +5222,68 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0007
 			public const int progress_horizontal = 2131361799;
 			
-			// aapt resource value: 0x7f0a01d8
-			public const int quality = 2131362264;
+			// aapt resource value: 0x7f0a01d6
+			public const int quality = 2131362262;
 			
-			// aapt resource value: 0x7f0a01c2
-			public const int quality_btn = 2131362242;
+			// aapt resource value: 0x7f0a01c0
+			public const int quality_btn = 2131362240;
 			
-			// aapt resource value: 0x7f0a01e2
-			public const int quote = 2131362274;
+			// aapt resource value: 0x7f0a01e0
+			public const int quote = 2131362272;
 			
 			// aapt resource value: 0x7f0a0094
 			public const int radio = 2131361940;
 			
+			// aapt resource value: 0x7f0a0169
+			public const int ram_procent = 2131362153;
+			
+			// aapt resource value: 0x7f0a0168
+			public const int ram_value = 2131362152;
+			
+			// aapt resource value: 0x7f0a01bb
+			public const int realm_database_reset = 2131362235;
+			
+			// aapt resource value: 0x7f0a0106
+			public const int recent_albums_holder = 2131362054;
+			
+			// aapt resource value: 0x7f0a010a
+			public const int recent_rv = 2131362058;
+			
+			// aapt resource value: 0x7f0a0109
+			public const int recent_sub_title = 2131362057;
+			
+			// aapt resource value: 0x7f0a0108
+			public const int recenty_played_title = 2131362056;
+			
+			// aapt resource value: 0x7f0a00ca
+			public const int related_artist_list = 2131361994;
+			
+			// aapt resource value: 0x7f0a00c9
+			public const int related_list_title = 2131361993;
+			
 			// aapt resource value: 0x7f0a016d
-			public const int ram_procent = 2131362157;
-			
-			// aapt resource value: 0x7f0a016c
-			public const int ram_value = 2131362156;
-			
-			// aapt resource value: 0x7f0a010b
-			public const int recent_albums_holder = 2131362059;
-			
-			// aapt resource value: 0x7f0a010e
-			public const int recent_rv = 2131362062;
-			
-			// aapt resource value: 0x7f0a010d
-			public const int recent_sub_title = 2131362061;
-			
-			// aapt resource value: 0x7f0a010c
-			public const int recenty_played_title = 2131362060;
-			
-			// aapt resource value: 0x7f0a00cf
-			public const int related_artist_list = 2131361999;
-			
-			// aapt resource value: 0x7f0a00ce
-			public const int related_list_title = 2131361998;
-			
-			// aapt resource value: 0x7f0a0171
-			public const int repeat = 2131362161;
+			public const int repeat = 2131362157;
 			
 			// aapt resource value: 0x7f0a0055
 			public const int right = 2131361877;
 			
-			// aapt resource value: 0x7f0a018e
-			public const int right_guideline = 2131362190;
-			
-			// aapt resource value: 0x7f0a015c
-			public const int right_icon = 2131362140;
-			
-			// aapt resource value: 0x7f0a00ec
-			public const int right_image = 2131362028;
+			// aapt resource value: 0x7f0a018a
+			public const int right_guideline = 2131362186;
 			
 			// aapt resource value: 0x7f0a0158
-			public const int right_side = 2131362136;
+			public const int right_icon = 2131362136;
 			
-			// aapt resource value: 0x7f0a00f0
-			public const int right_subtitle = 2131362032;
+			// aapt resource value: 0x7f0a00e7
+			public const int right_image = 2131362023;
 			
-			// aapt resource value: 0x7f0a00dd
-			public const int rv = 2131362013;
+			// aapt resource value: 0x7f0a0154
+			public const int right_side = 2131362132;
+			
+			// aapt resource value: 0x7f0a00eb
+			public const int right_subtitle = 2131362027;
+			
+			// aapt resource value: 0x7f0a00d8
+			public const int rv = 2131362008;
 			
 			// aapt resource value: 0x7f0a000c
 			public const int save_image_matrix = 2131361804;
@@ -5294,8 +5294,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a000e
 			public const int save_scale_type = 2131361806;
 			
-			// aapt resource value: 0x7f0a017b
-			public const int save_to_songs = 2131362171;
+			// aapt resource value: 0x7f0a0177
+			public const int save_to_songs = 2131362167;
 			
 			// aapt resource value: 0x7f0a0030
 			public const int screen = 2131361840;
@@ -5315,32 +5315,32 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a005d
 			public const int scrollable = 2131361885;
 			
-			// aapt resource value: 0x7f0a018f
-			public const int se_content_holder = 2131362191;
+			// aapt resource value: 0x7f0a018b
+			public const int se_content_holder = 2131362187;
 			
-			// aapt resource value: 0x7f0a00d3
-			public const int se_image = 2131362003;
+			// aapt resource value: 0x7f0a00ce
+			public const int se_image = 2131361998;
 			
-			// aapt resource value: 0x7f0a0192
-			public const int se_subtitle = 2131362194;
+			// aapt resource value: 0x7f0a018e
+			public const int se_subtitle = 2131362190;
 			
-			// aapt resource value: 0x7f0a0191
-			public const int se_title = 2131362193;
+			// aapt resource value: 0x7f0a018d
+			public const int se_title = 2131362189;
 			
-			// aapt resource value: 0x7f0a0190
-			public const int seach_gif = 2131362192;
+			// aapt resource value: 0x7f0a018c
+			public const int seach_gif = 2131362188;
 			
-			// aapt resource value: 0x7f0a00b2
-			public const int seacr_icon = 2131361970;
+			// aapt resource value: 0x7f0a00ad
+			public const int seacr_icon = 2131361965;
 			
-			// aapt resource value: 0x7f0a01e9
-			public const int search = 2131362281;
+			// aapt resource value: 0x7f0a01e7
+			public const int search = 2131362279;
 			
-			// aapt resource value: 0x7f0a0185
-			public const int searchStart = 2131362181;
+			// aapt resource value: 0x7f0a0181
+			public const int searchStart = 2131362177;
 			
-			// aapt resource value: 0x7f0a0184
-			public const int searchStartx = 2131362180;
+			// aapt resource value: 0x7f0a0180
+			public const int searchStartx = 2131362176;
 			
 			// aapt resource value: 0x7f0a009e
 			public const int search_badge = 2131361950;
@@ -5357,14 +5357,14 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a00a0
 			public const int search_edit_frame = 2131361952;
 			
-			// aapt resource value: 0x7f0a018c
-			public const int search_empty = 2131362188;
+			// aapt resource value: 0x7f0a0188
+			public const int search_empty = 2131362184;
 			
 			// aapt resource value: 0x7f0a00a6
 			public const int search_go_btn = 2131361958;
 			
-			// aapt resource value: 0x7f0a0182
-			public const int search_loading = 2131362178;
+			// aapt resource value: 0x7f0a017e
+			public const int search_loading = 2131362174;
 			
 			// aapt resource value: 0x7f0a00a1
 			public const int search_mag_icon = 2131361953;
@@ -5375,14 +5375,14 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a00a3
 			public const int search_src_text = 2131361955;
 			
-			// aapt resource value: 0x7f0a00b1
-			public const int search_text = 2131361969;
+			// aapt resource value: 0x7f0a00ac
+			public const int search_text = 2131361964;
 			
 			// aapt resource value: 0x7f0a00a7
 			public const int search_voice_btn = 2131361959;
 			
-			// aapt resource value: 0x7f0a0176
-			public const int seekBar = 2131362166;
+			// aapt resource value: 0x7f0a0172
+			public const int seekBar = 2131362162;
 			
 			// aapt resource value: 0x7f0a00a8
 			public const int select_dialog_listview = 2131361960;
@@ -5390,8 +5390,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a004f
 			public const int selected = 2131361871;
 			
-			// aapt resource value: 0x7f0a00af
-			public const int settings = 2131361967;
+			// aapt resource value: 0x7f0a010b
+			public const int settings = 2131362059;
 			
 			// aapt resource value: 0x7f0a0090
 			public const int shortcut = 2131361936;
@@ -5405,20 +5405,20 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a002c
 			public const int showTitle = 2131361836;
 			
-			// aapt resource value: 0x7f0a0164
-			public const int show_player = 2131362148;
+			// aapt resource value: 0x7f0a0160
+			public const int show_player = 2131362144;
 			
-			// aapt resource value: 0x7f0a0173
-			public const int shuffle = 2131362163;
+			// aapt resource value: 0x7f0a016f
+			public const int shuffle = 2131362159;
 			
-			// aapt resource value: 0x7f0a01e5
-			public const int skip = 2131362277;
+			// aapt resource value: 0x7f0a01e3
+			public const int skip = 2131362275;
 			
-			// aapt resource value: 0x7f0a00f9
-			public const int smallLabel = 2131362041;
+			// aapt resource value: 0x7f0a00f4
+			public const int smallLabel = 2131362036;
 			
-			// aapt resource value: 0x7f0a01dc
-			public const int small_img = 2131362268;
+			// aapt resource value: 0x7f0a01da
+			public const int small_img = 2131362266;
 			
 			// aapt resource value: 0x7f0a0016
 			public const int snackbar_action = 2131361814;
@@ -5432,74 +5432,74 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a004b
 			public const int snapMargins = 2131361867;
 			
-			// aapt resource value: 0x7f0a01c6
-			public const int song = 2131362246;
+			// aapt resource value: 0x7f0a01c4
+			public const int song = 2131362244;
 			
-			// aapt resource value: 0x7f0a01de
-			public const int song_artist = 2131362270;
+			// aapt resource value: 0x7f0a01dc
+			public const int song_artist = 2131362268;
 			
-			// aapt resource value: 0x7f0a01a3
-			public const int song_binded_count = 2131362211;
-			
-			// aapt resource value: 0x7f0a01a4
-			public const int song_binded_text = 2131362212;
-			
-			// aapt resource value: 0x7f0a01a2
-			public const int song_binder_btn = 2131362210;
-			
-			// aapt resource value: 0x7f0a00d8
-			public const int song_cof_seeker = 2131362008;
-			
-			// aapt resource value: 0x7f0a00e9
-			public const int song_count = 2131362025;
-			
-			// aapt resource value: 0x7f0a01dd
-			public const int song_image = 2131362269;
-			
-			// aapt resource value: 0x7f0a00c0
-			public const int song_list = 2131361984;
-			
-			// aapt resource value: 0x7f0a00cb
-			public const int song_list_title = 2131361995;
-			
-			// aapt resource value: 0x7f0a016f
-			public const int song_name = 2131362159;
-			
-			// aapt resource value: 0x7f0a01df
-			public const int song_option_rv = 2131362271;
-			
-			// aapt resource value: 0x7f0a0188
-			public const int song_rv = 2131362184;
-			
-			// aapt resource value: 0x7f0a00e5
-			public const int song_switch = 2131362021;
-			
-			// aapt resource value: 0x7f0a00df
-			public const int song_text = 2131362015;
-			
-			// aapt resource value: 0x7f0a00d7
-			public const int song_title = 2131362007;
-			
-			// aapt resource value: 0x7f0a01cc
-			public const int song_title_value = 2131362252;
+			// aapt resource value: 0x7f0a019f
+			public const int song_binded_count = 2131362207;
 			
 			// aapt resource value: 0x7f0a01a0
-			public const int song_unbinded_count = 2131362208;
+			public const int song_binded_text = 2131362208;
 			
-			// aapt resource value: 0x7f0a01a1
-			public const int song_unbinded_text = 2131362209;
+			// aapt resource value: 0x7f0a019e
+			public const int song_binder_btn = 2131362206;
 			
-			// aapt resource value: 0x7f0a00e2
-			public const int song_value = 2131362018;
+			// aapt resource value: 0x7f0a00d3
+			public const int song_cof_seeker = 2131362003;
 			
-			// aapt resource value: 0x7f0a0186
-			public const int songs_container = 2131362182;
+			// aapt resource value: 0x7f0a00e4
+			public const int song_count = 2131362020;
 			
-			// aapt resource value: 0x7f0a00e8
-			public const int soung_found_count = 2131362024;
+			// aapt resource value: 0x7f0a01db
+			public const int song_image = 2131362267;
 			
-			// aapt resource value: 0x7f0a00ca
-			public const int space = 2131361994;
+			// aapt resource value: 0x7f0a00bb
+			public const int song_list = 2131361979;
+			
+			// aapt resource value: 0x7f0a00c6
+			public const int song_list_title = 2131361990;
+			
+			// aapt resource value: 0x7f0a016b
+			public const int song_name = 2131362155;
+			
+			// aapt resource value: 0x7f0a01dd
+			public const int song_option_rv = 2131362269;
+			
+			// aapt resource value: 0x7f0a0184
+			public const int song_rv = 2131362180;
+			
+			// aapt resource value: 0x7f0a00e0
+			public const int song_switch = 2131362016;
+			
+			// aapt resource value: 0x7f0a00da
+			public const int song_text = 2131362010;
+			
+			// aapt resource value: 0x7f0a00d2
+			public const int song_title = 2131362002;
+			
+			// aapt resource value: 0x7f0a01ca
+			public const int song_title_value = 2131362250;
+			
+			// aapt resource value: 0x7f0a019c
+			public const int song_unbinded_count = 2131362204;
+			
+			// aapt resource value: 0x7f0a019d
+			public const int song_unbinded_text = 2131362205;
+			
+			// aapt resource value: 0x7f0a00dd
+			public const int song_value = 2131362013;
+			
+			// aapt resource value: 0x7f0a0182
+			public const int songs_container = 2131362178;
+			
+			// aapt resource value: 0x7f0a00e3
+			public const int soung_found_count = 2131362019;
+			
+			// aapt resource value: 0x7f0a00c5
+			public const int space = 2131361989;
 			
 			// aapt resource value: 0x7f0a0080
 			public const int spacer = 2131361920;
@@ -5528,8 +5528,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0056
 			public const int start = 2131361878;
 			
-			// aapt resource value: 0x7f0a0153
-			public const int status_bar_latest_event_content = 2131362131;
+			// aapt resource value: 0x7f0a014f
+			public const int status_bar_latest_event_content = 2131362127;
 			
 			// aapt resource value: 0x7f0a005b
 			public const int stretch = 2131361883;
@@ -5540,17 +5540,17 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a00a5
 			public const int submit_area = 2131361957;
 			
-			// aapt resource value: 0x7f0a00d4
-			public const int subtitle = 2131362004;
+			// aapt resource value: 0x7f0a00cf
+			public const int subtitle = 2131361999;
 			
-			// aapt resource value: 0x7f0a01c1
-			public const int sync_btn = 2131362241;
+			// aapt resource value: 0x7f0a01bf
+			public const int sync_btn = 2131362239;
 			
 			// aapt resource value: 0x7f0a0026
 			public const int tabMode = 2131361830;
 			
-			// aapt resource value: 0x7f0a011a
-			public const int tabs = 2131362074;
+			// aapt resource value: 0x7f0a0116
+			public const int tabs = 2131362070;
 			
 			// aapt resource value: 0x7f0a001e
 			public const int tag_transition_group = 2131361822;
@@ -5561,14 +5561,14 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0020
 			public const int tag_unhandled_key_listeners = 2131361824;
 			
-			// aapt resource value: 0x7f0a0168
-			public const int temp_value = 2131362152;
+			// aapt resource value: 0x7f0a0164
+			public const int temp_value = 2131362148;
 			
-			// aapt resource value: 0x7f0a0169
-			public const int temperature_symbol = 2131362153;
+			// aapt resource value: 0x7f0a0165
+			public const int temperature_symbol = 2131362149;
 			
-			// aapt resource value: 0x7f0a0167
-			public const int temperature_title = 2131362151;
+			// aapt resource value: 0x7f0a0163
+			public const int temperature_title = 2131362147;
 			
 			// aapt resource value: 0x7f0a0021
 			public const int text = 2131361825;
@@ -5585,107 +5585,107 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a005a
 			public const int textStart = 2131361882;
 			
-			// aapt resource value: 0x7f0a00ac
-			public const int textView = 2131361964;
+			// aapt resource value: 0x7f0a01ba
+			public const int textView = 2131362234;
 			
-			// aapt resource value: 0x7f0a0198
-			public const int textView10 = 2131362200;
+			// aapt resource value: 0x7f0a0194
+			public const int textView10 = 2131362196;
 			
-			// aapt resource value: 0x7f0a0197
-			public const int textView12 = 2131362199;
+			// aapt resource value: 0x7f0a0193
+			public const int textView12 = 2131362195;
 			
-			// aapt resource value: 0x7f0a00d6
-			public const int textView13 = 2131362006;
-			
-			// aapt resource value: 0x7f0a01b6
-			public const int textView14 = 2131362230;
-			
-			// aapt resource value: 0x7f0a01be
-			public const int textView15 = 2131362238;
-			
-			// aapt resource value: 0x7f0a01a7
-			public const int textView16 = 2131362215;
-			
-			// aapt resource value: 0x7f0a00f8
-			public const int textView17 = 2131362040;
-			
-			// aapt resource value: 0x7f0a01b4
-			public const int textView18 = 2131362228;
-			
-			// aapt resource value: 0x7f0a01b1
-			public const int textView19 = 2131362225;
-			
-			// aapt resource value: 0x7f0a019f
-			public const int textView2 = 2131362207;
-			
-			// aapt resource value: 0x7f0a01af
-			public const int textView20 = 2131362223;
-			
-			// aapt resource value: 0x7f0a01b3
-			public const int textView21 = 2131362227;
+			// aapt resource value: 0x7f0a00d1
+			public const int textView13 = 2131362001;
 			
 			// aapt resource value: 0x7f0a01b2
-			public const int textView22 = 2131362226;
-			
-			// aapt resource value: 0x7f0a019a
-			public const int textView23 = 2131362202;
-			
-			// aapt resource value: 0x7f0a0199
-			public const int textView24 = 2131362201;
-			
-			// aapt resource value: 0x7f0a01a9
-			public const int textView25 = 2131362217;
-			
-			// aapt resource value: 0x7f0a01ab
-			public const int textView26 = 2131362219;
-			
-			// aapt resource value: 0x7f0a019b
-			public const int textView27 = 2131362203;
-			
-			// aapt resource value: 0x7f0a01ac
-			public const int textView28 = 2131362220;
-			
-			// aapt resource value: 0x7f0a01b8
-			public const int textView29 = 2131362232;
-			
-			// aapt resource value: 0x7f0a01cb
-			public const int textView3 = 2131362251;
-			
-			// aapt resource value: 0x7f0a019d
-			public const int textView30 = 2131362205;
-			
-			// aapt resource value: 0x7f0a01ad
-			public const int textView31 = 2131362221;
-			
-			// aapt resource value: 0x7f0a01b9
-			public const int textView32 = 2131362233;
+			public const int textView14 = 2131362226;
 			
 			// aapt resource value: 0x7f0a01bc
-			public const int textView33 = 2131362236;
+			public const int textView15 = 2131362236;
 			
-			// aapt resource value: 0x7f0a01aa
-			public const int textView34 = 2131362218;
+			// aapt resource value: 0x7f0a01a3
+			public const int textView16 = 2131362211;
+			
+			// aapt resource value: 0x7f0a00f3
+			public const int textView17 = 2131362035;
+			
+			// aapt resource value: 0x7f0a01b0
+			public const int textView18 = 2131362224;
+			
+			// aapt resource value: 0x7f0a01ad
+			public const int textView19 = 2131362221;
+			
+			// aapt resource value: 0x7f0a019b
+			public const int textView2 = 2131362203;
+			
+			// aapt resource value: 0x7f0a01ab
+			public const int textView20 = 2131362219;
+			
+			// aapt resource value: 0x7f0a01af
+			public const int textView21 = 2131362223;
 			
 			// aapt resource value: 0x7f0a01ae
-			public const int textView4 = 2131362222;
-			
-			// aapt resource value: 0x7f0a00d5
-			public const int textView5 = 2131362005;
-			
-			// aapt resource value: 0x7f0a0178
-			public const int textView6 = 2131362168;
-			
-			// aapt resource value: 0x7f0a01e6
-			public const int textView7 = 2131362278;
+			public const int textView22 = 2131362222;
 			
 			// aapt resource value: 0x7f0a0196
-			public const int textView8 = 2131362198;
+			public const int textView23 = 2131362198;
+			
+			// aapt resource value: 0x7f0a0195
+			public const int textView24 = 2131362197;
 			
 			// aapt resource value: 0x7f0a01a5
-			public const int textView9 = 2131362213;
+			public const int textView25 = 2131362213;
 			
-			// aapt resource value: 0x7f0a0104
-			public const int text_input_password_toggle = 2131362052;
+			// aapt resource value: 0x7f0a01a7
+			public const int textView26 = 2131362215;
+			
+			// aapt resource value: 0x7f0a0197
+			public const int textView27 = 2131362199;
+			
+			// aapt resource value: 0x7f0a01a8
+			public const int textView28 = 2131362216;
+			
+			// aapt resource value: 0x7f0a01b4
+			public const int textView29 = 2131362228;
+			
+			// aapt resource value: 0x7f0a01c9
+			public const int textView3 = 2131362249;
+			
+			// aapt resource value: 0x7f0a0199
+			public const int textView30 = 2131362201;
+			
+			// aapt resource value: 0x7f0a01a9
+			public const int textView31 = 2131362217;
+			
+			// aapt resource value: 0x7f0a01b5
+			public const int textView32 = 2131362229;
+			
+			// aapt resource value: 0x7f0a01b8
+			public const int textView33 = 2131362232;
+			
+			// aapt resource value: 0x7f0a01a6
+			public const int textView34 = 2131362214;
+			
+			// aapt resource value: 0x7f0a01aa
+			public const int textView4 = 2131362218;
+			
+			// aapt resource value: 0x7f0a00d0
+			public const int textView5 = 2131362000;
+			
+			// aapt resource value: 0x7f0a0174
+			public const int textView6 = 2131362164;
+			
+			// aapt resource value: 0x7f0a01e4
+			public const int textView7 = 2131362276;
+			
+			// aapt resource value: 0x7f0a0192
+			public const int textView8 = 2131362194;
+			
+			// aapt resource value: 0x7f0a01a1
+			public const int textView9 = 2131362209;
+			
+			// aapt resource value: 0x7f0a00ff
+			public const int text_input_password_toggle = 2131362047;
 			
 			// aapt resource value: 0x7f0a0018
 			public const int textinput_counter = 2131361816;
@@ -5696,8 +5696,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a001a
 			public const int textinput_helper_text = 2131361818;
 			
-			// aapt resource value: 0x7f0a0159
-			public const int time = 2131362137;
+			// aapt resource value: 0x7f0a0155
+			public const int time = 2131362133;
 			
 			// aapt resource value: 0x7f0a0023
 			public const int title = 2131361827;
@@ -5714,17 +5714,17 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a008a
 			public const int topPanel = 2131361930;
 			
-			// aapt resource value: 0x7f0a0110
-			public const int top_albums_title = 2131362064;
+			// aapt resource value: 0x7f0a010c
+			public const int top_albums_title = 2131362060;
 			
-			// aapt resource value: 0x7f0a0106
-			public const int top_playlist_holder = 2131362054;
+			// aapt resource value: 0x7f0a0101
+			public const int top_playlist_holder = 2131362049;
 			
-			// aapt resource value: 0x7f0a0177
-			public const int total_song_time = 2131362167;
+			// aapt resource value: 0x7f0a0173
+			public const int total_song_time = 2131362163;
 			
-			// aapt resource value: 0x7f0a00fd
-			public const int touch_outside = 2131362045;
+			// aapt resource value: 0x7f0a00f8
+			public const int touch_outside = 2131362040;
 			
 			// aapt resource value: 0x7f0a000f
 			public const int transition_current_scene = 2131361807;
@@ -5747,8 +5747,8 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0050
 			public const int unlabeled = 2131361872;
 			
-			// aapt resource value: 0x7f0a01b5
-			public const int unplayable_songs_switch = 2131362229;
+			// aapt resource value: 0x7f0a01b1
+			public const int unplayable_songs_switch = 2131362225;
 			
 			// aapt resource value: 0x7f0a0009
 			public const int up = 2131361801;
@@ -5756,26 +5756,26 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a002d
 			public const int useLogo = 2131361837;
 			
-			// aapt resource value: 0x7f0a016a
-			public const int used_ram_title = 2131362154;
+			// aapt resource value: 0x7f0a0166
+			public const int used_ram_title = 2131362150;
 			
-			// aapt resource value: 0x7f0a0195
-			public const int version = 2131362197;
+			// aapt resource value: 0x7f0a0191
+			public const int version = 2131362193;
 			
-			// aapt resource value: 0x7f0a00c9
-			public const int view = 2131361993;
+			// aapt resource value: 0x7f0a00c4
+			public const int view = 2131361988;
 			
 			// aapt resource value: 0x7f0a001b
 			public const int view_offset_helper = 2131361819;
 			
-			// aapt resource value: 0x7f0a011b
-			public const int viewpager = 2131362075;
+			// aapt resource value: 0x7f0a0117
+			public const int viewpager = 2131362071;
 			
-			// aapt resource value: 0x7f0a01e7
-			public const int visible = 2131362279;
+			// aapt resource value: 0x7f0a01e5
+			public const int visible = 2131362277;
 			
-			// aapt resource value: 0x7f0a0140
-			public const int volume_item_container = 2131362112;
+			// aapt resource value: 0x7f0a013c
+			public const int volume_item_container = 2131362108;
 			
 			// aapt resource value: 0x7f0a0043
 			public const int withText = 2131361859;
@@ -5786,14 +5786,14 @@ namespace SpotyPie
 			// aapt resource value: 0x7f0a0035
 			public const int wrap_content = 2131361845;
 			
-			// aapt resource value: 0x7f0a00d0
-			public const int wrapper = 2131362000;
+			// aapt resource value: 0x7f0a00cb
+			public const int wrapper = 2131361995;
 			
-			// aapt resource value: 0x7f0a01d3
-			public const int year = 2131362259;
+			// aapt resource value: 0x7f0a01d1
+			public const int year = 2131362257;
 			
-			// aapt resource value: 0x7f0a01cf
-			public const int year_value = 2131362255;
+			// aapt resource value: 0x7f0a01cd
+			public const int year_value = 2131362253;
 			
 			static Id()
 			{

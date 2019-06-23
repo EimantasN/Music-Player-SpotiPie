@@ -63,15 +63,15 @@ namespace SpotyPie.Player
                 {
                     Playlist album = JsonConvert.DeserializeObject<Playlist>(response.Content);
                     //AlbumSongs.Clear();
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        GetState().CurrentSongList = album.Songs;
-                        foreach (var x in album.Songs)
-                        {
-                            //AlbumSongs.Add(x);
-                        }
-                        //List<Copyright> Copyright = JsonConvert.DeserializeObject<List<Copyright>>(album.Created);
-                    }, null);
+                    //Application.SynchronizationContext.Post(_ =>
+                    //{
+                    //    GetState().CurrentSongList = album.Songs;
+                    //    foreach (var x in album.Songs)
+                    //    {
+                    //        //AlbumSongs.Add(x);
+                    //    }
+                    //    //List<Copyright> Copyright = JsonConvert.DeserializeObject<List<Copyright>>(album.Created);
+                    //}, null);
                 }
                 else
                 {
