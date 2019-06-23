@@ -194,7 +194,6 @@ namespace SpotyPie.Music
             playback = new Playback(this, musicProvider);
             playback.State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateNone;
             playback.Callback = this;
-            playback.Start();
 
             var intent = new Intent(ApplicationContext, typeof(MainActivity));
             var pi = PendingIntent.GetActivity(ApplicationContext, 99 /*request code*/, intent, PendingIntentFlags.UpdateCurrent);
@@ -260,13 +259,13 @@ namespace SpotyPie.Music
             return new BrowserRoot(MediaIDHelper.MediaIdRoot, null);
         }
 
-        public override async void OnLoadChildren(string parentId, Result result)
+        public override void OnLoadChildren(string parentId, Result result)
         {
             if (!musicProvider.IsInitialized)
             {
                 result.Detach();
 
-                await musicProvider.RetrieveMediaAsync(success =>
+                musicProvider.RetrieveMedia(success =>
                 {
                     if (success)
                     {
@@ -278,7 +277,6 @@ namespace SpotyPie.Music
                         result.SendResult(new JavaList<MediaBrowser.MediaItem>());
                     }
                 });
-
             }
             else
             {
@@ -461,6 +459,7 @@ namespace SpotyPie.Music
         public void OnPlaybackStatusChanged(int state)
         {
             UpdatePlaybackState(null);
+            CallBack.OnPlaybackStatusChanged(state);
         }
 
         public void OnPlaybackMetaDataChanged(MediaMetadataCompat meta)
@@ -489,6 +488,15 @@ namespace SpotyPie.Music
         public void OnDurationChanged(int miliseconds)
         {
             CallBack?.OnDurationChanged(miliseconds);
+        }
+
+        public void OnPlay()
+        {
+            
+        }
+
+        public void OnStop()
+        {
         }
     }
 }

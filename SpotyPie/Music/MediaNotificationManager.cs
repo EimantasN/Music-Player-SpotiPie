@@ -134,12 +134,17 @@ namespace SpotyPie.Music
 
         public void StartNotification()
         {
+            SPController.RegisterCallback(SPMediaControllerCallback);
             if (!started)
             {
                 started = true;
                 playbackState = SPController.PlaybackState;
 
-                SPController.RegisterCallback(SPMediaControllerCallback);
+                Notification notification = CreateNotification();
+                if (notification != null)
+                {
+                    Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, notification);
+                }
                 var filter = new IntentFilter();
                 filter.AddAction(ActionNext);
                 filter.AddAction(ActionPause);
@@ -149,11 +154,6 @@ namespace SpotyPie.Music
                 filter.AddAction(ActionTrash);
                 filter.AddAction(ActionSeek);
                 Service.RegisterReceiver(this, filter);
-                Notification notification = CreateNotification();
-                if (notification != null)
-                {
-                    Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, notification);
-                }
             }
             else
             {
@@ -186,54 +186,39 @@ namespace SpotyPie.Music
 
         public override void OnReceive(Context context, Intent intent)
         {
-            int retry = 0;
-            bool tryagain = true;
-            while (tryagain)
+
+            var action = intent.Action;
+            switch (action)
             {
-                tryagain = false;
-                retry++;
-                try
-                {
-                    var action = intent.Action;
-                    switch (action)
+                case ActionPause:
+                    transportControls?.Pause();
+                    break;
+                case ActionPlay:
+                    transportControls?.Play();
+                    break;
+                case ActionNext:
+                    transportControls?.SkipToNext();
+                    break;
+                case ActionPrev:
+                    transportControls?.SkipToPrevious();
+                    break;
+                case ActionFavorite:
+                    transportControls?.SendCustomAction(ActionFavorite, null);
+                    break;
+                case ActionTrash:
+                    transportControls?.SendCustomAction(ActionTrash, null);
+                    break;
+                case ActionSeek:
                     {
-                        case ActionPause:
-                            transportControls?.Pause();
-                            break;
-                        case ActionPlay:
-                            transportControls?.Play();
-                            break;
-                        case ActionNext:
-                            transportControls?.SkipToNext();
-                            break;
-                        case ActionPrev:
-                            transportControls?.SkipToPrevious();
-                            break;
-                        case ActionFavorite:
-                            transportControls?.SendCustomAction(ActionFavorite, null);
-                            break;
-                        case ActionTrash:
-                            transportControls?.SendCustomAction(ActionTrash, null);
-                            break;
-                        case ActionSeek:
-                            {
-                                var data = intent.GetStringExtra("PLAYER_SEEK");
-                                if (!string.IsNullOrEmpty(data))
-                                {
-                                    transportControls?.SeekTo(int.Parse(data));
-                                }
-                            }
-                            break;
-                        default:
-                            break;
+                        var data = intent.GetStringExtra("PLAYER_SEEK");
+                        if (!string.IsNullOrEmpty(data))
+                        {
+                            transportControls?.SeekTo(int.Parse(data));
+                        }
                     }
-                }
-                catch (ObjectDisposedException e)
-                {
-                    if (retry <= 3)
-                        tryagain = true;
-                    Thread.Sleep(250);
-                }
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -246,8 +231,8 @@ namespace SpotyPie.Music
 
                 SessionToken = freshToken;
                 SPController = new MediaControllerCompat(Service, SessionToken);
-                transportControls = SPController.GetTransportControls();
                 SPController.RegisterCallback(SPMediaControllerCallback);
+                transportControls = SPController.GetTransportControls();
             }
         }
 
@@ -296,10 +281,25 @@ namespace SpotyPie.Music
         {
             lock (NotificationLock)
             {
-                if (Metadata == null || playbackState == null)
+                if (Metadata == null)
                 {
-                    return null;
+                    Metadata = new MediaMetadataCompat.Builder()
+                        .PutString(MediaMetadataCompat.MetadataKeyMediaId, "ID")
+                        .PutString(MediaMetadataCompat.MetadataKeyAlbum, "Album")
+                        .PutString(MediaMetadataCompat.MetadataKeyArtist, "Artist")
+                        .PutLong(MediaMetadataCompat.MetadataKeyDuration, 360000)
+                        .PutString(MediaMetadataCompat.MetadataKeyGenre, "Rock")
+                        .PutString(MediaMetadataCompat.MetadataKeyAlbumArtUri, "https://i.scdn.co/image/2f6316728abf5078c9b886d92cadbf71fa965b9b")
+                        .PutString(MediaMetadataCompat.MetadataKeyTitle, "")
+                        .PutLong(MediaMetadataCompat.MetadataKeyTrackNumber, 1)
+                        .PutLong(MediaMetadataCompat.MetadataKeyNumTracks, 10)
+                        .PutLong(MediaMetadataCompat.MetadataKeyDiscNumber, 1)
+                        .PutString("SpotyPieImgUrl", "https://i.scdn.co/image/7eccf38b6a7aef4ff7db2e4b00716e1e1c23a559")
+                        .Build();
                 }
+
+                if (playbackState == null) { return null; }
+
                 NotificationBuilder = new Android.Support.V4.App.NotificationCompat.Builder(Service, Service.Resources.GetString(Resource.String.ChannelId));
                 SetupNotificationButtons(NotificationBuilder);
 

@@ -77,11 +77,6 @@ namespace SpotyPie.Music
             };
         }
 
-        public void Start()
-        {
-
-        }
-
         public void Stop(bool notifyListeners)
         {
             State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateStopped;
@@ -482,6 +477,7 @@ namespace SpotyPie.Music
 
         public interface ICallback
         {
+            void OnPlay();
             void OnDurationChanged(int miliseconds);
             void OnPositionChanged(int progress, TimeSpan currentTime);
             void OnCompletion();
