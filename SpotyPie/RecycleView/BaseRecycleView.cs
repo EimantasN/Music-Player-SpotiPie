@@ -97,6 +97,11 @@ namespace SpotyPie.RecycleView
             }
         }
 
+        internal void SetFocusable(bool v)
+        {
+            CustomRecyclerView.GetRecycleView().Focusable = v;
+        }
+
         public void DisableScroolNested()
         {
             CustomRecyclerView.GetRecycleView().NestedScrollingEnabled = false;
@@ -108,7 +113,7 @@ namespace SpotyPie.RecycleView
             CustomRecyclerView.GetRecycleView().SetItemClickListener((rv, position, view) =>
             {
                 LastPosition = position;
-                if (!IgnoreClick && CustomRecyclerView != null && CustomRecyclerView.GetRecycleView().ChildCount != 0)
+                if (!RvDataset.Updating && !IgnoreClick && CustomRecyclerView != null && CustomRecyclerView.GetRecycleView().ChildCount != 0)
                 {
                     if (RvDataset[position].GetType().Name == "Album")
                     {

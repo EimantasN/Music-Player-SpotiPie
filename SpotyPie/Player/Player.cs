@@ -167,18 +167,19 @@ namespace SpotyPie.Player
 
             Task.Run(async () =>
             {
-                Songs song = Adapter.GetCurrentSong(e.Position);
+                Songs song = null;
+                RunOnUiThread(() => { song = Adapter.GetCurrentSong(e.Position); });
                 while (song == null)
                 {
-                    song = Adapter.GetCurrentSong(e.Position);
+                    RunOnUiThread(() => { song = Adapter.GetCurrentSong(e.Position); });
                     await Task.Delay(250);
                 }
 
                 RunOnUiThread(() =>
                 {
-                    TitleHelper.Format(PlayerSongName, song.Name, 14);
-                    TitleHelper.Format(PlayerArtistName, song.ArtistName, 12);
-                    TitleHelper.Format(CurrentSongListValue, song.AlbumName, 12);
+                    TitleHelper.Format(PlayerSongName, song.Name == null ? "Error" : song.Name, 14);
+                    TitleHelper.Format(PlayerArtistName, song.ArtistName == null ? "Error" : song.ArtistName, 12);
+                    TitleHelper.Format(CurrentSongListValue, song.AlbumName == null ? "Error" : song.AlbumName, 12);
 
                     Pager.Enable(true);
                 });
@@ -277,14 +278,12 @@ namespace SpotyPie.Player
 
         private void PreviewSong_Click(object sender, EventArgs e)
         {
-            SongLoadStarted();
-            SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.prev"));
+            Pager.SetCurrentItem(LastPosition == 0 ? 0 : LastPosition - 1, true);
         }
 
         private void NextSong_Click(object sender, EventArgs e)
         {
-            SongLoadStarted();
-            SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.next"));
+            Pager.SetCurrentItem(LastPosition + 1, true);
         }
 
         private void PlayToggle_Click(object sender, EventArgs e)

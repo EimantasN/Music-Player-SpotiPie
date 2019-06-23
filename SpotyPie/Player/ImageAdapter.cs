@@ -85,18 +85,19 @@ namespace SpotyPie.Player
                     {
                         var songs = realm.All<Mobile_Api.Models.Realm.Music>().ToList().Select(x => new Songs(x.Song)).ToList();
 
-                        Activity.RunOnUiThread(() =>
-                        {
-                            Songs = songs;
-                        });
+                        Activity.RunOnUiThread(() => { Songs = songs; });
                     }
                     while (Songs == null)
                         Thread.Sleep(50);
                 }
                 int Count = Songs.Count;
-                if (position > Songs.Count - 1)
+                if (position > Songs.Count - 1 && Songs.Count != 0)
                 {
-                    Realm_Songs nextSong = Activity.GetAPIService().GetNextSongAsync(Songs.Last().Id).Result;
+                    Realm_Songs nextSong = null;
+                    while (nextSong == null || nextSong.Id == -1)
+                    {
+                        nextSong = Activity.GetAPIService().GetNextSongAsync(Songs.Last().Id).Result;
+                    }
                     var song = new Songs(nextSong);
                     Activity.RunOnUiThread(() =>
                     {
@@ -113,6 +114,7 @@ namespace SpotyPie.Player
 
                     while (Count == Songs.Count)
                         Thread.Sleep(125);
+
                 }
                 else
                 {

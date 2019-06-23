@@ -116,6 +116,7 @@ namespace SpotyPie
             {
                 JumpBack = new BaseRecycleView<Album>(this, Resource.Id.albums_old_rv);
                 JumpBack.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+                JumpBack.SetFocusable(false);
             }
 
             using (Realm realm = Realm.GetInstance())
@@ -149,6 +150,7 @@ namespace SpotyPie
             {
                 BestAlbums = new BaseRecycleView<Album>(this, Resource.Id.best_albums_rv);
                 BestAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+                BestAlbums.SetFocusable(false);
             }
 
             using (Realm realm = Realm.GetInstance())
@@ -182,6 +184,7 @@ namespace SpotyPie
             {
                 RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv);
                 RecentAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+                RecentAlbums.SetFocusable(false);
             }
 
             using (Realm realm = Realm.GetInstance())

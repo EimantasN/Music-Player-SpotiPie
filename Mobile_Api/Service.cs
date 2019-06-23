@@ -74,7 +74,7 @@ namespace Mobile_Api
 
         public async Task<Songs> GetNextSong(int? songId)
         {
-            return await Post<Songs>("Songs", "GetNextSong", songId == null ? $"id={songId}" : "");
+            return await Post<Songs>("Songs", "GetNextSong", songId != null ? $"id={songId}" : "");
         }
 
         public async Task<List<Songs>> GetSongsByArtistAsync(Artist artist)

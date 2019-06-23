@@ -10,6 +10,7 @@ namespace SpotyPie.RecycleView
 {
     public class RvList<T> where T : IBaseInterface<T>
     {
+        public bool Updating = false;
         private List<T> mItems;
         private RecyclerView.Adapter mAdapter;
         private FragmentBase Activity;
@@ -40,12 +41,14 @@ namespace SpotyPie.RecycleView
         {
             Activity.RunOnUiThread(() =>
             {
+                Updating = true;
                 DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, new List<T>()), false);
 
                 // Overwrite the old data
                 Erase();
                 mItems.AddRange(new List<T>());
                 result.DispatchUpdatesTo(Adapter);
+                Updating = false;
             });
         }
 
@@ -53,6 +56,7 @@ namespace SpotyPie.RecycleView
         {
             Activity.RunOnUiThread(() =>
             {
+                Updating = true;
                 DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, newData), true);
 
                 // Overwrite the old data
@@ -61,6 +65,7 @@ namespace SpotyPie.RecycleView
 
                 // Despatch the updates to your RecyclerAdapter
                 result.DispatchUpdatesTo(Adapter);
+                Updating = false;
             });
         }
 
@@ -68,23 +73,27 @@ namespace SpotyPie.RecycleView
         {
             Activity.RunOnUiThread(() =>
             {
+                Updating = true;
                 mItems.Add(item);
 
                 if (Adapter != null)
                 {
                     Adapter.NotifyItemInserted(Count);
                 }
+                Updating = false;
             });
         }
 
         public void Remove(int position)
         {
+            Updating = true;
             mItems.RemoveAt(position);
 
             if (Adapter != null)
             {
                 Adapter.NotifyItemRemoved(0);
             }
+            Updating = false;
         }
 
         public T this[int index]
