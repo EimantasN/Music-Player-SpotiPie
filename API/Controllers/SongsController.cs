@@ -35,13 +35,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("GetNextSong")]
+        [HttpPost("GetNextSong")]
         [EnableCors("AllowSpecificOrigin")]
-        public async Task<IActionResult> GetNextSong()
+        public async Task<IActionResult> GetNextSong([FromForm] int? id)
         {
             try
             {
-                return Ok(await _songs.GetNextSong());
+                return Ok(await _songs.GetNextSong(id));
             }
             catch (Exception ex)
             {

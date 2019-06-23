@@ -22,5 +22,14 @@
 
         public string Image { get; set; }
 
+        public CurrentSong() { }
+
+        public CurrentSong(Song song)
+        {
+            ArtistId = song.ArtistId;
+            AlbumId = song.AlbumId;
+            SongId = song.Id;
+        }
+
     }
 }
