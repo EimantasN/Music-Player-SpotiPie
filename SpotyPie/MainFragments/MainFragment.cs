@@ -57,6 +57,8 @@ namespace SpotyPie
 
             Settings = RootView.FindViewById<ImageButton>(Resource.Id.settings);
             Settings.Click += Settings_Click;
+
+            Toggle(false, PlaylistHolder);
         }
 
         private void Settings_Click(object sender, EventArgs e)
@@ -121,7 +123,7 @@ namespace SpotyPie
 
             using (Realm realm = Realm.GetInstance())
             {
-                var albums = realm.All<Realm_Album>().Where(x => x.AlbumListType == 3).ToList();
+                var albums = realm.All<Realm_Album>().OrderBy(x => x.LastActiveTime).ToList();
                 if (albums == null || albums.Count == 0)
                 {
                     Toggle(false, JumpBackHolder);
@@ -155,7 +157,7 @@ namespace SpotyPie
 
             using (Realm realm = Realm.GetInstance())
             {
-                var albums = realm.All<Realm_Album>().Where(x => x.AlbumListType == 2).ToList();
+                var albums = realm.All<Realm_Album>().OrderByDescending(x => x.Popularity).ToList();
                 if (albums == null || albums.Count == 0)
                 {
                     Toggle(false, BestHolder);
@@ -189,7 +191,7 @@ namespace SpotyPie
 
             using (Realm realm = Realm.GetInstance())
             {
-                List<Realm_Album> albums = realm.All<Realm_Album>().Where(x => x.AlbumListType == 1).ToList();
+                List<Realm_Album> albums = realm.All<Realm_Album>().OrderByDescending(x => x.LastActiveTime).ToList();
                 if (albums == null || albums.Count == 0)
                 {
                     Toggle(false, RecentHolder);

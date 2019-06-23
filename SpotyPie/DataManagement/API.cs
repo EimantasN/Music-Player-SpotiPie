@@ -230,7 +230,7 @@ namespace SpotyPie
                                 temp.LastActiveTime = newAblum.LastActiveTime;
                                 temp.Tracks = newAblum.Tracks;
                                 temp.Type = (int)newAblum.GetModelType();
-                                temp.AlbumListType = 3;
+                                temp.AlbumListType += 3;
                                 temp.Update(newAblum, 3);
                             });
                         }

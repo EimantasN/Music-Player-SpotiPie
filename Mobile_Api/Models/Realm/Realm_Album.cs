@@ -32,7 +32,7 @@ namespace Mobile_Api.Models
 
         public int Type { get; set; }
 
-        public int AlbumListType { get; set; }
+        public string AlbumListType { get; set; }
 
         public Realm_Album()
         {
@@ -54,7 +54,7 @@ namespace Mobile_Api.Models
             LastActiveTime = x.LastActiveTime;
             Tracks = x.Tracks;
             Type = (int)x.GetModelType();
-            AlbumListType = type;
+            AlbumListType += type;
         }
 
         public void Update(Album x, int type)
@@ -70,7 +70,7 @@ namespace Mobile_Api.Models
             this.LastActiveTime = x.LastActiveTime;
             this.Tracks = x.Tracks;
             this.Type = (int)x.GetModelType();
-            this.AlbumListType = type;
+            this.AlbumListType += type;
         }
     }
 }

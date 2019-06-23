@@ -50,6 +50,7 @@ namespace SpotyPie
         protected override void InitView()
         {
             base.InitView();
+
             Settings settings = InitRealSettings();
 
             InitSpinner();

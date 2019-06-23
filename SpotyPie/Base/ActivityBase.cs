@@ -99,7 +99,15 @@ namespace SpotyPie.Base
         {
             if (Realm == null || Realm.IsClosed)
             {
-                Realm = Realm.GetInstance();
+                try
+                {
+                    Realm = Realm.GetInstance();
+                }
+                catch (Realms.Exceptions.RealmMigrationNeededException )
+                {
+                    Realm.DeleteRealm(RealmConfiguration.DefaultConfiguration);
+                    Realm = Realm.GetInstance();
+                }
                 Realm.RealmChanged += Realm_RealmChanged1;
                 SongList = Realm.All<MusicList>().AsRealmCollection();
 
