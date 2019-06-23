@@ -13,12 +13,18 @@ using SpotyPie.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
+using MusicList = Mobile_Api.Models.Realm.Music;
+using Android.Content;
+using SpotyPie.Music;
 
 namespace SpotyPie.Base
 {
     public abstract class ActivityBase : AppCompatActivity
     {
+        private Current_state State { get; set; }
+
         private static int FrameLayoutId { get; set; } = 100000;
 
         public abstract NavigationColorState NavigationBtnColorState { get; set; }
@@ -50,8 +56,6 @@ namespace SpotyPie.Base
 
         private FrameLayout PlayerFrame;
 
-        private ProgressBar FragmentLoading;
-
         public bool IsFragmentLoadedAdded = false;
 
         private API Api_service { get; set; }
@@ -62,19 +66,16 @@ namespace SpotyPie.Base
 
         private Realm Realm;
 
-        private ApplicationSongList SongList;
+        public IRealmCollection<MusicList> SongList;
+        public IRealmCollection<Realm_Songs> List;
 
-        public delegate void DatabaseInfoHandler(dynamic databaseInfo, EventArgs e);
-
-        public DatabaseInfoHandler Handler;
-
-        public delegate void SongListChangeHandler(List<Realm_Songs> songListInfo, EventArgs e);
+        public delegate void SongListChangeHandler(IRealmCollection<MusicList> list, System.Collections.Specialized.NotifyCollectionChangedEventArgs e);
 
         public SongListChangeHandler SongListHandler;
 
         public delegate void CurrentSongStateChangeHandler(Realm_Songs currentSong, EventArgs e);
 
-        public DatabaseInfoHandler CurrentSongHandler;
+        public CurrentSongStateChangeHandler CurrentSongHandler;
 
         public abstract dynamic GetInstance();
 
@@ -99,16 +100,60 @@ namespace SpotyPie.Base
             if (Realm == null || Realm.IsClosed)
             {
                 Realm = Realm.GetInstance();
-                Realm.RealmChanged += Realm_RealmChanged;
+                Realm.RealmChanged += Realm_RealmChanged1;
+                SongList = Realm.All<MusicList>().AsRealmCollection();
 
-                Realm.Write(() => { Realm.RemoveAll<ApplicationSongList>(); });
-                if (SongList == null)
-                {
-                    Realm.Write(() => { Realm.Add(new ApplicationSongList()); });
-                    SongList = Realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
-                }
-                SongList.PropertyChanged += SongList_PropertyChanged;
+                //var c = SongList[0].Song.Id;
+                //List = Realm.All<Realm_Songs>().Where(x => x.Id == c).AsRealmCollection();
+
+                //for (int i = 1; i < SongList.Count; i++)
+                //{
+                //    c = SongList[i].Song.Id;
+                //    List.Append(Realm.All<Realm_Songs>().First(x => x.Id == c));
+                //}
+
+                //var a = List.Count;
+                //for (int i = 0; i < List.Count(); i++)
+                //    List[i].PropertyChanged += SongList_PropertyChanged1;
+
+                SongList.CollectionChanged += SongList_CollectionChanged;
             }
+        }
+
+        private void Realm_RealmChanged1(object sender, EventArgs e)
+        {
+            SongListHandler?.Invoke(SongList, null);
+        }
+
+        private void SongList_PropertyChanged1(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            SongListHandler?.Invoke(SongList, null);
+        }
+
+        private void SongList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            SongListHandler?.Invoke(SongList, e);
+            //if (e.NewItems != null && e.NewItems.Count != 0)
+            //{
+            //    for (int i = 0; i < e.NewItems.Count; i++)
+            //    {
+            //        var song = (MusicList)e.NewItems[i];
+            //        var id = song.Song.Id;
+            //        if (!List.Any(x => x.Id == song.Song.Id))
+            //        {
+            //            List.Append(Realm.All<Realm_Songs>().First(x => x.Id == id));
+            //            List.Last().PropertyChanged += SongList_PropertyChanged1;
+            //        }
+            //    }
+            //}
+
+            //for (int i = 0; i < List.Count; i++)
+            //{
+            //    if (!SongList.Any(x => x.Song.Id == List[i].Id))
+            //    {
+            //        List[i].PropertyChanged -= SongList_PropertyChanged1;
+            //    }
+            //}
         }
 
         private void SongList_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -125,7 +170,7 @@ namespace SpotyPie.Base
                     }
                 case "PlayingSong":
                     {
-                        CurrentSongHandler?.Invoke(new Songs(SongList.PlayingSong), e);
+                        //CurrentSongHandler?.Invoke(new Songs(SongList.PlayingSong), e);
                         break;
                     }
                 case "IsPlaying":
@@ -145,12 +190,12 @@ namespace SpotyPie.Base
 
         private void Song_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            CurrentSongHandler?.Invoke(sender, e);
+            //CurrentSongHandler?.Invoke(sender, e);
         }
 
         private void Realm_RealmChanged(object sender, EventArgs e)
         {
-            Handler?.Invoke(sender, e);
+            //Handler?.Invoke(sender, e);
         }
 
         protected override void OnResume()
@@ -160,13 +205,21 @@ namespace SpotyPie.Base
             base.OnResume();
         }
 
+        protected override void OnRestart()
+        {
+            InitRealChangeLisiner();
+            base.OnRestart();
+        }
+
         protected override void OnStop()
         {
             if (Realm != null)
             {
-                Realm.RealmChanged -= Realm_RealmChanged;
                 if (!Realm.IsClosed)
+                {
                     Realm.Dispose();
+                    Realm = null;
+                }
             }
             base.OnStop();
         }
@@ -210,6 +263,13 @@ namespace SpotyPie.Base
             if (Api_service == null)
                 return Api_service = new API(new Mobile_Api.Service(), this);
             return Api_service;
+        }
+
+        public Current_state GetState()
+        {
+            if (State == null)
+                State = new Current_state(this);
+            return State;
         }
 
         public override void OnBackPressed()
@@ -399,5 +459,32 @@ namespace SpotyPie.Base
         }
 
         public abstract void SetScreen(LayoutScreenState screen);
+
+        public void StartPlayer()
+        {
+            var intent = new Intent(this, typeof(Player.Player));
+            intent.AddFlags(ActivityFlags.SingleTop);
+            StartActivity(intent);
+        }
+
+        protected void StartMusicService()
+        {
+            Task.Run(() =>
+            {
+                Type serviceMusic = typeof(MusicService);
+                ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
+                foreach (var service in manager.GetRunningServices(int.MaxValue))
+                {
+                    if (serviceMusic.Name.Equals(service.Service.ClassName))
+                    {
+                        return;
+                    }
+                }
+                RunOnUiThread(() =>
+                {
+                    this.StartService(new Intent(this, typeof(MusicService)));
+                });
+            });
+        }
     }
 }

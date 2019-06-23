@@ -100,11 +100,10 @@ namespace SpotyPie.Base
 
         public Current_state GetState()
         {
-            if (ParentActivity == null)
-                ParentActivity = (ActivityBase)Activity;
-
-            return ParentActivity?.GetInstance()?.GetState();
+            return GetActivity()?.GetState();
         }
+
+
 
         public SupportFragment GetCurrentFragment()
         {
