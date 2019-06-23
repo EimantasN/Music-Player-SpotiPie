@@ -6,7 +6,7 @@ namespace SpotyPie.Models
     {
         public static void SetCustomTransitions(ref Android.Support.V4.App.FragmentTransaction transaction, FragmentBase fragment)
         {
-            if (fragment is Player.Player || fragment is Player.PlaylistSongList)
+            if (fragment is Player.Player || fragment is Player.PlayerSongList)
             {
                 transaction.SetCustomAnimations(Resource.Animation.enter_from_right, Resource.Animation.exit_to_right);
             }

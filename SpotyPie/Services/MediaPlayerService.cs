@@ -15,7 +15,6 @@ using static Android.Support.V4.Media.App.NotificationCompat;
 
 namespace SpotyPie.Services
 {
-    [Service]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback, ActionNext, ActionPrevious })]
     public class MediaPlayerService : Service, AudioManager.IOnAudioFocusChangeListener,
     MediaPlayer.IOnBufferingUpdateListener,

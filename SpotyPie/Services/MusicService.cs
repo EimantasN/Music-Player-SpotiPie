@@ -22,7 +22,6 @@ using System.Threading.Tasks;
 
 namespace SpotyPie.Services
 {
-    [Service]
     public class MusicService : Service
     {
         private const string BaseUrl = "https://pie.pertrauktiestaskas.lt/api/stream/play/";
