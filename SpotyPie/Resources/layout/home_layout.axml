@@ -8,6 +8,7 @@
     android:background="@drawable/gradient_grey_reverse">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/parent_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="60dp">
@@ -72,11 +73,11 @@
             android:id="@+id/recent_albums_holder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/best_albums_holder">
+            app:layout_constraintTop_toBottomOf="@+id/settings">
 
             <TextView
                 android:id="@+id/recenty_played_title"
@@ -85,8 +86,8 @@
                 android:text="Recently played"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/home_layout_header_title"
                 android:textStyle="bold"
+                android:textSize="@dimen/home_layout_header_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -121,10 +122,10 @@
             android:id="@+id/best_albums_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settings">
+            app:layout_constraintTop_toBottomOf="@+id/recent_albums_holder">
 
             <TextView
                 android:id="@+id/top_albums_title"
@@ -165,16 +166,15 @@
 
         </android.support.constraint.ConstraintLayout>
 
-
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recent_albums_holder">
+            app:layout_constraintTop_toBottomOf="@+id/best_albums_holder">
 
             <TextView
                 android:id="@+id/album_old_title"

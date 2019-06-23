@@ -203,6 +203,10 @@ namespace SpotyPie.SongBinder.Fragments
                 Songs = new BaseRecycleView<Songs>(this, Resource.Id.rv);
                 Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 Songs.IgnoreClick = true;
+                Songs.SetClickAction(() =>
+                {
+                    Snackbar.Make(RootView, "Veikia", Snackbar.LengthIndefinite).Show();
+                });
             }
         }
 
