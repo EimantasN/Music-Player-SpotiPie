@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Android.Views;
 using SpotyPie.Base;
 using SpotyPie.Enums;
-using Mobile_Api.Models;
 
 namespace SpotyPie
 {
@@ -44,8 +43,6 @@ namespace SpotyPie
         private TextView SongUnbindedText;
         private TextView SongUnbindedCount;
         private Button LaunchSongBinder;
-
-        private Button DeleteRealm;
 
         protected override void InitView()
         {
@@ -91,33 +88,6 @@ namespace SpotyPie
 
             LaunchSongBinder = FindViewById<Button>(Resource.Id.song_binder_btn);
             LaunchSongBinder.Click += LaunchSongBinder_Click;
-
-            //real_database_reset
-            DeleteRealm = FindViewById<Button>(Resource.Id.realm_database_reset);
-            DeleteRealm.Click += DeleteRealDatabase;
-        }
-
-        private void DeleteRealDatabase(object sender, EventArgs e)
-        {
-            try
-            {
-                using (var realm = Realm.GetInstance())
-                {
-                    realm.Write(() =>
-                    {
-                        realm.RemoveAll<Realm_Songs>();
-                        realm.RemoveAll<Mobile_Api.Models.Realm.ApplicationSongList>();
-                        realm.RemoveAll<Mobile_Api.Models.Realm.Music>();
-                        realm.RemoveAll<Realm_Album>();
-                        realm.RemoveAll<Realm_Artist>();
-                    });
-                }
-                ShowMessage("Succesfully deleted");
-            }
-            catch //Ignore
-            {
-                ShowMessage("Can't delete");
-            }
         }
 
         protected override void OnResume()
@@ -131,7 +101,7 @@ namespace SpotyPie
         {
             Task.Run(async () =>
             {
-                dynamic bindStatistics = await GetAPIService().GetBindedStatisticsAsync();
+                var bindStatistics = await GetAPIService().GetBindedStatisticsAsync();
                 RunOnUiThread(() =>
                 {
                     SongUnbindedCount.Text = $"{bindStatistics.unbindedCount}";
@@ -212,20 +182,19 @@ namespace SpotyPie
 
         private Settings InitRealSettings()
         {
-            using (var realm = Realm.GetInstance())
-            {
-                if (realm.All<Settings>().FirstOrDefault() == null)
+            var realm = Realm.GetInstance();
+
+            if (realm.All<Settings>().FirstOrDefault() == null)
+                realm.Write(() =>
                 {
-                    realm.Write(() => { realm.Add(new Settings()); });
-                    return realm.All<Settings>().First();
-                }
-                return realm.All<Settings>().First();
-            }
+                    realm.Add(new Settings());
+                });
+            var settings = realm.All<Settings>().First();
+            return settings;
         }
 
         protected override void OnDestroy()
         {
-            DeleteRealm.Click -= DeleteRealDatabase;
             DataSaverSwitch.CheckedChange -= DataSaverSwitch_CheckedChange;
             ExplicitContentSwitch.CheckedChange -= ExplicitContentSwitch_CheckedChange;
             UnplayableSongsSwitch.CheckedChange -= UnplayableSongsSwitch_CheckedChange;

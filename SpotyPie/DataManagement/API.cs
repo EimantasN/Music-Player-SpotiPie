@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CurrentSong = Mobile_Api.Models.Realm.Music;
 
 namespace SpotyPie
 {
@@ -45,21 +44,17 @@ namespace SpotyPie
         {
             Task.Run(() =>
             {
-                using (var realm = Realm.GetInstance())
+                var realm = Realm.GetInstance();
+                var songs = realm.All<Realm_Songs>().AsRealmCollection();
+                var old = songs.FirstOrDefault(x => x.IsPlaying == true);
+                realm.Write(() =>
                 {
-                    IQueryable<CurrentSong> songs = realm.All<CurrentSong>();
-                    IEnumerable<CurrentSong> old = songs.Where(x => x.IsPlaying == true);
-                    foreach (var x in old)
+                    if (old != null)
                     {
-                        realm.Write(() =>
-                        {
-                            x.IsPlaying = false;
-                            x.Song.LastActiveTime = DateTime.Now;
-                        });
+                        old.IsPlaying = false;
+                        old.LastActiveTime = DateTime.Now;
                     }
-                    if (old.Count() > 1)
-                        throw new Exception("Inconsistentcy detected");
-                }
+                });
             });
         }
 
@@ -67,27 +62,22 @@ namespace SpotyPie
         {
             Task.Run(() =>
             {
-                using (var realm = Realm.GetInstance())
+                var realm = Realm.GetInstance();
+                var songs = realm.All<Realm_Songs>().AsRealmCollection();
+                var old = songs.OrderByDescending(x => x.LastActiveTime).FirstOrDefault();
+                realm.Write(() =>
                 {
-                    var songs = realm.All<CurrentSong>();
-                    var old = songs.OrderByDescending(x => x.Song.LastActiveTime).FirstOrDefault();
                     if (old != null)
                     {
-                        realm.Write(() =>
-                        {
-                            old.IsPlaying = true;
-                            old.Song.LastActiveTime = DateTime.Now;
-                        });
+                        old.IsPlaying = true;
                     }
-                    else
-                        throw new Exception("Inconsistency detected");
-                }
+                });
             });
         }
 
-        public async Task<Realm_Songs> GetNextSongAsync()
+        public async Task<Songs> GetNextSongAsync()
         {
-            return new Realm_Songs(await _service.GetNextSong());
+            return UpdateCurrentSongList(await _service.GetNextSong());
         }
 
         private Songs UpdateCurrentSongList(Songs song)
@@ -153,7 +143,7 @@ namespace SpotyPie
         public async Task<Songs> GetCurrentSong()
         {
             await GetCurrentState();
-            return await GetSongAsync(854);//(int)State.songId);
+            return await GetSongAsync((int)State.songId);
         }
 
         public async Task<dynamic> GetSystemInfo()
@@ -165,7 +155,7 @@ namespace SpotyPie
 
         #region Library
 
-        public async Task GetAll<T>(RvList<T> RvList, Action action, RvType type) where T : IBaseInterface<T>
+        public async Task GetAll<T>(RvList<T> RvList, Action action, RvType type) where T : IBaseInterface
         {
             try
             {
@@ -213,26 +203,11 @@ namespace SpotyPie
                         temp = realm.All<Realm_Album>().FirstOrDefault(x => x.Id == newAblum.Id);
                         if (temp == null)
                         {
-                            realm.Write(() => { realm.Add(new Realm_Album(newAblum, 3)); });
+                            realm.Write(() => { realm.Add(new Realm_Album(newAblum, 1)); });
                         }
                         else
                         {
-                            realm.Write(() =>
-                            {
-                                temp.SpotifyId = newAblum.SpotifyId;
-                                temp.LargeImage = newAblum.LargeImage;
-                                temp.MediumImage = newAblum.MediumImage;
-                                temp.SmallImage = newAblum.SmallImage;
-                                temp.Name = newAblum.Name;
-                                temp.ReleaseDate = newAblum.ReleaseDate;
-                                temp.Popularity = newAblum.Popularity;
-                                temp.IsPlayable = newAblum.IsPlayable;
-                                temp.LastActiveTime = newAblum.LastActiveTime;
-                                temp.Tracks = newAblum.Tracks;
-                                temp.Type = (int)newAblum.GetModelType();
-                                temp.AlbumListType = 3;
-                                temp.Update(newAblum, 3);
-                            });
+                            realm.Write(() => { temp.Update(newAblum, 1); });
                         }
                     }
                 }
@@ -612,7 +587,7 @@ namespace SpotyPie
             return await _service.GetNewImageForSong(id);
         }
 
-        internal async Task<List<T>> SearchAsync<T>(string query) where T : IBaseInterface<T>
+        internal async Task<List<T>> SearchAsync<T>(string query) where T : IBaseInterface
         {
             return await _service.Search<T>(query);
         }

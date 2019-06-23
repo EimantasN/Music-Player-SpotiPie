@@ -43,14 +43,22 @@ namespace SpotyPie
 
         public BottomNavigationView BottomNavigation;
 
+        public ImageButton BackHeaderButton;
+        public ImageButton OptionsHeaderButton;
+
         public int WidthInDp = 0;
         public int HeightInDp = 0;
         public bool PlayerVisible = false;
+
+        public TextView ActionName;
+        public ConstraintLayout MiniPlayer;
 
         public FragmentBase FirstLayerFragment;
         public FragmentBase SecondLayerFragment;
 
         public int Add_to_playlist_id = 0;
+
+        ConstraintLayout HeaderContainer;
 
         protected override void InitView()
         {
@@ -60,19 +68,29 @@ namespace SpotyPie
             ConstraintLayout layout = FindViewById<ConstraintLayout>(Resource.Id.MainContainer);
             GradientBG.SetBacground(layout);
 
+            HeaderContainer = FindViewById<ConstraintLayout>(Resource.Id.HeaderContainer);
+
             WidthInDp = Resources.DisplayMetrics.WidthPixels;
             HeightInDp = Resources.DisplayMetrics.HeightPixels;
 
             BottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
 
+            ActionName = FindViewById<TextView>(Resource.Id.textView);
+
+            BackHeaderButton = FindViewById<ImageButton>(Resource.Id.back);
+            OptionsHeaderButton = FindViewById<ImageButton>(Resource.Id.options);
+
+            BackHeaderButton.Click += BackHeaderButton_Click;
+
             BottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             LoadFragmentInner(Main.Home, AddToBackButtonStack: false);
+
+            this.StartService(new Intent(this, typeof(MusicService)));
         }
 
         protected override void OnResume()
         {
             LoadMiniPlayer();
-            //StartMusicService();
             base.OnResume();
         }
 
@@ -84,6 +102,23 @@ namespace SpotyPie
         public override void OnBackPressed()
         {
             base.OnBackPressed();
+        }
+
+        private void BackHeaderButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OnBackPressed();
+            }
+            catch (Exception)
+            {
+                //if (MainFragment == null)
+                //    MainFragment = new MainFragment();
+
+                //SupportFragmentManager.BeginTransaction()
+                //    .Replace(Resource.Id.content_frame, MainFragment)
+                //    .Commit();
+            }
         }
 
         private void BottomNavigation_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
@@ -106,12 +141,6 @@ namespace SpotyPie
                     LoadFragmentInner(Main.Performance);
                     break;
             }
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            this.StopService(new Intent(this, typeof(MusicService)));
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -143,28 +172,28 @@ namespace SpotyPie
                                 MainFragment = new MainFragment();
                             GetFManager().SetCurrentFragment(MainFragment);
                             LastMainFragment = main;
-                            //ActionName.Text = "Home";
+                            ActionName.Text = "Home";
                             break;
                         case Main.Search:
                             if (Search == null)
                                 Search = new Search();
                             GetFManager().SetCurrentFragment(Search);
                             LastMainFragment = main;
-                            //HeaderContainer.Visibility = ViewStates.Gone;
+                            HeaderContainer.Visibility = ViewStates.Gone;
 
                             break;
                         case Main.Library:
                             if (Library == null) Library = new LibraryFragment();
                             GetFManager().SetCurrentFragment(Library);
                             LastMainFragment = main;
-                            //ActionName.Text = "Library";
+                            ActionName.Text = "Library";
                             break;
                         case Main.Performance:
                             if (Performance == null)
                                 Performance = new HostStats();
                             GetFManager().SetCurrentFragment(Performance);
                             LastMainFragment = main;
-                            //ActionName.Text = "Performance for host";
+                            ActionName.Text = "Performance for host";
                             break;
                     }
                     break;
@@ -181,9 +210,8 @@ namespace SpotyPie
                             GetFManager().SetCurrentFragment(ArtistFragment);
                             break;
                         case HomePage.Player:
-                            StartPlayer();
-                            //GetFManager().SetCurrentFragment(new Player.Player());
-                            //NAvBotVisible = false;
+                            GetFManager().SetCurrentFragment(new Player.Player());
+                            NAvBotVisible = false;
                             break;
                     }
                     break;
@@ -228,14 +256,14 @@ namespace SpotyPie
                     if (BottomNavigation.Visibility == ViewStates.Visible)
                     {
                         BottomNavigation.Visibility = ViewStates.Gone;
-                        //MiniPlayer.Visibility = ViewStates.Gone;
+                        MiniPlayer.Visibility = ViewStates.Gone;
                     }
                     break;
                 case LayoutScreenState.Holder:
                     if (BottomNavigation.Visibility == ViewStates.Gone)
                     {
                         BottomNavigation.Visibility = ViewStates.Visible;
-                        //MiniPlayer.Visibility = ViewStates.Visible;
+                        MiniPlayer.Visibility = ViewStates.Visible;
                     }
                     break;
             }
