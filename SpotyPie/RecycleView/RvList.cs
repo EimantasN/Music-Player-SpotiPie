@@ -8,7 +8,7 @@ using SpotyPie.RecycleView.Helpers;
 
 namespace SpotyPie.RecycleView
 {
-    public class RvList<T> where T : IBaseInterface
+    public class RvList<T> where T : IBaseInterface<T>
     {
         private List<T> mItems;
         private RecyclerView.Adapter mAdapter;
@@ -18,8 +18,6 @@ namespace SpotyPie.RecycleView
         {
             return mItems;
         }
-
-        private int LoadingIndex { get; set; } = -1;
 
         public void Erase()
         {
@@ -38,7 +36,6 @@ namespace SpotyPie.RecycleView
             set { mAdapter = value; }
         }
 
-
         public void Clear()
         {
             Activity.RunOnUiThread(() =>
@@ -56,7 +53,7 @@ namespace SpotyPie.RecycleView
         {
             Activity.RunOnUiThread(() =>
             {
-                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, newData), false);
+                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, newData), true);
 
                 // Overwrite the old data
                 Erase();
@@ -71,9 +68,6 @@ namespace SpotyPie.RecycleView
         {
             Activity.RunOnUiThread(() =>
             {
-                if (item == null)
-                    LoadingIndex = mItems.Count;
-
                 mItems.Add(item);
 
                 if (Adapter != null)
@@ -102,48 +96,6 @@ namespace SpotyPie.RecycleView
         public int Count
         {
             get { return mItems.Count; }
-        }
-
-        internal void RemoveLoading(List<T> data)
-        {
-            try
-            {
-                if (mItems[mItems.Count - 1] == null)
-                {
-                    Activity.RunOnUiThread(() =>
-                    {
-                        mItems.RemoveAt(mItems.Count - 1);
-                        Adapter.NotifyItemRemoved(LoadingIndex);
-                    });
-                }
-                else
-                {
-                    data.RemoveAll(x => x == null);
-                    AddList(data);
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        internal void RemoveLoading()
-        {
-            try
-            {
-
-                if (LoadingIndex > -1)
-                {
-                    Activity.RunOnUiThread(() =>
-                    {
-                        Remove(LoadingIndex);
-                        Adapter.NotifyItemRemoved(LoadingIndex);
-                    });
-                }
-            }
-            catch
-            {
-            }
         }
     }
 }

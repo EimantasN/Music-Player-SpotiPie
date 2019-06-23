@@ -5,22 +5,23 @@ using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using SpotyPie.RecycleView.Models;
 using System;
+using System.Collections.Generic;
 
 namespace SpotyPie.RecycleView
 {
-    public class BaseRv<T> : RecyclerView.Adapter where T : IBaseInterface
+    public class BaseRv<T> : RecyclerView.Adapter where T : IBaseInterface<T>
     {
         protected RvList<T> Dataset;
         protected RecyclerView mRecyclerView;
         protected Context Context;
-        protected Action Action;
+        protected List<Action> Action;
 
-        public BaseRv(RvList<T> data, RecyclerView recyclerView, Context context, Action action = null)
+        public BaseRv(RvList<T> data, RecyclerView recyclerView, Context context, List<Action> actions = null)
         {
             Dataset = data;
             mRecyclerView = recyclerView;
             Context = context;
-            this.Action = action;
+            this.Action = actions;
             this.HasStableIds = true;
         }
 
@@ -101,7 +102,7 @@ namespace SpotyPie.RecycleView
                 case Resource.Layout.song_list_with_image:
                     return new SongWithImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_with_image, parent, false), parent);
                 case Resource.Layout.song_detail_list:
-                    return new SongBindList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_detail_list, parent, false), parent);
+                    return new SongBindList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_detail_list, parent, false), parent, Action);
                 case Resource.Layout.artist_list:
                     return new ArtistList(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.artist_list, parent, false), parent);
                 case Resource.Layout.album_list:
