@@ -103,11 +103,6 @@ namespace SpotyPie
 
         public void SetAlbum(Album album)
         {
-            //Current_Album = album;
-            Activity.RunOnUiThread(() =>
-            {
-        //GetPlayer().PlayerPlaylistName.Text = Current_Album.Name;
-    });
         }
 
         internal void Dispose()

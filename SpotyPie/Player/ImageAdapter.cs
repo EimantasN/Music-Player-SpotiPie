@@ -17,6 +17,7 @@ using Realms;
 using RestSharp;
 using SpotyPie.Base;
 using SpotyPie.Database.Helpers;
+using SpotyPie.Music.Helpers;
 using Square.Picasso;
 
 namespace SpotyPie.Player
@@ -29,6 +30,23 @@ namespace SpotyPie.Player
         private ActivityBase Activity;
 
         public override int Count => int.MaxValue;
+
+        public int GetCurrentItem()
+        {
+            var song = Songs.Select((v, i) => new { x = v, index = i }).FirstOrDefault(x => x.x.Id == QueueHelper.Id);
+            if (song == null)
+                return 0;
+            return song.index;
+        }
+
+        public Songs GetCurrentSong(int index)
+        {
+            if (index < Songs.Count)
+            {
+                return Songs[index];
+            }
+            return null;
+        }
 
         public ImageAdapter(Context _context, ActivityBase activity)
         {
@@ -78,7 +96,7 @@ namespace SpotyPie.Player
                 int Count = Songs.Count;
                 if (position > Songs.Count - 1)
                 {
-                    Realm_Songs nextSong = Activity.GetAPIService().GetNextSongAsync().Result;
+                    Realm_Songs nextSong = Activity.GetAPIService().GetNextSongAsync(Songs.Last().Id).Result;
                     var song = new Songs(nextSong);
                     Activity.RunOnUiThread(() =>
                     {

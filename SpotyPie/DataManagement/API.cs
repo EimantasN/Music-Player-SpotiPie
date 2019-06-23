@@ -85,9 +85,9 @@ namespace SpotyPie
             });
         }
 
-        public async Task<Realm_Songs> GetNextSongAsync()
+        public async Task<Realm_Songs> GetNextSongAsync(int? songId = null)
         {
-            return new Realm_Songs(await _service.GetNextSong());
+            return new Realm_Songs(await _service.GetNextSong(songId));
         }
 
         private Songs UpdateCurrentSongList(Songs song)

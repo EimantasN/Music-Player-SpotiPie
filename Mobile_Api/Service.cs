@@ -72,9 +72,9 @@ namespace Mobile_Api
             return await Post<Songs>($"Corrupted/{id}", "Songs");
         }
 
-        public async Task<Songs> GetNextSong()
+        public async Task<Songs> GetNextSong(int? songId)
         {
-            return await Get<Songs>("Songs", "GetNextSong");
+            return await Post<Songs>("Songs", "GetNextSong", songId == null ? $"id={songId}" : "");
         }
 
         public async Task<List<Songs>> GetSongsByArtistAsync(Artist artist)

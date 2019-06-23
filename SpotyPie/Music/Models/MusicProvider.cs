@@ -143,7 +143,7 @@ namespace SpotyPie.Music.Models
             {
                 innerRealm.Write(() =>
                 {
-                    innerRealm.Add(new CurrentMusic(nextSong, true));
+                    innerRealm.Add(new CurrentMusic(nextSong, true), true);
                 });
             }
         }

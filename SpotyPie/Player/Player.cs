@@ -10,6 +10,7 @@ using Realms;
 using SpotyPie.Base;
 using SpotyPie.Database.Helpers;
 using SpotyPie.Enums;
+using SpotyPie.Helpers;
 using SpotyPie.Music;
 using SpotyPie.Music.Helpers;
 using SpotyPie.Player.Interfaces;
@@ -47,7 +48,7 @@ namespace SpotyPie.Player
 
         public int CurrentState { get; set; } = 1;
         public override int LayoutId { get; set; } = Resource.Layout.player;
-        public override LayoutScreenState ScreenState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.FullScreen;
 
         TimeSpan CurrentTime = new TimeSpan(0, 0, 0, 0);
         TimeSpan TotalSongTime = new TimeSpan(0, 0, 0, 0);
@@ -62,10 +63,11 @@ namespace SpotyPie.Player
         public TextView CurretSongTimeText;
         TextView TotalSongTimeText;
 
-        //public ImageView ImgHolder;
-        public TextView PlayerSongName;
-        public TextView PlayerArtistName;
-        public TextView PlayerPlaylistName;
+        private TextView PlayerSongName;
+        private TextView PlayerArtistName;
+        private TextView CurrentSongListType;
+        private TextView CurrentSongListValue;
+
 
         ImageButton SongListButton;
 
@@ -81,7 +83,8 @@ namespace SpotyPie.Player
 
         private bool SeekActive = false;
 
-        ViewPager pager;
+        SpotyPieViewPager Pager;
+        ImageAdapter Adapter;
 
         private int LastPosition = 0;
 
@@ -89,10 +92,10 @@ namespace SpotyPie.Player
         {
             ServiceConnection = this;
 
-            pager = FindViewById<ViewPager>(Resource.Id.img_holder);
-            ImageAdapter adapter = new ImageAdapter(this.ApplicationContext, this);
-            pager.Adapter = adapter;
-            pager.PageSelected += Pager_PageSelected;
+            Pager = FindViewById<SpotyPieViewPager>(Resource.Id.img_holder);
+            Adapter = new ImageAdapter(this.ApplicationContext, this);
+            Pager.Adapter = Adapter;
+            Pager.PageSelected += Pager_PageSelected;
 
             SongListButton = FindViewById<ImageButton>(Resource.Id.song_list);
             SongListButton.Click += SongListButton_Click;
@@ -114,7 +117,8 @@ namespace SpotyPie.Player
             PlayerSongName.Selected = true;
             PlayerArtistName = FindViewById<TextView>(Resource.Id.artist_name);
             PlayerArtistName.Selected = true;
-            PlayerPlaylistName = FindViewById<TextView>(Resource.Id.playlist_name);
+            CurrentSongListType = FindViewById<TextView>(Resource.Id.playing_from_title);
+            CurrentSongListValue = FindViewById<TextView>(Resource.Id.playing_from_value);
 
             CurretSongTimeText = FindViewById<TextView>(Resource.Id.current_song_time);
             CurretSongTimeText.Text = "00:00";
@@ -123,17 +127,6 @@ namespace SpotyPie.Player
 
             HidePlayerButton = FindViewById<ImageButton>(Resource.Id.back_button);
             PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
-
-            //if (GetState().IsPlaying)
-            //{
-            //    PlayToggle.SetImageResource(Resource.Drawable.pause);
-            //    PlayToggle.Tag = Resource.Drawable.pause;
-            //}
-            //else
-            //{
-            //    PlayToggle.SetImageResource(Resource.Drawable.play_button);
-            //    PlayToggle.Tag = Resource.Drawable.play_button;
-            //}
 
             HidePlayerButton.Click += HidePlayerButton_Click;
             PlayToggle.Click += PlayToggle_Click;
@@ -151,26 +144,46 @@ namespace SpotyPie.Player
 
         private void Pager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
+            Intent actionToService = null;
             if (LastPosition == 0 && e.Position == 0)
             {
-                Task.Run(() => RunOnUiThread(() => SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.play"))));
-                
+                Pager.Enable(false);
+                actionToService = new Intent("com.spotypie.adnroid.musicservice.play");
+
             }
             else if (LastPosition < e.Position) //Moved foward
             {
+                Pager.Enable(false);
                 LastPosition = e.Position;
-                Task.Run(() => RunOnUiThread(() => SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.next"))));
+                actionToService = new Intent("com.spotypie.adnroid.musicservice.next");
                 Task.Run(() => RunOnUiThread(() => SongLoadStarted()));
             }
             else if (LastPosition > e.Position)
             {
+                Pager.Enable(false);
                 LastPosition = e.Position;
-                Task.Run(() => RunOnUiThread(() => SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.prev"))));
-                Task.Run(() => RunOnUiThread(() => SongLoadStarted()));
-
+                actionToService = new Intent("com.spotypie.adnroid.musicservice.prev");
             }
-            //Toast.MakeText(this.BaseContext, $"index {e.Position}", ToastLength.Short).Show();
-            //pager.Adapter.NotifyDataSetChanged();
+
+            Task.Run(async () =>
+            {
+                Songs song = Adapter.GetCurrentSong(e.Position);
+                while (song == null)
+                {
+                    song = Adapter.GetCurrentSong(e.Position);
+                    await Task.Delay(250);
+                }
+
+                RunOnUiThread(() =>
+                {
+                    TitleHelper.Format(PlayerSongName, song.Name, 14);
+                    TitleHelper.Format(PlayerArtistName, song.ArtistName, 12);
+                    TitleHelper.Format(CurrentSongListValue, song.AlbumName, 12);
+
+                    Pager.Enable(true);
+                });
+                //RunOnUiThread(() => { if (actionToService != null) { SendBroadcast(actionToService); } });
+            });
         }
 
         public void SongLoadStarted()
@@ -211,18 +224,22 @@ namespace SpotyPie.Player
 
             //ImgHolder.SetOnTouchListener(this);
 
-            BindService(new Intent(this, typeof(Music.MusicService)), ServiceConnection, Bind.AutoCreate);
+            //BindService(new Intent(this, typeof(Music.MusicService)), ServiceConnection, Bind.AutoCreate);
         }
 
         protected override void OnDestroy()
         {
-            //ImgHolder.SetOnTouchListener(null);
-
             if (IsBinded)
             {
                 //GetActivity().UnbindService(ServiceConnection);
             }
             base.OnDestroy();
+        }
+
+        public override void OnBackPressed()
+        {
+            Pager.SetCurrentItem(Adapter.GetCurrentItem(), false);
+            base.OnBackPressed();
         }
 
         public override void LoadFragment(dynamic switcher, string jsonModel = null)
@@ -248,26 +265,10 @@ namespace SpotyPie.Player
 
         public void NextSongPlayer()
         {
-            Task.Run((Action)(() =>
-            {
-                RunOnUiThread(() =>
-                {
-                    //this.ImgHolder.TranslationX = FragmentWidth * -1;
-                    //this.ImgHolder?.Animate().TranslationX(0);
-                });
-            }));
         }
 
         public void PrevSongPlayer()
         {
-            Task.Run((Action)(() =>
-            {
-                RunOnUiThread(() =>
-                {
-                    //this.ImgHolder.TranslationX = FragmentWidth;
-                    //this.ImgHolder?.Animate().TranslationX(0);
-                });
-            }));
         }
 
         private void HidePlayerButton_Click(object sender, EventArgs e)
@@ -306,33 +307,10 @@ namespace SpotyPie.Player
 
         public void PlayerPrepared(int duration)
         {
-            Task.Run(() =>
-            {
-                RunOnUiThread(() =>
-                {
-                    //TotalSongTime = new TimeSpan(0, 0, (int)MusicService.MusicPlayer.Duration / 1000);
-                    //string totalTime = TotalSongTime.Minutes + ":" + (TotalSongTime.Seconds > 9 ? TotalSongTime.Seconds.ToString() : "0" + TotalSongTime.Seconds);
-                    //TotalSongTimeText.Text = totalTime;
-                    //TotalSongTimeText.Visibility = ViewStates.Visible;
-                    //PlayToggle.SetImageResource(Resource.Drawable.pause);
-                    //PlayToggle.Tag = Resource.Drawable.pause;
-                });
-            });
         }
 
         public void Music_play()
         {
-            //Task.Run(async () =>
-            //{
-            //    while (MusicService?.MusicPlayer == null)
-            //        await Task.Delay(250);
-
-            //    Activity.RunOnUiThread(() =>
-            //    {
-            //        PlayToggle.SetImageResource(Resource.Drawable.play_loading);
-            //        PlayToggle.Tag = Resource.Drawable.play_loading;
-            //    });
-            //});
         }
 
         public void Music_pause()
@@ -383,7 +361,7 @@ namespace SpotyPie.Player
         {
         }
 
-        
+
 
         public void SongLoadEnded()
         {
@@ -604,26 +582,21 @@ namespace SpotyPie.Player
         public void OnServiceDisconnected(ComponentName name)
         {
             ShowMessage("Service unbinded");
-            //throw new NotImplementedException();
         }
 
         public void OnPlay()
         {
+            Pager.Enable(true);
             Task.Run(() =>
             {
                 Songs song = QueueHelper.GetPlayingSong();
                 RunOnUiThread(() =>
                 {
-                    PlayerSongName.Text = song.Name;
-                    PlayerArtistName.Text = song.ArtistName;
-
                     SongTimeSeekBar.Enabled = true;
 
-                    PlayerSongName.Text = song.Name;
-
-                    //if (GetActivity().MiniPlayer.Visibility == ViewStates.Gone)
-                    //    GetActivity().MiniPlayer.Visibility = ViewStates.Visible;
-                    //ViewLoadState = 2;
+                    TitleHelper.Format(PlayerSongName, song.Name, 14);
+                    TitleHelper.Format(PlayerArtistName, song.ArtistName, 12);
+                    TitleHelper.Format(CurrentSongListValue, song.AlbumName, 12);
 
                     PlayToggle.SetImageResource(Resource.Drawable.pause);
                     PlayToggle.Tag = Resource.Drawable.pause;

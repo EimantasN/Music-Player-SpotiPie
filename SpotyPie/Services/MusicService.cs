@@ -479,28 +479,28 @@ namespace SpotyPie.Services
 
         private async Task SongListEndCheckForAutoPlayAsync()
         {
-            try
-            {
-                Songs song = await GetAPIService().GetNextSong();
-                if (!Current_Song_List.Any(x => x.Id == song.Id))
-                {
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        song.SetModelType(Mobile_Api.Models.Enums.RvType.Song);
-                        song.IsPlaying = true;
-                        Current_Song_List.Add(song);
-                        SetSong(Current_Song_List.Count - 1);
-                    }, null);
-                }
-                else
-                {
-                    Application.SynchronizationContext.Post(_ => { SetSong(0); }, null);
-                }
-            }
-            catch (Exception e)
-            {
-                Application.SynchronizationContext.Post(_ => { SetSong(0); }, null);
-            }
+            //try
+            //{
+            //    Songs song = await GetAPIService().GetNextSong();
+            //    if (!Current_Song_List.Any(x => x.Id == song.Id))
+            //    {
+            //        Application.SynchronizationContext.Post(_ =>
+            //        {
+            //            song.SetModelType(Mobile_Api.Models.Enums.RvType.Song);
+            //            song.IsPlaying = true;
+            //            Current_Song_List.Add(song);
+            //            SetSong(Current_Song_List.Count - 1);
+            //        }, null);
+            //    }
+            //    else
+            //    {
+            //        Application.SynchronizationContext.Post(_ => { SetSong(0); }, null);
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Application.SynchronizationContext.Post(_ => { SetSong(0); }, null);
+            //}
         }
 
         public void SongChangeStarted(List<Songs> newSongList, int position)

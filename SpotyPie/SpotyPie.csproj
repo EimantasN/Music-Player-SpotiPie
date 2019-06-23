@@ -96,6 +96,7 @@
     <Compile Include="Helpers\GradientBG.cs" />
     <Compile Include="Helpers\InternetConnection.cs" />
     <Compile Include="Helpers\Retry.cs" />
+    <Compile Include="Helpers\TitleHelper.cs" />
     <Compile Include="MainFragments\AlbumFragment.cs" />
     <Compile Include="DataManagement\API.cs" />
     <Compile Include="Base\ActivityBase.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Music\SpotyPieCallback.cs" />
     <Compile Include="Player\ImageAdapter.cs" />
     <Compile Include="Player\Interfaces\IMusicPlayerUiControls.cs" />
+    <Compile Include="Player\SpotyPieViewPager.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
     <Compile Include="RecycleView\Models\SongBindList.cs" />
     <Compile Include="RecycleView\Models\SongOption.cs" />
