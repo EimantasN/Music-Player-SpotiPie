@@ -72,7 +72,7 @@ namespace SpotyPie
         protected override void OnResume()
         {
             LoadMiniPlayer();
-            //StartMusicService();
+            StartMusicService();
             base.OnResume();
         }
 

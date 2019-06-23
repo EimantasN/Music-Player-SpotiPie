@@ -65,7 +65,10 @@ namespace SpotyPie
                             playing = true;
                     }
                     else if (position == i)
+                    {
+                        QueueHelper.Id = songs[position].Id;
                         playing = true;
+                    }
 
                     songs[i].IsPlaying = playing;
                     realm.Write(() =>

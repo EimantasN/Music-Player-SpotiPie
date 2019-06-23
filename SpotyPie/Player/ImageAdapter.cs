@@ -39,9 +39,16 @@ namespace SpotyPie.Player
             return song.index;
         }
 
+        public Songs GetRecentItem()
+        {
+            if (Songs == null || Songs.Count == 0)
+                return null;
+            return Songs.FirstOrDefault(x => x.Id == QueueHelper.Id);
+        }
+
         public Songs GetCurrentSong(int index)
         {
-            if (index < Songs.Count)
+            if (Songs != null && index < Songs.Count)
             {
                 return Songs[index];
             }

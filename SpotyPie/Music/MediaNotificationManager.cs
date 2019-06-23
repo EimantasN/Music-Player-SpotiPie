@@ -186,7 +186,6 @@ namespace SpotyPie.Music
 
         public override void OnReceive(Context context, Intent intent)
         {
-
             var action = intent.Action;
             switch (action)
             {

@@ -42,7 +42,7 @@ namespace SpotyPie.Music
         MusicProvider musicProvider;
         public Playback playback;
         MediaNotificationManager mediaNotificationManager;
-        DelayedStopHandler delayedStopHandler;
+        //DelayedStopHandler delayedStopHandler;
         PackageValidator packageValidator;
         MediaSessionCallback mediaCallback;
 
@@ -58,7 +58,7 @@ namespace SpotyPie.Music
 
         public MusicService()
         {
-            delayedStopHandler = new DelayedStopHandler(this);
+            //delayedStopHandler = new DelayedStopHandler(this);
         }
 
         internal void SetServiceIsStopped() { serviceStarted = false; }
@@ -242,9 +242,13 @@ namespace SpotyPie.Music
             Binder = null;
 
             HandleStopRequest(null);
-            delayedStopHandler.RemoveCallbacksAndMessages(null);
-            delayedStopHandler = null;
+            //delayedStopHandler.RemoveCallbacksAndMessages(null);
+            //delayedStopHandler = null;
             session.Release();
+            session.Dispose();
+            session = null;
+            serviceStarted = false;
+            base.OnDestroy();
         }
 
         public override BrowserRoot OnGetRoot(string clientPackageName, int clientUid, Bundle rootHints)
@@ -291,13 +295,13 @@ namespace SpotyPie.Music
         void HandlePauseRequest()
         {
             playback.Pause();
-            delayedStopHandler.RemoveCallbacksAndMessages(null);
-            delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
+            //delayedStopHandler.RemoveCallbacksAndMessages(null);
+            //delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
         }
 
         void HandlePlayRequest()
         {
-            delayedStopHandler?.RemoveCallbacksAndMessages(null);
+            //delayedStopHandler?.RemoveCallbacksAndMessages(null);
             if (!serviceStarted)
             {
                 StartService(new Intent(ApplicationContext, typeof(MusicService)));
@@ -318,8 +322,8 @@ namespace SpotyPie.Music
         void HandleStopRequest(String withError)
         {
             playback.Stop(true);
-            delayedStopHandler.RemoveCallbacksAndMessages(null);
-            delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
+            //delayedStopHandler.RemoveCallbacksAndMessages(null);
+            //delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
 
             UpdatePlaybackState(withError);
 

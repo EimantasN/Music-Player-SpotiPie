@@ -49,11 +49,14 @@ namespace SpotyPie.Music.Models
             {
                 var song = realm.All<CurrentMusic>().FirstOrDefault(x => x.IsPlaying);
                 if (song != null)
+                {
+                    BuildMetadata(new Songs(song.Song));
                     return Id = $"{song.Song.Id}";
+                }
                 else
                 {
                     var songs = realm.All<CurrentMusic>().ToList();
-
+                    BuildMetadata(new Songs(songs[0].Song));
                     return $"{songs[0].Id}";
                 }
             }
@@ -199,31 +202,21 @@ namespace SpotyPie.Music.Models
 
         public MediaMetadataCompat GetMetadata() => MetaData;
 
-        public void BuildMetadata()
+        public void BuildMetadata(Songs Currentsong)
         {
-            using (var realm = Realm.GetInstance())
-            {
-                var song = realm.All<CurrentMusic>().FirstOrDefault(x => x.IsPlaying == true);
-                if (song == null)
-                    throw new Exception("Inconsistency detected");
-                else
-                {
-                    var Currentsong = new Songs(song.Song);
-                    MetaData = new MediaMetadataCompat.Builder()
-                        .PutString(MediaMetadataCompat.MetadataKeyMediaId, Currentsong.Id.ToString())
-                        .PutString(MediaMetadataCompat.MetadataKeyAlbum, Currentsong.AlbumName)
-                        .PutString(MediaMetadataCompat.MetadataKeyArtist, Currentsong.ArtistName)
-                        .PutLong(MediaMetadataCompat.MetadataKeyDuration, Currentsong.DurationMs)
-                        .PutString(MediaMetadataCompat.MetadataKeyGenre, "Rock")
-                        .PutString(MediaMetadataCompat.MetadataKeyAlbumArtUri, Currentsong.MediumImage)
-                        .PutString(MediaMetadataCompat.MetadataKeyTitle, Currentsong.Name)
-                        .PutLong(MediaMetadataCompat.MetadataKeyTrackNumber, Currentsong.TrackNumber)
-                        .PutLong(MediaMetadataCompat.MetadataKeyNumTracks, 10)
-                        .PutLong(MediaMetadataCompat.MetadataKeyDiscNumber, Currentsong.DiscNumber)
-                        .PutString("SpotyPieImgUrl", Currentsong.MediumImage)
-                        .Build();
-                }
-            }
+            MetaData = new MediaMetadataCompat.Builder()
+                .PutString(MediaMetadataCompat.MetadataKeyMediaId, Currentsong.Id.ToString())
+                .PutString(MediaMetadataCompat.MetadataKeyAlbum, Currentsong.AlbumName)
+                .PutString(MediaMetadataCompat.MetadataKeyArtist, Currentsong.ArtistName)
+                .PutLong(MediaMetadataCompat.MetadataKeyDuration, Currentsong.DurationMs)
+                .PutString(MediaMetadataCompat.MetadataKeyGenre, "Rock")
+                .PutString(MediaMetadataCompat.MetadataKeyAlbumArtUri, Currentsong.MediumImage)
+                .PutString(MediaMetadataCompat.MetadataKeyTitle, Currentsong.Name)
+                .PutLong(MediaMetadataCompat.MetadataKeyTrackNumber, Currentsong.TrackNumber)
+                .PutLong(MediaMetadataCompat.MetadataKeyNumTracks, 10)
+                .PutLong(MediaMetadataCompat.MetadataKeyDiscNumber, Currentsong.DiscNumber)
+                .PutString("SpotyPieImgUrl", Currentsong.MediumImage)
+                .Build();
         }
 
         internal List<string> GetCurrentSongListGendres()

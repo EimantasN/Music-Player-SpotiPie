@@ -485,7 +485,7 @@ namespace SpotyPie.Base
                 {
                     if (serviceMusic.Name.Equals(service.Service.ClassName))
                     {
-                        return;
+                        return ;
                     }
                 }
                 RunOnUiThread(() =>

@@ -57,16 +57,16 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>false</DebugSymbols>
     <Optimize>True</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
-    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <EnableProguard>false</EnableProguard>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
@@ -76,9 +76,9 @@
     <MandroidI18n>CJK;Mideast;Rare;West</MandroidI18n>
     <AndroidHttpClientHandlerType>
     </AndroidHttpClientHandlerType>
-    <AotAssemblies>false</AotAssemblies>
-    <EnableLLVM>false</EnableLLVM>
-    <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
+    <AotAssemblies>true</AotAssemblies>
+    <EnableLLVM>true</EnableLLVM>
+    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
