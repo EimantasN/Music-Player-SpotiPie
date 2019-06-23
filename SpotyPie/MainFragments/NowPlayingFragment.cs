@@ -1,8 +1,12 @@
 ﻿using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
+using Mobile_Api.Models.Realm;
+using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie.MainFragments
@@ -41,12 +45,12 @@ namespace SpotyPie.MainFragments
 
         private void PlayToggle_Click(object sender, EventArgs e)
         {
-            if (GetState().IsPlaying)
-                GetState().GetPlayer().Music_pause();
-            else
-            {
-                GetState().GetPlayer().Music_play();
-            }
+            //if (GetState().IsPlaying)
+            //    GetState().GetPlayer().Music_pause();
+            //else
+            //{
+            //    GetState().GetPlayer().Music_play();
+            //}
         }
 
         private void ShowMusicPlayer(object sender, EventArgs e)
@@ -84,6 +88,7 @@ namespace SpotyPie.MainFragments
                     var song = await GetAPIService().GetCurrentSong();
                     RunOnUiThread(() =>
                     {
+                        Test(song);
                         if (song != null)
                         {
                             SongTitle.Text = song.Name;
@@ -100,6 +105,24 @@ namespace SpotyPie.MainFragments
                     });
                 }
             });
+        }
+
+        private void Test(Songs song)
+        {
+            //using (var realm = Realm.GetInstance())
+            //{
+            //    var data = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
+
+            //    data.Add(realm, new Realm_Songs(song));
+
+            //    var xdata = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
+            //}
+
+            //using (var realm = Realm.GetInstance())
+            //{
+            //    var data = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
+            //    var songList = realm.All<Mobile_Api.Models.Realm.Music>().ToList();
+            //}
         }
     }
 }

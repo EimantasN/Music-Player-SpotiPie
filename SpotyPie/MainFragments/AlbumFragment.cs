@@ -1,4 +1,5 @@
-﻿using Android.Support.Constraints;
+﻿using Android.Content;
+using Android.Support.Constraints;
 using Android.Support.V4.Widget;
 using Android.Views;
 using Android.Widget;
@@ -64,8 +65,6 @@ namespace SpotyPie
             ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
             ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
 
-            GetState().ShowHeaderNavigationButtons();
-
             download = RootView.FindViewById<TextView>(Resource.Id.download_text);
             Copyrights = RootView.FindViewById<TextView>(Resource.Id.copyrights);
             MarginParrams = (MarginLayoutParams)download.LayoutParameters;
@@ -87,7 +86,6 @@ namespace SpotyPie
                     if (album == null)
                         album = GetModel<Album>();
                     ScrollFather.ScrollTo(0, 0);
-                    GetState().Activity.ActionName.Text = album.Name;
                     isPlayable = true;
                     IsMeniuActive = false;
                     Scrolled = 0;
@@ -169,7 +167,9 @@ namespace SpotyPie
             switch (switcher)
             {
                 case Enums.Activitys.HomePage.Player:
-                    ParentActivity.FManager.SetCurrentFragment(new Player.Player());
+                    var intent = new Intent(this.Context, typeof(Player.Player));
+                    intent.AddFlags(ActivityFlags.SingleTop);
+                    StartActivity(intent);
                     return;
             }
         }

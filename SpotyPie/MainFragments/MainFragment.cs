@@ -85,9 +85,30 @@ namespace SpotyPie
             LoadRecentData();
             LoadPopularAlbums();
             LoadOldAlbums();
-
-            //Toggle(false, PlaylistHolder);
         }
+
+        public override void ReleaseData()
+        {
+            if (RecentAlbums != null)
+            {
+                RecentAlbums.Dispose();
+                RecentAlbums = null;
+            }
+
+            if (BestAlbums != null)
+            {
+                BestAlbums.Dispose();
+                BestAlbums = null;
+            }
+
+            if (JumpBack != null)
+            {
+                JumpBack.Dispose();
+                JumpBack = null;
+            }
+        }
+
+        #region Data loading
 
         private void LoadOldAlbums()
         {
@@ -117,7 +138,8 @@ namespace SpotyPie
             Task.Run(async () =>
             {
                 var albums = await GetAPIService().GetOldAlbumsAsync();
-                LoadData(JumpBack.GetData(), albums, () => { Toggle(true, JumpBackHolder); });
+                if (albums != null && albums.Count != 0)
+                    LoadData(JumpBack.GetData(), albums, () => { Toggle(true, JumpBackHolder); });
             });
         }
 
@@ -148,8 +170,9 @@ namespace SpotyPie
             }
             Task.Run(async () =>
             {
-                var albums = await GetAPIService().GetPolularAlbumsAsync();
-                LoadData(BestAlbums.GetData(), albums, () => { Toggle(true, BestHolder); });
+                List<Album> albums = await GetAPIService().GetPolularAlbumsAsync();
+                if (albums != null && albums.Count != 0)
+                    LoadData(BestAlbums.GetData(), albums, () => { Toggle(true, BestHolder); });
             });
         }
 
@@ -180,8 +203,9 @@ namespace SpotyPie
             }
             Task.Run(async () =>
             {
-                List<Album> Albums = await GetAPIService().GetRecentAlbumsAsync();
-                LoadData(RecentAlbums.GetData(), Albums, () => { Toggle(true, RecentHolder); });
+                List<Album> albums = await GetAPIService().GetRecentAlbumsAsync();
+                if(albums != null && albums.Count != 0)
+                    LoadData(RecentAlbums.GetData(), albums, () => { Toggle(true, RecentHolder); });
             });
         }
 
@@ -191,26 +215,7 @@ namespace SpotyPie
             list.AddList(albumsData);
         }
 
-        public override void ReleaseData()
-        {
-            if (RecentAlbums != null)
-            {
-                RecentAlbums.Dispose();
-                RecentAlbums = null;
-            }
-
-            if (BestAlbums != null)
-            {
-                BestAlbums.Dispose();
-                BestAlbums = null;
-            }
-
-            if (JumpBack != null)
-            {
-                JumpBack.Dispose();
-                JumpBack = null;
-            }
-        }
+        #endregion
 
         public override int GetParentView()
         {
