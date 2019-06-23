@@ -6,21 +6,16 @@ using Android.Support.V4.Media;
 using Mobile_Api.Models;
 using Mobile_Api.Models.Realm;
 using Realms;
+using CurrentMusic = Mobile_Api.Models.Realm.Music;
 
 namespace SpotyPie.Music.Models
 {
     public class MusicProvider
     {
+        //Current playing song id
+        private string Id { get; set; }
+
         private API API { get; set; }
-
-        private Songs CurrentSong { get; set; } = new Songs();
-
-        enum State
-        {
-            NonInitialized,
-            Initializing,
-            Initialized
-        };
 
         private API GetApiService()
         {
@@ -29,29 +24,42 @@ namespace SpotyPie.Music.Models
             return API;
         }
 
-        volatile State currentState = State.NonInitialized;
+        volatile Enums.State currentState = Enums.State.NonInitialized;
 
         public MusicProvider()
         {
+            ResetPlayingList();
+        }
+
+        private void ResetPlayingList()
+        {
+            using (Realm realm = Realm.GetInstance())
+            {
+                var songs = realm.All<CurrentMusic>();
+                foreach (var x in songs)
+                {
+                    realm.Write(() => { x.IsPlaying = false; x.Song.IsPlaying = false; });
+                }
+            }
         }
 
         public string GetCurrentSong()
         {
             using (Realm realm = Realm.GetInstance())
             {
-                ApplicationSongList songList = realm.All<ApplicationSongList>().First(x => x.Id == 1);
-                CurrentSong = new Songs(songList.GetCurrentSong());
-                BuildMetadata();
+                var song = realm.All<CurrentMusic>().FirstOrDefault(x => x.IsPlaying);
+                if (song != null)
+                    return Id = $"{song.Song.Id}";
+                else
+                {
+                    var songs = realm.All<CurrentMusic>().ToList();
+
+                    return $"{songs[0].Id}";
+                }
             }
-            return CurrentSong.Id.ToString();
         }
 
-        public string GetCurrentSongId => CurrentSong.Id.ToString();
-
-        public async Task GetNextSongAsync()
-        {
-            BuildMetadata();
-        }
+        public string GetCurrentSongId => Id;
 
         public void SongPaused()
         {
@@ -65,58 +73,47 @@ namespace SpotyPie.Music.Models
 
         public string CurrentSongSource()
         {
-            return $"https://pie.pertrauktiestaskas.lt/api/stream/play/{GetCurrentSong()}";
+            return $"https://pie.pertrauktiestaskas.lt/api/stream/play/{Id}";
         }
 
         public void SetFavorite(string musicId, bool favorite)
         {
-
         }
 
         public async Task ChangeSongAsync(bool Foward)
         {
             using (Realm realm = Realm.GetInstance())
             {
-                ApplicationSongList songList = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
                 try
                 {
-                    IList<Realm_Songs> CurrentSongList = songList.Songs;
-                    if (CurrentSongList == null) return;
+                    List<CurrentMusic> Songs = realm.All<CurrentMusic>().ToList();
+                    if (Songs == null || Songs.Count == 0) return;
 
-                    for (int i = 0; i < CurrentSongList.Count; i++)
+                    for (int i = 0; i < Songs.Count; i++)
                     {
-                        if (CurrentSongList[i].IsPlaying)
+                        if (Songs[i].IsPlaying)
                         {
-                            UpdateCurrentSong(CurrentSongList[i], false);
+                            UpdateCurrentSong(Songs[i], false);
                             if (Foward)
                             {
-                                if ((i + 1) == CurrentSongList.Count)
+                                if ((i + 1) == Songs.Count)
                                 {
-                                    var r_song = await SongListEndCheckForAutoPlayAsync();
-
-                                    using (Realm innerRealm = Realm.GetInstance())
-                                    {
-                                        ApplicationSongList innerSongList = realm.All<ApplicationSongList>().First(x => x.Id == 1);
-                                        innerRealm.Write(() =>
-                                        {
-                                            innerSongList.Add(innerRealm, r_song);
-                                        });
-                                    }
+                                    await NextSongFromServerAsync();
                                 }
                                 else
                                 {
-                                    UpdateCurrentSong(CurrentSongList[i + 1]);
+                                    UpdateCurrentSong(Songs[i + 1]);
                                 }
                             }
                             else
                             {
                                 if (i == 0)
                                 {
-                                    UpdateCurrentSong(CurrentSongList[0]);
+                                    UpdateCurrentSong(Songs[0]);
                                 }
                                 else
                                 {
-                                    UpdateCurrentSong(CurrentSongList[i - 1]);
+                                    UpdateCurrentSong(Songs[i - 1]);
                                 }
                             }
                             break;
@@ -126,40 +123,28 @@ namespace SpotyPie.Music.Models
                 catch (Exception e)
                 {
                 }
-                finally
-                {
-                    realm.Dispose();
-                    BuildMetadata();
-                }
 
-                void UpdateCurrentSong(Realm_Songs song, bool status = true)
+                void UpdateCurrentSong(CurrentMusic song, bool status = true)
                 {
-                    if (realm != null)
+                    realm.Write(() =>
                     {
-                        realm.Write(() =>
-                        {
-                            song.IsPlaying = status;
-                        });
-                        if (status == true)
-                        {
-                            songList.UpdateCurrentSong(realm, song);
-                        }
-                    }
+                        song.IsPlaying = status;
+                        song.Song.IsPlaying = status;
+                        song.Song.LastActiveTime = DateTime.Now;
+                    });
                 }
             }
         }
 
-        private async Task<Realm_Songs> SongListEndCheckForAutoPlayAsync()
+        private async Task NextSongFromServerAsync()
         {
-            try
+            Realm_Songs nextSong = await GetApiService().GetNextSongAsync();
+            using (Realm innerRealm = Realm.GetInstance())
             {
-                Songs song = await GetApiService().GetNextSongAsync();
-                song.SetModelType(Mobile_Api.Models.Enums.RvType.Song);
-                return new Realm_Songs(song);
-            }
-            catch (Exception e)
-            {
-                return null;
+                innerRealm.Write(() =>
+                {
+                    innerRealm.Add(new CurrentMusic(nextSong, true));
+                });
             }
         }
 
@@ -172,31 +157,31 @@ namespace SpotyPie.Music.Models
         {
             get
             {
-                return currentState == State.Initialized;
+                return currentState == Enums.State.Initialized;
             }
         }
 
-        public async Task RetrieveMediaAsync(Action<bool> callback)
+        public void RetrieveMedia(Action<bool> callback)
         {
-            if (currentState == State.Initialized)
+            if (currentState == Enums.State.Initialized)
             {
                 callback(true);
                 return;
             }
 
-            await RetrieveMediaAsync();
-            callback(currentState == State.Initialized);
+            RetrieveMedia();
+            callback(currentState == Enums.State.Initialized);
         }
 
-        async Task RetrieveMediaAsync()
+        void RetrieveMedia()
         {
             try
             {
-                if (currentState == State.NonInitialized)
+                if (currentState == Enums.State.NonInitialized)
                 {
-                    currentState = State.Initializing;
+                    currentState = Enums.State.Initializing;
 
-                    currentState = State.Initialized;
+                    currentState = Enums.State.Initialized;
                 }
             }
             catch (Exception e)
@@ -205,8 +190,8 @@ namespace SpotyPie.Music.Models
             }
             finally
             {
-                if (currentState != State.Initialized)
-                    currentState = State.NonInitialized;
+                if (currentState != Enums.State.Initialized)
+                    currentState = Enums.State.NonInitialized;
             }
         }
 
@@ -216,19 +201,29 @@ namespace SpotyPie.Music.Models
 
         public void BuildMetadata()
         {
-            MetaData = new MediaMetadataCompat.Builder()
-                .PutString(MediaMetadataCompat.MetadataKeyMediaId, CurrentSong.Id.ToString())
-                .PutString(MediaMetadataCompat.MetadataKeyAlbum, CurrentSong.AlbumName)
-                .PutString(MediaMetadataCompat.MetadataKeyArtist, CurrentSong.ArtistName)
-                .PutLong(MediaMetadataCompat.MetadataKeyDuration, CurrentSong.DurationMs)
-                .PutString(MediaMetadataCompat.MetadataKeyGenre, "Rock")
-                .PutString(MediaMetadataCompat.MetadataKeyAlbumArtUri, CurrentSong.MediumImage)
-                .PutString(MediaMetadataCompat.MetadataKeyTitle, CurrentSong.Name)
-                .PutLong(MediaMetadataCompat.MetadataKeyTrackNumber, CurrentSong.TrackNumber)
-                .PutLong(MediaMetadataCompat.MetadataKeyNumTracks, 10)
-                .PutLong(MediaMetadataCompat.MetadataKeyDiscNumber, CurrentSong.DiscNumber)
-                .PutString("SpotyPieImgUrl", CurrentSong.MediumImage)
-                .Build();
+            using (var realm = Realm.GetInstance())
+            {
+                var song = realm.All<CurrentMusic>().FirstOrDefault(x => x.IsPlaying == true);
+                if (song == null)
+                    throw new Exception("Inconsistency detected");
+                else
+                {
+                    var Currentsong = new Songs(song.Song);
+                    MetaData = new MediaMetadataCompat.Builder()
+                        .PutString(MediaMetadataCompat.MetadataKeyMediaId, Currentsong.Id.ToString())
+                        .PutString(MediaMetadataCompat.MetadataKeyAlbum, Currentsong.AlbumName)
+                        .PutString(MediaMetadataCompat.MetadataKeyArtist, Currentsong.ArtistName)
+                        .PutLong(MediaMetadataCompat.MetadataKeyDuration, Currentsong.DurationMs)
+                        .PutString(MediaMetadataCompat.MetadataKeyGenre, "Rock")
+                        .PutString(MediaMetadataCompat.MetadataKeyAlbumArtUri, Currentsong.MediumImage)
+                        .PutString(MediaMetadataCompat.MetadataKeyTitle, Currentsong.Name)
+                        .PutLong(MediaMetadataCompat.MetadataKeyTrackNumber, Currentsong.TrackNumber)
+                        .PutLong(MediaMetadataCompat.MetadataKeyNumTracks, 10)
+                        .PutLong(MediaMetadataCompat.MetadataKeyDiscNumber, Currentsong.DiscNumber)
+                        .PutString("SpotyPieImgUrl", Currentsong.MediumImage)
+                        .Build();
+                }
+            }
         }
 
         internal List<string> GetCurrentSongListGendres()
