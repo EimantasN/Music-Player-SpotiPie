@@ -2,13 +2,16 @@
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.Media;
+using Android.Support.V4.View;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using Realms;
 using SpotyPie.Base;
+using SpotyPie.Database.Helpers;
 using SpotyPie.Enums;
 using SpotyPie.Music;
+using SpotyPie.Music.Helpers;
 using SpotyPie.Player.Interfaces;
 using SpotyPie.Services;
 using SpotyPie.Services.Binders;
@@ -21,18 +24,15 @@ using System.Threading.Tasks;
 
 namespace SpotyPie.Player
 {
-    public class Player : FragmentBase, View.IOnTouchListener, IMusicPlayerUiControls, Playback.ICallback, IServiceConnection
+    [Activity(Label = "SpotyPie", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Icon = "@drawable/logo_spotify", Theme = "@style/Theme.SpotyPie")]
+    public class Player : ActivityBase, View.IOnTouchListener, Playback.ICallback, IServiceConnection
     {
         private bool IsBinded = false;
-
-        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
         public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Player;
 
         private int ViewLoadState = 0;
 
         private bool Bound { get; set; } = false;
-
-        protected new MainActivity ParentActivity;
 
         //private MusicService MusicService;
 
@@ -47,6 +47,7 @@ namespace SpotyPie.Player
 
         public int CurrentState { get; set; } = 1;
         public override int LayoutId { get; set; } = Resource.Layout.player;
+        public override LayoutScreenState ScreenState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         TimeSpan CurrentTime = new TimeSpan(0, 0, 0, 0);
         TimeSpan TotalSongTime = new TimeSpan(0, 0, 0, 0);
@@ -61,7 +62,7 @@ namespace SpotyPie.Player
         public TextView CurretSongTimeText;
         TextView TotalSongTimeText;
 
-        public ImageView ImgHolder;
+        //public ImageView ImgHolder;
         public TextView PlayerSongName;
         public TextView PlayerArtistName;
         public TextView PlayerPlaylistName;
@@ -78,103 +79,61 @@ namespace SpotyPie.Player
 
         ImageView Save_to_songs;
 
-        private int CurrentSongPosition = 0;
-
         private bool SeekActive = false;
 
+        ViewPager pager;
 
-        private Realm Realm;
-        private Realm_Songs RealObject;
-        private IRealmCollection<Realm_Songs> Songs;
-
-        private void SendSystemInfoData(dynamic m, EventArgs e)
-        {
-            //if (Realm == null)
-            //    Realm = Realm.GetInstance();
-
-            //var songList = Realm.All<Realm_Songs>().AsQueryable().ToList();
-
-            //if (RealObject != null)
-            //{
-            //    RealObject.PropertyChanged -= RealObject_PropertyChanged;
-            //}
-            //if (songList.Count == 1)
-            //    RealObject = (Realm_Songs)songList[0];
-            //else
-            //{
-            //    foreach (var x in songList)
-            //    {
-            //        if (x.IsPlaying == true)
-            //        {
-            //            RealObject = x;
-            //            break;
-            //        }
-            //    }
-            //    if (RealObject == null)
-            //    {
-            //        RealObject = songList[0];
-            //    }
-            //}
-            //RealObject.PropertyChanged += RealObject_PropertyChanged;
-            Start(RealObject);
-        }
-
-
-        private void SongChanged(dynamic currentSong, EventArgs e)
-        {
-            Start(new Realm_Songs((Songs)currentSong));
-        }
+        private int LastPosition = 0;
 
         protected override void InitView()
         {
             ServiceConnection = this;
 
-            RealmInit();
+            pager = FindViewById<ViewPager>(Resource.Id.img_holder);
+            ImageAdapter adapter = new ImageAdapter(this.ApplicationContext, this);
+            pager.Adapter = adapter;
+            pager.PageSelected += Pager_PageSelected;
 
-            GetActivity().CurrentSongHandler += SongChanged;
-
-            GetActivity().Handler += SendSystemInfoData;
-
-            SongListButton = RootView.FindViewById<ImageButton>(Resource.Id.song_list);
+            SongListButton = FindViewById<ImageButton>(Resource.Id.song_list);
             SongListButton.Click += SongListButton_Click;
 
-            NextSong = RootView.FindViewById<ImageButton>(Resource.Id.next_song);
+            NextSong = FindViewById<ImageButton>(Resource.Id.next_song);
             NextSong.Click += NextSong_Click;
-            PreviewSong = RootView.FindViewById<ImageButton>(Resource.Id.preview_song);
+            PreviewSong = FindViewById<ImageButton>(Resource.Id.preview_song);
             PreviewSong.Click += PreviewSong_Click;
 
-            Repeat = RootView.FindViewById<ImageButton>(Resource.Id.repeat);
+            Repeat = FindViewById<ImageButton>(Resource.Id.repeat);
             Repeat.Click += Repeat_Click;
-            Shuffle = RootView.FindViewById<ImageButton>(Resource.Id.shuffle);
+            Shuffle = FindViewById<ImageButton>(Resource.Id.shuffle);
             Shuffle.Click += Shuffle_Click;
-            Save_to_songs = RootView.FindViewById<ImageView>(Resource.Id.save_to_songs);
+            Save_to_songs = FindViewById<ImageView>(Resource.Id.save_to_songs);
             Save_to_songs.Click += Save_to_songs_Click;
 
-            ImgHolder = RootView.FindViewById<ImageView>(Resource.Id.img_holder);
-            PlayerSongName = RootView.FindViewById<TextView>(Resource.Id.song_name);
+            //ImgHolder = FindViewById<ImageView>(Resource.Id.img_holder);
+            PlayerSongName = FindViewById<TextView>(Resource.Id.song_name);
             PlayerSongName.Selected = true;
-            PlayerArtistName = RootView.FindViewById<TextView>(Resource.Id.artist_name);
+            PlayerArtistName = FindViewById<TextView>(Resource.Id.artist_name);
             PlayerArtistName.Selected = true;
-            PlayerPlaylistName = RootView.FindViewById<TextView>(Resource.Id.playlist_name);
+            PlayerPlaylistName = FindViewById<TextView>(Resource.Id.playlist_name);
 
-            CurretSongTimeText = RootView.FindViewById<TextView>(Resource.Id.current_song_time);
+            CurretSongTimeText = FindViewById<TextView>(Resource.Id.current_song_time);
             CurretSongTimeText.Text = "00:00";
-            TotalSongTimeText = RootView.FindViewById<TextView>(Resource.Id.total_song_time);
+            TotalSongTimeText = FindViewById<TextView>(Resource.Id.total_song_time);
             TotalSongTimeText.Visibility = ViewStates.Invisible;
 
-            HidePlayerButton = RootView.FindViewById<ImageButton>(Resource.Id.back_button);
-            PlayToggle = RootView.FindViewById<ImageButton>(Resource.Id.play_stop);
+            HidePlayerButton = FindViewById<ImageButton>(Resource.Id.back_button);
+            PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
 
-            if (GetState().IsPlaying)
-            {
-                PlayToggle.SetImageResource(Resource.Drawable.pause);
-                PlayToggle.Tag = Resource.Drawable.pause;
-            }
-            else
-            {
-                PlayToggle.SetImageResource(Resource.Drawable.play_button);
-                PlayToggle.Tag = Resource.Drawable.play_button;
-            }
+            //if (GetState().IsPlaying)
+            //{
+            //    PlayToggle.SetImageResource(Resource.Drawable.pause);
+            //    PlayToggle.Tag = Resource.Drawable.pause;
+            //}
+            //else
+            //{
+            //    PlayToggle.SetImageResource(Resource.Drawable.play_button);
+            //    PlayToggle.Tag = Resource.Drawable.play_button;
+            //}
 
             HidePlayerButton.Click += HidePlayerButton_Click;
             PlayToggle.Click += PlayToggle_Click;
@@ -183,95 +142,43 @@ namespace SpotyPie.Player
 
             FragmentWidth = Resources.DisplayMetrics.WidthPixels;
 
-            SongTimeSeekBar = RootView.FindViewById<SeekBar>(Resource.Id.seekBar);
+            SongTimeSeekBar = FindViewById<SeekBar>(Resource.Id.seekBar);
 
             SongTimeSeekBar.StartTrackingTouch += SongTimeSeekBar_StartTrackingTouch;
             SongTimeSeekBar.StopTrackingTouch += SongTimeSeekBar_StopTrackingTouch;
             SongTimeSeekBar.ProgressChanged += SongTimeSeekBar_ProgressChanged;
         }
 
-        private void Songs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Pager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
-            if (e.NewItems != null && e.NewItems.Count > 0)
+            if (LastPosition == 0 && e.Position == 0)
             {
-                //if (RealObject != null)
-                //{
-                //    RealObject.PropertyChanged -= RealObject_PropertyChanged;
-                //}
-                //if (e.NewItems.Count == 1)
-                //    RealObject = (Realm_Songs)e.NewItems[0];
-                //else
-                //{
-                //    Realm_Songs song;
-                //    foreach (var x in e.NewItems)
-                //    {
-                //        song = (Realm_Songs)x;
-                //        if (song.IsPlaying == true)
-                //        {
-                //            RealObject = song;
-                //            break;
-                //        }
-                //    }
-                //    if (RealObject == null)
-                //    {
-                //        RealObject = (Realm_Songs)e.NewItems[0];
-                //    }
-                //}
-                //RealObject.PropertyChanged += RealObject_PropertyChanged;
-                //Start(RealObject);
+                Task.Run(() => RunOnUiThread(() => SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.play"))));
+                
             }
-        }
-
-        private void RealObject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            Realm_Songs song = (Realm_Songs)sender;
-            switch (e.PropertyName)
+            else if (LastPosition < e.Position) //Moved foward
             {
-                case "IsPlaying":
-                    {
-                        if (song.IsPlaying)
-                        {
-                            Start(song);
-                        }
-                        else
-                        {
-                            SongStopped();
-                        }
-                    }
-                    break;
-                default:
-                    break;
+                LastPosition = e.Position;
+                Task.Run(() => RunOnUiThread(() => SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.next"))));
+                Task.Run(() => RunOnUiThread(() => SongLoadStarted()));
             }
-        }
-
-        public void Start(Realm_Songs song)
-        {
-            Task.Run(() =>
+            else if (LastPosition > e.Position)
             {
-                Activity.RunOnUiThread(() =>
-                {
-                    TotalSongTimeText.Visibility = ViewStates.Invisible;
+                LastPosition = e.Position;
+                Task.Run(() => RunOnUiThread(() => SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.prev"))));
+                Task.Run(() => RunOnUiThread(() => SongLoadStarted()));
 
-                    PlayerSongName.Text = song.Name;
-                    PlayerArtistName.Text = song.ArtistName;
-
-                    CurretSongTimeText.Text = "00:00";
-                    SongTimeSeekBar.Progress = 0;
-                    PlayerSongName.Text = song.Name;
-
-                    //if (GetActivity().MiniPlayer.Visibility == ViewStates.Gone)
-                    //    GetActivity().MiniPlayer.Visibility = ViewStates.Visible;
-                    //ViewLoadState = 2;
-
-                    PlayToggle.SetImageResource(Resource.Drawable.pause);
-                    PlayToggle.Tag = Resource.Drawable.pause;
-                });
-            });
-            LoadCustomImage(song);
+            }
+            //Toast.MakeText(this.BaseContext, $"index {e.Position}", ToastLength.Short).Show();
+            //pager.Adapter.NotifyDataSetChanged();
         }
 
         public void SongLoadStarted()
         {
+            CurretSongTimeText.Text = "00:00";
+            if (!SeekActive && SongTimeSeekBar != null)
+                SongTimeSeekBar.Progress = 0;
+            SongTimeSeekBar.Enabled = false;
             PlayToggle.SetImageResource(Resource.Drawable.play_loading);
             PlayToggle.Tag = Resource.Drawable.play_loading;
         }
@@ -291,8 +198,9 @@ namespace SpotyPie.Player
             throw new NotImplementedException();
         }
 
-        public override void ForceUpdate()
+        protected override void OnResume()
         {
+            base.OnResume();
             //if (!IsMyServiceRunning(typeof(Music.MusicService)))
             //{
             //    this.Activity.StartService(new Intent(this.Activity, typeof(Music.MusicService)));
@@ -301,54 +209,33 @@ namespace SpotyPie.Player
             //Intent intent = new Intent(this.Activity, typeof(MusicService));
             //Activity.BindService(intent, this.ServiceConnection, Bind.AutoCreate);
 
-            if (Realm == null || Realm.IsClosed)
-            {
-                RealmInit();
-            }
+            //ImgHolder.SetOnTouchListener(this);
 
-            RealObject = Realm.All<Realm_Songs>().FirstOrDefault(x => x.Id == Current_state.Id);
-            if (RealObject != null)
-            {
-                Start(RealObject);
-                RealObject.PropertyChanged += RealObject_PropertyChanged;
-            }
-
-            ImgHolder.SetOnTouchListener(this);
-
-            GetActivity().BindService(new Intent(this.Context, typeof(Music.MusicService)), ServiceConnection, Bind.AutoCreate);
+            BindService(new Intent(this, typeof(Music.MusicService)), ServiceConnection, Bind.AutoCreate);
         }
 
-        private void RealmInit()
+        protected override void OnDestroy()
         {
-            Realm = Realm.GetInstance();
-            Songs = Realm.All<Realm_Songs>().AsRealmCollection();
-            Songs.CollectionChanged += Songs_CollectionChanged;
-        }
-
-        public override void ReleaseData()
-        {
-            Songs.CollectionChanged -= Songs_CollectionChanged;
-            Realm?.Dispose();
-            Realm = null;
-            ImgHolder.SetOnTouchListener(null);
+            //ImgHolder.SetOnTouchListener(null);
 
             if (IsBinded)
             {
                 //GetActivity().UnbindService(ServiceConnection);
             }
+            base.OnDestroy();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override void LoadFragment(dynamic switcher, string jsonModel = null)
         {
             switch (switcher)
             {
                 case Enums.Activitys.Player.CurrentSongList:
-                    GetActivity().FManager.SetCurrentFragment(new PlaylistSongList());
+                    GetFManager().SetCurrentFragment(new PlayerSongList());
                     return;
             }
         }
 
-        public override int GetParentView()
+        public override int GetParentView(bool Player = false)
         {
             return Resource.Id.parent_view;
         }
@@ -363,10 +250,10 @@ namespace SpotyPie.Player
         {
             Task.Run((Action)(() =>
             {
-                Activity.RunOnUiThread(() =>
+                RunOnUiThread(() =>
                 {
-                    this.ImgHolder.TranslationX = FragmentWidth * -1;
-                    this.ImgHolder?.Animate().TranslationX(0);
+                    //this.ImgHolder.TranslationX = FragmentWidth * -1;
+                    //this.ImgHolder?.Animate().TranslationX(0);
                 });
             }));
         }
@@ -375,10 +262,10 @@ namespace SpotyPie.Player
         {
             Task.Run((Action)(() =>
             {
-                Activity.RunOnUiThread(() =>
+                RunOnUiThread(() =>
                 {
-                    this.ImgHolder.TranslationX = FragmentWidth;
-                    this.ImgHolder?.Animate().TranslationX(0);
+                    //this.ImgHolder.TranslationX = FragmentWidth;
+                    //this.ImgHolder?.Animate().TranslationX(0);
                 });
             }));
         }
@@ -390,13 +277,13 @@ namespace SpotyPie.Player
         private void PreviewSong_Click(object sender, EventArgs e)
         {
             SongLoadStarted();
-            GetActivity().SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.prev"));
+            SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.prev"));
         }
 
         private void NextSong_Click(object sender, EventArgs e)
         {
             SongLoadStarted();
-            GetActivity().SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.next"));
+            SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.next"));
         }
 
         private void PlayToggle_Click(object sender, EventArgs e)
@@ -409,11 +296,11 @@ namespace SpotyPie.Player
 
             if (tag == Resource.Drawable.play_button)
             {
-                GetActivity().SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.play"));
+                SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.play"));
             }
             else if (tag == Resource.Drawable.pause)
             {
-                GetActivity().SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.pause"));
+                SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.pause"));
             }
         }
 
@@ -421,7 +308,7 @@ namespace SpotyPie.Player
         {
             Task.Run(() =>
             {
-                Activity.RunOnUiThread(() =>
+                RunOnUiThread(() =>
                 {
                     //TotalSongTime = new TimeSpan(0, 0, (int)MusicService.MusicPlayer.Duration / 1000);
                     //string totalTime = TotalSongTime.Minutes + ":" + (TotalSongTime.Seconds > 9 ? TotalSongTime.Seconds.ToString() : "0" + TotalSongTime.Seconds);
@@ -458,7 +345,7 @@ namespace SpotyPie.Player
         {
             Task.Run(() =>
             {
-                Activity.RunOnUiThread(() =>
+                RunOnUiThread(() =>
                 {
                     CurretSongTimeText.Text = text;
                     if (!SeekActive && SongTimeSeekBar != null)
@@ -471,7 +358,7 @@ namespace SpotyPie.Player
         {
             Task.Run(() =>
             {
-                Activity.RunOnUiThread(() =>
+                RunOnUiThread(() =>
                 {
                     //CurretSongTimeText.Text = "00:00";
                     //SongTimeSeekBar.Progress = 0;
@@ -483,7 +370,7 @@ namespace SpotyPie.Player
         {
             Task.Run(() =>
             {
-                Activity.RunOnUiThread(() =>
+                RunOnUiThread(() =>
                 {
                     PlayToggle.SetImageResource(Resource.Drawable.play_button);
                     PlayToggle.Tag = Resource.Drawable.play_button;
@@ -496,60 +383,13 @@ namespace SpotyPie.Player
         {
         }
 
-        private void LoadCustomImage(Realm_Songs song)
-        {
-            Task.Run((Func<Task>)(async () =>
-            {
-                var real = Realm.GetInstance();
-                Database.ViewModels.Settings settings = real.All<Database.ViewModels.Settings>().First();
-
-                if (!settings.CustomImagesSwitch)
-                {
-                    LoadOld();
-                }
-                else
-                {
-                    Activity.RunOnUiThread(() =>
-                    {
-                        ImgHolder.SetImageResource(Resource.Drawable.img_loading);
-                    });
-
-                    List<Image> imageList = await ParentActivity.GetAPIService().GetNewImageForSongAsync(song.Id);
-                    if (imageList == null || imageList.Count == 0)
-                        LoadOld();
-                    else
-                    {
-                        var img = imageList.OrderByDescending(x => x.Width).ThenByDescending(x => x.Height).First();
-                        if (CurrentPlayerImage != song.LargeImage)
-                        {
-                            Activity.RunOnUiThread(() =>
-                            {
-                                CurrentPlayerImage = img.Url;
-                                Picasso.With(Activity.ApplicationContext).Load(img.Url).Resize(1200, 1200).CenterCrop().Into((ImageView)this.ImgHolder);
-                            });
-                        }
-                    }
-                }
-            }));
-
-            void LoadOld()
-            {
-                Activity.RunOnUiThread(() =>
-                {
-                    if (CurrentPlayerImage != song.LargeImage)
-                    {
-                        CurrentPlayerImage = song.LargeImage;
-                        Picasso.With(Activity.ApplicationContext).Load(song.LargeImage).Resize(1200, 1200).CenterCrop().Into(ImgHolder);
-                    }
-                });
-            }
-        }
+        
 
         public void SongLoadEnded()
         {
             Task.Run(() =>
             {
-                Activity.RunOnUiThread(() =>
+                RunOnUiThread(() =>
                 {
                     PlayToggle.SetImageResource(Resource.Drawable.pause);
                     PlayToggle.Tag = Resource.Drawable.pause;
@@ -565,7 +405,7 @@ namespace SpotyPie.Player
         {
             Intent intent = new Intent("com.spotypie.adnroid.musicservice.seek");
             intent.PutExtra("PLAYER_SEEK", e.SeekBar.Progress.ToString());
-            GetActivity().SendBroadcast(intent);
+            SendBroadcast(intent);
             SeekActive = false;
         }
 
@@ -719,7 +559,21 @@ namespace SpotyPie.Player
 
         public void OnPlaybackStatusChanged(int state)
         {
-            throw new NotImplementedException();
+            switch (state)
+            {
+                case Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying:
+                    OnPlay();
+                    break;
+                case Android.Support.V4.Media.Session.PlaybackStateCompat.StateBuffering:
+                case Android.Support.V4.Media.Session.PlaybackStateCompat.StateNone:
+                    PlayToggle.SetImageResource(Resource.Drawable.play_loading);
+                    PlayToggle.Tag = Resource.Drawable.play_loading;
+                    break;
+                case Android.Support.V4.Media.Session.PlaybackStateCompat.StatePaused:
+                    PlayToggle.SetImageResource(Resource.Drawable.play_button);
+                    PlayToggle.Tag = Resource.Drawable.play_button;
+                    break;
+            }
         }
 
         public void OnPlaybackMetaDataChanged(MediaMetadataCompat meta)
@@ -743,13 +597,54 @@ namespace SpotyPie.Player
                 var binder = service as Music.MusicServiceBinder;
                 binder.SetMusicServiceUpdateCallback(this);
                 IsBinded = true;
+                SendBroadcast(new Intent("com.spotypie.adnroid.musicservice.play"));
             }
         }
 
         public void OnServiceDisconnected(ComponentName name)
         {
-            GetActivity().ShowMessage("Service unbinded");
+            ShowMessage("Service unbinded");
             //throw new NotImplementedException();
+        }
+
+        public void OnPlay()
+        {
+            Task.Run(() =>
+            {
+                Songs song = QueueHelper.GetPlayingSong();
+                RunOnUiThread(() =>
+                {
+                    PlayerSongName.Text = song.Name;
+                    PlayerArtistName.Text = song.ArtistName;
+
+                    SongTimeSeekBar.Enabled = true;
+
+                    PlayerSongName.Text = song.Name;
+
+                    //if (GetActivity().MiniPlayer.Visibility == ViewStates.Gone)
+                    //    GetActivity().MiniPlayer.Visibility = ViewStates.Visible;
+                    //ViewLoadState = 2;
+
+                    PlayToggle.SetImageResource(Resource.Drawable.pause);
+                    PlayToggle.Tag = Resource.Drawable.pause;
+                });
+            });
+        }
+
+        public override dynamic GetInstance()
+        {
+            return this;
+        }
+
+        public override void SetScreen(LayoutScreenState screen)
+        {
+            switch (screen)
+            {
+                case LayoutScreenState.FullScreen:
+                    break;
+                case LayoutScreenState.Holder:
+                    break;
+            }
         }
 
         #endregion
