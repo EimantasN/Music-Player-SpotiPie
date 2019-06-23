@@ -1,14 +1,13 @@
 ﻿using Mobile_Api.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mobile_Api.Interfaces
 {
-    public interface IBaseInterface
+    public interface IBaseInterface<T>
     {
         int GetId();
 
         void SetModelType(RvType type);
+
+        bool Equals(T obj);
     }
 }

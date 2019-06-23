@@ -21,8 +21,6 @@ namespace Mobile_Api.Models.Realm
 
         public DateTimeOffset UpdatedAt { get; set; }
 
-        public IList<Realm_Songs> Songs { get; private set; } = new List<Realm_Songs>();
-
         public ApplicationSongList()
         {
             Id = 1;
@@ -43,7 +41,8 @@ namespace Mobile_Api.Models.Realm
                 PlayingSong = song;
                 UpdatedAt = DateTime.Now;
 
-                Songs.Add(song);
+                if(!realm.All<Music>().Any(x => x.Id == song.Id))
+                    realm.Add(new Music(song, true), true);
             });
         }
 
@@ -54,25 +53,34 @@ namespace Mobile_Api.Models.Realm
 
         public void Rewrite(Realms.Realm realm, List<Songs> songs, int position)
         {
-            realm.Write(() =>
+            if (songs != null && songs.Count != 0)
             {
-                LastCount = 0;
-                CurrentCount = songs.Count;
-                UpdatedAt = DateTime.Now;
-                PlayingSong = new Realm_Songs(songs[position]);
-                IsPlaying = true;
+                realm.Write(() =>
+                {
+                    LastCount = 0;
+                    CurrentCount = songs.Count;
+                    UpdatedAt = DateTime.Now;
+                    PlayingSong = new Realm_Songs(songs[position]);
+                    IsPlaying = true;
 
-                for (int i = 0; i < Songs.Count; i++)
-                    Songs.RemoveAt(i);
+                    realm.RemoveAll<Music>();
 
-                foreach (var song in songs)
-                    Songs.Add(new Realm_Songs(song));
-            });
+                    foreach (var song in songs)
+                        realm.Add(new Music(song));
+                });
+            }
+            else
+                throw new Exception("song list can't be null");
+        }
+
+        public List<Music> GetSongList(Realms.Realm realm)
+        {
+            return realm.All<Music>().ToList();
         }
 
         public void UpdateCurrentSong(Realms.Realm realm, Realm_Songs song)
         {
-            if (Songs.Any(x => x.Id == song.Id))
+            if (realm.All<Music>().Any(x => x.Id == song.Id))
             {
                 realm.Write(() =>
                 {

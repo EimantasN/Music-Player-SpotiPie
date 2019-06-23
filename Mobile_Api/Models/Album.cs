@@ -1,11 +1,12 @@
-﻿using Mobile_Api.Models.Enums;
+﻿using Mobile_Api.Interfaces;
+using Mobile_Api.Models.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Album : BaseModel, IDisposable
+    public class Album : BaseModel, IBaseInterface<Album>, IDisposable
     {
         [JsonProperty("id")]
         public override int Id { get; set; }
@@ -75,6 +76,13 @@ namespace Mobile_Api.Models
             SmallImage = null;
             Name = null;
             ReleaseDate = null;
+        }
+
+        public bool Equals(Album obj)
+        {
+            if (Id == obj.Id)
+                return true;
+            return false;
         }
     }
 }

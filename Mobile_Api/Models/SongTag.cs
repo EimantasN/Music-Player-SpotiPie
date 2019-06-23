@@ -1,8 +1,9 @@
-﻿using Mobile_Api.Models.Enums;
+﻿using Mobile_Api.Interfaces;
+using Mobile_Api.Models.Enums;
 
 namespace Mobile_Api.Models
 {
-    public class SongTag : BaseModel
+    public class SongTag : BaseModel, IBaseInterface<SongTag>
     {
         public override int Id { get; set; }
 
@@ -23,5 +24,12 @@ namespace Mobile_Api.Models
         public int TrackNumber { get; set; }
 
         protected override RvType Type { get; set; } = RvType.SongBindList;
+
+        public bool Equals(SongTag obj)
+        {
+            if (Id == obj.Id)
+                return true;
+            return false;
+        }
     }
 }

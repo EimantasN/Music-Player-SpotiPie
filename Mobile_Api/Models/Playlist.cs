@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Playlist : BaseModel
+    public class Playlist : BaseModel, IBaseInterface<Playlist>
     {
         public override int Id { get; set; }
 
@@ -29,5 +29,12 @@ namespace Mobile_Api.Models
 
         public string Image { get; set; }
         protected override RvType Type { get; set; } = RvType.Playlist;
+
+        public bool Equals(Playlist obj)
+        {
+            if (Id == obj.Id)
+                return true;
+            return false;
+        }
     }
 }

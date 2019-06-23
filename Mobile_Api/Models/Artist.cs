@@ -1,10 +1,11 @@
-﻿using Mobile_Api.Models.Enums;
+﻿using Mobile_Api.Interfaces;
+using Mobile_Api.Models.Enums;
 using System;
 using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Artist : BaseModel, IDisposable
+    public class Artist : BaseModel, IBaseInterface<Artist>, IDisposable
     {
         public override int Id { get; set; }
 
@@ -37,6 +38,13 @@ namespace Mobile_Api.Models
             MediumImage = null;
             SmallImage = null;
             Albums = null;
+        }
+
+        public bool Equals(Artist obj)
+        {
+            if (Id == obj.Id)
+                return true;
+            return false;
         }
     }
 }
