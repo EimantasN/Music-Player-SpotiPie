@@ -26,10 +26,6 @@ namespace SpotyPie
         public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Main;
         public override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Holder;
 
-        private int LastViewLayer = 0;
-
-        private int CurrentViewLayer = 1;
-
         private Current_state APPSTATE;
 
         private Main LastMainFragment;

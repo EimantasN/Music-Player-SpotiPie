@@ -5,19 +5,30 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Mobile_Api.Models;
+using Mobile_Api.Models.Realm;
+using Realms;
 using SpotyPie.Enums;
 using SpotyPie.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
+using MusicList = Mobile_Api.Models.Realm.Music;
+using Android.Content;
+using SpotyPie.Music;
 
 namespace SpotyPie.Base
 {
     public abstract class ActivityBase : AppCompatActivity
     {
+        private Current_state State { get; set; }
+
         private static int FrameLayoutId { get; set; } = 100000;
 
         public abstract NavigationColorState NavigationBtnColorState { get; set; }
+
         public abstract LayoutScreenState ScreenState { get; set; }
 
         public abstract int LayoutId { get; set; }
@@ -45,19 +56,39 @@ namespace SpotyPie.Base
 
         private FrameLayout PlayerFrame;
 
-        private ProgressBar FragmentLoading;
-
         public bool IsFragmentLoadedAdded = false;
 
         private API Api_service { get; set; }
 
         public SupportFragmentManager mSupportFragmentManager;
 
+        public EventArgs e = null;
+
+        private Realm Realm;
+
+        public IRealmCollection<MusicList> SongList;
+        public IRealmCollection<Realm_Songs> List;
+
+        public delegate void SongListChangeHandler(IRealmCollection<MusicList> list, System.Collections.Specialized.NotifyCollectionChangedEventArgs e);
+
+        public SongListChangeHandler SongListHandler;
+
+        public delegate void CurrentSongStateChangeHandler(Realm_Songs currentSong, EventArgs e);
+
+        public CurrentSongStateChangeHandler CurrentSongHandler;
+
         public abstract dynamic GetInstance();
 
-        private int GetLayout()
+        private int GetLayout() { return LayoutId; }
+
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            return LayoutId;
+            base.OnCreate(savedInstanceState);
+            SetContentView(GetLayout());
+            Fabric.Fabric.With(this, new Crashlytics.Crashlytics());
+
+            SupportFragmentManager.BackStackChanged += SupportFragmentManager_BackStackChanged;
+            InitView();
         }
 
         public virtual void LoadBaseFragment()
@@ -65,19 +96,141 @@ namespace SpotyPie.Base
 
         }
 
+        private void InitRealChangeLisiner()
+        {
+            if (Realm == null || Realm.IsClosed)
+            {
+                try
+                {
+                    Realm = Realm.GetInstance();
+                }
+                catch (Realms.Exceptions.RealmMigrationNeededException )
+                {
+                    Realm.DeleteRealm(RealmConfiguration.DefaultConfiguration);
+                    Realm = Realm.GetInstance();
+                }
+                Realm.RealmChanged += Realm_RealmChanged1;
+                SongList = Realm.All<MusicList>().AsRealmCollection();
+
+                //var c = SongList[0].Song.Id;
+                //List = Realm.All<Realm_Songs>().Where(x => x.Id == c).AsRealmCollection();
+
+                //for (int i = 1; i < SongList.Count; i++)
+                //{
+                //    c = SongList[i].Song.Id;
+                //    List.Append(Realm.All<Realm_Songs>().First(x => x.Id == c));
+                //}
+
+                //var a = List.Count;
+                //for (int i = 0; i < List.Count(); i++)
+                //    List[i].PropertyChanged += SongList_PropertyChanged1;
+
+                SongList.CollectionChanged += SongList_CollectionChanged;
+            }
+        }
+
+        private void Realm_RealmChanged1(object sender, EventArgs e)
+        {
+            SongListHandler?.Invoke(SongList, null);
+        }
+
+        private void SongList_PropertyChanged1(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            SongListHandler?.Invoke(SongList, null);
+        }
+
+        private void SongList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            SongListHandler?.Invoke(SongList, e);
+            //if (e.NewItems != null && e.NewItems.Count != 0)
+            //{
+            //    for (int i = 0; i < e.NewItems.Count; i++)
+            //    {
+            //        var song = (MusicList)e.NewItems[i];
+            //        var id = song.Song.Id;
+            //        if (!List.Any(x => x.Id == song.Song.Id))
+            //        {
+            //            List.Append(Realm.All<Realm_Songs>().First(x => x.Id == id));
+            //            List.Last().PropertyChanged += SongList_PropertyChanged1;
+            //        }
+            //    }
+            //}
+
+            //for (int i = 0; i < List.Count; i++)
+            //{
+            //    if (!SongList.Any(x => x.Song.Id == List[i].Id))
+            //    {
+            //        List[i].PropertyChanged -= SongList_PropertyChanged1;
+            //    }
+            //}
+        }
+
+        private void SongList_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "CurrentCount":
+                    {
+                        break;
+                    }
+                case "LastCount":
+                    {
+                        break;
+                    }
+                case "PlayingSong":
+                    {
+                        //CurrentSongHandler?.Invoke(new Songs(SongList.PlayingSong), e);
+                        break;
+                    }
+                case "IsPlaying":
+                    {
+                        break;
+                    }
+                case "UpdatedAt":
+                    {
+                        break;
+                    }
+                case "Songs":
+                    {
+                        break;
+                    }
+            }
+        }
+
+        private void Song_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            //CurrentSongHandler?.Invoke(sender, e);
+        }
+
+        private void Realm_RealmChanged(object sender, EventArgs e)
+        {
+            //Handler?.Invoke(sender, e);
+        }
+
         protected override void OnResume()
         {
             SetNavigationBarColor();
+            InitRealChangeLisiner();
             base.OnResume();
         }
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override void OnRestart()
         {
-            base.OnCreate(savedInstanceState);
-            SetContentView(GetLayout());
+            InitRealChangeLisiner();
+            base.OnRestart();
+        }
 
-            SupportFragmentManager.BackStackChanged += SupportFragmentManager_BackStackChanged;
-            InitView();
+        protected override void OnStop()
+        {
+            if (Realm != null)
+            {
+                if (!Realm.IsClosed)
+                {
+                    Realm.Dispose();
+                    Realm = null;
+                }
+            }
+            base.OnStop();
         }
 
         private void SupportFragmentManager_BackStackChanged(object sender, EventArgs e)
@@ -119,6 +272,13 @@ namespace SpotyPie.Base
             if (Api_service == null)
                 return Api_service = new API(new Mobile_Api.Service(), this);
             return Api_service;
+        }
+
+        public Current_state GetState()
+        {
+            if (State == null)
+                State = new Current_state(this);
+            return State;
         }
 
         public override void OnBackPressed()
@@ -278,7 +438,7 @@ namespace SpotyPie.Base
                 var transaction = fragmentManager.BeginTransaction();
                 transaction.Remove(fragment);
                 transaction.Commit();
-                transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitNone);
+                transaction.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitExitMask);
                 transaction = null;
                 fragment = null;
             }
@@ -308,5 +468,32 @@ namespace SpotyPie.Base
         }
 
         public abstract void SetScreen(LayoutScreenState screen);
+
+        public void StartPlayer()
+        {
+            var intent = new Intent(this, typeof(Player.Player));
+            intent.AddFlags(ActivityFlags.SingleTop);
+            StartActivity(intent);
+        }
+
+        protected void StartMusicService()
+        {
+            Task.Run(() =>
+            {
+                Type serviceMusic = typeof(MusicService);
+                ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
+                foreach (var service in manager.GetRunningServices(int.MaxValue))
+                {
+                    if (serviceMusic.Name.Equals(service.Service.ClassName))
+                    {
+                        return ;
+                    }
+                }
+                RunOnUiThread(() =>
+                {
+                    this.StartService(new Intent(this, typeof(MusicService)));
+                });
+            });
+        }
     }
 }

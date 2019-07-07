@@ -1,4 +1,9 @@
 <resources>
+  <string name="package_name">com.eimantasn.spotypie</string>
+  <string name="app_version_number">1</string>
+  <string name="app_version_name">1</string>
+  <string name="com.crashlytics.android.build_id">@string/app_version_number</string>
+  
   <string name="app_name">SpotyPie</string>
   <string name="action_settings">Settings</string>
   <string name="channelName">SpotyPie</string>
