@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1006880919916",
+    "firebase_url": "https://spotypie-88c30.firebaseio.com",
+    "project_id": "spotypie-88c30",
+    "storage_bucket": "spotypie-88c30.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006880919916:android:89cc6e58cd24f38f",
+        "android_client_info": {
+          "package_name": "com.eimantasn.spotypie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1006880919916-rprrs8084udn92udlgg44ljhfegtp5t8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR9GQPLSYz2JhuCi1rQYzpG_hGKf4T1Xk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1006880919916-rprrs8084udn92udlgg44ljhfegtp5t8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
