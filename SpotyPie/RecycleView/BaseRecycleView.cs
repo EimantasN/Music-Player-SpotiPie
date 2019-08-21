@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SpotyPie.RecycleView
 {
-    public class BaseRecycleView<T> where T : IBaseInterface
+    public class BaseRecycleView<T> where T : IBaseInterface<T>
     {
         private int RvId { get; set; }
 
@@ -27,7 +27,7 @@ namespace SpotyPie.RecycleView
         private RvList<T> RvDataset { get; set; }
         private SpotyPieRv CustomRecyclerView { get; set; }
         private LayoutManagers Manager { get; set; } = LayoutManagers.Unseted;
-        private Action CustomAction { get; set; }
+        private List<Action> CustomActions { get; set; }
         private FragmentBase Activity { get; set; }
 
         public BaseRecycleView(FragmentBase activity, int rvId)
@@ -37,22 +37,23 @@ namespace SpotyPie.RecycleView
             this.RvId = rvId;
         }
 
-        internal void SetClickAction(Action p)
+        public RvList<T> Setup(LayoutManagers layout, List<Action> actionsToView = null)
         {
-            CustomAction = p;
-        }
+            if (actionsToView != null)
+            {
+                CustomActions = actionsToView;
+                IgnoreClick = true;
+            }
 
-        public RvList<T> Setup(LayoutManagers layout, Action action = null)
-        {
-            Init(layout, action);
+            Init(layout);
             return RvDataset;
         }
 
-        public void Init(LayoutManagers layout, Action action = null)
+        public void Init(LayoutManagers layout)
         {
             CustomRecyclerView = new SpotyPieRv(Activity.GetView().FindViewById<RecyclerView>(RvId));
             SetLayoutManager(layout);
-            CustomRecyclerView.GetRecycleView().SetAdapter(new BaseRv<T>(RvDataset, CustomRecyclerView.GetRecycleView(), Activity.Context, action));
+            CustomRecyclerView.GetRecycleView().SetAdapter(new BaseRv<T>(RvDataset, CustomRecyclerView.GetRecycleView(), Activity.Context, CustomActions));
             RvDataset.Adapter = CustomRecyclerView.GetRecycleView().GetAdapter();
             SetOnClick();
         }
@@ -96,6 +97,11 @@ namespace SpotyPie.RecycleView
             }
         }
 
+        internal void SetFocusable(bool v)
+        {
+            CustomRecyclerView.GetRecycleView().Focusable = v;
+        }
+
         public void DisableScroolNested()
         {
             CustomRecyclerView.GetRecycleView().NestedScrollingEnabled = false;
@@ -106,9 +112,9 @@ namespace SpotyPie.RecycleView
         {
             CustomRecyclerView.GetRecycleView().SetItemClickListener((rv, position, view) =>
             {
-                if (!IgnoreClick && CustomRecyclerView != null && CustomRecyclerView.GetRecycleView().ChildCount != 0)
+                LastPosition = position;
+                if (!RvDataset.Updating && !IgnoreClick && CustomRecyclerView != null && CustomRecyclerView.GetRecycleView().ChildCount != 0)
                 {
-                    LastPosition = position;
                     if (RvDataset[position].GetType().Name == "Album")
                     {
                         Task.Run(() => Activity.GetAPIService().UpdateAsync<Album>(RvDataset[position].GetId()));
@@ -135,7 +141,6 @@ namespace SpotyPie.RecycleView
                         Activity.LoadArtist(RvDataset[position] as Artist);
                     }
                 }
-                CustomAction?.Invoke();
             });
         }
 

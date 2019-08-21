@@ -1,12 +1,17 @@
-﻿using Android.Support.Constraints;
+﻿using Android.Content;
+using Android.Support.Constraints;
 using Android.Support.V4.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
+using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using Square.Picasso;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static Android.Views.ViewGroup;
 
@@ -60,8 +65,6 @@ namespace SpotyPie
             ButtonBackGround = RootView.FindViewById<TextView>(Resource.Id.backgroundHalf);
             ButtonBackGround2 = RootView.FindViewById<TextView>(Resource.Id.backgroundHalfInner);
 
-            GetState().ShowHeaderNavigationButtons();
-
             download = RootView.FindViewById<TextView>(Resource.Id.download_text);
             Copyrights = RootView.FindViewById<TextView>(Resource.Id.copyrights);
             MarginParrams = (MarginLayoutParams)download.LayoutParameters;
@@ -74,11 +77,6 @@ namespace SpotyPie
             SetAlbum(GetModel<Album>());
         }
 
-        public override void OnResume()
-        {
-            base.OnResume();
-        }
-
         public void SetAlbum(Album album = null)
         {
             try
@@ -88,7 +86,6 @@ namespace SpotyPie
                     if (album == null)
                         album = GetModel<Album>();
                     ScrollFather.ScrollTo(0, 0);
-                    GetState().Activity.ActionName.Text = album.Name;
                     isPlayable = true;
                     IsMeniuActive = false;
                     Scrolled = 0;
@@ -115,10 +112,40 @@ namespace SpotyPie
                 RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
                 RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
                 RvData.DisableScroolNested();
-                RvData.GetData().AddList(new System.Collections.Generic.List<Songs>() { null });
+                LoadAlbumSongs();
             }
+        }
 
-            Task.Run(async () => await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>(), RvData.GetData(), () => { }));
+        private void LoadAlbumSongs()
+        {
+            Album CurrentAlbum = GetModel<Album>();
+            DataBaseSongLoad(CurrentAlbum);
+            Task.Run(async () =>
+            {
+                var songs = await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>());
+                RvData.GetData().AddList(songs);
+            });
+        }
+
+        private void DataBaseSongLoad(Album currentAlbum)
+        {
+            using (Realm realm = Realm.GetInstance())
+            {
+                var dbAlbums = realm.All<Realm_Songs>().Where(x => x.AlbumId == currentAlbum.Id).ToList();
+                if (dbAlbums != null && dbAlbums.Count != 0)
+                {
+                    List<Songs> albums = new List<Songs>();
+                    foreach (var x in dbAlbums)
+                    {
+                        albums.Add(new Songs(x));
+                    }
+                    RvData.GetData().AddList(albums);
+                }
+                else
+                {
+                    RvData.GetData().AddList(new List<Songs>() { null });
+                }
+            }
         }
 
         public override void ReleaseData()
@@ -140,7 +167,9 @@ namespace SpotyPie
             switch (switcher)
             {
                 case Enums.Activitys.HomePage.Player:
-                    ParentActivity.FManager.SetCurrentFragment(new Player.Player());
+                    var intent = new Intent(this.Context, typeof(Player.Player));
+                    intent.AddFlags(ActivityFlags.SingleTop);
+                    StartActivity(intent);
                     return;
             }
         }

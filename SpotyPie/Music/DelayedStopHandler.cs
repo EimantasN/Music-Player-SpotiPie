@@ -30,10 +30,9 @@ namespace SpotyPie.Music
             {
                 if (service.playback.IsPlaying)
                 {
-                    LogHelper.Debug("DelayedStopHandler", "Ignoring delayed stop since the media player is in use.");
+                    //Ignoring delayed stop since the media player is in use.
                     return;
                 }
-                LogHelper.Debug("DelayedStopHandler", "Stopping service with delay handler.");
                 service.StopSelf();
                 service.SetServiceIsStopped();
             }

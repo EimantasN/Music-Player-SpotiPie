@@ -30,6 +30,47 @@ namespace Mobile_Api.Models
 
         public int Tracks { get; set; }
 
-        protected int Type { get; set; }
+        public int Type { get; set; }
+
+        public string AlbumListType { get; set; }
+
+        public Realm_Album()
+        {
+
+        }
+
+        public Realm_Album(Album x, int type)
+        {
+            Id = x.Id;
+            SpotifyId = x.SpotifyId;
+            LargeImage = x.LargeImage;
+            MediumImage = x.MediumImage;
+            SmallImage = x.SmallImage;
+            Name = x.Name;
+            ReleaseDate = x.ReleaseDate;
+            Songs = new List<Realm_Songs>();
+            Popularity = x.Popularity;
+            IsPlayable = x.IsPlayable;
+            LastActiveTime = x.LastActiveTime;
+            Tracks = x.Tracks;
+            Type = (int)x.GetModelType();
+            AlbumListType += type;
+        }
+
+        public void Update(Album x, int type)
+        {
+            this.SpotifyId = x.SpotifyId;
+            this.LargeImage = x.LargeImage;
+            this.MediumImage = x.MediumImage;
+            this.SmallImage = x.SmallImage;
+            this.Name = x.Name;
+            this.ReleaseDate = x.ReleaseDate;
+            this.Popularity = x.Popularity;
+            this.IsPlayable = x.IsPlayable;
+            this.LastActiveTime = x.LastActiveTime;
+            this.Tracks = x.Tracks;
+            this.Type = (int)x.GetModelType();
+            this.AlbumListType += type;
+        }
     }
 }

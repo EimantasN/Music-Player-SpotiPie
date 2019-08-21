@@ -1,11 +1,12 @@
-﻿using Mobile_Api.Models.Enums;
+﻿using Mobile_Api.Interfaces;
+using Mobile_Api.Models.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Album : BaseModel, IDisposable
+    public class Album : BaseModel, IBaseInterface<Album>, IDisposable
     {
         [JsonProperty("id")]
         public override int Id { get; set; }
@@ -47,7 +48,23 @@ namespace Mobile_Api.Models
 
         public Album()
         {
+        }
 
+        public Album(Realm_Album x)
+        {
+            Id = x.Id;
+            SpotifyId = x.SpotifyId;
+            LargeImage = x.LargeImage;
+            MediumImage = x.MediumImage;
+            SmallImage = x.SmallImage;
+            Name = x.Name;
+            ReleaseDate = x.ReleaseDate;
+            Songs = new List<Songs>();
+            Popularity = x.Popularity;
+            IsPlayable = x.IsPlayable;
+            LastActiveTime = x.LastActiveTime.DateTime;
+            Tracks = x.Tracks;
+            Type = (RvType)x.Type;
         }
 
         public Album(Realm_Album album)
@@ -76,6 +93,13 @@ namespace Mobile_Api.Models
             SmallImage = null;
             Name = null;
             ReleaseDate = null;
+        }
+
+        public bool Equals(Album obj)
+        {
+            if (Id == obj.Id)
+                return true;
+            return false;
         }
     }
 }

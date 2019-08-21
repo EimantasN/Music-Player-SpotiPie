@@ -120,7 +120,7 @@ namespace SpotyPie
         {
             SearchBase<Artist>(RvRevated.GetData(), await ParentActivity.GetAPIService().GetRelatedAsync(CurrentArtist.Id), ArtistListTitle, RvType.Artist);
         }
-        public void SearchBase<T>(RvList<T> RvList, List<T> DataList, TextView header, RvType type, int limit = int.MaxValue) where T : IBaseInterface
+        public void SearchBase<T>(RvList<T> RvList, List<T> DataList, TextView header, RvType type, int limit = int.MaxValue) where T : IBaseInterface<T>
         {
             try
             {
@@ -150,7 +150,7 @@ namespace SpotyPie
             }
         }
 
-        private void FormatView<T>(ref List<T> dataList, RvType type) where T : IBaseInterface
+        private void FormatView<T>(ref List<T> dataList, RvType type) where T : IBaseInterface<T>
         {
             if (dataList == null || dataList.Count == 0)
                 return;
@@ -200,7 +200,6 @@ namespace SpotyPie
                 if (Context != null)
                 {
                     ScrollFather.ScrollTo(0, 0);
-                    GetState().Activity.ActionName.Text = CurrentArtist.Name;
 
                     Picasso.With(Context).Load(CurrentArtist.LargeImage).Into(Photo);
 

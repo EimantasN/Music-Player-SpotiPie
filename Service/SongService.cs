@@ -503,22 +503,26 @@ namespace Services
             return _ctx.CurrentSong.FirstOrDefaultAsync();
         }
 
-        public async Task<Song> GetNextSong()
+        public async Task<Song> GetNextSong(int? currentSong = null)
         {
             try
             {
-                var current = await _ctx.CurrentSong.FirstOrDefaultAsync();
+                CurrentSong current;
+                if (currentSong == null)
+                    current = await _ctx.CurrentSong.FirstOrDefaultAsync();
+                else
+                    current = new CurrentSong(await _ctx.Songs.FirstOrDefaultAsync(x => x.Id == currentSong));
 
                 if (current == null)
                 {
-                    var song = await _ctx.Songs.FirstOrDefaultAsync(x => x.IsPlayable && x.Corrupted < 4);
-                    return await ReturnSongAsync(song);
+                    Song result = await _ctx.Songs.FirstOrDefaultAsync(x => x.IsPlayable && x.Corrupted < 4);
+                    return await ReturnSongAsync(result, currentSong == null ? true : false);
                 }
                 else
                 {
-                    var CurrentSong = await _ctx.Songs.FirstAsync(x => x.Id == current.SongId);
+                    Song CurrentSong = await _ctx.Songs.FirstAsync(x => x.Id == current.SongId);
 
-                    var song = await _ctx.Songs
+                    Song song = await _ctx.Songs
                         .OrderBy(x => x.AlbumId)
                         .ThenBy(x => x.TrackNumber)
                         .FirstOrDefaultAsync(x => x.TrackNumber > CurrentSong.TrackNumber && x.AlbumId == current.AlbumId && x.IsPlayable && x.Corrupted < 4);
@@ -529,13 +533,14 @@ namespace Services
                             .OrderBy(x => x.AlbumId)
                             .ThenBy(x => x.TrackNumber)
                             .FirstOrDefaultAsync(x => x.AlbumId > current.AlbumId && x.IsPlayable && x.Corrupted < 4);
+
                         if (song == null)
                         {
                             return new Song { Id = -1 };
                         }
-                        return await ReturnSongAsync(song);
+                        return await ReturnSongAsync(song, currentSong == null ? true : false);
                     }
-                    return await ReturnSongAsync(song);
+                    return await ReturnSongAsync(song, currentSong == null ? true : false);
                 }
             }
             catch (Exception e)
@@ -543,9 +548,10 @@ namespace Services
                 throw e;
             }
 
-            async Task<Song> ReturnSongAsync(Song song)
+            async Task<Song> ReturnSongAsync(Song song, bool setState)
             {
-                await SetStateAsync(song.Id, song.ArtistId, song.AlbumId, 0);
+                if(setState)
+                    await SetStateAsync(song.Id, song.ArtistId, song.AlbumId, 0);
                 return song;
             }
         }

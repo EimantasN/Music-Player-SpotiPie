@@ -15,11 +15,12 @@ using MediaSessionCompat = Android.Support.V4.Media.Session.MediaSessionCompat;
 using Android.Widget;
 using System.Threading.Tasks;
 using System.Threading;
+using Java.IO;
 
 namespace SpotyPie.Music
 {
     [Service(Exported = true)]
-    public class MusicService : MediaBrowserServiceCompat, Playback.ICallback, MusicControlInterface
+    public class MusicService : MediaBrowserServiceCompat, Playback.ICallback
     {
         public bool InitNotification = true;
 
@@ -34,18 +35,30 @@ namespace SpotyPie.Music
         int currentIndexOnQueue;
         bool serviceStarted;
 
+        public Playback.ICallback CallBack;
+
         MediaSessionCompat session;
         List<MediaSessionCompat.QueueItem> PlayingQueue;
         MusicProvider musicProvider;
         public Playback playback;
         MediaNotificationManager mediaNotificationManager;
-        DelayedStopHandler delayedStopHandler;
+        //DelayedStopHandler delayedStopHandler;
         PackageValidator packageValidator;
         MediaSessionCallback mediaCallback;
 
+        public IBinder Binder { get; private set; }
+
+        public MusicService GetMusicService() { return this; }
+
+        public override IBinder OnBind(Intent intent)
+        {
+            this.Binder = new MusicServiceBinder(this);
+            return this.Binder;
+        }
+
         public MusicService()
         {
-            delayedStopHandler = new DelayedStopHandler(this);
+            //delayedStopHandler = new DelayedStopHandler(this);
         }
 
         internal void SetServiceIsStopped() { serviceStarted = false; }
@@ -65,7 +78,7 @@ namespace SpotyPie.Music
             //MUSIC PLAYER PLAY ACTION
             mediaCallback.OnPlayImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
                 HandlePlayRequest();
             };
 
@@ -90,80 +103,38 @@ namespace SpotyPie.Music
             //MUSIC PLAYER PLAY FROM MEDIA ID ACTION
             mediaCallback.OnPlayFromMediaIdImpl = (mediaId, extras) =>
             {
-                Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
                 return;
-
-                LogHelper.Debug(Tag, "playFromMediaId mediaId:", mediaId, "  extras=", extras);
-
-                PlayingQueue = QueueHelper.GetPlayingQueue(mediaId, musicProvider);
-                session.SetQueue(PlayingQueue);
-                var queueTitle = GetString(Resource.String.browse_musics_by_genre_subtitle,
-                                     MediaIDHelper.ExtractBrowseCategoryValueFromMediaID(mediaId));
-                session.SetQueueTitle(queueTitle);
-
-                if (PlayingQueue != null && PlayingQueue.Count != 0)
-                {
-                    currentIndexOnQueue = QueueHelper.GetMusicIndexOnQueue(PlayingQueue, mediaId);
-
-                    if (currentIndexOnQueue < 0)
-                    {
-                        LogHelper.Error(Tag, "playFromMediaId: media ID ", mediaId,
-                            " could not be found on queue. Ignoring.");
-                    }
-                    else
-                    {
-                        HandlePlayRequest();
-                    }
-                }
             };
 
             //MUSIC PLAYER PAUSE ACTION
             mediaCallback.OnPauseImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnPauseImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnPauseImpl", ToastLength.Long).Show();
                 HandlePauseRequest();
             };
 
             //MUSIC PLAYER STOP ACTION
             mediaCallback.OnStopImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnStopImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnStopImpl", ToastLength.Long).Show();
                 HandleStopRequest(null);
             };
 
             //MUSIC PLAYER SKIP TO NEXT ACTION
             mediaCallback.OnSkipToNextImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnSkipToNextImpl", ToastLength.Long).Show();
-                mediaNotificationManager.CountSkip++;
-                playback.Skip(null);
-
-                Task.Run(async () =>
-                {
-                    await musicProvider.GetNextSongAsync();
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        playback.Play(null);
-                    }, null);
-                });
+                //Toast.MakeText(ApplicationContext, "OnSkipToNextImpl", ToastLength.Long).Show();
+                OnNextSong();
                 return;
             };
 
             //MUSIC PLAYER SKIP TO PREVIUOS ACTION
             mediaCallback.OnSkipToPreviousImpl = () =>
             {
-                Toast.MakeText(ApplicationContext, "OnSkipToPreviousImpl", ToastLength.Long).Show();
+                //Toast.MakeText(ApplicationContext, "OnSkipToPreviousImpl", ToastLength.Long).Show();
                 mediaNotificationManager.CountSkip--;
-                playback.Skip(null);
-
-                Task.Run(async () =>
-                {
-                    await musicProvider.GetNextSongAsync();
-                    Application.SynchronizationContext.Post(_ =>
-                    {
-                        playback.Play(null);
-                    }, null);
-                });
+                playback.Skip(false);
                 return;
             };
 
@@ -182,7 +153,7 @@ namespace SpotyPie.Music
                 }
                 else
                 {
-                    LogHelper.Error(Tag, "Unsupported action: ", action);
+                    Toast.MakeText(ApplicationContext, $"Unsuported action {action}", ToastLength.Short).Show();
                 }
             };
 
@@ -193,11 +164,11 @@ namespace SpotyPie.Music
 
                 if (string.IsNullOrEmpty(query))
                 {
-                    PlayingQueue = new List<Android.Support.V4.Media.Session.MediaSessionCompat.QueueItem>(QueueHelper.GetRandomQueue(musicProvider));
+                    PlayingQueue = new List<MediaSessionCompat.QueueItem>(QueueHelper.GetRandomQueue(musicProvider));
                 }
                 else
                 {
-                    PlayingQueue = new List<Android.Support.V4.Media.Session.MediaSessionCompat.QueueItem>(QueueHelper.GetPlayingQueueFromSearch(query, musicProvider));
+                    PlayingQueue = new List<MediaSessionCompat.QueueItem>(QueueHelper.GetPlayingQueueFromSearch(query, musicProvider));
                 }
 
                 LogHelper.Debug(Tag, "playFromSearch  playqueue.length=" + PlayingQueue.Count);
@@ -223,7 +194,6 @@ namespace SpotyPie.Music
             playback = new Playback(this, musicProvider);
             playback.State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateNone;
             playback.Callback = this;
-            playback.Start();
 
             var intent = new Intent(ApplicationContext, typeof(MainActivity));
             var pi = PendingIntent.GetActivity(ApplicationContext, 99 /*request code*/, intent, PendingIntentFlags.UpdateCurrent);
@@ -236,6 +206,12 @@ namespace SpotyPie.Music
             mediaNotificationManager = new MediaNotificationManager(this);
 
             UpdatePlaybackState(null);
+        }
+
+        private void OnNextSong()
+        {
+            mediaNotificationManager.CountSkip++;
+            playback.Skip(true);
         }
 
         [Obsolete("deprecated")]
@@ -259,12 +235,20 @@ namespace SpotyPie.Music
             return StartCommandResult.Sticky;
         }
 
+        private MusicService myServiceBinder;
+
         public override void OnDestroy()
         {
-            HandleStopRequest(null);
+            Binder = null;
 
-            delayedStopHandler.RemoveCallbacksAndMessages(null);
+            HandleStopRequest(null);
+            //delayedStopHandler.RemoveCallbacksAndMessages(null);
+            //delayedStopHandler = null;
             session.Release();
+            session.Dispose();
+            session = null;
+            serviceStarted = false;
+            base.OnDestroy();
         }
 
         public override BrowserRoot OnGetRoot(string clientPackageName, int clientUid, Bundle rootHints)
@@ -279,13 +263,13 @@ namespace SpotyPie.Music
             return new BrowserRoot(MediaIDHelper.MediaIdRoot, null);
         }
 
-        public override async void OnLoadChildren(string parentId, Result result)
+        public override void OnLoadChildren(string parentId, Result result)
         {
             if (!musicProvider.IsInitialized)
             {
                 result.Detach();
 
-                await musicProvider.RetrieveMediaAsync(success =>
+                musicProvider.RetrieveMedia(success =>
                 {
                     if (success)
                     {
@@ -297,7 +281,6 @@ namespace SpotyPie.Music
                         result.SendResult(new JavaList<MediaBrowser.MediaItem>());
                     }
                 });
-
             }
             else
             {
@@ -312,13 +295,13 @@ namespace SpotyPie.Music
         void HandlePauseRequest()
         {
             playback.Pause();
-            delayedStopHandler.RemoveCallbacksAndMessages(null);
-            delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
+            //delayedStopHandler.RemoveCallbacksAndMessages(null);
+            //delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
         }
 
         void HandlePlayRequest()
         {
-            delayedStopHandler.RemoveCallbacksAndMessages(null);
+            //delayedStopHandler?.RemoveCallbacksAndMessages(null);
             if (!serviceStarted)
             {
                 StartService(new Intent(ApplicationContext, typeof(MusicService)));
@@ -339,8 +322,8 @@ namespace SpotyPie.Music
         void HandleStopRequest(String withError)
         {
             playback.Stop(true);
-            delayedStopHandler.RemoveCallbacksAndMessages(null);
-            delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
+            //delayedStopHandler.RemoveCallbacksAndMessages(null);
+            //delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
 
             UpdatePlaybackState(withError);
 
@@ -459,39 +442,65 @@ namespace SpotyPie.Music
 
         public void OnCompletion()
         {
-            if (PlayingQueue != null && PlayingQueue.Count != 0)
-            {
-                // In this sample, we restart the playing queue when it gets to the end:
-                currentIndexOnQueue++;
-                if (currentIndexOnQueue >= PlayingQueue.Count)
-                {
-                    currentIndexOnQueue = 0;
-                }
-                HandlePlayRequest();
-            }
-            else
-            {
-                // If there is nothing to play, we stop and release the resources:
-                HandleStopRequest(null);
-            }
+            OnNextSong();
+            //if (PlayingQueue != null && PlayingQueue.Count != 0)
+            //{
+            //    // In this sample, we restart the playing queue when it gets to the end:
+            //    currentIndexOnQueue++;
+            //    if (currentIndexOnQueue >= PlayingQueue.Count)
+            //    {
+            //        currentIndexOnQueue = 0;
+            //    }
+            //HandlePlayRequest();
+            //}
+            //else
+            //{
+            //    // If there is nothing to play, we stop and release the resources:
+            //    HandleStopRequest(null);
+            //}
         }
 
         public void OnPlaybackStatusChanged(int state)
         {
             UpdatePlaybackState(null);
+            CallBack.OnPlaybackStatusChanged(state);
         }
 
         public void OnPlaybackMetaDataChanged(MediaMetadataCompat meta)
         {
             if (mediaNotificationManager != null)
             {
-                mediaNotificationManager.metadata = meta;
+                mediaNotificationManager.Metadata = meta;
             }
         }
 
         public void OnError(string error)
         {
             UpdatePlaybackState(error);
+        }
+
+        public void OnPositionChanged(int miliseconds, TimeSpan currentTime)
+        {
+            CallBack?.OnPositionChanged(miliseconds, currentTime);
+        }
+
+        internal void SetCallback(Player.Player player)
+        {
+            CallBack = player;
+        }
+
+        public void OnDurationChanged(int miliseconds)
+        {
+            CallBack?.OnDurationChanged(miliseconds);
+        }
+
+        public void OnPlay()
+        {
+            
+        }
+
+        public void OnStop()
+        {
         }
     }
 }

@@ -41,6 +41,13 @@ namespace SpotyPie.Base
             return RootView;
         }
 
+        public ActivityBase GetActivity()
+        {
+            if (ParentActivity == null)
+                ParentActivity = (ActivityBase)Activity;
+            return ParentActivity;
+        }
+
         private int GetLayout()
         {
             return LayoutId;
@@ -93,20 +100,19 @@ namespace SpotyPie.Base
 
         public Current_state GetState()
         {
-            if (ParentActivity == null)
-                ParentActivity = (ActivityBase)Activity;
-
-            return ParentActivity?.GetInstance()?.GetState();
+            return GetActivity()?.GetState();
         }
+
+
 
         public SupportFragment GetCurrentFragment()
         {
-            return ParentActivity.GetInstance().FirstLayerFragment;
+            return GetActivity().GetInstance().FirstLayerFragment;
         }
 
         public API GetAPIService()
         {
-            return ParentActivity.GetInstance().GetAPIService();
+            return GetActivity().GetInstance().GetAPIService();
         }
 
         public void InvokeOnMainThread(Action action)
@@ -121,19 +127,19 @@ namespace SpotyPie.Base
 
         public void LoadAlbum(Album album)
         {
-            ParentActivity.GetInstance().LoadAlbum(album);
+            GetActivity().GetInstance().LoadAlbum(album);
         }
 
         public void LoadArtist(Artist artist)
         {
-            ParentActivity.GetInstance().LoadArtist(artist);
+            GetActivity().GetInstance().LoadArtist(artist);
         }
 
         public override void OnResume()
         {
             ForceUpdate();
-            ParentActivity?.FragmentLoaded();
-            ParentActivity?.SetNavigationBarColor(NavigationBtnColorState);
+            GetActivity()?.FragmentLoaded();
+            GetActivity()?.SetNavigationBarColor(NavigationBtnColorState);
             base.OnResume();
         }
 
@@ -168,7 +174,7 @@ namespace SpotyPie.Base
 
         public void RemoveMe()
         {
-            ParentActivity?.OnBackPressed();
+            GetActivity()?.OnBackPressed();
         }
 
         public void SendData(string data)
@@ -200,42 +206,42 @@ namespace SpotyPie.Base
 
         public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, LayoutScreenState screen = LayoutScreenState.Holder)
         {
-            ParentActivity.GetFManager().FragmentHistory.Push(new FragmentState());
-            ParentActivity.GetFManager().FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
-            ParentActivity.GetFManager().FragmentHistory.Peek().FatherState = ParentActivity.FManager.CurrentFragmentState;
-            ParentActivity.GetFManager().FragmentHistory.Peek().ScreenState = screen;
+            GetActivity().GetFManager().FragmentHistory.Push(new FragmentState());
+            GetActivity().GetFManager().FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
+            GetActivity().GetFManager().FragmentHistory.Peek().FatherState = ParentActivity.FManager.CurrentFragmentState;
+            GetActivity().GetFManager().FragmentHistory.Peek().ScreenState = screen;
 
-            if (ParentActivity.GetFManager().FragmentHistory.Peek()?.FatherState?.Fragment != null)
+            if (GetActivity().GetFManager().FragmentHistory.Peek()?.FatherState?.Fragment != null)
             {
-                ParentActivity.GetFManager().CurrentFragmentState?.FatherState?.Fragment.Hide();
+                GetActivity().GetFManager().CurrentFragmentState?.FatherState?.Fragment.Hide();
             }
 
-            ParentActivity.GetFManager().GetFragmentStack().Push(switcher);
+            GetActivity().GetFManager().GetFragmentStack().Push(switcher);
 
             LoadFragment(switcher);
 
-            if (ParentActivity.GetFManager().FragmentHistory?.Peek()?.Fragment == null)
+            if (GetActivity().GetFManager().FragmentHistory?.Peek()?.Fragment == null)
             {
                 throw new Exception("Fragment not founded");
             }
 
             //Can send data to fragment
             if (!string.IsNullOrEmpty(jsonModel))
-                ParentActivity.GetFManager().FragmentHistory?.Peek()?.SendData(jsonModel);
+                GetActivity().GetFManager().FragmentHistory?.Peek()?.SendData(jsonModel);
 
-            if (ParentActivity.GetFManager().FragmentHistory.Peek().Fragment is Player.Player)
-                ParentActivity.GetFManager().FragmentHistory.Peek().LayoutId = GetFragmentViewId(true);
+            if (GetActivity().GetFManager().FragmentHistory.Peek().Fragment is Player.Player)
+                GetActivity().GetFManager().FragmentHistory.Peek().LayoutId = GetFragmentViewId(true);
             else
-                ParentActivity.GetFManager().FragmentHistory.Peek().LayoutId = GetFragmentViewId();
+                GetActivity().GetFManager().FragmentHistory.Peek().LayoutId = GetFragmentViewId();
 
-            InsertFragment(ParentActivity.GetFManager().FragmentHistory.Peek().LayoutId, ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
-            ParentActivity.FManager.FragmentHistory.Peek().BackButton =
+            InsertFragment(GetActivity().GetFManager().FragmentHistory.Peek().LayoutId, ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
+            GetActivity().FManager.FragmentHistory.Peek().BackButton =
                 () =>
                 {
                     ParentView.RemoveView(FragmentFrame);
                     FragmentFrame = null;
-                    ParentActivity.RemoveCurrentFragment(ChildFragmentManager,
-                        ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
+                    GetActivity().RemoveCurrentFragment(ChildFragmentManager,
+                        GetActivity().GetFManager().FragmentHistory.Peek().Fragment);
                 };
 
             SetScreen(screen);

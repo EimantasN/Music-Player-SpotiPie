@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    android:id="@+id/MainContainer"
+<android.support.constraint.ConstraintLayout android:id="@+id/MainContainer"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,83 +7,13 @@
     android:background="#222326">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/HeaderContainer"
+        android:id="@+id/SearchContainer"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="@color/BottomNavBarColor"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="Home"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/options"
-            app:layout_constraintStart_toEndOf="@+id/back"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/back"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@android:color/transparent"
-            android:padding="20dp"
-            android:rotation="180"
-            android:scaleType="fitCenter"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/expand" />
-
-        <ImageButton
-            android:id="@+id/options"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@android:color/transparent"
-            android:padding="20dp"
-            android:scaleType="fitCenter"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/dots_small" />
-
-        <ImageButton
-            android:id="@+id/settings"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
-            android:padding="16dp"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/tune" />
-
-    </android.support.constraint.ConstraintLayout>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/SearchContainer"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/BottomNavBarColor"
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
@@ -93,10 +22,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginRight="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:backgroundTint="@android:color/white"
             android:inputType="textPersonName"
@@ -113,8 +40,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -124,94 +50,24 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/PlayerContainer"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/BottomNavBarColor"
-        app:layout_constraintBottom_toTopOf="@+id/BotNavPlayerDevider"
+        android:id="@+id/content_holder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/mini_player_holder"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageButton
-            android:id="@+id/play_stop"
-            android:layout_width="?android:attr/actionBarSize"
-            android:layout_height="?android:attr/actionBarSize"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:background="@android:color/transparent"
-            android:padding="12dp"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/play_button" />
-
-        <TextView
-            android:id="@+id/song_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:ellipsize="marquee"
-            android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:text="I Dare you"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/play_stop"
-            app:layout_constraintStart_toEndOf="@+id/show_player"
-            app:layout_constraintTop_toBottomOf="@+id/artist_name" />
-
-        <TextView
-            android:id="@+id/artist_name"
-            android:layout_width="0dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:ellipsize="marquee"
-            android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"
-            android:text="The XX"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/greylight"
-            app:layout_constraintEnd_toStartOf="@+id/play_stop"
-            app:layout_constraintStart_toEndOf="@+id/show_player"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/show_player"
-            android:layout_width="?android:attr/actionBarSize"
-            android:layout_height="?android:attr/actionBarSize"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
-            android:padding="18dp"
-            android:rotation="-90"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/expand" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SearchContainer">
 
     </android.support.constraint.ConstraintLayout>
 
-    <View
-        android:id="@+id/BotNavPlayerDevider"
+    <FrameLayout
+        android:id="@+id/mini_player_holder"
         android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@android:color/black"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/NavBot"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+    </FrameLayout>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/NavBot"
@@ -228,16 +84,5 @@
         app:menu="@menu/menu_main" >
 
     </android.support.design.widget.BottomNavigationView>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/content_holder"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/PlayerContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/HeaderContainer">
-
-    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

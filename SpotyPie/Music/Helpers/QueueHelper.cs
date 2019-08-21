@@ -4,12 +4,24 @@ using Android.Media.Session;
 using Android.Media;
 using SpotyPie.Music.Models;
 using System.Linq;
+using Mobile_Api.Models;
+using Realms;
 
 namespace SpotyPie.Music.Helpers
 {
     public static class QueueHelper
     {
         static readonly string Tag = LogHelper.MakeLogTag(typeof(QueueHelper));
+
+        public static int Id { get; set; } = -1;
+
+        public static Songs GetPlayingSong()
+        {
+            using (var realm = Realm.GetInstance())
+            {
+                return new Songs(realm.All<Mobile_Api.Models.Realm.Music>().FirstOrDefault(x => x.IsPlaying).Song);
+            }
+        }
 
         public static List<Android.Support.V4.Media.Session.MediaSessionCompat.QueueItem> GetPlayingQueue(string mediaId, MusicProvider musicProvider)
         {

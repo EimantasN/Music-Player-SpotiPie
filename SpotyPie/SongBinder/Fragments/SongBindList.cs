@@ -28,11 +28,11 @@ namespace SpotyPie.SongBinder.Fragments
             if (Songs == null)
             {
                 Songs = new BaseRecycleView<SongTag>(this, Resource.Id.song_list);
-                Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
-                Songs.SetClickAction(() =>
-                {
-                    ParentActivity.GetInstance().LoadFragmentInner(BinderFragments.SongDetailsFragment, JsonConvert.SerializeObject(Songs.GetData().GetList()[Songs.LastPosition]));
-                });
+                Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical,
+                    new List<Action>()
+                    {
+                        () => GetActivity().LoadFragmentInner(BinderFragments.SongDetailsFragment, JsonConvert.SerializeObject(Songs.GetData().GetList()[Songs.LastPosition]))
+                    });
             }
             Task.Run(() => LoadUnbindedSongsAsync());
         }

@@ -4,7 +4,7 @@ using Android.Support.V4.Media.Session;
 
 namespace SpotyPie.Music
 {
-    public class MediaController : MediaControllerCompat.Callback
+    public class SpotyPieMediaControllerCallback : MediaControllerCompat.Callback
     {
         protected MediaMetadataCompat Metadata { get; set; }
         public Action<PlaybackStateCompat> OnPlaybackStateChangedImpl { get; set; }

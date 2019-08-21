@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Android.Support.V7.Util;
 using Mobile_Api.Interfaces;
+using Newtonsoft.Json;
 
 namespace SpotyPie.RecycleView.Helpers
 {
-    public class RecycleUpdate<T> : DiffUtil.Callback where T : IBaseInterface
+    public class RecycleUpdate<T> : DiffUtil.Callback where T : IBaseInterface<T>
     {
         private List<T> oldList;
         private List<T> newList;
@@ -29,8 +30,12 @@ namespace SpotyPie.RecycleView.Helpers
 
         public override bool AreContentsTheSame(int oldItemPosition, int newItemPosition)
         {
-            if (newList[newItemPosition].GetId() == Current_state.Id || newList[newItemPosition].GetId() == Current_state.PrevId)
-                return false;
+            if (oldList[oldItemPosition].GetId() == newList[newItemPosition].GetId())
+            {
+                if (oldList[oldItemPosition].Equals(newList[newItemPosition]))
+                    return true;
+                return true;
+            }
             return true;
         }
     }

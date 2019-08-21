@@ -22,7 +22,7 @@
         app:srcCompat="@drawable/play_button"
         tools:ignore="VectorDrawableCompat" />
 
-    <ImageView
+    <SpotyPie.Player.SpotyPieViewPager
         android:id="@+id/img_holder"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -37,10 +37,8 @@
         app:layout_constraintBottom_toTopOf="@+id/song_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playlist_name"
+        app:layout_constraintTop_toBottomOf="@+id/playing_from_value"
         app:srcCompat="@drawable/img_loading" />
-
-    <!--</android.support.v7.widget.CardView>-->
 
 
     <ImageButton
@@ -98,15 +96,16 @@
 
     <TextView
         android:id="@+id/current_song_time"
-        android:layout_width="wrap_content"
+        android:layout_width="35dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="1:55"
+        android:fontFamily="@font/montserrat"
+        android:text="01:55"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@android:color/white"
+        android:textSize="10sp"
+        android:typeface="monospace"
         app:layout_constraintBottom_toBottomOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -115,15 +114,17 @@
 
     <TextView
         android:id="@+id/total_song_time"
-        android:layout_width="wrap_content"
+        android:layout_width="35dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:text="2:37"
+        android:fontFamily="@font/montserrat"
+        android:gravity="right"
+        android:text="02:37"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@android:color/white"
+        android:textSize="10sp"
+        android:typeface="monospace"
         app:layout_constraintBottom_toBottomOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -138,9 +139,9 @@
         android:layout_marginRight="16dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/playlist_name"
+        app:layout_constraintBottom_toBottomOf="@+id/playing_from_value"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView6"
+        app:layout_constraintTop_toTopOf="@+id/playing_from_title"
         app:srcCompat="@drawable/palyer_playlist" />
 
     <ImageButton
@@ -153,22 +154,22 @@
         android:padding="8dp"
         android:rotation="90"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/playlist_name"
+        app:layout_constraintBottom_toBottomOf="@+id/playing_from_value"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView6"
+        app:layout_constraintTop_toTopOf="@+id/playing_from_title"
         app:srcCompat="@drawable/expand" />
 
     <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
+        android:id="@+id/playing_from_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="42dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:fontFamily="@font/montserrat"
         android:text="Playing from playlist"
         android:textAllCaps="true"
+        android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/song_list"
@@ -176,40 +177,35 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/playlist_name"
+        android:id="@+id/playing_from_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="July Talk - Touch"
-        android:ellipsize="marquee"
+        android:fontFamily="@font/montserrat_bold"
         android:gravity="center"
-        android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
+        android:text="July Talk - Touch"
         android:textColor="@android:color/white"
+        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/song_list"
         app:layout_constraintStart_toEndOf="@+id/back_button"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/playing_from_title" />
 
     <TextView
         android:id="@+id/song_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:ellipsize="marquee"
+        android:fontFamily="@font/montserrat_bold"
         android:gravity="center"
-        android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
         android:text="Johnny + Mary"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@android:color/white"
         android:textSize="14dp"
+        android:typeface="normal"
         app:layout_constraintBottom_toTopOf="@+id/artist_name"
         app:layout_constraintEnd_toStartOf="@+id/add_to_playlist"
         app:layout_constraintStart_toEndOf="@+id/save_to_songs" />
@@ -219,17 +215,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="24dp"
-        android:ellipsize="marquee"
+        android:fontFamily="@font/montserrat"
         android:gravity="center"
-        android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
         android:text="July Talk"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@color/greylight"
+        android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintEnd_toStartOf="@+id/add_to_playlist"
         app:layout_constraintStart_toEndOf="@+id/save_to_songs" />

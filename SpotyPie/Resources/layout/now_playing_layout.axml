@@ -1,0 +1,72 @@
+<android.support.constraint.ConstraintLayout android:id="@+id/PlayerContainer"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/BottomNavBarColor"
+    app:layout_constraintBottom_toTopOf="@+id/BotNavPlayerDevider"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageButton
+        android:id="@+id/play_stop"
+        android:layout_width="?android:attr/actionBarSize"
+        android:layout_height="?android:attr/actionBarSize"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@android:color/transparent"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/play_button" />
+
+    <TextView
+        android:id="@+id/song_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ellipsize="marquee"
+        android:fontFamily="@font/montserrat_bold"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:text="I Dare you"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/play_stop"
+        app:layout_constraintStart_toEndOf="@+id/show_player"
+        app:layout_constraintTop_toBottomOf="@+id/artist_name" />
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:fontFamily="@font/montserrat"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:paddingTop="6dp"
+        android:text="The XX"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@color/greylight"
+        app:layout_constraintEnd_toStartOf="@+id/play_stop"
+        app:layout_constraintStart_toEndOf="@+id/show_player"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/show_player"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:background="@android:color/transparent"
+        android:padding="12dp"
+        android:rotation="0"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_favorite_24" />
+
+</android.support.constraint.ConstraintLayout>

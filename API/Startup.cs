@@ -34,7 +34,7 @@ namespace API
                 options.SwaggerDoc("v1",
                     new Info
                     {
-                        Title = "SpotyPie API V 1.0",
+                        Title = "SpotyPie API V 1.1",
                         Version = "v1",
                         Description = "For development purpose",
                         TermsOfService = "WTFPL",
@@ -88,8 +88,6 @@ namespace API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SpotyPie API V1");
                 c.RoutePrefix = string.Empty;
             });
-
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }

@@ -13,7 +13,6 @@ using SpotyPie.Services;
 
 namespace SpotyPie
 {
-    [BroadcastReceiver]
     [IntentFilter(new[] { Intent.ActionMediaButton })]
     public class MediaButtonBroadcastReceiver : BroadcastReceiver
     {

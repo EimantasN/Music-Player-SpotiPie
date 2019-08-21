@@ -103,7 +103,7 @@ namespace SpotyPie
         {
             if (search.IsFocused)
             {
-                GetState().ToggleMiniPlayer(false);
+                //GetState().ToggleMiniPlayer(false);
                 if (search.Text.Contains("Search"))
                     search.Text = "";
             }
@@ -291,7 +291,7 @@ namespace SpotyPie
             await SearchBaseAsync<Artist>(RvBaseArtist.GetData(), ArtistContainer, query, SongLimit, RvType.ArtistGrid);
         }
 
-        public async Task SearchBaseAsync<T>(RvList<T> RvList, TextView Container, string query, int limit, RvType type) where T : IBaseInterface
+        public async Task SearchBaseAsync<T>(RvList<T> RvList, TextView Container, string query, int limit, RvType type) where T : IBaseInterface<T>
         {
             try
             {
@@ -322,7 +322,7 @@ namespace SpotyPie
             }
         }
 
-        private void FormatView<T>(ref List<T> dataList, RvType type) where T : IBaseInterface
+        private void FormatView<T>(ref List<T> dataList, RvType type) where T : IBaseInterface<T>
         {
             if (dataList == null || dataList.Count == 0)
                 return;
@@ -419,13 +419,13 @@ namespace SpotyPie
             int heightDiff = RootView.RootView.Height - RootView.Height;
             if (heightDiff > 500)
             {
-                GetState()?.ToggleBotNav(false);
-                GetState()?.ToggleMiniPlayer(false);
+                //GetState()?.ToggleBotNav(false);
+                //GetState()?.ToggleMiniPlayer(false);
             }
             else
             {
-                GetState()?.ToggleBotNav(true);
-                GetState()?.ToggleMiniPlayer(true);
+                //GetState()?.ToggleBotNav(true);
+                //GetState()?.ToggleMiniPlayer(true);
             }
         }
 

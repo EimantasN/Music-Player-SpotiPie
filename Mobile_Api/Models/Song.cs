@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Mobile_Api.Models
 {
-    public class Songs : BaseModel, IBaseInterface, IDisposable
+    public class Songs : BaseModel, IBaseInterface<Songs>, IDisposable
     {
         public override int Id { get; set; }
 
@@ -103,6 +103,16 @@ namespace Mobile_Api.Models
             LocalUrl = null;
             ArtistName = null;
             AlbumName = null;
+        }
+
+        public bool Equals(Songs obj)
+        {
+            if (Id == obj.Id &&
+                Name == obj.Name &&
+                IsPlayable == obj.IsPlayable &&
+                IsPlaying == obj.IsPlaying)
+                return true;
+            return false;
         }
     }
 }
