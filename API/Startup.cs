@@ -88,8 +88,6 @@ namespace API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SpotyPie API V1");
                 c.RoutePrefix = string.Empty;
             });
-
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
