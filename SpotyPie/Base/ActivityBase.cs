@@ -54,8 +54,6 @@ namespace SpotyPie.Base
 
         private FrameLayout FragmentFrame;
 
-        private FrameLayout PlayerFrame;
-
         public bool IsFragmentLoadedAdded = false;
 
         private API Api_service { get; set; }
@@ -85,6 +83,7 @@ namespace SpotyPie.Base
         {
             base.OnCreate(savedInstanceState);
             SetContentView(GetLayout());
+            Fabric.Fabric.With(this, new Crashlytics.Crashlytics());
 
             SupportFragmentManager.BackStackChanged += SupportFragmentManager_BackStackChanged;
             InitView();
@@ -103,26 +102,13 @@ namespace SpotyPie.Base
                 {
                     Realm = Realm.GetInstance();
                 }
-                catch (Realms.Exceptions.RealmMigrationNeededException )
+                catch (Realms.Exceptions.RealmMigrationNeededException)
                 {
                     Realm.DeleteRealm(RealmConfiguration.DefaultConfiguration);
                     Realm = Realm.GetInstance();
                 }
                 Realm.RealmChanged += Realm_RealmChanged1;
                 SongList = Realm.All<MusicList>().AsRealmCollection();
-
-                //var c = SongList[0].Song.Id;
-                //List = Realm.All<Realm_Songs>().Where(x => x.Id == c).AsRealmCollection();
-
-                //for (int i = 1; i < SongList.Count; i++)
-                //{
-                //    c = SongList[i].Song.Id;
-                //    List.Append(Realm.All<Realm_Songs>().First(x => x.Id == c));
-                //}
-
-                //var a = List.Count;
-                //for (int i = 0; i < List.Count(); i++)
-                //    List[i].PropertyChanged += SongList_PropertyChanged1;
 
                 SongList.CollectionChanged += SongList_CollectionChanged;
             }
@@ -141,27 +127,6 @@ namespace SpotyPie.Base
         private void SongList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             SongListHandler?.Invoke(SongList, e);
-            //if (e.NewItems != null && e.NewItems.Count != 0)
-            //{
-            //    for (int i = 0; i < e.NewItems.Count; i++)
-            //    {
-            //        var song = (MusicList)e.NewItems[i];
-            //        var id = song.Song.Id;
-            //        if (!List.Any(x => x.Id == song.Song.Id))
-            //        {
-            //            List.Append(Realm.All<Realm_Songs>().First(x => x.Id == id));
-            //            List.Last().PropertyChanged += SongList_PropertyChanged1;
-            //        }
-            //    }
-            //}
-
-            //for (int i = 0; i < List.Count; i++)
-            //{
-            //    if (!SongList.Any(x => x.Song.Id == List[i].Id))
-            //    {
-            //        List[i].PropertyChanged -= SongList_PropertyChanged1;
-            //    }
-            //}
         }
 
         private void SongList_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -178,7 +143,6 @@ namespace SpotyPie.Base
                     }
                 case "PlayingSong":
                     {
-                        //CurrentSongHandler?.Invoke(new Songs(SongList.PlayingSong), e);
                         break;
                     }
                 case "IsPlaying":
@@ -198,12 +162,10 @@ namespace SpotyPie.Base
 
         private void Song_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            //CurrentSongHandler?.Invoke(sender, e);
         }
 
         private void Realm_RealmChanged(object sender, EventArgs e)
         {
-            //Handler?.Invoke(sender, e);
         }
 
         protected override void OnResume()
@@ -257,13 +219,6 @@ namespace SpotyPie.Base
         protected virtual void InitView()
         {
             mSupportFragmentManager = SupportFragmentManager;
-            if (IsFragmentLoadedAdded)
-            {
-                //FragmentFrame = FindViewById<FrameLayout>(FirstLayerFragmentHolder);
-                //FragmentFrame.Visibility = ViewStates.Gone;
-                //FragmentLoading = FindViewById<ProgressBar>(Resource.Id.fragmentloading);
-                //FragmentLoading.Visibility = ViewStates.Gone;
-            }
         }
 
         public API GetAPIService()
@@ -284,43 +239,11 @@ namespace SpotyPie.Base
         {
             if (GetFManager().CheckBackButton())
                 base.OnBackPressed();
-            else
-            {
-                //LoadFragmentInner(GetFragmentStack().Pop());
-                //if (GetFragmentStack().Count == 0)
-                //{
-                //    if (IsFragmentLoadedAdded)
-                //    {
-                //        if (FragmentFrame.Visibility == ViewStates.Visible)
-                //            FragmentFrame.Visibility = ViewStates.Gone;
-
-                //        if (FragmentLoading.Visibility == ViewStates.Visible)
-                //            FragmentLoading.Visibility = ViewStates.Gone;
-                //    }
-                //}
-            }
         }
 
-        public void RemovePlayerView()
-        {
-            if (PlayerFrame != null)
-            {
-                ParentView.RemoveView(PlayerFrame);
-                PlayerFrame = null;
-            }
-        }
+        public virtual void FragmentLoaded() { }
 
-        public virtual void FragmentLoaded()
-        {
-            //if (IsFragmentLoadedAdded && FragmentLoading.Visibility == ViewStates.Visible)
-            //{
-            //    FragmentLoading.Visibility = ViewStates.Gone;
-            //}
-        }
-
-        public virtual void LoadFragment(dynamic switcher, string jsonModel = null)
-        {
-        }
+        public virtual void LoadFragment(dynamic switcher, string jsonModel = null) { }
 
         public void AddParent(FragmentBase parent)
         {
@@ -378,55 +301,27 @@ namespace SpotyPie.Base
             }
         }
 
-        public virtual int GetFragmentViewId(bool isPlayer = false)
+        public virtual int GetFragmentViewId()
         {
-            if (!isPlayer)
+            if (FragmentFrame == null)
             {
-                if (FragmentFrame == null)
-                {
-                    FragmentFrame = new FrameLayout(this.ApplicationContext);
+                FragmentFrame = new FrameLayout(this.ApplicationContext);
 
-                    FragmentFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
-                        ConstraintLayout.LayoutParams.MatchParent,
-                        ConstraintLayout.LayoutParams.MatchParent);
+                FragmentFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MatchParent,
+                    ConstraintLayout.LayoutParams.MatchParent);
 
-                    FragmentFrame.Id = GetFragmentId();
+                FragmentFrame.Id = GetFragmentId();
 
-                    GetViewToInsert(false);
+                GetViewToInsert(false);
 
-                    ParentView.AddView(FragmentFrame);
+                ParentView.AddView(FragmentFrame);
 
-                    FragmentFrame.BringToFront();
-                    return FragmentFrame.Id;
-                }
-                else
-                    return FragmentFrame.Id;
+                FragmentFrame.BringToFront();
+                return FragmentFrame.Id;
             }
             else
-            {
-                if (PlayerFrame == null)
-                {
-                    PlayerFrame = new FrameLayout(this.ApplicationContext);
-
-                    PlayerFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
-                        ConstraintLayout.LayoutParams.MatchParent,
-                        ConstraintLayout.LayoutParams.MatchParent);
-
-                    PlayerFrame.Id = int.MaxValue - 1;
-
-                    GetViewToInsert(true);
-
-                    PlayerView.AddView(PlayerFrame);
-
-                    PlayerFrame.BringToFront();
-                    return PlayerFrame.Id;
-                }
-                else
-                {
-                    PlayerFrame.BringToFront();
-                    return PlayerFrame.Id;
-                }
-            }
+                return FragmentFrame.Id;
         }
 
         public void RemoveCurrentFragment(SupportFragmentManager fragmentManager, FragmentBase fragment)
@@ -485,7 +380,7 @@ namespace SpotyPie.Base
                 {
                     if (serviceMusic.Name.Equals(service.Service.ClassName))
                     {
-                        return ;
+                        return;
                     }
                 }
                 RunOnUiThread(() =>
