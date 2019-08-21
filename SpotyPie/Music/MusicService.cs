@@ -48,7 +48,7 @@ namespace SpotyPie.Music
 
         public IBinder Binder { get; private set; }
 
-        public MusicService GetService() { return this; }
+        public MusicService GetMusicService() { return this; }
 
         public override IBinder OnBind(Intent intent)
         {

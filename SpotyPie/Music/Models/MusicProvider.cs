@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Android.Support.V4.Media;
 using Mobile_Api.Models;
-using Mobile_Api.Models.Realm;
 using Realms;
 using CurrentMusic = Mobile_Api.Models.Realm.Music;
 
@@ -13,11 +12,11 @@ namespace SpotyPie.Music.Models
     public class MusicProvider
     {
         //Current playing song id
-        private string Id { get; set; }
+        public int Id { get; set; }
 
         private API API { get; set; }
 
-        private API GetApiService()
+        public API GetApiService()
         {
             if (API == null)
                 API = new API();
@@ -43,7 +42,7 @@ namespace SpotyPie.Music.Models
             }
         }
 
-        public string GetCurrentSong()
+        public int GetCurrentSong()
         {
             using (Realm realm = Realm.GetInstance())
             {
@@ -51,18 +50,16 @@ namespace SpotyPie.Music.Models
                 if (song != null)
                 {
                     BuildMetadata(new Songs(song.Song));
-                    return Id = $"{song.Song.Id}";
+                    return Id = song.Song.Id;
                 }
                 else
                 {
                     var songs = realm.All<CurrentMusic>().ToList();
                     BuildMetadata(new Songs(songs[0].Song));
-                    return $"{songs[0].Id}";
+                    return songs[0].Id;
                 }
             }
         }
-
-        public string GetCurrentSongId => Id;
 
         public void SongPaused()
         {
@@ -123,8 +120,10 @@ namespace SpotyPie.Music.Models
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
+                    //Ignored for now
+                    //TODO send report to crashnalytics
                 }
 
                 void UpdateCurrentSong(CurrentMusic song, bool status = true)

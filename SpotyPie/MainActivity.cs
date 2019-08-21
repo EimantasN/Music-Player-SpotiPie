@@ -25,14 +25,6 @@ namespace SpotyPie
         public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Main;
         public override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Holder;
 
-        private int LastViewLayer = 0;
-
-        private int CurrentViewLayer = 1;
-
-        private Current_state APPSTATE;
-
-        private Main LastMainFragment;
-
         private MainFragment MainFragment;
         private Search Search;
         private HostStats Performance;
@@ -55,7 +47,6 @@ namespace SpotyPie
         protected override void InitView()
         {
             base.InitView();
-            APPSTATE = new Current_state(this);
 
             ConstraintLayout layout = FindViewById<ConstraintLayout>(Resource.Id.MainContainer);
             GradientBG.SetBacground(layout);
@@ -142,29 +133,21 @@ namespace SpotyPie
                             if (MainFragment == null)
                                 MainFragment = new MainFragment();
                             GetFManager().SetCurrentFragment(MainFragment);
-                            LastMainFragment = main;
-                            //ActionName.Text = "Home";
                             break;
                         case Main.Search:
                             if (Search == null)
                                 Search = new Search();
                             GetFManager().SetCurrentFragment(Search);
-                            LastMainFragment = main;
-                            //HeaderContainer.Visibility = ViewStates.Gone;
 
                             break;
                         case Main.Library:
                             if (Library == null) Library = new LibraryFragment();
                             GetFManager().SetCurrentFragment(Library);
-                            LastMainFragment = main;
-                            //ActionName.Text = "Library";
                             break;
                         case Main.Performance:
                             if (Performance == null)
                                 Performance = new HostStats();
                             GetFManager().SetCurrentFragment(Performance);
-                            LastMainFragment = main;
-                            //ActionName.Text = "Performance for host";
                             break;
                     }
                     break;
@@ -182,8 +165,6 @@ namespace SpotyPie
                             break;
                         case HomePage.Player:
                             StartPlayer();
-                            //GetFManager().SetCurrentFragment(new Player.Player());
-                            //NAvBotVisible = false;
                             break;
                     }
                     break;
@@ -193,13 +174,6 @@ namespace SpotyPie
         public void LoadAlbum(Album album)
         {
             LoadFragmentInner(HomePage.Album, JsonConvert.SerializeObject(album));
-        }
-
-        public Current_state GetState()
-        {
-            if (APPSTATE == null)
-                APPSTATE = new Current_state(this);
-            return APPSTATE;
         }
 
         public void LoadArtist(Artist artist)
@@ -228,14 +202,12 @@ namespace SpotyPie
                     if (BottomNavigation.Visibility == ViewStates.Visible)
                     {
                         BottomNavigation.Visibility = ViewStates.Gone;
-                        //MiniPlayer.Visibility = ViewStates.Gone;
                     }
                     break;
                 case LayoutScreenState.Holder:
                     if (BottomNavigation.Visibility == ViewStates.Gone)
                     {
                         BottomNavigation.Visibility = ViewStates.Visible;
-                        //MiniPlayer.Visibility = ViewStates.Visible;
                     }
                     break;
             }
