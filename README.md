@@ -6,9 +6,15 @@ There are many music applications that provide a modern interface and unlimited 
 
 # Screenshot
 
-![Album song list](https://github.com/EimantasN/Music-Player-SpotiPie/blob/feature-new-player-fragment/Screenshots/album-song-list.png | width=300)
+<img 
+src="https://github.com/EimantasN/Music-Player-SpotiPie/blob/feature-new-player-fragment/Screenshots/album-song-list.png" 
+alt="Album song list" 
+width="300"/>
 
-![Album main view](https://github.com/EimantasN/Music-Player-SpotiPie/blob/feature-new-player-fragment/Screenshots/album-view.png | width=300)
+<img 
+src="https://github.com/EimantasN/Music-Player-SpotiPie/blob/feature-new-player-fragment/Screenshots/album-view.png" 
+alt="Album main view" 
+width="300"/>
 
 ![Artist album view](https://github.com/EimantasN/Music-Player-SpotiPie/blob/feature-new-player-fragment/Screenshots/artist-album-view.png | width=300)
 
