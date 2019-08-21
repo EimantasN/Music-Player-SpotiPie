@@ -41,6 +41,20 @@ namespace SpotyPie
 
         #endregion
 
+        public void SetState(int songId)
+        {
+            Task.Run(() => _service.SetState(songId));
+        }
+
+        public void Report(Exception e)
+        {
+            Task.Run(() => _service.Report(e));
+        }
+        public void Corrupted(int songId)
+        {
+            Task.Run(() => _service.Corruped(songId));
+        }
+
         internal void SongPaused()
         {
             Task.Run(() =>
@@ -94,19 +108,19 @@ namespace SpotyPie
         {
             Task.Run(() =>
             {
-                var realm = Realm.GetInstance();
-                var songs = realm.All<Realm_Songs>().AsRealmCollection();
-                var old = songs.FirstOrDefault(x => x.IsPlaying == true);
-                var real_song = new Realm_Songs(song);
-                real_song.IsPlaying = true;
-                realm.Write(() =>
+                using (var realm = Realm.GetInstance())
                 {
-                    if (old != null)
+                    Realm_Songs old = realm.All<Realm_Songs>().AsQueryable()
+                    .FirstOrDefault(x => x.IsPlaying == true);
+                    Realm_Songs real_song = new Realm_Songs(song);
+                    real_song.IsPlaying = true;
+                    realm.Write(() =>
                     {
-                        old.IsPlaying = false;
-                    }
-                    realm.Add(real_song);
-                });
+                        if (old != null)
+                            old.IsPlaying = false;
+                        realm.Add(real_song);
+                    });
+                }
             });
             return song;
         }
@@ -131,10 +145,9 @@ namespace SpotyPie
                 Realm realm = Realm.GetInstance();
                 realm.Dispose();
             }
-            catch (Exception)
+            catch (Exception) //Exeption is raised because migration was make and old realm can't be used
             {
                 //Recreate real if real class changed
-
                 Realm.DeleteRealm(RealmConfiguration.DefaultConfiguration);
                 Realm realm = Realm.GetInstance();
                 realm.Dispose();
@@ -167,8 +180,6 @@ namespace SpotyPie
 
         public async Task GetAll<T>(RvList<T> RvList, Action action, RvType type) where T : IBaseInterface<T>
         {
-            try
-            {
                 List<T> AlbumsData = new List<T>() { default(T) };
                 RvList.AddList(AlbumsData);
 
@@ -184,11 +195,6 @@ namespace SpotyPie
                         action.Invoke();
                     }
                 });
-            }
-            catch (Exception e)
-            {
-
-            }
         }
 
         internal async Task<string> DeleteSongAsync(string filePath)
@@ -202,8 +208,6 @@ namespace SpotyPie
 
         public async Task<List<Album>> GetOldAlbumsAsync()
         {
-            try
-            {
                 List<Album> AlbumData = await _service.GetOld<Album>();
                 using (Realm realm = Realm.GetInstance())
                 {
@@ -237,17 +241,10 @@ namespace SpotyPie
                     }
                 }
                 return AlbumData;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
         }
 
         public async Task<List<Album>> GetRecentAlbumsAsync()
         {
-            try
-            {
                 List<Album> AlbumData = await _service.GetRecent<Album>();
                 using (Realm realm = Realm.GetInstance())
                 {
@@ -266,17 +263,10 @@ namespace SpotyPie
                     }
                 }
                 return AlbumData;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
         }
 
         public async Task<List<Album>> GetPolularAlbumsAsync()
         {
-            try
-            {
                 List<Album> AlbumData = await _service.GetPopular<Album>();
                 using (Realm realm = Realm.GetInstance())
                 {
@@ -301,11 +291,6 @@ namespace SpotyPie
                     }
                 }
                 return AlbumData;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
         }
 
         internal async Task<dynamic> GetBindedStatisticsAsync()
@@ -398,40 +383,12 @@ namespace SpotyPie
         #endregion
 
         #region Getters
-        //private async Task<List<Songs>> GetSongsByAlbumAsync(Album al)
-        //{
-        //    if (_Albums == null)
-        //        _Albums = new List<Album>() { al };
-
-        //    if (al.Songs != null && al.Songs.Count != 0)
-        //        return al.Songs;
-        //    else
-        //    {
-        //        al = await GetAlbumByIdAsync(al.Id);
-        //        return al.Songs;
-        //    }
-        //}
 
         private async Task<Album> GetAlbumByIdAsync(int id)
         {
             Album al = await _service.GetById<Album>(id);
             return UpdateAlbums(al);
         }
-
-        //private async Task<List<Songs>> GetSongsByArtistAsync(Album al)
-        //{
-        //    if (_Artists == null)
-        //        _Artists = new List<Artist>() { al };
-
-        //    if (al.Songs != null && al.Songs.Count != 0)
-        //        return al.Songs;
-        //    else
-        //    {
-        //        al = await GetAlbumByIdAsync(al.Id);
-        //        return al.Songs;
-        //    }
-        //    return null;
-        //}
 
         private async Task<Artist> GetArtistByIdAsync(int id)
         {
@@ -518,27 +475,13 @@ namespace SpotyPie
         #region Updates
         internal async Task UpdateSongPopularity(int id)
         {
-            try
-            {
                 await _service.Update<Songs>(id);
                 UpdateSongs(id);
-            }
-            catch (Exception e)
-            {
-
-            }
         }
 
         internal async Task SongCorrupted(int id)
         {
-            try
-            {
                 await _service.Corruped(id);
-            }
-            catch (Exception e)
-            {
-
-            }
         }
         #endregion
 
@@ -554,8 +497,6 @@ namespace SpotyPie
 
         public void SetCurrentList(List<Songs> songs)
         {
-            try
-            {
                 //TODO ADD MODEL CASTING
                 var realm = Realm.GetInstance();
                 songs.ForEach(x =>
@@ -565,26 +506,12 @@ namespace SpotyPie
                         //realm.Add<Realm_Songs>(x);
                     });
                 });
-            }
-            catch (Exception e)
-            {
-
-            }
         }
 
         public List<Songs> GetCurrentList()
         {
-            try
-            {
                 //TODO add song list getting from database
-                //var realm = Realm.GetInstance();
-                //var songs = realm.All<Songs>().ToList();
                 return new List<Songs>();
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
         }
 
         public List<Songs> GetCurrentListLive()
