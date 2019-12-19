@@ -463,7 +463,7 @@ namespace SpotyPie.Music
         public void OnPlaybackStatusChanged(int state)
         {
             UpdatePlaybackState(null);
-            CallBack.OnPlaybackStatusChanged(state);
+            CallBack?.OnPlaybackStatusChanged(state);
         }
 
         public void OnPlaybackMetaDataChanged(MediaMetadataCompat meta)

@@ -44,7 +44,7 @@ namespace Mobile_Api.Models
         [JsonProperty("tracks")]
         public int Tracks { get; set; }
 
-        public override RvType Type { get; set; } = RvType.Album;
+        protected override RvType Type { get; set; } = RvType.Album;
 
         public Album()
         {
@@ -67,22 +67,22 @@ namespace Mobile_Api.Models
             Type = (RvType)x.Type;
         }
 
-        public Album(Realm_Album album)
-        {
-            Id = album.Id;
-            SpotifyId = album.SpotifyId;
-            LargeImage = album.LargeImage;
-            MediumImage = album.MediumImage;
-            SmallImage = album.SmallImage;
-            Name = album.Name;
-            ReleaseDate = album.ReleaseDate;
-            Songs = new List<Songs>();
-            Popularity = album.Popularity;
-            IsPlayable = album.IsPlayable;
-            LastActiveTime = album.LastActiveTime.ToUniversalTime();
-            Tracks = album.Tracks;
-            Type = (RvType)album.Type;
-        }
+        //public Album(Realm_Album album)
+        //{
+        //    Id = album.Id;
+        //    SpotifyId = album.SpotifyId;
+        //    LargeImage = album.LargeImage;
+        //    MediumImage = album.MediumImage;
+        //    SmallImage = album.SmallImage;
+        //    Name = album.Name;
+        //    ReleaseDate = album.ReleaseDate;
+        //    Songs = new List<Songs>();
+        //    Popularity = album.Popularity;
+        //    IsPlayable = album.IsPlayable;
+        //    LastActiveTime = album.LastActiveTime.ToUniversalTime();
+        //    Tracks = album.Tracks;
+        //    Type = (RvType)album.Type;
+        //}
 
         public void Dispose()
         {

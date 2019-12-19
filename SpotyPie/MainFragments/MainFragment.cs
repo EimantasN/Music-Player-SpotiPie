@@ -68,17 +68,20 @@ namespace SpotyPie
 
         public void Toggle(bool state, ConstraintLayout layout)
         {
-            //Show
-            if (state)
+            if (layout != null)
             {
-                if (Loading.Visibility == Android.Views.ViewStates.Visible)
-                    Loading.Visibility = Android.Views.ViewStates.Gone;
+                //Show
+                if (state)
+                {
+                    if (Loading?.Visibility == Android.Views.ViewStates.Visible)
+                        Loading.Visibility = Android.Views.ViewStates.Gone;
 
-                layout.Visibility = Android.Views.ViewStates.Visible;
-            }
-            else
-            {
-                layout.Visibility = Android.Views.ViewStates.Gone;
+                    layout.Visibility = Android.Views.ViewStates.Visible;
+                }
+                else
+                {
+                    layout.Visibility = Android.Views.ViewStates.Gone;
+                }
             }
         }
 
@@ -185,8 +188,8 @@ namespace SpotyPie
             if (RecentAlbums == null)
             {
                 RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv);
-                RecentAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
-                RecentAlbums.SetFocusable(false);
+                RecentAlbums?.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+                RecentAlbums?.SetFocusable(false);
             }
 
             using (Realm realm = Realm.GetInstance())
@@ -210,7 +213,7 @@ namespace SpotyPie
             {
                 List<Album> albums = await GetAPIService().GetRecentAlbumsAsync();
                 if(albums != null && albums.Count != 0)
-                    LoadData(RecentAlbums.GetData(), albums, () => { Toggle(true, RecentHolder); });
+                    LoadData(RecentAlbums?.GetData(), albums, () => { Toggle(true, RecentHolder); });
             });
         }
 

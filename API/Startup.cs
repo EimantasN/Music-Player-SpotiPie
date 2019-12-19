@@ -40,9 +40,8 @@ namespace API
                         TermsOfService = "WTFPL",
                         Contact = new Contact
                         {
-                            Email = "eimantas@kiro.tech",
-                            Name = "Eimantas Noreika",
-                            Url = "kiro.tech"
+                            Email = "noreika.eimantas@gmail.com",
+                            Name = "Eimantas Noreika"
                         }
                     }
                 );
