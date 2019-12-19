@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.Support.V4.Media;
+using Mobile_Api;
 using Mobile_Api.Models;
 using Realms;
 using CurrentMusic = Mobile_Api.Models.Realm.Music;
@@ -73,7 +74,7 @@ namespace SpotyPie.Music.Models
 
         public string CurrentSongSource()
         {
-            return $"https://pie.pertrauktiestaskas.lt/api/stream/play/{Id}";
+            return $"{BaseClient.BaseUrl}api/stream/play/{Id}";
         }
 
         public void SetFavorite(string musicId, bool favorite)

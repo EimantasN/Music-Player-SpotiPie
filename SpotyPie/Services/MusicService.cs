@@ -1,30 +1,25 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Graphics;
 using Android.Media;
-using Android.Media.Session;
 using Android.OS;
 using Android.Support.V4.App;
-using Android.Support.V4.Media.Session;
-using Android.Views;
+using Mobile_Api;
 using Mobile_Api.Models;
-using RestSharp;
 using SpotyPie.Models;
 using SpotyPie.Services.Binders;
 using SpotyPie.Services.Interfaces;
 using SpotyPie.Services.Restarters;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SpotyPie.Services
 {
-    public class MusicService : Service
+    public class MusicService : Android.App.Service
     {
-        private const string BaseUrl = "https://pie.pertrauktiestaskas.lt/api/stream/play/";
+        private static string BaseUrl = $"{BaseClient.BaseUrl}api/stream/play/";
 
         private Mobile_Api.Service API { get; set; }
 

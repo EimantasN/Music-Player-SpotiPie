@@ -4,7 +4,7 @@ namespace Mobile_Api
 {
     public class BaseClient
     {
-        private string BaseUrl { get; set; } = "http://spotypie.endev.lt/";
+        public static string BaseUrl { get; set; } = "http://spotypie.endev.lt/";
 
         private ClientGetter Clients { get; set; } = new ClientGetter();
 

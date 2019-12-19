@@ -12,11 +12,12 @@ using Android.Support.V4.App;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using static Android.Support.V4.Media.App.NotificationCompat;
+using Mobile_Api;
 
 namespace SpotyPie.Services
 {
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback, ActionNext, ActionPrevious })]
-    public class MediaPlayerService : Service, AudioManager.IOnAudioFocusChangeListener,
+    public class MediaPlayerService : Android.App.Service, AudioManager.IOnAudioFocusChangeListener,
     MediaPlayer.IOnBufferingUpdateListener,
     MediaPlayer.IOnCompletionListener,
     MediaPlayer.IOnErrorListener,
@@ -38,7 +39,7 @@ namespace SpotyPie.Services
         public const string ActionNext = "com.xamarin.action.NEXT";
         public const string ActionPrevious = "com.xamarin.action.PREVIOUS";
 
-        private const string audioUrl = @"https://pie.pertrauktiestaskas.lt/api/Stream/play/2";
+        private static string audioUrl = $"{BaseClient.BaseUrl}api/Stream/play/2";
 
         public MediaPlayer mediaPlayer;
         private AudioManager audioManager;

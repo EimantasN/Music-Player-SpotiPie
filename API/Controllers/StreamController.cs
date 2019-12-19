@@ -25,9 +25,9 @@ namespace API.Controllers
             _ctd = ctd;
             cts = new CancellationTokenSource();
             ct = cts.Token;
-            settings = new ConfigurationBuilder<ISettings>()
-                .UseJsonFile(Environment.CurrentDirectory + @"/settings.json")
-                .Build();
+            //settings = new ConfigurationBuilder<ISettings>()
+            //    .UseJsonFile(Environment.CurrentDirectory + @"/settings.json")
+            //    .Build();
         }
 
         [HttpGet("Test")]

@@ -4,6 +4,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Widget;
+using Mobile_Api;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -50,7 +51,7 @@ namespace SpotyPie
                     count++;
                     var random = new Random();
                     int value = random.Next(2, 28);
-                    RestClient client = new RestClient("https://pie.pertrauktiestaskas.lt/api/sync/GetQuote/" + value);
+                    RestClient client = new RestClient($"{BaseClient.BaseUrl}api/sync/GetQuote/" + value);
                     var request = new RestRequest(Method.GET);
                     request.AddHeader("cache-control", "no-cache");
                     IRestResponse response = await client.ExecuteTaskAsync(request);
