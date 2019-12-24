@@ -5,6 +5,7 @@ using Mobile_Api.Models;
 using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
+using SpotyPie.Music.Manager;
 using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
@@ -21,19 +22,31 @@ namespace SpotyPie.Player
 
         private BaseRecycleView<Songs> RvData { get; set; }
 
-        protected override void InitView()
-        {
-        }
-
         public override int GetParentView()
         {
             return Resource.Id.innerWrapper;
         }
 
+        protected override void InitView()
+        {
+            SongManager.SongListHandler += OnSongListChange;
+        }
+
+        public void OnSongListChange(List<Songs> songs)
+        {
+            RvData?.GetData()?.AddList(songs);
+        }
+
+        public void Update(List<Songs> songs = null)
+        {
+            if (songs != null)
+                RvData?.GetData()?.AddList(songs);
+            else
+                RvData?.GetData()?.AddList(SongManager.SongQueue);
+        }
+
         public override void ForceUpdate()
         {
-            GetActivity().SongListHandler += Songs_CollectionChanged;
-
             if (RvData == null)
             {
                 RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
@@ -53,16 +66,6 @@ namespace SpotyPie.Player
             {
                 Update();
             }
-        }
-
-        private void Update()
-        {
-            List<Songs> newSongs = new List<Songs>();
-            foreach (var x in GetActivity().SongList)
-            {
-                newSongs.Add(new Songs(x.Song));
-            }
-            RvData.GetData().AddList(newSongs);
         }
 
         public override void ReleaseData()

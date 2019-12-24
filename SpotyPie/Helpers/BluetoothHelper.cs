@@ -1,12 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Android.Bluetooth;
-using Android.Content;
-using Java.Util;
-
-namespace SpotyPie.Helpers
+﻿namespace SpotyPie.Helpers
 {
     //public interface IBluetoothHelper
     //{

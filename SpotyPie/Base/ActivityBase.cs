@@ -18,6 +18,7 @@ using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 using MusicList = Mobile_Api.Models.Realm.Music;
 using Android.Content;
 using SpotyPie.Music;
+using SpotyPie.Music.Manager;
 
 namespace SpotyPie.Base
 {
@@ -60,21 +61,6 @@ namespace SpotyPie.Base
 
         public SupportFragmentManager mSupportFragmentManager;
 
-        public EventArgs e = null;
-
-        private Realm Realm;
-
-        public IRealmCollection<MusicList> SongList;
-        public IRealmCollection<Realm_Songs> List;
-
-        public delegate void SongListChangeHandler(IRealmCollection<MusicList> list, System.Collections.Specialized.NotifyCollectionChangedEventArgs e);
-
-        public SongListChangeHandler SongListHandler;
-
-        public delegate void CurrentSongStateChangeHandler(Realm_Songs currentSong, EventArgs e);
-
-        public CurrentSongStateChangeHandler CurrentSongHandler;
-
         public abstract dynamic GetInstance();
 
         private int GetLayout() { return LayoutId; }
@@ -86,112 +72,17 @@ namespace SpotyPie.Base
             Fabric.Fabric.With(this, new Crashlytics.Crashlytics());
 
             SupportFragmentManager.BackStackChanged += SupportFragmentManager_BackStackChanged;
+
+            SongManager.SetAcitivityRef(this);
             InitView();
         }
 
-        public virtual void LoadBaseFragment()
-        {
-
-        }
-
-        private void InitRealChangeLisiner()
-        {
-            if (Realm == null || Realm.IsClosed)
-            {
-                try
-                {
-                    Realm = Realm.GetInstance();
-                }
-                catch (Realms.Exceptions.RealmMigrationNeededException)
-                {
-                    Realm.DeleteRealm(RealmConfiguration.DefaultConfiguration);
-                    Realm = Realm.GetInstance();
-                }
-                Realm.RealmChanged += Realm_RealmChanged1;
-                SongList = Realm.All<MusicList>().AsRealmCollection();
-
-                SongList.CollectionChanged += SongList_CollectionChanged;
-            }
-        }
-
-        private void Realm_RealmChanged1(object sender, EventArgs e)
-        {
-            SongListHandler?.Invoke(SongList, null);
-        }
-
-        private void SongList_PropertyChanged1(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            SongListHandler?.Invoke(SongList, null);
-        }
-
-        private void SongList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            SongListHandler?.Invoke(SongList, e);
-        }
-
-        private void SongList_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "CurrentCount":
-                    {
-                        break;
-                    }
-                case "LastCount":
-                    {
-                        break;
-                    }
-                case "PlayingSong":
-                    {
-                        break;
-                    }
-                case "IsPlaying":
-                    {
-                        break;
-                    }
-                case "UpdatedAt":
-                    {
-                        break;
-                    }
-                case "Songs":
-                    {
-                        break;
-                    }
-            }
-        }
-
-        private void Song_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-        }
-
-        private void Realm_RealmChanged(object sender, EventArgs e)
-        {
-        }
+        public virtual void LoadBaseFragment() { }
 
         protected override void OnResume()
         {
             SetNavigationBarColor();
-            InitRealChangeLisiner();
             base.OnResume();
-        }
-
-        protected override void OnRestart()
-        {
-            InitRealChangeLisiner();
-            base.OnRestart();
-        }
-
-        protected override void OnStop()
-        {
-            if (Realm != null)
-            {
-                if (!Realm.IsClosed)
-                {
-                    Realm.Dispose();
-                    Realm = null;
-                }
-            }
-            base.OnStop();
         }
 
         private void SupportFragmentManager_BackStackChanged(object sender, EventArgs e)
@@ -372,22 +263,16 @@ namespace SpotyPie.Base
 
         protected void StartMusicService()
         {
-            Task.Run(() =>
+            Type serviceMusic = typeof(MusicService);
+            ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
+            foreach (var service in manager.GetRunningServices(int.MaxValue))
             {
-                Type serviceMusic = typeof(MusicService);
-                ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
-                foreach (var service in manager.GetRunningServices(int.MaxValue))
+                if (serviceMusic.Name.Equals(service.Service.ClassName))
                 {
-                    if (serviceMusic.Name.Equals(service.Service.ClassName))
-                    {
-                        return;
-                    }
+                    return;
                 }
-                RunOnUiThread(() =>
-                {
-                    this.StartService(new Intent(this, typeof(MusicService)));
-                });
-            });
+            }
+            this.StartService(new Intent(this, typeof(MusicService)));
         }
     }
 }

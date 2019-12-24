@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
 using SpotyPie.Music.Helpers;
+using SpotyPie.Music.Manager;
 
 namespace SpotyPie.RecycleView.Models
 {
@@ -47,7 +48,6 @@ namespace SpotyPie.RecycleView.Models
 
         private void EmptyTimeView_Click(object sender, EventArgs e)
         {
-            QueueHelper.Id = SongId;
             Actions[1]?.Invoke();
         }
 
@@ -70,7 +70,7 @@ namespace SpotyPie.RecycleView.Models
         internal void PrepareView(Songs t)
         {
             SongId = t.Id;
-            if (t.IsPlaying)
+            if (t.Id == SongManager.SongId)
             {
                 SmallIcon.SetImageResource(Resource.Drawable.music_pause_small);
                 Title.SetTextColor(ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#1db954")));

@@ -23,6 +23,11 @@ namespace SpotyPie.Player
         {
         }
 
+        public override void SetCurrentItem(int item, bool smoothScroll)
+        {
+            base.SetCurrentItem(item, true);
+        }
+
         public override bool OnTouchEvent(MotionEvent e)
         {
             return this.Loading && base.OnTouchEvent(e);
@@ -33,9 +38,9 @@ namespace SpotyPie.Player
             return this.Loading && base.OnInterceptTouchEvent(ev);
         }
 
-        public void Enable(bool status)
+        public void Enable(bool enableStatus)
         {
-            this.Loading = status;
+            this.Loading = true;
         }
     }
 }

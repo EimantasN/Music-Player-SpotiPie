@@ -42,7 +42,8 @@
     <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
-    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>
+    </AndroidSupportedAbis>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <AotAssemblies>false</AotAssemblies>
@@ -53,7 +54,7 @@
     <AndroidLinkTool>proguard</AndroidLinkTool>
     <AndroidDexTool>dx</AndroidDexTool>
     <AndroidHttpClientHandlerType>System.Net.Http.HttpClientHandler</AndroidHttpClientHandlerType>
-    <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
@@ -113,6 +114,7 @@
     <Compile Include="Models\FragmentTransitions.cs" />
     <Compile Include="Monitoring\SystemInfo.cs" />
     <Compile Include="Music\DelayedStopHandler.cs" />
+    <Compile Include="Music\Enums\PlayState.cs" />
     <Compile Include="Music\Enums\State.cs" />
     <Compile Include="Music\Helpers\BitmapHelper.cs" />
     <Compile Include="Music\Helpers\CarHelper.cs" />
@@ -121,6 +123,9 @@
     <Compile Include="Music\Helpers\LogHelper.cs" />
     <Compile Include="Music\Helpers\ResourceHelper.cs" />
     <Compile Include="Music\Interface\MusicControlInterface.cs" />
+    <Compile Include="Music\Manager\DefaultValues.cs" />
+    <Compile Include="Music\Manager\ServiceConnection.cs" />
+    <Compile Include="Music\Manager\SongManager.cs" />
     <Compile Include="Music\MediaController.cs" />
     <Compile Include="Music\MediaNotificationManager.cs" />
     <Compile Include="Music\MediaSessionCallback.cs" />
@@ -130,7 +135,6 @@
     <Compile Include="Music\MusicServiceBinder.cs" />
     <Compile Include="Music\PackageValidator.cs" />
     <Compile Include="Music\Playback.cs" />
-    <Compile Include="Music\SpotyPieCallback.cs" />
     <Compile Include="Player\ImageAdapter.cs" />
     <Compile Include="Player\Interfaces\IMusicPlayerUiControls.cs" />
     <Compile Include="Player\SpotyPieViewPager.cs" />
@@ -175,8 +179,8 @@
     <Compile Include="MainFragments\ArtistFragment.cs" />
     <Compile Include="Player\PlayerSongList.cs" />
     <Compile Include="Player\PlaylistFragment.cs" />
-    <Compile Include="Player\Playlist_choose.cs" />
-    <Compile Include="Playlist_view.cs" />
+    <Compile Include="Player\PlaylistChoose.cs" />
+    <Compile Include="PlaylistView.cs" />
     <Compile Include="RecycleView\BaseRecycleView.cs" />
     <Compile Include="RecycleView\Enums\LayoutManagers.cs" />
     <Compile Include="RecycleView\Helpers\RecycleUpdate.cs" />

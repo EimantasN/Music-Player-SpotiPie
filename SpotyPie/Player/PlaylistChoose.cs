@@ -1,22 +1,16 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
-using Newtonsoft.Json;
-using RestSharp;
-using SpotyPie.Helpers;
 using SpotyPie.RecycleView;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using SupportFragment = Android.Support.V4.App.Fragment;
 namespace SpotyPie.Player
 {
-    public class Playlist_choose : SupportFragment
+    public class PlaylistChoose : SupportFragment
     {
         View RootView;
 

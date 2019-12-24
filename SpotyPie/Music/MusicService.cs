@@ -9,13 +9,9 @@ using Android.OS;
 using Android.Runtime;
 using SpotyPie.Music.Helpers;
 using SpotyPie.Music.Models;
-using SpotyPie.Music.Interface;
 using Android.Support.V4.Media;
 using MediaSessionCompat = Android.Support.V4.Media.Session.MediaSessionCompat;
 using Android.Widget;
-using System.Threading.Tasks;
-using System.Threading;
-using Java.IO;
 
 namespace SpotyPie.Music
 {
@@ -46,6 +42,8 @@ namespace SpotyPie.Music
         PackageValidator packageValidator;
         MediaSessionCallback mediaCallback;
 
+        public bool ServiceCreated { get; set; } = false;
+
         public IBinder Binder { get; private set; }
 
         public MusicService GetMusicService() { return this; }
@@ -71,14 +69,13 @@ namespace SpotyPie.Music
             musicProvider = new MusicProvider();
             packageValidator = new PackageValidator(this);
 
-            session = new MediaSessionCompat(this, "MusicService");
+            session = new MediaSessionCompat(this, DateTime.Now.Ticks.ToString());
             SessionToken = session.SessionToken;
             mediaCallback = new MediaSessionCallback();
 
             //MUSIC PLAYER PLAY ACTION
             mediaCallback.OnPlayImpl = () =>
             {
-                //Toast.MakeText(ApplicationContext, "OnPlayFromMediaIdImpl", ToastLength.Long).Show();
                 HandlePlayRequest();
             };
 
@@ -206,6 +203,8 @@ namespace SpotyPie.Music
             mediaNotificationManager = new MediaNotificationManager(this);
 
             UpdatePlaybackState(null);
+
+            ServiceCreated = true;
         }
 
         private void OnNextSong()
@@ -235,15 +234,12 @@ namespace SpotyPie.Music
             return StartCommandResult.Sticky;
         }
 
-        private MusicService myServiceBinder;
-
         public override void OnDestroy()
         {
+            ServiceCreated = false;
             Binder = null;
 
             HandleStopRequest(null);
-            //delayedStopHandler.RemoveCallbacksAndMessages(null);
-            //delayedStopHandler = null;
             session.Release();
             session.Dispose();
             session = null;
@@ -302,21 +298,19 @@ namespace SpotyPie.Music
         void HandlePlayRequest()
         {
             //delayedStopHandler?.RemoveCallbacksAndMessages(null);
-            if (!serviceStarted)
+            if (!serviceStarted && !ServiceCreated)
             {
-                StartService(new Intent(ApplicationContext, typeof(MusicService)));
                 serviceStarted = true;
+                StartService(new Intent(ApplicationContext, typeof(MusicService)));
             }
 
-            if (!session.Active)
-                session.Active = true;
-
-            if (QueueHelper.isIndexPlayable(currentIndexOnQueue, PlayingQueue))
+            if (ServiceCreated)
             {
-                UpdateMetadata();
-                playback.Play(PlayingQueue[currentIndexOnQueue]);
+                if (session != null && !session.Active)
+                    session.Active = true;
+
+                playback?.Play();
             }
-            playback.Play(null);
         }
 
         void HandleStopRequest(String withError)
@@ -376,8 +370,15 @@ namespace SpotyPie.Music
 
             if (QueueHelper.isIndexPlayable(currentIndexOnQueue, PlayingQueue))
             {
-                var item = PlayingQueue[currentIndexOnQueue];
-                stateBuilder.SetActiveQueueItemId(item.QueueId);
+                try
+                {
+                    var item = PlayingQueue[currentIndexOnQueue];
+                    stateBuilder.SetActiveQueueItemId(item.QueueId);
+                }
+                catch (Exception e)
+                {
+                    
+                }
             }
 
             session.SetPlaybackState(stateBuilder.Build());
@@ -429,13 +430,20 @@ namespace SpotyPie.Music
 
         MediaMetadataCompat GetCurrentPlayingMusic()
         {
-            if (QueueHelper.isIndexPlayable(currentIndexOnQueue, PlayingQueue))
+            try
             {
-                var item = PlayingQueue[currentIndexOnQueue];
-                if (item != null)
+                if (QueueHelper.isIndexPlayable(currentIndexOnQueue, PlayingQueue))
                 {
-                    return musicProvider.GetMetadata();
+                    var item = PlayingQueue[currentIndexOnQueue];
+                    if (item != null)
+                    {
+                        return musicProvider.GetMetadata();
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                
             }
             return musicProvider.GetMetadata();
         }

@@ -6,17 +6,27 @@ namespace Mobile_Api
     {
         public static string BaseUrl { get; set; } = "http://spotypie.endev.lt/";
 
-        private ClientGetter Clients { get; set; } = new ClientGetter();
+        private static ClientGetter Clients { get; set; } = new ClientGetter();
+
+        private static object _releaseLock { get; set; } = new object();
+
+        private static object _getLock { get; set; } = new object();
 
         public void Release(CustomRestClient client)
         {
-            if (client != null)
-                Clients.ReleaseClient(client);
+            lock (_releaseLock)
+            {
+                if (client != null)
+                    Clients.ReleaseClient(client);
+            }
         }
 
         public CustomRestClient GetClient(string endpoint)
         {
-            return Clients.GetClient(BaseUrl + endpoint);
+            lock (_getLock)
+            {
+                return Clients.GetClient(BaseUrl + endpoint);
+            }
         }
     }
 }

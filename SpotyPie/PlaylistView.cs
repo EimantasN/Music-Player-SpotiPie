@@ -1,5 +1,4 @@
-﻿using Android.App;
-using Android.Support.V7.Widget;
+﻿using Android.Support.V7.Widget;
 using Android.Widget;
 using Mobile_Api;
 using Mobile_Api.Models;
@@ -7,15 +6,12 @@ using Newtonsoft.Json;
 using RestSharp;
 using SpotyPie.Base;
 using SpotyPie.Enums;
-using SpotyPie.Helpers;
-using SpotyPie.RecycleView;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SpotyPie.Player
 {
-    public class Playlist_view : FragmentBase
+    public class PlaylistView : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.player_song_list;
 

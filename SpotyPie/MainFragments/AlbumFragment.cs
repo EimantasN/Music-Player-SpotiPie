@@ -7,6 +7,7 @@ using Mobile_Api.Models;
 using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
+using SpotyPie.Music.Manager;
 using SpotyPie.RecycleView;
 using Square.Picasso;
 using System;
@@ -21,7 +22,7 @@ namespace SpotyPie
     {
         public override int LayoutId { get; set; } = Resource.Layout.Album_layout;
 
-        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+        protected override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private BaseRecycleView<Songs> RvData;
 
@@ -33,7 +34,7 @@ namespace SpotyPie
         TextView ButtonBackGround;
         TextView ButtonBackGround2;
 
-        private Button ShufflePlay;//button_text
+        private Button ShufflePlay;
 
         private TextView download;
         private TextView Copyrights;
@@ -42,18 +43,15 @@ namespace SpotyPie
         private MarginLayoutParams MarginParrams;
         private RelativeLayout relative;
         private NestedScrollView ScrollFather;
-        //private FrameLayout Holder;
 
-        private int Height = 0;
-        private int Scrolled;
-        private bool isPlayable;
-        private bool IsMeniuActive = false;
+        private int Height { get; set; } = 0;
+        private int Scrolled { get; set; }
+        private bool isPlayable { get; set; }
+
+        private bool IsMeniuActive { get; set; } = false;
 
         protected override void InitView()
         {
-            //Background binding
-            //Holder = RootView.FindViewById<FrameLayout>(Resource.Id.frameLayout);
-            //Holder.Touch += Containerx_Touch;
             ShufflePlay = RootView.FindViewById<Button>(Resource.Id.button_text);
             ShufflePlay.Visibility = ViewStates.Gone;
 
@@ -77,34 +75,6 @@ namespace SpotyPie
             SetAlbum(GetModel<Album>());
         }
 
-        public void SetAlbum(Album album = null)
-        {
-            try
-            {
-                if (Context != null)
-                {
-                    if (album == null)
-                        album = GetModel<Album>();
-                    ScrollFather.ScrollTo(0, 0);
-                    isPlayable = true;
-                    IsMeniuActive = false;
-                    Scrolled = 0;
-
-                    Picasso.With(Context).Load(album.LargeImage).Into(AlbumPhoto);
-
-                    AlbumTitle.Text = album.Name;
-
-                    //TODO connect artist name
-                    AlbumByText.Text = $"Popularity {album.Popularity}";
-
-                    ForceUpdate();
-                }
-            }
-            catch
-            {
-            }
-        }
-
         public override void ForceUpdate()
         {
             if (RvData == null)
@@ -114,38 +84,8 @@ namespace SpotyPie
                 RvData.DisableScroolNested();
                 LoadAlbumSongs();
             }
-        }
-
-        private void LoadAlbumSongs()
-        {
-            Album CurrentAlbum = GetModel<Album>();
-            DataBaseSongLoad(CurrentAlbum);
-            Task.Run(async () =>
-            {
-                var songs = await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>());
-                RvData.GetData().AddList(songs);
-            });
-        }
-
-        private void DataBaseSongLoad(Album currentAlbum)
-        {
-            using (Realm realm = Realm.GetInstance())
-            {
-                var dbAlbums = realm.All<Realm_Songs>().Where(x => x.AlbumId == currentAlbum.Id).ToList();
-                if (dbAlbums != null && dbAlbums.Count != 0)
-                {
-                    List<Songs> albums = new List<Songs>();
-                    foreach (var x in dbAlbums)
-                    {
-                        albums.Add(new Songs(x));
-                    }
-                    RvData.GetData().AddList(albums);
-                }
-                else
-                {
-                    RvData.GetData().AddList(new List<Songs>() { null });
-                }
-            }
+            SongManager.SongListHandler += OnSongListChange;
+            SongManager.SongHandler += OnSongChange;
         }
 
         public override void ReleaseData()
@@ -155,6 +95,50 @@ namespace SpotyPie
                 RvData.Dispose();
                 RvData = null;
             }
+            SongManager.SongListHandler -= OnSongListChange;
+            SongManager.SongHandler -= OnSongChange;
+        }
+
+        public void OnSongChange(Songs song)
+        {
+            RvData?.GetData()?.Adapter?.NotifyDataSetChanged();
+        }
+
+        public void OnSongListChange(List<Songs> songs)
+        {
+            RvData?.GetData()?.AddList(songs);
+        }
+
+        public void SetAlbum(Album album = null)
+        {
+            if (Context != null)
+            {
+                if (album == null)
+                    album = GetModel<Album>();
+
+                ScrollFather.ScrollTo(0, 0);
+                isPlayable = true;
+                IsMeniuActive = false;
+                Scrolled = 0;
+
+                Picasso.With(Context).Load(album.LargeImage).Into(AlbumPhoto);
+
+                AlbumTitle.Text = album.Name;
+
+                //TODO connect artist name
+                AlbumByText.Text = $"Popularity {album.Popularity}";
+
+                ForceUpdate();
+            }
+        }
+
+        private void LoadAlbumSongs()
+        {
+            Task.Run(async () =>
+            {
+                List<Songs> songs = await GetAPIService().GetSongsByAlbumAsync(GetModel<Album>());
+                RvData?.GetData()?.AddList(songs);
+            });
         }
 
         public override int GetParentView()

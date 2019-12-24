@@ -30,7 +30,7 @@ namespace SpotyPie.Player
         public void LoadLists()
         {
             ChildFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.choose_playlist, new Playlist_choose())
+                .Replace(Resource.Id.choose_playlist, new PlaylistChoose())
                 .Commit();
             Container.TranslationX = 0;
         }

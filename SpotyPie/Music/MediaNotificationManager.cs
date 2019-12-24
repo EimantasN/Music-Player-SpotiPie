@@ -4,13 +4,11 @@ using Android.App;
 using Android.Graphics;
 using SpotyPie.Music.Helpers;
 using Android.OS;
-using RestSharp;
-using Android.Support.V4.Media.App;
 using Android.Support.V4.Media.Session;
 using Android.Support.V4.Media;
 using System.Threading.Tasks;
 using Android.Support.V4.App;
-using System.Threading;
+using RestSharp;
 
 namespace SpotyPie.Music
 {
@@ -224,15 +222,15 @@ namespace SpotyPie.Music
         void UpdateSessionToken(bool ignore = false)
         {
             var freshToken = Service.SessionToken;
-            if (SessionToken == null || SessionToken != freshToken)
-            {
+            //if (SessionToken == null || SessionToken != freshToken)
+            //{
                 SPController?.UnregisterCallback(SPMediaControllerCallback);
 
                 SessionToken = freshToken;
                 SPController = new MediaControllerCompat(Service, SessionToken);
                 SPController.RegisterCallback(SPMediaControllerCallback);
                 transportControls = SPController.GetTransportControls();
-            }
+            //}
         }
 
         PendingIntent CreateContentIntent()
@@ -299,14 +297,14 @@ namespace SpotyPie.Music
 
                 if (playbackState == null) { return null; }
 
-                NotificationBuilder = new Android.Support.V4.App.NotificationCompat.Builder(Service, Service.Resources.GetString(Resource.String.ChannelId));
+                NotificationBuilder = new NotificationCompat.Builder(Service, Service.Resources.GetString(Resource.String.ChannelId));
                 SetupNotificationButtons(NotificationBuilder);
 
                 NotificationBuilder
                     .SetStyle(GetMediaStyle())
                     .SetColor(notificationColor)
                     .SetSmallIcon(Resource.Drawable.logo_spotify)
-                    .SetVisibility(Android.Support.V4.App.NotificationCompat.VisibilityPublic)
+                    .SetVisibility(NotificationCompat.VisibilityPublic)
                     .SetUsesChronometer(true)
                     .SetSound(null)
                     .SetDefaults(0)
@@ -333,21 +331,21 @@ namespace SpotyPie.Music
             }
         }
 
-        public void GetLargeImage(Android.Support.V4.App.NotificationCompat.Builder builder)
+        public void GetLargeImage(NotificationCompat.Builder builder)
         {
-            RestClient client = new RestClient(Metadata.GetString("SpotyPieImgUrl"));
+            RestClient client = new RestClient(new Uri(Metadata.GetString("SpotyPieImgUrl")));
             RestRequest request = new RestRequest(Method.GET);
-            byte[] image = client.DownloadData(request);
-            if (image.Length > 1000)
-            {
-                builder.SetLargeIcon(BitmapFactory.DecodeByteArray(image, 0, image.Length));
-            }
+            //byte[] image = client.DownloadData(request, false);
+            //if (image.Length > 1000)
+            //{
+                //builder.SetLargeIcon(BitmapFactory.DecodeByteArray(image, 0, image.Length));
+            //}
         }
 
-        void SetupNotificationButtons(Android.Support.V4.App.NotificationCompat.Builder builder)
+        void SetupNotificationButtons(NotificationCompat.Builder builder)
         {
             //FAVORITE BUTTON
-            builder.AddAction(new Android.Support.V4.App.NotificationCompat.Action(Resource.Drawable.baseline_favorite_black_18, "Favorite", FavoriteIntent));
+            builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_favorite_black_18, "Favorite", FavoriteIntent));
 
             //REVIOUS SONG BUTTON
             builder.AddAction(Resource.Drawable.baseline_skip_previous_black_24, "Previuos Song", PreviousIntent);
@@ -355,25 +353,25 @@ namespace SpotyPie.Music
             //PLAY OR PAUSE BUTTON
             if (playbackState.State == PlaybackStateCompat.StatePlaying)
             {
-                builder.AddAction(new Android.Support.V4.App.NotificationCompat.Action(Resource.Drawable.baseline_pause_black_36, "Pause", PauseIntent));
+                builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_pause_black_36, "Pause", PauseIntent));
             }
             else if (playbackState.State == PlaybackStateCompat.StateBuffering)
             {
-                builder.AddAction(new Android.Support.V4.App.NotificationCompat.Action(Resource.Drawable.baseline_loop_black_18, "Loading", null));
+                builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_loop_black_18, "Loading", null));
             }
             else
             {
-                builder.AddAction(new Android.Support.V4.App.NotificationCompat.Action(Resource.Drawable.baseline_play_arrow_black_36, "Play", PlayIntent));
+                builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_play_arrow_black_36, "Play", PlayIntent));
             }
 
             //NEXT SONG BUTTON
             builder.AddAction(Resource.Drawable.baseline_skip_next_black_24, "Next Song", NextIntent);
 
             //DELETE
-            builder.AddAction(new Android.Support.V4.App.NotificationCompat.Action(Resource.Drawable.baseline_delete_forever_black_18, "To Trash", TrashIntent));
+            builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_delete_forever_black_18, "To Trash", TrashIntent));
         }
 
-        void SetNotificationPlaybackState(Android.Support.V4.App.NotificationCompat.Builder builder)
+        void SetNotificationPlaybackState(NotificationCompat.Builder builder)
         {
             var beginningOfTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             if (playbackState == null || !started)

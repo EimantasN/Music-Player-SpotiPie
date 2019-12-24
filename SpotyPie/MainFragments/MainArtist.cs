@@ -33,14 +33,6 @@ namespace SpotyPie
 
         public override void ForceUpdate()
         {
-            //if (RvData == null)
-            //{
-            //    RvData = new BaseRecycleView<Songs>(this, Resource.Id.main_rv);
-            //    RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical);
-            //    RvData.DisableScroolNested();
-            //}
-
-            //Task.Run(async () => await LoadSongs());
         }
 
         public override void ReleaseData()

@@ -39,7 +39,7 @@ namespace SpotyPie.RecycleView
 
         public void Clear()
         {
-            Activity.RunOnUiThread(() =>
+            Activity?.RunOnUiThread(() =>
             {
                 Updating = true;
                 DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, new List<T>()), false);
@@ -54,7 +54,7 @@ namespace SpotyPie.RecycleView
 
         public void AddList(List<T> newData)
         {
-            Activity.RunOnUiThread(() =>
+            Activity?.RunOnUiThread(() =>
             {
                 Updating = true;
                 DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, newData), true);
@@ -71,7 +71,7 @@ namespace SpotyPie.RecycleView
 
         public void Add(T item)
         {
-            Activity.RunOnUiThread(() =>
+            Activity?.RunOnUiThread(() =>
             {
                 Updating = true;
                 mItems.Add(item);
@@ -86,13 +86,12 @@ namespace SpotyPie.RecycleView
 
         public void Remove(int position)
         {
+            if (position < 0 || position > mItems.Count || position > Adapter.ItemCount)
+                return;
+
             Updating = true;
             mItems.RemoveAt(position);
-
-            if (Adapter != null)
-            {
-                Adapter.NotifyItemRemoved(0);
-            }
+            Adapter?.NotifyItemRemoved(0);
             Updating = false;
         }
 

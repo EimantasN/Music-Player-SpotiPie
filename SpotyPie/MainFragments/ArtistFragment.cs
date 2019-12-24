@@ -63,11 +63,9 @@ namespace SpotyPie
 
         protected override void InitView()
         {
-            //MainActivity.ActionName.Text = GetState().Current_Artist.Name;
-
             ShufflePlay = RootView.FindViewById<Button>(Resource.Id.button_text);
             ShufflePlay.Click += ShufflePlay_Click;
-            ////Background binding
+
             Photo = RootView.FindViewById<ImageView>(Resource.Id.album_photo);
             AlbumTitle = RootView.FindViewById<TextView>(Resource.Id.album_title);
             PlayableButton = RootView.FindViewById<Button>(Resource.Id.playable_button);
@@ -81,9 +79,6 @@ namespace SpotyPie
 
             ArtistListTitle = RootView.FindViewById<TextView>(Resource.Id.related_list_title);
             ArtistListTitle.Visibility = ViewStates.Gone;
-
-            //Picasso.With(Context).Load(GetState().Current_Artist.LargeImage).Resize(300, 300).CenterCrop().Into(Photo);
-            //AlbumTitle.Text = GetState().Current_Artist.Name;
 
             ScrollFather = RootView.FindViewById<NestedScrollView>(Resource.Id.fatherScrool);
             ScrollFather.ScrollChange += ScrollFather_ScrollChange;
@@ -194,24 +189,18 @@ namespace SpotyPie
 
         public new void LoadArtist(Artist artist)
         {
-            try
+            CurrentArtist = GetModel<Artist>();
+            if (Context != null)
             {
-                CurrentArtist = GetModel<Artist>();
-                if (Context != null)
-                {
-                    ScrollFather.ScrollTo(0, 0);
+                ScrollFather.ScrollTo(0, 0);
 
-                    Picasso.With(Context).Load(CurrentArtist.LargeImage).Into(Photo);
+                Picasso.With(Context).Load(CurrentArtist.LargeImage).Into(Photo);
 
-                    AlbumTitle.Text = CurrentArtist.Name;
+                AlbumTitle.Text = CurrentArtist.Name;
 
-                    //TODO connect artist name
-                    AlbumByText.Text = "Coming soon";
-                    ForceUpdate();
-                }
-            }
-            catch
-            {
+                //TODO connect artist name
+                AlbumByText.Text = "Coming soon";
+                ForceUpdate();
             }
         }
 

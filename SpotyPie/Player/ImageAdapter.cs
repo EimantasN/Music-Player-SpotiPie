@@ -1,65 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Graphics;
-using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.View;
 using Android.Views;
 using Android.Widget;
-using Java.Lang;
 using Mobile_Api.Models;
-using Realms;
 using RestSharp;
 using SpotyPie.Base;
 using SpotyPie.Database.Helpers;
-using SpotyPie.Music.Helpers;
+using SpotyPie.Music.Manager;
 using Square.Picasso;
 
 namespace SpotyPie.Player
 {
     public class ImageAdapter : PagerAdapter
     {
-        private object Locker { get; set; } = new object();
-        private List<Songs> Songs;
-        private Context Context;
-        private ActivityBase Activity;
+        private object _locker { get; set; } = new object();
 
-        public override int Count => int.MaxValue;
+        private Context _context;
+
+        private ActivityBase _activity;
+
+        private bool _locked { get; set; }
+
+        public override int Count 
+        {
+            get
+            {
+                return SongManager.SongQueue.Count;
+            }
+        }
+
+        public ImageAdapter(Context context, ActivityBase activity)
+        {
+            _context = context;
+            _activity = activity;
+            SongManager.SongListHandler += OnSongListChange;
+        }
+
+        private void OnSongListChange(List<Songs> songs)
+        {
+            NotifyDataSetChanged();
+        }
 
         public int GetCurrentItem()
         {
-            var song = Songs.Select((v, i) => new { x = v, index = i }).FirstOrDefault(x => x.x.Id == QueueHelper.Id);
-            if (song == null)
-                return 0;
-            return song.index;
+            return SongManager.Index;
         }
 
         public Songs GetRecentItem()
         {
-            if (Songs == null || Songs.Count == 0)
-                return null;
-            return Songs.FirstOrDefault(x => x.Id == QueueHelper.Id);
+            return SongManager.Song;
         }
 
-        public Songs GetCurrentSong(int index)
-        {
-            if (Songs != null && index < Songs.Count)
-            {
-                return Songs[index];
-            }
-            return null;
-        }
-
-        public ImageAdapter(Context _context, ActivityBase activity)
-        {
-            Context = _context;
-            Activity = activity;
-        }
+        public Songs GetCurrentSong(int index) => SongManager.TryGetSongByIndex(index);
 
         public override bool IsViewFromObject(View view, Java.Lang.Object @object)
         {
@@ -68,7 +65,7 @@ namespace SpotyPie.Player
 
         public override Java.Lang.Object InstantiateItem(View container, int position)
         {
-            ImageView image = new ImageView(Context);
+            ImageView image = new ImageView(_context);
             image.SetScaleType(ImageView.ScaleType.CenterCrop);
             image.SetImageResource(Resource.Drawable.img_loading);
             ((ViewPager)container).AddView(image, 0);
@@ -82,55 +79,36 @@ namespace SpotyPie.Player
             ((ViewPager)container).RemoveView((ImageView)@object);
         }
 
-        public void LoadImage(ImageView image, int position)
+        public async Task LoadImage(ImageView image, int position)
         {
-            lock (Locker)
+            var loadSongIamge = false;
+            lock (_locker)
             {
-                if (Songs == null)
+                if (!_locked)
                 {
-                    using (var realm = Realm.GetInstance())
-                    {
-                        var songs = realm.All<Mobile_Api.Models.Realm.Music>().ToList().Select(x => new Songs(x.Song)).ToList();
-
-                        Activity.RunOnUiThread(() => { Songs = songs; });
-                    }
-                    while (Songs == null)
-                        Thread.Sleep(50);
+                    loadSongIamge = true;
+                    _locked = true;
                 }
-                int Count = Songs.Count;
-                if (position > Songs.Count - 1 && Songs.Count != 0)
+            }
+            if (loadSongIamge)
+            {
+                if (position > Count - 1 && Count != 0)
                 {
-                    Realm_Songs nextSong = null;
-                    while (nextSong == null || nextSong.Id == -1)
+                    //Load Song
+                    _activity?.RunOnUiThread(() =>
                     {
-                        nextSong = Activity.GetAPIService().GetNextSongAsync(Songs.Last().Id).Result;
-                    }
-                    var song = new Songs(nextSong);
-                    Activity.RunOnUiThread(() =>
-                    {
-                        Songs.Add(song);
+                        Toast.MakeText(this._context, "Load Song", ToastLength.Long).Show();
                     });
-                    using (Realm innerRealm = Realm.GetInstance())
-                    {
-                        innerRealm.Write(() =>
-                        {
-                            innerRealm.Add(new Mobile_Api.Models.Realm.Music(nextSong, false));
-                        });
-                    }
-                    LoadCustomImage(song, image);
-
-                    while (Count == Songs.Count)
-                        Thread.Sleep(125);
-
                 }
                 else
                 {
-                    LoadCustomImage(Songs[position], image);
+                    await LoadCustomImage(SongManager.SongQueue[position], image);
                 }
+                _locked = false;
             }
         }
 
-        private void LoadCustomImage(Songs song, ImageView image)
+        private async Task LoadCustomImage(Songs song, ImageView image)
         {
 
             if (SettingHelper.IsCustomImageLoadingOn())
@@ -139,22 +117,34 @@ namespace SpotyPie.Player
             }
             else
             {
-                List<Image> imageList = Activity.GetAPIService().GetNewImageForSongAsync(song.Id).Result;
+                List<Image> imageList = await _activity.GetAPIService().GetNewImageForSongAsync(song.Id);
                 if (imageList == null || imageList.Count == 0)
                     LoadOld();
                 else
                 {
                     var img = imageList.OrderByDescending(x => x.Width).ThenByDescending(x => x.Height).First();
-                    Activity.RunOnUiThread(() =>
+                    _activity.RunOnUiThread(() =>
                     {
-                        Picasso.With(this.Context).Load(img.Url).Resize(1200, 1200).CenterCrop().Into((ImageView)image);
+                        Picasso
+                        .With(_context)
+                        .Load(img.Url)
+                        .Resize(1200, 1200)
+                        .CenterCrop()
+                        .Into(image);
                     });
                 }
             }
 
             void LoadOld()
             {
-                Activity.RunOnUiThread(() => { Picasso.With(this.Context).Load(song.LargeImage).Resize(1200, 1200).CenterCrop().Into(image); });
+                _activity.RunOnUiThread(() => { 
+                    Picasso
+                    .With(_context)
+                    .Load(song.LargeImage)
+                    .Resize(1200, 1200)
+                    .CenterCrop()
+                    .Into(image); 
+                });
             }
         }
 

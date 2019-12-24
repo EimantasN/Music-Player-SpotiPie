@@ -1,17 +1,11 @@
-﻿using Android.Content;
-using Android.Support.Constraints;
-using Android.Support.V7.Widget;
+﻿using Android.Support.Constraints;
 using Android.Widget;
-using Mobile_Api;
 using Mobile_Api.Models;
-using Mobile_Api.Models.Enums;
-using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpotyPie
@@ -124,28 +118,11 @@ namespace SpotyPie
                 JumpBack.SetFocusable(false);
             }
 
-            using (Realm realm = Realm.GetInstance())
-            {
-                var albums = realm.All<Realm_Album>().OrderBy(x => x.LastActiveTime).ToList();
-                if (albums == null || albums.Count == 0)
-                {
-                    Toggle(false, JumpBackHolder);
-                }
-                else
-                {
-                    List<Album> list = new List<Album>();
-                    foreach (var x in albums.Take(8))
-                    {
-                        list.Add(new Album(x));
-                    }
-                    JumpBack.GetData().AddList(list);
-                }
-            }
             Task.Run(async () =>
             {
                 var albums = await GetAPIService().GetOldAlbumsAsync();
                 if (albums != null && albums.Count != 0)
-                    LoadData(JumpBack.GetData(), albums, () => { Toggle(true, JumpBackHolder); });
+                    LoadData(JumpBack?.GetData(), albums, () => { Toggle(true, JumpBackHolder); });
             });
         }
 
@@ -158,28 +135,11 @@ namespace SpotyPie
                 BestAlbums.SetFocusable(false);
             }
 
-            using (Realm realm = Realm.GetInstance())
-            {
-                var albums = realm.All<Realm_Album>().OrderByDescending(x => x.Popularity).ToList();
-                if (albums == null || albums.Count == 0)
-                {
-                    Toggle(false, BestHolder);
-                }
-                else
-                {
-                    List<Album> list = new List<Album>();
-                    foreach (var x in albums.Take(8))
-                    {
-                        list.Add(new Album(x));
-                    }
-                    BestAlbums.GetData().AddList(list);
-                }
-            }
             Task.Run(async () =>
             {
                 List<Album> albums = await GetAPIService().GetPolularAlbumsAsync();
                 if (albums != null && albums.Count != 0)
-                    LoadData(BestAlbums.GetData(), albums, () => { Toggle(true, BestHolder); });
+                    LoadData(BestAlbums?.GetData(), albums, () => { Toggle(true, BestHolder); });
             });
         }
 
@@ -188,31 +148,14 @@ namespace SpotyPie
             if (RecentAlbums == null)
             {
                 RecentAlbums = new BaseRecycleView<Album>(this, Resource.Id.recent_rv);
-                RecentAlbums?.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
-                RecentAlbums?.SetFocusable(false);
+                RecentAlbums.Setup(RecycleView.Enums.LayoutManagers.Linear_horizontal);
+                RecentAlbums.SetFocusable(false);
             }
 
-            using (Realm realm = Realm.GetInstance())
-            {
-                List<Realm_Album> albums = realm.All<Realm_Album>().OrderByDescending(x => x.LastActiveTime).ToList();
-                if (albums == null || albums.Count == 0)
-                {
-                    Toggle(false, RecentHolder);
-                }
-                else
-                {
-                    List<Album> list = new List<Album>();
-                    foreach (var x in albums.Take(8))
-                    {
-                        list.Add(new Album(x));
-                    }
-                    RecentAlbums.GetData().AddList(list);
-                }
-            }
             Task.Run(async () =>
             {
                 List<Album> albums = await GetAPIService().GetRecentAlbumsAsync();
-                if(albums != null && albums.Count != 0)
+                if (albums != null && albums.Count != 0)
                     LoadData(RecentAlbums?.GetData(), albums, () => { Toggle(true, RecentHolder); });
             });
         }

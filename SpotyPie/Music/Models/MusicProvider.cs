@@ -1,154 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Android.Support.V4.Media;
 using Mobile_Api;
 using Mobile_Api.Models;
-using Realms;
-using CurrentMusic = Mobile_Api.Models.Realm.Music;
+using SpotyPie.Music.Manager;
 
 namespace SpotyPie.Music.Models
 {
     public class MusicProvider
     {
-        //Current playing song id
-        public int Id { get; set; }
-
-        private API API { get; set; }
-
-        public API GetApiService()
-        {
-            if (API == null)
-                API = new API();
-            return API;
+        public int Id 
+        { 
+            get
+            {
+                return SongManager.SongId;
+            }
         }
 
         volatile Enums.State currentState = Enums.State.NonInitialized;
 
         public MusicProvider()
         {
-            ResetPlayingList();
         }
 
-        private void ResetPlayingList()
-        {
-            using (Realm realm = Realm.GetInstance())
-            {
-                var songs = realm.All<CurrentMusic>();
-                foreach (var x in songs)
-                {
-                    realm.Write(() => { x.IsPlaying = false; x.Song.IsPlaying = false; });
-                }
-            }
-        }
+        public int GetCurrentSong() => SongManager.SongId;
 
-        public int GetCurrentSong()
-        {
-            using (Realm realm = Realm.GetInstance())
-            {
-                var song = realm.All<CurrentMusic>().FirstOrDefault(x => x.IsPlaying);
-                if (song != null)
-                {
-                    BuildMetadata(new Songs(song.Song));
-                    return Id = song.Song.Id;
-                }
-                else
-                {
-                    var songs = realm.All<CurrentMusic>().ToList();
-                    BuildMetadata(new Songs(songs[0].Song));
-                    return songs[0].Id;
-                }
-            }
-        }
+        public void SongPaused() => SongManager.Pause();
 
-        public void SongPaused()
-        {
-            GetApiService().SongPaused();
-        }
-
-        public void SongResumed()
-        {
-            GetApiService().SongResumed();
-        }
+        public void SongResumed() => SongManager.Play();
 
         public string CurrentSongSource()
         {
-            return $"{BaseClient.BaseUrl}api/stream/play/{Id}";
+            return $"{BaseClient.BaseUrl}api/stream/play/{SongManager.SongId}";
         }
 
         public void SetFavorite(string musicId, bool favorite)
         {
-        }
-
-        public async Task ChangeSongAsync(bool Foward)
-        {
-            using (Realm realm = Realm.GetInstance())
-            {
-                try
-                {
-                    List<CurrentMusic> Songs = realm.All<CurrentMusic>().ToList();
-                    if (Songs == null || Songs.Count == 0) return;
-
-                    for (int i = 0; i < Songs.Count; i++)
-                    {
-                        if (Songs[i].IsPlaying)
-                        {
-                            UpdateCurrentSong(Songs[i], false);
-                            if (Foward)
-                            {
-                                if ((i + 1) == Songs.Count)
-                                {
-                                    await NextSongFromServerAsync();
-                                }
-                                else
-                                {
-                                    UpdateCurrentSong(Songs[i + 1]);
-                                }
-                            }
-                            else
-                            {
-                                if (i == 0)
-                                {
-                                    UpdateCurrentSong(Songs[0]);
-                                }
-                                else
-                                {
-                                    UpdateCurrentSong(Songs[i - 1]);
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    //Ignored for now
-                    //TODO send report to crashnalytics
-                }
-
-                void UpdateCurrentSong(CurrentMusic song, bool status = true)
-                {
-                    realm.Write(() =>
-                    {
-                        song.IsPlaying = status;
-                        song.Song.IsPlaying = status;
-                        song.Song.LastActiveTime = DateTime.Now;
-                    });
-                }
-            }
-        }
-
-        private async Task NextSongFromServerAsync()
-        {
-            Realm_Songs nextSong = await GetApiService().GetNextSongAsync();
-            using (Realm innerRealm = Realm.GetInstance())
-            {
-                innerRealm.Write(() =>
-                {
-                    innerRealm.Add(new CurrentMusic(nextSong, true), true);
-                });
-            }
         }
 
         public bool IsFavorite(string musicId)
@@ -186,10 +73,6 @@ namespace SpotyPie.Music.Models
 
                     currentState = Enums.State.Initialized;
                 }
-            }
-            catch (Exception e)
-            {
-
             }
             finally
             {

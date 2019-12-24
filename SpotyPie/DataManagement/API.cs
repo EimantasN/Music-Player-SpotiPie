@@ -55,53 +55,9 @@ namespace SpotyPie
             Task.Run(() => _service.Corruped(songId));
         }
 
-        internal void SongPaused()
+        public async Task<Songs> GetNextSongAsync(int? songId = null)
         {
-            Task.Run(() =>
-            {
-                using (var realm = Realm.GetInstance())
-                {
-                    IQueryable<CurrentSong> songs = realm.All<CurrentSong>();
-                    IEnumerable<CurrentSong> old = songs.Where(x => x.IsPlaying == true);
-                    foreach (var x in old)
-                    {
-                        realm.Write(() =>
-                        {
-                            x.IsPlaying = false;
-                            x.Song.LastActiveTime = DateTime.Now;
-                        });
-                    }
-                    if (old.Count() > 1)
-                        throw new Exception("Inconsistentcy detected");
-                }
-            });
-        }
-
-        internal void SongResumed()
-        {
-            Task.Run(() =>
-            {
-                using (var realm = Realm.GetInstance())
-                {
-                    var songs = realm.All<CurrentSong>();
-                    var old = songs.OrderByDescending(x => x.Song.LastActiveTime).FirstOrDefault();
-                    if (old != null)
-                    {
-                        realm.Write(() =>
-                        {
-                            old.IsPlaying = true;
-                            old.Song.LastActiveTime = DateTime.Now;
-                        });
-                    }
-                    else
-                        throw new Exception("Inconsistency detected");
-                }
-            });
-        }
-
-        public async Task<Realm_Songs> GetNextSongAsync(int? songId = null)
-        {
-            return new Realm_Songs(await _service.GetNextSong(songId));
+            return await _service.GetNextSong(songId);
         }
 
         private Songs UpdateCurrentSongList(Songs song)
@@ -320,28 +276,31 @@ namespace SpotyPie
                     throw new Exception("Album can't be null");
 
                 Album album = await GetAlbumByIdAsync(currentALbum.Id);
-                using (Realm realm = Realm.GetInstance())
-                {
-                    Realm_Songs temp;
-                    foreach (var song in album.Songs)
-                    {
-                        temp = realm.All<Realm_Songs>().FirstOrDefault(x => x.Id == song.Id);
-                        if (temp == null)
-                        {
-                            realm.Write(() =>
-                            {
-                                realm.Add(new Realm_Songs(song));
-                            });
-                        }
-                        else
-                        {
-                            realm.Write(() =>
-                            {
-                                temp.Update(song);
-                            });
-                        }
-                    }
-                }
+                //using (Realm realm = Realm.GetInstance())
+                //{
+
+                //    var a = realm.All<Realm_Songs>().AsQueryable().ToList().Count;
+
+                //    Realm_Songs temp;
+                //    foreach (var song in album.Songs)
+                //    {
+                //        temp = realm.All<Realm_Songs>().FirstOrDefault(x => x.Id == song.Id);
+                //        if (temp == null)
+                //        {
+                //            realm.Write(() =>
+                //            {
+                //                realm.Add(new Realm_Songs(song));
+                //            });
+                //        }
+                //        else
+                //        {
+                //            realm.Write(() =>
+                //            {
+                //                temp.Update(song);
+                //            });
+                //        }
+                //    }
+                //}
                 return album.Songs;
             }
             catch (Exception e)

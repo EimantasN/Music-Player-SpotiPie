@@ -63,12 +63,12 @@ namespace API.Controllers
                     //}
                     //else
                     //{
-                        if (await _ctd.SetAudioPlaying(id, data.ArtistId, data.AlbumId, data.PlaylistId))
-                        {
-                            return _ctd.OpenFile(path, out FileStream fs)
-                                ? File(fs, new MediaTypeHeaderValue("audio/mpeg").MediaType, true)
-                                : (IActionResult)BadRequest();
-                        }
+                    if (await _ctd.SetAudioPlaying(id, data.ArtistId, data.AlbumId, data.PlaylistId))
+                    {
+                        return _ctd.OpenFile(path, out FileStream fs)
+                            ? File(fs, new MediaTypeHeaderValue("audio/mpeg").MediaType, true)
+                            : (IActionResult)BadRequest();
+                    }
                     //}
 
                     return BadRequest("Cannot find path specified/File not playable");
@@ -92,30 +92,12 @@ namespace API.Controllers
 
                 if (!string.IsNullOrWhiteSpace(path))
                 {
-                    //if (settings != null && settings.StreamQuality < 1000)
-                    //{
-                    //    if (await _ctd.SetAudioPlaying(id, 0, 0, 0))
-                    //    {
-                    //        var qualityPath = _ctd.ConvertAudio(path, settings.StreamQuality);
-                    //        if (string.IsNullOrWhiteSpace(qualityPath))
-                    //            return _ctd.OpenFile(path, out FileStream fs)
-                    //                ? File(fs, new MediaTypeHeaderValue("audio/mpeg").MediaType, true)
-                    //                : (IActionResult)BadRequest();
-                    //        else
-                    //            return _ctd.OpenFile(qualityPath, out FileStream fs)
-                    //                ? File(fs, new MediaTypeHeaderValue("audio/mpeg").MediaType, true)
-                    //                : (IActionResult)BadRequest();
-                    //    }
-                    //}
-                    //else
-                    //{
-                        if (await _ctd.SetAudioPlaying(id, 0, 0, 0))
-                        {
-                            return _ctd.OpenFile(path, out FileStream fs)
-                                ? File(fs, new MediaTypeHeaderValue("audio/mpeg").MediaType, true)
-                                : (IActionResult)BadRequest();
-                        }
-                    //}
+                    if (await _ctd.SetAudioPlaying(id, 0, 0, 0))
+                    {
+                        return _ctd.OpenFile(path, out FileStream fs)
+                            ? File(fs, new MediaTypeHeaderValue("audio/mpeg").MediaType, true)
+                            : (IActionResult)BadRequest();
+                    }
 
                     return BadRequest("Cannot find path specified/File not playable");
                 }

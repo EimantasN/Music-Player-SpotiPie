@@ -9,6 +9,7 @@ using Android.Widget;
 using System.Threading.Tasks;
 using Android.App;
 using System.Threading;
+using SpotyPie.Music.Manager;
 
 namespace SpotyPie.Music
 {
@@ -68,7 +69,7 @@ namespace SpotyPie.Music
                     LogHelper.Debug(Tag, "Headphones disconnected.");
                     if (IsPlaying)
                     {
-                        var i = new Intent(context, typeof(Music.MusicService));
+                        var i = new Intent(context, typeof(MusicService));
                         i.SetAction(MusicService.ActionCmd);
                         i.PutExtra(MusicService.CmdName, MusicService.CmdPause);
                         service.StartService(i);
@@ -114,7 +115,7 @@ namespace SpotyPie.Music
             }
         }
 
-        public void Play(Android.Support.V4.Media.Session.MediaSessionCompat.QueueItem item)
+        public void Play()
         {
             playOnFocusGain = true;
             TryToGetAudioFocus();
@@ -155,7 +156,7 @@ namespace SpotyPie.Music
                             GetMediaPlayer();
 
                             Starting = false;
-                            MediaPlayer.SetDataSourceAsync(musicProvider.CurrentSongSource());
+                            MediaPlayer.SetDataSource(musicProvider.CurrentSongSource());
                             MediaPlayer.PrepareAsync();
 
                             wifiLock.Acquire();
@@ -168,14 +169,12 @@ namespace SpotyPie.Music
                 }
                 catch (Exception e)
                 {
-                    musicProvider.GetApiService().Report(e);
-                    musicProvider.GetApiService().Corrupted(musicProvider.Id);
-
-                    //Callback?.OnError(e.Message);
+                    //musicProvider.GetApiService().Report(e);
+                    //musicProvider.GetApiService().Corrupted(musicProvider.Id);
                 }
                 finally
                 {
-                    musicProvider.GetApiService().SetState(songId: musicProvider.Id);
+                    //musicProvider.GetApiService().SetState(songId: musicProvider.Id);
                 }
             }
         }
@@ -204,14 +203,10 @@ namespace SpotyPie.Music
 
         public void Skip(bool foward)
         {
-            Task.Run(async () =>
+            if (SongManager.Next())
             {
-                await musicProvider.ChangeSongAsync(foward);
-                Application.SynchronizationContext.Post(_ =>
-                {
-                    Play(null);
-                }, null);
-            });
+                Play();
+            }
         }
 
         public void Pause()
@@ -254,7 +249,7 @@ namespace SpotyPie.Music
         {
             if (audioFocus != AudioFocused)
             {
-                AudioFocusRequest result = audioManager.RequestAudioFocus(this, Android.Media.Stream.Music, AudioFocus.Gain);
+                AudioFocusRequest result = audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
                 if (result == AudioFocusRequest.Granted)
                 {
                     audioFocus = AudioFocused;

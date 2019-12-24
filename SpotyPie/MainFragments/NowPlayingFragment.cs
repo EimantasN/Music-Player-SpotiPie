@@ -5,6 +5,8 @@ using Mobile_Api.Models.Realm;
 using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
+using SpotyPie.Music.Enums;
+using SpotyPie.Music.Manager;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,34 +35,56 @@ namespace SpotyPie.MainFragments
             ArtistName = RootView.FindViewById<TextView>(Resource.Id.artist_name);
             ArtistName.Selected = true;
 
-            if (GetState().IsPlaying)
-                PlayToggle.SetImageResource(Resource.Drawable.pause);
-            else
-                PlayToggle.SetImageResource(Resource.Drawable.play_button);
-
             PlayToggle.Click += PlayToggle_Click;
             ShowPlayler.Click += ShowMusicPlayer;
             RootView.Click += ShowMusicPlayer;
+
+            OnPlayingStateChange(SongManager._playState);
+            OnSongChange(SongManager.Song);
+
+            SongManager.SongHandler += OnSongChange;
+            SongManager.PlayingHandler += OnPlayingStateChange;
+        }
+
+        public void OnPlayingStateChange(PlayState state)
+        {
+            switch (state)
+            {
+                case PlayState.Loading:
+                    PlayToggle.SetImageResource(Resource.Drawable.play_loading);
+                    break;
+                case PlayState.Playing:
+                    PlayToggle.SetImageResource(Resource.Drawable.pause);
+                    break;
+                case PlayState.Stopeed:
+                    PlayToggle.SetImageResource(Resource.Drawable.play_button);
+                    break;
+            }
+        }
+
+        public void OnSongChange(Songs song)
+        {
+            if (song != null)
+            {
+                SongTitle.Text = song.Name;
+                ArtistName.Text = song.ArtistName;
+                RootView.Visibility = ViewStates.Visible;
+            }
         }
 
         private void PlayToggle_Click(object sender, EventArgs e)
         {
-            //if (GetState().IsPlaying)
-            //    GetState().GetPlayer().Music_pause();
-            //else
-            //{
-            //    GetState().GetPlayer().Music_play();
-            //}
+            SongManager.ToggleState();
         }
 
         private void ShowMusicPlayer(object sender, EventArgs e)
         {
-            GetState().SetSong(GetAPIService().GetCurrentListLive(), 0);
+            GetState().SetSong(SongManager.SongQueue, 0);
         }
 
         public override void ForceUpdate()
         {
-            LoadCurrentState();
+            SongManager.LoadCurrentSong();
         }
 
         public override void ReleaseData()
@@ -76,35 +100,6 @@ namespace SpotyPie.MainFragments
         public override void LoadFragment(dynamic switcher)
         {
 
-        }
-
-        private void LoadCurrentState()
-        {
-            //TODO make more maintanable
-            Task.Run(async () =>
-            {
-                try
-                {
-                    var song = await GetAPIService().GetCurrentSong();
-                    RunOnUiThread(() =>
-                    {
-                        Test(song);
-                        if (song != null)
-                        {
-                            SongTitle.Text = song.Name;
-                            ArtistName.Text = song.ArtistName;
-                            RootView.Visibility = ViewStates.Visible;
-                        }
-                    });
-                }
-                catch (Exception e)
-                {
-                    RunOnUiThread(() =>
-                    {
-                        Toast.MakeText(this.Context, "Failed load current state", ToastLength.Long).Show();
-                    });
-                }
-            });
         }
 
         private void Test(Songs song)

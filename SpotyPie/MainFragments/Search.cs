@@ -142,9 +142,9 @@ namespace SpotyPie
                         AlbumSearchTask = Task.Run(() => SearchAlbums(search.Text));
                         ArtistSearchTask = Task.Run(() => SearchArtist(search.Text));
 
-                        while (!(SongSearchTask.IsCompletedSuccessfully || SongSearchTask.IsCanceled || SongSearchTask.IsCompleted || SongSearchTask.IsFaulted)) await Task.Delay(50);
-                        while (!(AlbumSearchTask.IsCompletedSuccessfully || AlbumSearchTask.IsCanceled || AlbumSearchTask.IsCompleted || AlbumSearchTask.IsFaulted)) await Task.Delay(50);
-                        while (!(ArtistSearchTask.IsCompletedSuccessfully || ArtistSearchTask.IsCanceled || ArtistSearchTask.IsCompleted || ArtistSearchTask.IsFaulted)) await Task.Delay(50);
+                        while (!(SongSearchTask.IsCompletedSuccessfully || SongSearchTask.IsCanceled || SongSearchTask.IsCompleted || SongSearchTask.IsFaulted)) await Task.Delay(250);
+                        while (!(AlbumSearchTask.IsCompletedSuccessfully || AlbumSearchTask.IsCanceled || AlbumSearchTask.IsCompleted || AlbumSearchTask.IsFaulted)) await Task.Delay(250);
+                        while (!(ArtistSearchTask.IsCompletedSuccessfully || ArtistSearchTask.IsCanceled || ArtistSearchTask.IsCompleted || ArtistSearchTask.IsFaulted)) await Task.Delay(250);
 
                         if (index == tempIndex)
                         {
@@ -165,7 +165,7 @@ namespace SpotyPie
                         Snackbar.Make(this.Activity.Window.DecorView.RootView, e.Message, Snackbar.LengthShort).Show()
                     );
                 }
-                await Task.Delay(250);
+                await Task.Delay(750);
             }
         }
 
@@ -185,7 +185,10 @@ namespace SpotyPie
                         {
                             ToggleSeachInfoFrame(true, true);
                         }
-                        ToggleSearchBarLoading(true);
+                        else
+                        {
+                            ToggleSearchBarLoading(true);
+                        }
                         break;
                     }
                 case Search_status.NothingFound:

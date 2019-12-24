@@ -6,6 +6,7 @@ using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.Enums.Activitys;
 using SpotyPie.Helpers;
+using SpotyPie.Music.Manager;
 using SpotyPie.RecycleView.Enums;
 using System;
 using System.Collections.Generic;
@@ -125,7 +126,7 @@ namespace SpotyPie.RecycleView
                         Songs song = RvDataset[position] as Songs;
                         if (song.GetModelType() != Mobile_Api.Models.Enums.RvType.SongBindList)
                         {
-                            Activity.GetState().SetSong(RvDataset.GetList() as List<Songs>, position);
+                            SongManager.SetSongs(RvDataset.GetList() as List<Songs>, position);
                         }
                     }
                     else if (RvDataset[position].GetType().Name == "SongTag")
@@ -138,7 +139,13 @@ namespace SpotyPie.RecycleView
                     }
                     else if (RvDataset[position].GetType().Name == "Artist")
                     {
-                        Activity.LoadArtist(RvDataset[position] as Artist);
+                        try
+                        {
+                            Activity.LoadArtist(RvDataset[position] as Artist);
+                        }
+                        catch (Exception e)
+                        {
+                        }
                     }
                 }
             });
