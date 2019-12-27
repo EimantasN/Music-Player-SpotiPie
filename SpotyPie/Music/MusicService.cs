@@ -4,7 +4,6 @@ using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.Media.Browse;
-using Android.Media.Session;
 using Android.OS;
 using Android.Runtime;
 using SpotyPie.Music.Helpers;
@@ -16,30 +15,23 @@ using Android.Widget;
 namespace SpotyPie.Music
 {
     [Service(Exported = true)]
-    public class MusicService : MediaBrowserServiceCompat, Playback.ICallback
+    public class MusicService : MediaBrowserServiceCompat
     {
-        public bool InitNotification = true;
-
-        public const string ActionCmd = "com.spotypie.adnroid.musicservice.ACTION_CMD";
-        public const string CmdName = "CMD_NAME";
-        public const string CmdPause = "CMD_PAUSE";
-
-        static readonly string Tag = LogHelper.MakeLogTag(typeof(MusicService));
-        const string CustomActionThumbsUp = "com.spotypie.adnroid.musicservice.THUMBS_UP";
-        const int StopDelay = 30000;
-
-        int currentIndexOnQueue;
-        bool serviceStarted;
-
-        public Playback.ICallback CallBack;
+        private int currentIndexOnQueue;
+        private bool serviceStarted;
 
         MediaSessionCompat session;
+
         List<MediaSessionCompat.QueueItem> PlayingQueue;
+
         MusicProvider musicProvider;
+
         public Playback playback;
+
         MediaNotificationManager mediaNotificationManager;
-        //DelayedStopHandler delayedStopHandler;
+
         PackageValidator packageValidator;
+
         MediaSessionCallback mediaCallback;
 
         public bool ServiceCreated { get; set; } = false;
@@ -54,10 +46,7 @@ namespace SpotyPie.Music
             return this.Binder;
         }
 
-        public MusicService()
-        {
-            //delayedStopHandler = new DelayedStopHandler(this);
-        }
+        public MusicService() { }
 
         internal void SetServiceIsStopped() { serviceStarted = false; }
 
@@ -82,8 +71,6 @@ namespace SpotyPie.Music
             //MUSIC PLAYER SKIP TO QUEUE ITEM ACTION
             mediaCallback.OnSkipToQueueItemImpl = (id) =>
             {
-                LogHelper.Debug(Tag, "OnSkipToQueueItem:" + id);
-
                 if (PlayingQueue != null && PlayingQueue.Count != 0)
                 {
                     currentIndexOnQueue = QueueHelper.GetMusicIndexOnQueue(PlayingQueue, id.ToString());
@@ -138,27 +125,12 @@ namespace SpotyPie.Music
             //MUSIC PLAYER CUSTOM ACTION
             mediaCallback.OnCustomActionImpl = (action, extras) =>
             {
-                if (CustomActionThumbsUp == action)
-                {
-                    var track = GetCurrentPlayingMusic();
-                    if (track != null)
-                    {
-                        var musicId = track.GetString(MediaMetadata.MetadataKeyMediaId);
-                        musicProvider.SetFavorite(musicId, !musicProvider.IsFavorite(musicId));
-                    }
-                    UpdatePlaybackState(null);
-                }
-                else
-                {
-                    Toast.MakeText(ApplicationContext, $"Unsuported action {action}", ToastLength.Short).Show();
-                }
+                Toast.MakeText(ApplicationContext, $"Unsuported action {action}", ToastLength.Short).Show();
             };
 
             //MUSIC PLAYER PLAYSEARCH ACTION
             mediaCallback.OnPlayFromSearchImpl = (query, extras) =>
             {
-                LogHelper.Debug(Tag, "playFromSearch  query=", query);
-
                 if (string.IsNullOrEmpty(query))
                 {
                     PlayingQueue = new List<MediaSessionCompat.QueueItem>(QueueHelper.GetRandomQueue(musicProvider));
@@ -168,7 +140,6 @@ namespace SpotyPie.Music
                     PlayingQueue = new List<MediaSessionCompat.QueueItem>(QueueHelper.GetPlayingQueueFromSearch(query, musicProvider));
                 }
 
-                LogHelper.Debug(Tag, "playFromSearch  playqueue.length=" + PlayingQueue.Count);
                 session.SetQueue(PlayingQueue);
 
                 if (PlayingQueue != null && PlayingQueue.Count != 0)
@@ -188,9 +159,7 @@ namespace SpotyPie.Music
             //TODO FIX
             session.SetFlags(1 | 2);
 
-            playback = new Playback(this, musicProvider);
-            playback.State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateNone;
-            playback.Callback = this;
+            playback = new Playback(this, session);
 
             var intent = new Intent(ApplicationContext, typeof(MainActivity));
             var pi = PendingIntent.GetActivity(ApplicationContext, 99 /*request code*/, intent, PendingIntentFlags.UpdateCurrent);
@@ -202,7 +171,10 @@ namespace SpotyPie.Music
 
             mediaNotificationManager = new MediaNotificationManager(this);
 
-            UpdatePlaybackState(null);
+            new Handler().PostDelayed(() =>
+            {
+                mediaNotificationManager.StartNotification();
+            }, 1000);
 
             ServiceCreated = true;
         }
@@ -219,10 +191,10 @@ namespace SpotyPie.Music
             if (intent != null)
             {
                 var action = intent.Action;
-                var command = intent.GetStringExtra(CmdName);
-                if (ActionCmd == action)
+                var command = intent.GetStringExtra(Playback.CmdName);
+                if (Playback.ActionCmd == action)
                 {
-                    if (CmdPause == command)
+                    if (Playback.CmdPause == command)
                     {
                         if (playback != null && playback.IsPlaying)
                         {
@@ -273,7 +245,6 @@ namespace SpotyPie.Music
                     }
                     else
                     {
-                        UpdatePlaybackState("error_no_metadata");
                         result.SendResult(new JavaList<MediaBrowser.MediaItem>());
                     }
                 });
@@ -291,13 +262,10 @@ namespace SpotyPie.Music
         void HandlePauseRequest()
         {
             playback.Pause();
-            //delayedStopHandler.RemoveCallbacksAndMessages(null);
-            //delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
         }
 
         void HandlePlayRequest()
         {
-            //delayedStopHandler?.RemoveCallbacksAndMessages(null);
             if (!serviceStarted && !ServiceCreated)
             {
                 serviceStarted = true;
@@ -316,10 +284,6 @@ namespace SpotyPie.Music
         void HandleStopRequest(String withError)
         {
             playback.Stop(true);
-            //delayedStopHandler.RemoveCallbacksAndMessages(null);
-            //delayedStopHandler.SendEmptyMessageDelayed(0, StopDelay);
-
-            UpdatePlaybackState(withError);
 
             StopSelf();
             serviceStarted = false;
@@ -329,7 +293,6 @@ namespace SpotyPie.Music
         {
             if (!QueueHelper.isIndexPlayable(currentIndexOnQueue, PlayingQueue))
             {
-                UpdatePlaybackState("error_no_metadata");
                 return;
             }
             MediaSessionCompat.QueueItem queueItem = PlayingQueue[currentIndexOnQueue];
@@ -338,177 +301,6 @@ namespace SpotyPie.Music
 
             string trackId = track.GetString(MediaMetadata.MetadataKeyMediaId);
             session.SetMetadata(track);
-        }
-
-        void UpdatePlaybackState(String error)
-        {
-            var position = Android.Support.V4.Media.Session.PlaybackStateCompat.PlaybackPositionUnknown;
-            if (playback != null && playback.IsConnected)
-            {
-                position = playback.CurrentStreamPosition;
-            }
-
-            var stateBuilder = new Android.Support.V4.Media.Session.PlaybackStateCompat.Builder().SetActions(GetAvailableActions());
-
-            SetCustomAction(stateBuilder);
-
-            //TODO REMOVE
-            if (InitNotification)
-            {
-                playback.State = Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying;
-                InitNotification = false;
-            }
-
-            var state = playback.State;
-
-            if (error != null)
-            {
-                stateBuilder.SetErrorMessage(error);
-                state = Android.Support.V4.Media.Session.PlaybackStateCompat.StateError;
-            }
-            stateBuilder.SetState(state, position, 1.0f, SystemClock.ElapsedRealtime());
-
-            if (QueueHelper.isIndexPlayable(currentIndexOnQueue, PlayingQueue))
-            {
-                try
-                {
-                    var item = PlayingQueue[currentIndexOnQueue];
-                    stateBuilder.SetActiveQueueItemId(item.QueueId);
-                }
-                catch (Exception e)
-                {
-                    
-                }
-            }
-
-            session.SetPlaybackState(stateBuilder.Build());
-
-            if (state == Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying || state == Android.Support.V4.Media.Session.PlaybackStateCompat.StatePaused)
-            {
-                mediaNotificationManager.StartNotification();
-            }
-        }
-
-        void SetCustomAction(Android.Support.V4.Media.Session.PlaybackStateCompat.Builder stateBuilder)
-        {
-            MediaMetadataCompat currentMusic = GetCurrentPlayingMusic();
-            if (currentMusic != null)
-            {
-                var musicId = currentMusic.GetString(MediaMetadata.MetadataKeyMediaId);
-                //TODO
-                var favoriteIcon = Resource.Drawable.abc_ic_star_black_16dp;
-                if (musicProvider.IsFavorite(musicId))
-                {
-                    //TODO
-                    favoriteIcon = Resource.Drawable.abc_ic_star_half_black_16dp;
-                }
-                stateBuilder.AddCustomAction(CustomActionThumbsUp, "Favorite", favoriteIcon);
-            }
-        }
-
-        long GetAvailableActions()
-        {
-            long actions = PlaybackState.ActionPlay | PlaybackState.ActionPlayFromMediaId | PlaybackState.ActionPlayFromSearch;
-            if (PlayingQueue == null || PlayingQueue.Count == 0)
-            {
-                return actions;
-            }
-            if (playback.IsPlaying)
-            {
-                actions |= PlaybackState.ActionPause;
-            }
-            if (currentIndexOnQueue > 0)
-            {
-                actions |= PlaybackState.ActionSkipToPrevious;
-            }
-            if (currentIndexOnQueue < PlayingQueue.Count - 1)
-            {
-                actions |= PlaybackState.ActionSkipToNext;
-            }
-            return actions;
-        }
-
-        MediaMetadataCompat GetCurrentPlayingMusic()
-        {
-            try
-            {
-                if (QueueHelper.isIndexPlayable(currentIndexOnQueue, PlayingQueue))
-                {
-                    var item = PlayingQueue[currentIndexOnQueue];
-                    if (item != null)
-                    {
-                        return musicProvider.GetMetadata();
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                
-            }
-            return musicProvider.GetMetadata();
-        }
-
-        public void OnCompletion()
-        {
-            OnNextSong();
-            //if (PlayingQueue != null && PlayingQueue.Count != 0)
-            //{
-            //    // In this sample, we restart the playing queue when it gets to the end:
-            //    currentIndexOnQueue++;
-            //    if (currentIndexOnQueue >= PlayingQueue.Count)
-            //    {
-            //        currentIndexOnQueue = 0;
-            //    }
-            //HandlePlayRequest();
-            //}
-            //else
-            //{
-            //    // If there is nothing to play, we stop and release the resources:
-            //    HandleStopRequest(null);
-            //}
-        }
-
-        public void OnPlaybackStatusChanged(int state)
-        {
-            UpdatePlaybackState(null);
-            CallBack?.OnPlaybackStatusChanged(state);
-        }
-
-        public void OnPlaybackMetaDataChanged(MediaMetadataCompat meta)
-        {
-            if (mediaNotificationManager != null)
-            {
-                mediaNotificationManager.Metadata = meta;
-            }
-        }
-
-        public void OnError(string error)
-        {
-            UpdatePlaybackState(error);
-        }
-
-        public void OnPositionChanged(int miliseconds, TimeSpan currentTime)
-        {
-            CallBack?.OnPositionChanged(miliseconds, currentTime);
-        }
-
-        internal void SetCallback(Player.Player player)
-        {
-            CallBack = player;
-        }
-
-        public void OnDurationChanged(int miliseconds)
-        {
-            CallBack?.OnDurationChanged(miliseconds);
-        }
-
-        public void OnPlay()
-        {
-            
-        }
-
-        public void OnStop()
-        {
         }
     }
 }

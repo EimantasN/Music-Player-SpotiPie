@@ -4,12 +4,13 @@ using Android.Media;
 using Android.Net;
 using Android.Net.Wifi;
 using SpotyPie.Music.Helpers;
-using SpotyPie.Music.Models;
 using Android.Widget;
-using System.Threading.Tasks;
-using Android.App;
 using System.Threading;
 using SpotyPie.Music.Manager;
+using Android.Support.V4.Media.Session;
+using Mobile_Api;
+using Android.OS;
+using Android.Media.Session;
 
 namespace SpotyPie.Music
 {
@@ -17,7 +18,9 @@ namespace SpotyPie.Music
     MediaPlayer.IOnCompletionListener, MediaPlayer.IOnErrorListener,
     MediaPlayer.IOnPreparedListener, MediaPlayer.IOnSeekCompleteListener
     {
-        static readonly string Tag = LogHelper.MakeLogTag(typeof(Playback));
+        public const string ActionCmd = "com.spotypie.adnroid.musicservice.ACTION_CMD";
+        public const string CmdName = "com.spotypie.adnroid.musicservice.CMD_NAME";
+        public const string CmdPause = "com.spotypie.adnroid.musicservice.CMD_PAUSE";
 
         public const float VolumeDuck = 0.2f;
         public const float VolumeNormal = 1.0f;
@@ -26,12 +29,18 @@ namespace SpotyPie.Music
         const int AudioNoFocusCanDuck = 1;
         const int AudioFocused = 2;
 
-        readonly MusicService service;
+        readonly MusicService Service;
+
         readonly WifiManager.WifiLock wifiLock;
-        public int State { get; set; }
+
+        public delegate void OnStateChange(int state);
+
+        public static OnStateChange StateHandler;
+
+        private int State { get; set; }
+
         bool playOnFocusGain;
-        public ICallback Callback { get; set; }
-        readonly MusicProvider musicProvider;
+
         volatile bool audioNoisyReceiverRegistered;
         volatile int currentPosition;
         volatile int currentMediaId;
@@ -41,6 +50,7 @@ namespace SpotyPie.Music
         int audioFocus = AudioNoFocusNoDuck;
         AudioManager audioManager;
         MediaPlayer MediaPlayer;
+        MediaSessionCompat Session;
 
         IntentFilter mAudioNoisyIntentFilter = new IntentFilter(AudioManager.ActionAudioBecomingNoisy);
 
@@ -55,37 +65,44 @@ namespace SpotyPie.Music
             }
         }
 
-        public Playback(MusicService service, MusicProvider musicProvider)
+        public Playback(MusicService _service, MediaSessionCompat _session)
         {
-            this.service = service;
-            this.musicProvider = musicProvider;
-            audioManager = (AudioManager)service.GetSystemService(Context.AudioService);
-            wifiLock = ((WifiManager)service.GetSystemService(Context.WifiService))
+            Service = _service;
+            Session = _session;
+            SetState(PlaybackStateCompat.StateNone);
+
+            audioManager = (AudioManager)Service.GetSystemService(Context.AudioService);
+            wifiLock = ((WifiManager)Service.GetSystemService(Context.WifiService))
                 .CreateWifiLock(WifiMode.Full, "spotypie_lock");
+
             mAudioNoisyReceiver.OnReceiveImpl = (context, intent) =>
             {
                 if (AudioManager.ActionAudioBecomingNoisy == intent.Action)
                 {
-                    LogHelper.Debug(Tag, "Headphones disconnected.");
                     if (IsPlaying)
                     {
                         var i = new Intent(context, typeof(MusicService));
-                        i.SetAction(MusicService.ActionCmd);
-                        i.PutExtra(MusicService.CmdName, MusicService.CmdPause);
-                        service.StartService(i);
+                        i.SetAction(ActionCmd);
+                        i.PutExtra(CmdName, CmdPause);
+                        Service.StartService(i);
                     }
                 }
             };
         }
 
+        private void SetState(int state)
+        {
+            if (State != state)
+            {
+                State = state;
+                StateHandler?.Invoke(State);
+                UpdatePlaybackState();
+            }
+        }
+
         public void Stop(bool notifyListeners)
         {
-            State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateStopped;
-
-            if (notifyListeners)
-            {
-                Callback?.OnPlaybackStatusChanged(State);
-            }
+            SetState(PlaybackStateCompat.StateStopped);
 
             currentPosition = CurrentStreamPosition;
             GiveUpAudioFocus();
@@ -119,63 +136,68 @@ namespace SpotyPie.Music
         {
             playOnFocusGain = true;
             TryToGetAudioFocus();
-            RegisterAudioNoisyReceiver();
-            int mediaId = musicProvider.GetCurrentSong();
-            Callback?.OnPlaybackMetaDataChanged(musicProvider.GetMetadata());
-            bool mediaHasChanged = mediaId != currentMediaId;
-            if (mediaHasChanged)
-            {
-                currentPosition = 0;
-                currentMediaId = mediaId;
-            }
-            else
-            {
-                musicProvider.SongResumed();
-            }
+            TryToRegisterAudioNoisyReceiver();
 
-            if (State == Android.Support.V4.Media.Session.PlaybackStateCompat.StatePaused && !mediaHasChanged && MediaPlayer != null)
+            if (IsSongChange())
             {
-                ConfigMediaPlayerState();
-            }
-            else
-            {
-                State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateStopped;
-                RelaxResources(false);
-
-                try
+                if (State == PlaybackStateCompat.StatePaused && MediaPlayer != null)
                 {
-                    State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateBuffering;
-
-                    Callback?.OnPlaybackStatusChanged(State);
-
-                    bool Starting = true;
-                    while (Starting)
+                    ConfigMediaPlayerState();
+                }
+                else
+                {
+                    RelaxResources(false);
+                    try
                     {
-                        try
-                        {
-                            GetMediaPlayer();
+                        SetState(PlaybackStateCompat.StateBuffering);
 
-                            Starting = false;
-                            MediaPlayer.SetDataSource(musicProvider.CurrentSongSource());
-                            MediaPlayer.PrepareAsync();
-
-                            wifiLock.Acquire();
-                        }
-                        catch (Exception)
+                        bool Starting = true;
+                        while (Starting)
                         {
-                            Starting = true;
+                            try
+                            {
+                                GetMediaPlayer();
+
+                                Starting = false;
+                                MediaPlayer.SetDataSource($"{BaseClient.BaseUrl}api/stream/play/{SongManager.SongId}");
+                                MediaPlayer.PrepareAsync();
+
+                                wifiLock.Acquire();
+                            }
+                            catch (Exception)
+                            {
+                                Starting = true;
+                            }
                         }
                     }
+                    catch (Exception)
+                    {
+                        //musicProvider.GetApiService().Report(e);
+                        //musicProvider.GetApiService().Corrupted(musicProvider.Id);
+                    }
+                    finally
+                    {
+                        //musicProvider.GetApiService().SetState(songId: musicProvider.Id);
+                    }
                 }
-                catch (Exception e)
-                {
-                    //musicProvider.GetApiService().Report(e);
-                    //musicProvider.GetApiService().Corrupted(musicProvider.Id);
-                }
-                finally
-                {
-                    //musicProvider.GetApiService().SetState(songId: musicProvider.Id);
-                }
+            }
+        }
+
+        private bool IsSongChange()
+        {
+            bool mediaHasChanged = SongManager.SongId != currentMediaId;
+            if (mediaHasChanged) //Song Changed
+            {
+                currentPosition = 0;
+                currentMediaId = SongManager.SongId;
+
+                return true;
+            }
+            else //Resuming old song
+            {
+                MediaPlayer.Start();
+
+                return false;
             }
         }
 
@@ -186,7 +208,7 @@ namespace SpotyPie.Music
                 MediaPlayer = new MediaPlayer();
                 MediaPlayer.SetAudioStreamType(Stream.Music);
 
-                MediaPlayer.SetWakeMode(service.ApplicationContext,
+                MediaPlayer.SetWakeMode(Service.ApplicationContext,
                     Android.OS.WakeLockFlags.Partial);
 
                 MediaPlayer.SetOnPreparedListener(this);
@@ -211,8 +233,8 @@ namespace SpotyPie.Music
 
         public void Pause()
         {
-            musicProvider.SongPaused();
-            if (State == Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying)
+            SetState(PlaybackStateCompat.StatePaused);
+            if (State == PlaybackStateCompat.StatePlaying)
             {
                 if (MediaPlayer != null && MediaPlayer.IsPlaying)
                 {
@@ -222,8 +244,6 @@ namespace SpotyPie.Music
                 RelaxResources(false);
                 GiveUpAudioFocus();
             }
-            State = Android.Support.V4.Media.Session.PlaybackStateCompat.StatePaused;
-            Callback?.OnPlaybackStatusChanged(State);
             UnregisterAudioNoisyReceiver();
         }
 
@@ -238,10 +258,9 @@ namespace SpotyPie.Music
             {
                 if (MediaPlayer.IsPlaying)
                 {
-                    State = Android.Support.V4.Media.Session.PlaybackStateCompat.StateBuffering;
+                    SetState(PlaybackStateCompat.StateBuffering);
                 }
                 MediaPlayer.SeekTo(position);
-                Callback?.OnPlaybackStatusChanged(State);
             }
         }
 
@@ -272,7 +291,7 @@ namespace SpotyPie.Music
         {
             if (audioFocus == AudioNoFocusNoDuck)
             {
-                if (State == Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying)
+                if (State == PlaybackStateCompat.StatePlaying)
                 {
                     Pause();
                 }
@@ -296,23 +315,17 @@ namespace SpotyPie.Music
                     {
                         if (currentPosition == MediaPlayer.CurrentPosition)
                         {
-                            SetState(Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying);
+                            SetState(PlaybackStateCompat.StatePlaying);
                             MediaPlayer.Start();
                         }
                         else
                         {
-                            SetState(Android.Support.V4.Media.Session.PlaybackStateCompat.StateBuffering);
+                            SetState(PlaybackStateCompat.StateBuffering);
                             MediaPlayer.SeekTo(currentPosition);
                         }
                     }
                     playOnFocusGain = false;
                 }
-            }
-
-            void SetState(int state)
-            {
-                State = state;
-                Callback?.OnPlaybackStatusChanged(State);
             }
         }
 
@@ -327,7 +340,7 @@ namespace SpotyPie.Music
                 bool canDuck = focusChange == AudioFocus.LossTransientCanDuck;
                 audioFocus = canDuck ? AudioNoFocusCanDuck : AudioNoFocusNoDuck;
 
-                playOnFocusGain |= State == Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying && !canDuck;
+                playOnFocusGain |= State == PlaybackStateCompat.StatePlaying && !canDuck;
             }
             else
             {
@@ -337,14 +350,12 @@ namespace SpotyPie.Music
 
         public void OnCompletion(MediaPlayer mp)
         {
-            Callback?.OnCompletion();
+            Skip(true);
         }
 
         public bool OnError(MediaPlayer mp, MediaError what, int extra)
         {
-            Toast.MakeText(service.ApplicationContext, "Media player error: what=" + what + ", extra=" + extra, ToastLength.Long).Show();
-
-            Callback?.OnError("MediaPlayer error " + what + " (" + extra + ")");
+            Toast.MakeText(Service.ApplicationContext, "Media player error: what=" + what + ", extra=" + extra, ToastLength.Long).Show();
             return true;
         }
 
@@ -353,7 +364,6 @@ namespace SpotyPie.Music
             ConfigMediaPlayerState();
             IsUpdating = false;
             MediaPlayerPositionWacher();
-            Callback?.OnDurationChanged(MediaPlayer.Duration);
         }
 
         private void MediaPlayerPositionWacher()
@@ -368,7 +378,7 @@ namespace SpotyPie.Music
                     int Progress = 0;
                     int Position = 0;
                     int sleepTime;
-                    while (MediaPlayer.IsPlaying)
+                    while (MediaPlayer != null && MediaPlayer.IsPlaying)
                     {
                         if (MediaPlayer.AudioSessionId != audioSession)
                             break;
@@ -379,20 +389,34 @@ namespace SpotyPie.Music
                             Position = (int)MediaPlayer.CurrentPosition / 1000;
                             if (CurrentTime.Seconds < Position)
                             {
+                                //Posistion has Changed
                                 CurrentTime = new TimeSpan(0, 0, Position);
-                                Callback?.OnPositionChanged(Progress, CurrentTime);
                             }
                             sleepTime = 1000 - (MediaPlayer.CurrentPosition - Position * 1000) + 25;
                             if (sleepTime <= 1025)
                             {
-                                Thread.Sleep(1000 - (MediaPlayer.CurrentPosition - Position * 1000) + 25);
+                                if (MediaPlayer.AudioSessionId != audioSession)
+                                    break;
+                                var leftTimeToWait = 1000 - (MediaPlayer.CurrentPosition - Position * 1000) + 25;
+                                if (leftTimeToWait > 0)
+                                {
+                                    Thread.Sleep(leftTimeToWait);
+                                }
                             }
                             else
+                            {
+                                if (MediaPlayer.AudioSessionId != audioSession)
+                                    break;
+
                                 Thread.Sleep(250);
+                            }
 
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
+                            if (MediaPlayer.AudioSessionId != audioSession)
+                                break;
+
                             Thread.Sleep(500);
                         }
                     }
@@ -403,19 +427,17 @@ namespace SpotyPie.Music
 
         public void OnSeekComplete(MediaPlayer mp)
         {
-
             currentPosition = mp.CurrentPosition;
-            if (State == Android.Support.V4.Media.Session.PlaybackStateCompat.StateBuffering)
+            if (State == PlaybackStateCompat.StateBuffering)
             {
                 MediaPlayer.Start();
-                State = Android.Support.V4.Media.Session.PlaybackStateCompat.StatePlaying;
+                SetState(PlaybackStateCompat.StatePlaying);
             }
-            Callback?.OnPlaybackStatusChanged(State);
         }
 
         private void RelaxResources(bool releaseMediaPlayer)
         {
-            service.StopForeground(true);
+            Service.StopForeground(true);
 
             if (releaseMediaPlayer && MediaPlayer != null)
             {
@@ -430,11 +452,11 @@ namespace SpotyPie.Music
             }
         }
 
-        void RegisterAudioNoisyReceiver()
+        void TryToRegisterAudioNoisyReceiver()
         {
             if (!audioNoisyReceiverRegistered)
             {
-                service.RegisterReceiver(mAudioNoisyReceiver, mAudioNoisyIntentFilter);
+                Service.RegisterReceiver(mAudioNoisyReceiver, mAudioNoisyIntentFilter);
                 audioNoisyReceiverRegistered = true;
             }
         }
@@ -443,20 +465,46 @@ namespace SpotyPie.Music
         {
             if (audioNoisyReceiverRegistered)
             {
-                service.UnregisterReceiver(mAudioNoisyReceiver);
+                Service.UnregisterReceiver(mAudioNoisyReceiver);
                 audioNoisyReceiverRegistered = false;
             }
         }
 
-        public interface ICallback
+        void UpdatePlaybackState()
         {
-            void OnPlay();
-            void OnDurationChanged(int miliseconds);
-            void OnPositionChanged(int progress, TimeSpan currentTime);
-            void OnCompletion();
-            void OnPlaybackStatusChanged(int state);
-            void OnPlaybackMetaDataChanged(Android.Support.V4.Media.MediaMetadataCompat meta);
-            void OnError(string error);
+            var position = PlaybackStateCompat.PlaybackPositionUnknown;
+            if (IsConnected)
+            {
+                position = CurrentStreamPosition;
+            }
+
+            var stateBuilder = new PlaybackStateCompat.Builder().SetActions(GetAvailableActions());
+
+            stateBuilder.SetState(State, position, 1.0f, SystemClock.ElapsedRealtime());
+
+            Session?.SetPlaybackState(stateBuilder.Build());
+        }
+
+        long GetAvailableActions()
+        {
+            long actions = PlaybackState.ActionPlay | PlaybackState.ActionPlayFromMediaId | PlaybackState.ActionPlayFromSearch;
+            if (SongManager.SongQueue == null || SongManager.SongQueue.Count == 0)
+            {
+                return actions;
+            }
+            if (IsPlaying)
+            {
+                actions |= PlaybackState.ActionPause;
+            }
+            if (SongManager.Index > 0)
+            {
+                actions |= PlaybackState.ActionSkipToPrevious;
+            }
+            if (SongManager.Index < SongManager.SongQueue.Count - 1)
+            {
+                actions |= PlaybackState.ActionSkipToNext;
+            }
+            return actions;
         }
     }
 }

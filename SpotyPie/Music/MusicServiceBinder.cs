@@ -6,14 +6,16 @@ namespace SpotyPie.Music
     {
         private MusicService Service { get; set; }
 
+        private bool Connected { get; set; }
+
         public MusicServiceBinder(MusicService service)
         {
             Service = service;
         }
 
-        internal void SetMusicServiceUpdateCallback(Player.Player player)
+        internal void SetConnectionStatus(bool status)
         {
-            Service?.SetCallback(player);
+            Connected = status;
         }
     }
 }
