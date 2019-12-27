@@ -32,6 +32,8 @@ namespace SpotyPie.Music
 
         public bool IsConnected = true;
 
+        private long _threadWatcherStartTime;
+
         public bool IsPlaying
         {
             get
@@ -44,7 +46,7 @@ namespace SpotyPie.Music
         {
             get
             {
-                return MediaPlayer != null ? MediaPlayer.CurrentPosition : currentPosition;
+                return MediaPlayer != null ? MediaPlayer.CurrentPosition : CurrentPosition;
             }
         }
 
@@ -59,16 +61,17 @@ namespace SpotyPie.Music
 
         public delegate void OnPositionChange(int position);
         public static OnPositionChange PositionHandler;
+        public static int CurrentPosition = 0;
 
         public delegate void OnDurationChange(int duration);
         public static OnDurationChange DurationHandler;
+        public static int CurrentDuration = 0;
 
         private int State { get; set; }
 
         bool playOnFocusGain;
 
         volatile bool audioNoisyReceiverRegistered;
-        volatile int currentPosition;
         volatile int currentMediaId;
 
         volatile bool IsUpdating = false;
@@ -130,7 +133,7 @@ namespace SpotyPie.Music
         {
             SetState(PlaybackStateCompat.StateStopped);
 
-            currentPosition = CurrentStreamPosition;
+            CurrentPosition = CurrentStreamPosition;
             GiveUpAudioFocus();
             UnregisterAudioNoisyReceiver();
             RelaxResources(true);
@@ -196,7 +199,7 @@ namespace SpotyPie.Music
             bool mediaHasChanged = SongManager.SongId != currentMediaId;
             if (mediaHasChanged) //Song Changed
             {
-                currentPosition = 0;
+                CurrentPosition = 0;
                 currentMediaId = SongManager.SongId;
 
                 return true;
@@ -204,7 +207,8 @@ namespace SpotyPie.Music
             else //Resuming old song
             {
                 MediaPlayer.Start();
-
+                SetState(PlaybackStateCompat.StatePlaying);
+                MediaPlayerPositionWacher();
                 return false;
             }
         }
@@ -245,17 +249,17 @@ namespace SpotyPie.Music
 
         public void Pause()
         {
-            SetState(PlaybackStateCompat.StatePaused);
             if (State == PlaybackStateCompat.StatePlaying)
             {
                 if (MediaPlayer != null && MediaPlayer.IsPlaying)
                 {
                     MediaPlayer.Pause();
-                    currentPosition = MediaPlayer.CurrentPosition;
+                    CurrentPosition = MediaPlayer.CurrentPosition;
                 }
                 RelaxResources(false);
                 GiveUpAudioFocus();
             }
+            SetState(PlaybackStateCompat.StatePaused);
             UnregisterAudioNoisyReceiver();
         }
 
@@ -320,7 +324,7 @@ namespace SpotyPie.Music
                 {
                     if (MediaPlayer != null && !MediaPlayer.IsPlaying)
                     {
-                        if (currentPosition == MediaPlayer.CurrentPosition)
+                        if (CurrentPosition == MediaPlayer.CurrentPosition)
                         {
                             SetState(PlaybackStateCompat.StatePlaying);
                             MediaPlayer.Start();
@@ -328,7 +332,7 @@ namespace SpotyPie.Music
                         else
                         {
                             SetState(PlaybackStateCompat.StateBuffering);
-                            MediaPlayer.SeekTo(currentPosition);
+                            MediaPlayer.SeekTo(CurrentPosition);
                         }
                     }
                     playOnFocusGain = false;
@@ -385,16 +389,19 @@ namespace SpotyPie.Music
 
         private void SetDuration(int duration)
         {
+            CurrentDuration = duration;
             DurationHandler?.Invoke(duration);
         }
 
         private void SetPosition(int position)
         {
+            CurrentPosition = position;
             PositionHandler?.Invoke(position);
         }
 
         private void MediaPlayerPositionWacher()
         {
+            _threadWatcherStartTime = DateTime.Now.Ticks;
             new Thread(() =>
             {
                 int audioSession = MediaPlayer.AudioSessionId;
@@ -405,7 +412,8 @@ namespace SpotyPie.Music
                     int Progress = 0;
                     int Position = 0;
                     int sleepTime;
-                    while (MediaPlayer != null && MediaPlayer.IsPlaying)
+                    long id = _threadWatcherStartTime;
+                    while (MediaPlayer != null && MediaPlayer.IsPlaying && _threadWatcherStartTime == id)
                     {
                         if (MediaPlayer.AudioSessionId != audioSession)
                             break;
@@ -457,7 +465,7 @@ namespace SpotyPie.Music
 
         public void OnSeekComplete(MediaPlayer mp)
         {
-            currentPosition = mp.CurrentPosition;
+            CurrentPosition = mp.CurrentPosition;
             if (State == PlaybackStateCompat.StateBuffering)
             {
                 MediaPlayer.Start();

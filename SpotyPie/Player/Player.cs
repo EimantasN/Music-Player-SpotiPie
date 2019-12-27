@@ -19,6 +19,7 @@ namespace SpotyPie.Player
     public class Player : ActivityBase, View.IOnTouchListener, IServiceConnection
     {
         private bool IsBinded = false;
+        private bool DisableSmoothScrool = true;
         public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Player;
 
         private IServiceConnection ServiceConnection;
@@ -80,6 +81,7 @@ namespace SpotyPie.Player
         protected override void InitView()
         {
             ServiceConnection = this;
+            DisableSmoothScrool = true;
 
             Pager = FindViewById<SpotyPieViewPager>(Resource.Id.img_holder);
             Adapter = new ImageAdapter(this.ApplicationContext, this);
@@ -115,6 +117,7 @@ namespace SpotyPie.Player
             TotalSongTimeText.Visibility = ViewStates.Invisible;
 
             HidePlayerButton = FindViewById<ImageButton>(Resource.Id.back_button);
+            HidePlayerButton.Click += OnPlayerHide;
             PlayToggle = FindViewById<ImageButton>(Resource.Id.play_stop);
 
             PlayToggle.Click += OnPlayToggleClick;
@@ -131,6 +134,17 @@ namespace SpotyPie.Player
 
             OnSonChange(SongManager.Song);
             OnPlayStateChange(SongManager._playState);
+            OnDurationChange(Playback.CurrentDuration);
+            if (Playback.CurrentPosition != 0)
+            {
+                SongTimeSeekBar.Enabled = true;
+            }
+            OnPositionChange(Playback.CurrentPosition);
+        }
+
+        private void OnPlayerHide(object sender, EventArgs e)
+        {
+            OnBackPressed();
         }
 
         protected override void OnStart()
@@ -215,7 +229,15 @@ namespace SpotyPie.Player
                     TitleHelper.Format(PlayerArtistName, song.ArtistName, 12);
                     TitleHelper.Format(CurrentSongListValue, song.AlbumName, 12);
 
-                    Pager.SetCurrentItem(SongManager.Index, true);
+                    if (DisableSmoothScrool)
+                    {
+                        DisableSmoothScrool = false;
+                        Pager.SetCurrentItem(SongManager.Index, false);
+                    }
+                    else 
+                    {
+                        Pager.SetCurrentItem(SongManager.Index, true);
+                    }
                 }, 25);
             }
         }

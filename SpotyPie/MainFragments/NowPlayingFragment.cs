@@ -1,15 +1,12 @@
 ﻿using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
-using Mobile_Api.Models.Realm;
-using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
+using SpotyPie.Music;
 using SpotyPie.Music.Enums;
 using SpotyPie.Music.Manager;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SpotyPie.MainFragments
 {
@@ -19,6 +16,7 @@ namespace SpotyPie.MainFragments
         private TextView SongTitle;
         private ImageButton PlayToggle;
         private ImageButton ShowPlayler;
+        private ProgressBar SongProgress;
 
         public override int LayoutId { get; set; } = Resource.Layout.now_playing_layout;
         protected override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Holder;
@@ -35,15 +33,38 @@ namespace SpotyPie.MainFragments
             ArtistName = RootView.FindViewById<TextView>(Resource.Id.artist_name);
             ArtistName.Selected = true;
 
+            SongProgress = RootView.FindViewById<ProgressBar>(Resource.Id.progressBar);
+            SongProgress.Enabled = false;
+
             PlayToggle.Click += PlayToggle_Click;
             ShowPlayler.Click += ShowMusicPlayer;
             RootView.Click += ShowMusicPlayer;
 
             OnPlayingStateChange(SongManager._playState);
             OnSongChange(SongManager.Song);
+            if (Playback.CurrentDuration != 0)
+            {
+                OnDurationChange(Playback.CurrentDuration);
+                OnPositionChange(Playback.CurrentPosition);
+            }
+            else
+            {
+                SongProgress.Visibility = ViewStates.Gone;
+            }
+        }
 
-            SongManager.SongHandler += OnSongChange;
-            SongManager.PlayingHandler += OnPlayingStateChange;
+        private void OnDurationChange(int duration)
+        {
+            if (duration > 0)
+            {
+                SongProgress.Visibility = ViewStates.Visible;
+                SongProgress.Max = duration;
+            }
+        }
+
+        private void OnPositionChange(int position)
+        {
+            SongProgress.Progress = position;
         }
 
         public void OnPlayingStateChange(PlayState state)
@@ -79,17 +100,23 @@ namespace SpotyPie.MainFragments
 
         private void ShowMusicPlayer(object sender, EventArgs e)
         {
-            GetState().SetSong(SongManager.SongQueue, 0);
+            GetActivity().StartPlayer();
         }
 
         public override void ForceUpdate()
         {
-            SongManager.LoadCurrentSong();
+            SongManager.SongHandler += OnSongChange;
+            SongManager.PlayingHandler += OnPlayingStateChange;
+            Playback.DurationHandler += OnDurationChange;
+            Playback.PositionHandler += OnPositionChange;
         }
 
         public override void ReleaseData()
         {
-
+            SongManager.SongHandler -= OnSongChange;
+            SongManager.PlayingHandler -= OnPlayingStateChange;
+            Playback.DurationHandler += OnDurationChange;
+            Playback.PositionHandler += OnPositionChange;
         }
 
         public override int GetParentView()
@@ -100,24 +127,6 @@ namespace SpotyPie.MainFragments
         public override void LoadFragment(dynamic switcher)
         {
 
-        }
-
-        private void Test(Songs song)
-        {
-            //using (var realm = Realm.GetInstance())
-            //{
-            //    var data = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
-
-            //    data.Add(realm, new Realm_Songs(song));
-
-            //    var xdata = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
-            //}
-
-            //using (var realm = Realm.GetInstance())
-            //{
-            //    var data = realm.All<ApplicationSongList>().FirstOrDefault(x => x.Id == 1);
-            //    var songList = realm.All<Mobile_Api.Models.Realm.Music>().ToList();
-            //}
         }
     }
 }

@@ -25,7 +25,7 @@ namespace SpotyPie.Player
 
         public override void SetCurrentItem(int item, bool smoothScroll)
         {
-            base.SetCurrentItem(item, true);
+            base.SetCurrentItem(item, smoothScroll);
         }
 
         public override bool OnTouchEvent(MotionEvent e)
