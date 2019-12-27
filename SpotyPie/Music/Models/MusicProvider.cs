@@ -23,17 +23,6 @@ namespace SpotyPie.Music.Models
         {
         }
 
-        public int GetCurrentSong() => SongManager.SongId;
-
-        public void SongPaused() => SongManager.Pause();
-
-        public void SongResumed() => SongManager.Play();
-
-        public string CurrentSongSource()
-        {
-            return $"{BaseClient.BaseUrl}api/stream/play/{SongManager.SongId}";
-        }
-
         public void SetFavorite(string musicId, bool favorite)
         {
         }
