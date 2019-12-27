@@ -1,6 +1,4 @@
-﻿using System;
-using Android.Media;
-using Android.Text;
+﻿using Android.Text;
 
 namespace SpotyPie.Music.Models
 {

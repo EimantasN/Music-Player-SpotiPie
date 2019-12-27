@@ -107,6 +107,11 @@ namespace SpotyPie.Music.Manager
 
         public static bool Next()
         {
+            if (_playState == PlayState.Loading)
+            {
+                return false;
+            }
+
             if (Index + 1 >= SongQueue.Count)
             {
                 return false;
@@ -165,11 +170,17 @@ namespace SpotyPie.Music.Manager
             }
         }
 
-        public static void Prev()
+        public static bool Prev()
         {
+            if (_playState == PlayState.Loading)
+            {
+                return false;
+            }
+
             if (Index == 0)
             {
                 //Ignore
+                return false;
             }
             else if (Index > 0)
             {
@@ -178,8 +189,10 @@ namespace SpotyPie.Music.Manager
                     SongHandler?.Invoke(SongQueue[Index - 1]);
                     SongId = SongQueue[--Index].Id;
                     _serviceConnection.PlayerPlay();
+                    return true;
                 }
             }
+            return false;
         }
 
         private static void SetPlayState(PlayState state)

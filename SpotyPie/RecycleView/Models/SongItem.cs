@@ -13,6 +13,8 @@ namespace SpotyPie.RecycleView.Models
 {
     public class SongItem : RecyclerView.ViewHolder
     {
+        private bool Disposed { get; set; }
+
         public View EmptyTimeView { get; set; }
 
         public int SongId { get; set; }
@@ -58,13 +60,14 @@ namespace SpotyPie.RecycleView.Models
 
         protected override void Dispose(bool disposing)
         {
-            if (Actions != null)
+            if (Actions != null && !Disposed)
             {
+                Disposed = true;
                 Actions = null;
-                EmptyTimeView.Click -= EmptyTimeView_Click;
-                Options.Click -= Options_Click1;
+                //EmptyTimeView.Click -= EmptyTimeView_Click;
+                //Options.Click -= Options_Click1;
+                base.Dispose(disposing);
             }
-            base.Dispose(disposing);
         }
 
         internal void PrepareView(Songs t)

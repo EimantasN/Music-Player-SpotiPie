@@ -18,15 +18,12 @@ namespace SpotyPie.Player
 {
     public class ImageAdapter : PagerAdapter
     {
-        private object _locker { get; set; } = new object();
 
         private Context _context;
 
         private ActivityBase _activity;
 
-        private bool _locked { get; set; }
-
-        public override int Count 
+        public override int Count
         {
             get
             {
@@ -63,48 +60,35 @@ namespace SpotyPie.Player
             return view == ((ImageView)@object);
         }
 
-        public override Java.Lang.Object InstantiateItem(View container, int position)
+        public override Java.Lang.Object InstantiateItem(ViewGroup container, int position)
         {
             ImageView image = new ImageView(_context);
             image.SetScaleType(ImageView.ScaleType.CenterCrop);
             image.SetImageResource(Resource.Drawable.img_loading);
-            ((ViewPager)container).AddView(image, 0);
+            container.AddView(image);
+
             Task.Run(() => LoadImage(image, position));
-            //Toast.MakeText(this.Context, $"Loaded -> {position}", ToastLength.Short).Show();
             return image;
         }
 
-        public override void DestroyItem(View container, int position, Java.Lang.Object @object)
+        public override void DestroyItem(ViewGroup container, int position, Java.Lang.Object view)
         {
-            ((ViewPager)container).RemoveView((ImageView)@object);
+            container.RemoveView((View)view);
         }
 
         public async Task LoadImage(ImageView image, int position)
         {
-            var loadSongIamge = false;
-            lock (_locker)
+            if (position > Count - 1 && Count != 0)
             {
-                if (!_locked)
+                //Load Song
+                _activity?.RunOnUiThread(() =>
                 {
-                    loadSongIamge = true;
-                    _locked = true;
-                }
+                    Toast.MakeText(this._context, "Load Song", ToastLength.Long).Show();
+                });
             }
-            if (loadSongIamge)
+            else
             {
-                if (position > Count - 1 && Count != 0)
-                {
-                    //Load Song
-                    _activity?.RunOnUiThread(() =>
-                    {
-                        Toast.MakeText(this._context, "Load Song", ToastLength.Long).Show();
-                    });
-                }
-                else
-                {
-                    await LoadCustomImage(SongManager.SongQueue[position], image);
-                }
-                _locked = false;
+                await LoadCustomImage(SongManager.SongQueue[position], image);
             }
         }
 
@@ -117,33 +101,40 @@ namespace SpotyPie.Player
             }
             else
             {
-                List<Image> imageList = await _activity.GetAPIService().GetNewImageForSongAsync(song.Id);
+                List<Image> imageList = await _activity?.GetAPIService()?.GetNewImageForSongAsync(song.Id);
                 if (imageList == null || imageList.Count == 0)
                     LoadOld();
                 else
                 {
                     var img = imageList.OrderByDescending(x => x.Width).ThenByDescending(x => x.Height).First();
-                    _activity.RunOnUiThread(() =>
+                    _activity?.RunOnUiThread(() =>
                     {
-                        Picasso
-                        .With(_context)
-                        .Load(img.Url)
-                        .Resize(1200, 1200)
-                        .CenterCrop()
-                        .Into(image);
+                        if (image != null)
+                        {
+                            Picasso
+                            .With(_context)
+                            .Load(img.Url)
+                            .Resize(1200, 1200)
+                            .CenterCrop()
+                            .Into(image);
+                        }
                     });
                 }
             }
 
             void LoadOld()
             {
-                _activity.RunOnUiThread(() => { 
-                    Picasso
-                    .With(_context)
-                    .Load(song.LargeImage)
-                    .Resize(1200, 1200)
-                    .CenterCrop()
-                    .Into(image); 
+                _activity?.RunOnUiThread(() =>
+                {
+                    if (image != null)
+                    {
+                        Picasso
+                        .With(_context)
+                        .Load(song.LargeImage)
+                        .Resize(1200, 1200)
+                        .CenterCrop()
+                        .Into(image);
+                    }
                 });
             }
         }

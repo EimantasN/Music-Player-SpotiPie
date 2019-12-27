@@ -21,8 +21,6 @@ namespace SpotyPie.Player
         private bool IsBinded = false;
         public override NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Player;
 
-        //private MusicService MusicService;
-
         private IServiceConnection ServiceConnection;
 
         private string CurrentPlayerImage { get; set; }
@@ -140,6 +138,8 @@ namespace SpotyPie.Player
             base.OnStart();
             SongManager.SongHandler += OnSonChange;
             SongManager.PlayingHandler += OnPlayStateChange;
+            Playback.DurationHandler += OnDurationChange;
+            Playback.PositionHandler += OnPositionChange;
             BindSong(SongManager.Song);
         }
 
@@ -148,6 +148,37 @@ namespace SpotyPie.Player
             base.OnStop();
             SongManager.SongHandler -= OnSonChange;
             SongManager.PlayingHandler -= OnPlayStateChange;
+            Playback.DurationHandler -= OnDurationChange;
+            Playback.PositionHandler -= OnPositionChange;
+        }
+
+        private void OnPositionChange(int position)
+        {
+            if (!SeekActive)
+            {
+                SongTimeSeekBar.Enabled = true;
+                SongTimeSeekBar.Progress = position;
+                CurretSongTimeText.Text = new TimeSpan(0, 0, 0, 0, position).ToString(@"mm\:ss");
+            }
+            if (position == 0)
+            {
+                CurretSongTimeText.Text = "00:00";
+                SongTimeSeekBar.Enabled = false;
+            }
+        }
+
+        private void OnDurationChange(int duration)
+        {
+            if (duration != 0)
+            {
+                SongTimeSeekBar.Max = duration;
+                TotalSongTimeText.Text = new TimeSpan(0, 0, 0, 0, duration).ToString(@"mm\:ss");
+                TotalSongTimeText.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                TotalSongTimeText.Visibility = ViewStates.Invisible;
+            }
         }
 
         public void OnPlayStateChange(PlayState state)
@@ -155,12 +186,15 @@ namespace SpotyPie.Player
             switch (state)
             {
                 case PlayState.Playing:
+                    Pager.Enable(true);
                     PlayToggle.SetImageResource(Resource.Drawable.pause);
                     break;
                 case PlayState.Stopeed:
+                    Pager.Enable(true);
                     PlayToggle.SetImageResource(Resource.Drawable.play_button);
                     break;
                 case PlayState.Loading:
+                    Pager.Enable(false);
                     SongLoadStarted();
                     PlayToggle.SetImageResource(Resource.Drawable.play_loading);
                     break;
@@ -180,13 +214,15 @@ namespace SpotyPie.Player
                     TitleHelper.Format(PlayerSongName, song.Name, 14);
                     TitleHelper.Format(PlayerArtistName, song.ArtistName, 12);
                     TitleHelper.Format(CurrentSongListValue, song.AlbumName, 12);
-                }, 100);
+
+                    Pager.SetCurrentItem(SongManager.Index, true);
+                }, 25);
             }
         }
 
         private void OnPagerSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
-            if (e.Position == -1) 
+            if (e.Position == -1)
             {
                 //Ignore
             }
@@ -206,14 +242,7 @@ namespace SpotyPie.Player
 
         public void SongLoadStarted()
         {
-            CurretSongTimeText.Text = "00:00";
-            if (!SeekActive && SongTimeSeekBar != null)
-            {
-                SongTimeSeekBar.Progress = 0;
-            }
             SongTimeSeekBar.Enabled = false;
-            PlayToggle.SetImageResource(Resource.Drawable.play_loading);
-            PlayToggle.Tag = Resource.Drawable.play_loading;
         }
 
         protected override void OnResume()
@@ -249,12 +278,20 @@ namespace SpotyPie.Player
 
         private void OnPrevSongClick(object sender, EventArgs e)
         {
-            Pager.SetCurrentItem(SongManager.Index - 1, true);
+            if (SongManager.Prev())
+            {
+                OnDurationChange(0);
+                OnPositionChange(0);
+            }
         }
 
         private void OnNextSongClick(object sender, EventArgs e)
         {
-            Pager.SetCurrentItem(SongManager.Index + 1, true);
+            if(SongManager.Next())
+            {
+                OnDurationChange(0);
+                OnPositionChange(0);
+            }
         }
 
         private void OnPlayToggleClick(object sender, EventArgs e)
@@ -398,31 +435,6 @@ namespace SpotyPie.Player
                     v.Animate().TranslationX(0);
                     return v.OnTouchEvent(e);
             }
-        }
-
-        #endregion
-
-        #region MediaSession
-
-        public void OnDurationChanged(int miliseconds)
-        {
-            RunOnUiThread(() =>
-            {
-                TotalSongTimeText.Text = new TimeSpan(0, 0, 0, 0, miliseconds).ToString(@"mm\:ss");
-                TotalSongTimeText.Visibility = ViewStates.Visible;
-            });
-        }
-
-        public void OnPositionChanged(int miliseconds, TimeSpan currentTime)
-        {
-            RunOnUiThread(() =>
-            {
-                if (SongTimeSeekBar.Enabled)
-                {
-                    SongTimeSeekBar.Progress = miliseconds;
-                    CurretSongTimeText.Text = currentTime.ToString(@"mm\:ss");
-                }
-            });
         }
 
         #endregion

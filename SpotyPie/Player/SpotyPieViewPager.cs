@@ -9,7 +9,7 @@ namespace SpotyPie.Player
 {
     public class SpotyPieViewPager : ViewPager
     {
-        private bool Loading = false;
+        private bool Enabled = false;
 
         public SpotyPieViewPager(Context context) : base(context)
         {
@@ -30,17 +30,17 @@ namespace SpotyPie.Player
 
         public override bool OnTouchEvent(MotionEvent e)
         {
-            return this.Loading && base.OnTouchEvent(e);
+            return this.Enabled && base.OnTouchEvent(e);
         }
 
         public override bool OnInterceptTouchEvent(MotionEvent ev)
         {
-            return this.Loading && base.OnInterceptTouchEvent(ev);
+            return this.Enabled && base.OnInterceptTouchEvent(ev);
         }
 
         public void Enable(bool enableStatus)
         {
-            this.Loading = true;
+            this.Enabled = enableStatus;
         }
     }
 }
