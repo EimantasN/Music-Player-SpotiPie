@@ -6,15 +6,19 @@ using SpotyPie.Music.Helpers;
 using Android.OS;
 using Android.Support.V4.Media.Session;
 using Android.Support.V4.Media;
-using System.Threading.Tasks;
 using Android.Support.V4.App;
+using NotificationCompatMusic = Android.Support.V4.Media.App.NotificationCompat;
 using RestSharp;
+using SpotyPie.Music.Manager;
+using Mobile_Api.Models;
 
 namespace SpotyPie.Music
 {
     public class MediaNotificationManager : BroadcastReceiver
     {
-        static readonly string Tag = LogHelper.MakeLogTag(typeof(MediaNotificationManager));
+        private readonly RestClient _client = new RestClient();
+
+        private readonly RestRequest request = new RestRequest(Method.GET);
 
         private string LastImgUrl { get; set; }
 
@@ -22,34 +26,51 @@ namespace SpotyPie.Music
 
         public int CountSkip { get; set; } = 0;
 
-        const int NotificationId = 1;
+        const int NotificationId = 352619;
         const int RequestCode = 100;
 
         public const string ActionPause = "com.spotypie.adnroid.musicservice.pause";
+
         public const string ActionPlay = "com.spotypie.adnroid.musicservice.play";
+
         public const string ActionPrev = "com.spotypie.adnroid.musicservice.prev";
+
         public const string ActionNext = "com.spotypie.adnroid.musicservice.next";
+
         public const string ActionFavorite = "com.spotypie.adnroid.musicservice.favorite";
+
         public const string ActionTrash = "com.spotypie.adnroid.musicservice.trash";
+
         public const string ActionSeek = "com.spotypie.adnroid.musicservice.seek";
 
         readonly MusicService Service;
+
         private MediaSessionCompat.Token SessionToken;
+
         private MediaControllerCompat SPController;
+
         private MediaControllerCompat.TransportControls transportControls;
+
         private SpotyPieMediaControllerCallback SPMediaControllerCallback;
 
         private PlaybackStateCompat playbackState;
+
         public MediaMetadataCompat Metadata;
 
         readonly NotificationManagerCompat NotificationManager;
 
         private PendingIntent PauseIntent { get; set; }
+
         private PendingIntent PlayIntent { get; set; }
+
         private PendingIntent PreviousIntent { get; set; }
+
         private PendingIntent NextIntent { get; set; }
+
         private PendingIntent FavoriteIntent { get; set; }
+
         private PendingIntent TrashIntent { get; set; }
+
         private PendingIntent SeekIntent { get; set; }
 
         int notificationColor;
@@ -83,28 +104,26 @@ namespace SpotyPie.Music
             SPMediaControllerCallback.OnPlaybackStateChangedImpl = (state) =>
             {
                 playbackState = state;
-                var notification = CreateNotification();
-                if (notification != null)
-                {
-                    //NotificationManager.FromContext(service.ApplicationContext).Notify(NotificationId, notification);
-                    NotificationManager.Notify(NotificationId, notification);
-                }
             };
 
             SPMediaControllerCallback.OnMetadataChangedImpl = (meta) =>
             {
-                Metadata = meta;
-                var notification = CreateNotification();
-                if (notification != null)
-                {
-                    NotificationManager.Notify(NotificationId, notification);
-                }
             };
 
             SPMediaControllerCallback.OnSessionDestroyedImpl = () =>
             {
-                UpdateSessionToken();
             };
+
+            SongManager.SongHandler += OnSongChange;
+        }
+
+        private void OnSongChange(Songs song)
+        {
+            var notification = CreateNotification(song);
+            if (notification != null)
+            {
+                NotificationManager.Notify(NotificationId, notification);
+            }
         }
 
         private void CreateNotificationChannel()
@@ -118,7 +137,7 @@ namespace SpotyPie.Music
             string channelDescription = Service.Resources.GetString(Resource.String.channelDescription);
             string ChannelId = Service.Resources.GetString(Resource.String.ChannelId);
 
-            NotificationChannel mChannel = new NotificationChannel(ChannelId, channelName, NotificationImportance.Max);
+            NotificationChannel mChannel = new NotificationChannel(ChannelId, channelName, NotificationImportance.Default);
             mChannel.Description = channelDescription;
             mChannel.EnableLights(true);
             mChannel.LightColor = Color.Red;
@@ -138,11 +157,6 @@ namespace SpotyPie.Music
                 started = true;
                 playbackState = SPController.PlaybackState;
 
-                Notification notification = CreateNotification();
-                if (notification != null)
-                {
-                    Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, notification);
-                }
                 var filter = new IntentFilter();
                 filter.AddAction(ActionNext);
                 filter.AddAction(ActionPause);
@@ -155,11 +169,6 @@ namespace SpotyPie.Music
             }
             else
             {
-                Notification notification = CreateNotification();
-                if (notification != null)
-                {
-                    Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, notification);
-                }
                 playbackState = SPController.PlaybackState;
             }
         }
@@ -222,27 +231,32 @@ namespace SpotyPie.Music
         void UpdateSessionToken(bool ignore = false)
         {
             var freshToken = Service.SessionToken;
-            //if (SessionToken == null || SessionToken != freshToken)
-            //{
+            if (SessionToken == null || SessionToken != freshToken)
+            {
                 SPController?.UnregisterCallback(SPMediaControllerCallback);
 
                 SessionToken = freshToken;
                 SPController = new MediaControllerCompat(Service, SessionToken);
                 SPController.RegisterCallback(SPMediaControllerCallback);
                 transportControls = SPController.GetTransportControls();
-            //}
+            }
         }
 
+        private PendingIntent _pendingIntent;
         PendingIntent CreateContentIntent()
         {
-            var openUI = new Intent(Service, typeof(MainActivity));
+            if (_pendingIntent == null)
+            {
+                var openUI = new Intent(Service, typeof(MainActivity));
 
-            openUI.SetFlags(ActivityFlags.SingleTop);
+                openUI.SetFlags(ActivityFlags.SingleTop);
 
-            return PendingIntent.GetActivity(Service, RequestCode, openUI, PendingIntentFlags.CancelCurrent);
+                _pendingIntent = PendingIntent.GetActivity(Service, RequestCode, openUI, PendingIntentFlags.CancelCurrent);
+            }
+            return _pendingIntent;
         }
 
-        private Android.Support.V4.App.NotificationCompat.Builder NotificationBuilder;
+        private NotificationCompat.Builder NotificationBuilder;
 
         //public Android.Support.V4.App.NotificationCompat.Builder GetNotificationBuilder()
         //{
@@ -255,18 +269,17 @@ namespace SpotyPie.Music
         //    return NotificationBuilder;
         //}
 
-        private Android.Support.V4.Media.App.NotificationCompat.MediaStyle SpotyPieMediaStyle;
-
-        public Android.Support.V4.Media.App.NotificationCompat.MediaStyle GetMediaStyle()
+        private NotificationCompatMusic.MediaStyle SpotyPieMediaStyle;
+        public NotificationCompatMusic.MediaStyle GetMediaStyle()
         {
             if (SpotyPieMediaStyle == null)
             {
-                SpotyPieMediaStyle = new Android.Support.V4.Media.App.NotificationCompat.MediaStyle();
+                SpotyPieMediaStyle = new NotificationCompatMusic.MediaStyle();
                 SpotyPieMediaStyle.SetMediaSession(SessionToken);
                 SpotyPieMediaStyle.SetShowActionsInCompactView(new[] { 3 });
                 Intent intent = new Intent(Service.ApplicationContext, typeof(MusicService));
                 intent.SetAction("spotypie_stop");
-                PendingIntent pendingCancelIntent = PendingIntent.GetService(Service.ApplicationContext, 1, intent, PendingIntentFlags.CancelCurrent);
+                PendingIntent pendingCancelIntent = PendingIntent.GetService(Service.ApplicationContext, 1, intent, PendingIntentFlags.UpdateCurrent);
 
                 SpotyPieMediaStyle.SetShowCancelButton(true);
                 SpotyPieMediaStyle.SetCancelButtonIntent(pendingCancelIntent);
@@ -274,34 +287,23 @@ namespace SpotyPie.Music
             return SpotyPieMediaStyle;
         }
 
-        Notification CreateNotification()
+        Notification CreateNotification(Songs song)
         {
             lock (NotificationLock)
             {
-                if (Metadata == null)
-                {
-                    Metadata = new MediaMetadataCompat.Builder()
-                        .PutString(MediaMetadataCompat.MetadataKeyMediaId, "ID")
-                        .PutString(MediaMetadataCompat.MetadataKeyAlbum, "Album")
-                        .PutString(MediaMetadataCompat.MetadataKeyArtist, "Artist")
-                        .PutLong(MediaMetadataCompat.MetadataKeyDuration, 360000)
-                        .PutString(MediaMetadataCompat.MetadataKeyGenre, "Rock")
-                        .PutString(MediaMetadataCompat.MetadataKeyAlbumArtUri, "https://i.scdn.co/image/2f6316728abf5078c9b886d92cadbf71fa965b9b")
-                        .PutString(MediaMetadataCompat.MetadataKeyTitle, "")
-                        .PutLong(MediaMetadataCompat.MetadataKeyTrackNumber, 1)
-                        .PutLong(MediaMetadataCompat.MetadataKeyNumTracks, 10)
-                        .PutLong(MediaMetadataCompat.MetadataKeyDiscNumber, 1)
-                        .PutString("SpotyPieImgUrl", "https://i.scdn.co/image/7eccf38b6a7aef4ff7db2e4b00716e1e1c23a559")
-                        .Build();
-                }
+                UpdateMetadata(song);
 
-                if (playbackState == null) { return null; }
+                if (Metadata == null || playbackState == null)
+                {
+                    return null;
+                }
 
                 NotificationBuilder = new NotificationCompat.Builder(Service, Service.Resources.GetString(Resource.String.ChannelId));
                 SetupNotificationButtons(NotificationBuilder);
 
                 NotificationBuilder
                     .SetStyle(GetMediaStyle())
+                    .SetPriority(1)
                     .SetColor(notificationColor)
                     .SetSmallIcon(Resource.Drawable.logo_spotify)
                     .SetVisibility(NotificationCompat.VisibilityPublic)
@@ -312,18 +314,7 @@ namespace SpotyPie.Music
                     .SetContentTitle(Metadata.Description.Title)
                     .SetContentText(Metadata.Description.Subtitle);
 
-                Task.Run(() =>
-                {
-                    if (LastImgUrl == null || LastImgUrl != Metadata.GetString("SpotyPieImgUrl"))
-                    {
-                        var id = Metadata.Description.MediaId;
-                        GetLargeImage(NotificationBuilder);
-                        if (id == Metadata.Description.MediaId && NotificationBuilder != null)
-                        {
-                            Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, NotificationBuilder.Build());
-                        }
-                    }
-                });
+                LoadLargeImage();
 
                 SetNotificationPlaybackState(NotificationBuilder);
 
@@ -331,15 +322,55 @@ namespace SpotyPie.Music
             }
         }
 
+        private void LoadLargeImage()
+        {
+            //Task.Run(() =>
+            //{
+            //    if (LastImgUrl == null || LastImgUrl != Metadata.GetString("SpotyPieImgUrl"))
+            //    {
+            //        var id = Metadata.Description.MediaId;
+            //        GetLargeImage(NotificationBuilder);
+            //        if (id == Metadata.Description.MediaId && NotificationBuilder != null)
+            //        {
+            //            Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, NotificationBuilder.Build());
+            //        }
+            //    }
+            //});
+        }
+
+        private void UpdateMetadata(Songs song)
+        {
+            var currentSong = song;
+            if (currentSong == null)
+            {
+                Metadata = null;
+            }
+            else if(Metadata == null || Metadata.Description.MediaId != currentSong.Id.ToString())
+            {
+                Metadata = new MediaMetadataCompat.Builder()
+                    .PutString(MediaMetadataCompat.MetadataKeyMediaId, currentSong.Id.ToString())
+                    .PutString(MediaMetadataCompat.MetadataKeyAlbum, currentSong.AlbumName)
+                    .PutString(MediaMetadataCompat.MetadataKeyArtist, currentSong.ArtistName)
+                    .PutLong(MediaMetadataCompat.MetadataKeyDuration, currentSong.DurationMs)
+                    .PutString(MediaMetadataCompat.MetadataKeyGenre, "Rock")
+                    .PutString(MediaMetadataCompat.MetadataKeyAlbumArtUri, currentSong.MediumImage)
+                    .PutString(MediaMetadataCompat.MetadataKeyTitle, currentSong.Name)
+                    .PutLong(MediaMetadataCompat.MetadataKeyTrackNumber, currentSong.TrackNumber)
+                    .PutLong(MediaMetadataCompat.MetadataKeyNumTracks, 10)
+                    .PutLong(MediaMetadataCompat.MetadataKeyDiscNumber, currentSong.DiscNumber)
+                    .PutString("SpotyPieImgUrl", currentSong.MediumImage)
+                    .Build();
+            }
+        }
+
         public void GetLargeImage(NotificationCompat.Builder builder)
         {
-            RestClient client = new RestClient(new Uri(Metadata.GetString("SpotyPieImgUrl")));
-            RestRequest request = new RestRequest(Method.GET);
-            //byte[] image = client.DownloadData(request, false);
-            //if (image.Length > 1000)
-            //{
-                //builder.SetLargeIcon(BitmapFactory.DecodeByteArray(image, 0, image.Length));
-            //}
+            _client.BaseUrl = new Uri(Metadata.GetString("SpotyPieImgUrl"));
+            byte[] image = _client.DownloadData(request, false);
+            if (image.Length > 1000)
+            {
+                builder.SetLargeIcon(BitmapFactory.DecodeByteArray(image, 0, image.Length));
+            }
         }
 
         void SetupNotificationButtons(NotificationCompat.Builder builder)
