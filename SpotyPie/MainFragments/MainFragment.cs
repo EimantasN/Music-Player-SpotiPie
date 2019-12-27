@@ -163,7 +163,7 @@ namespace SpotyPie
         private void LoadData(RvList<Album> list, List<Album> albumsData, Action action)
         {
             RunOnUiThread(() => { action?.Invoke(); });
-            list.AddList(albumsData);
+            list?.AddList(albumsData);
         }
 
         #endregion

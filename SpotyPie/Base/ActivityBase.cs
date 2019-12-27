@@ -267,7 +267,7 @@ namespace SpotyPie.Base
             ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
             foreach (var service in manager.GetRunningServices(int.MaxValue))
             {
-                if (serviceMusic.Name.Equals(service.Service.ClassName))
+                if (service.Service.ClassName.Contains(serviceMusic.Name))
                 {
                     return;
                 }
