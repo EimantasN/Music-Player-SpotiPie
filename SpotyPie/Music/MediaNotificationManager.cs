@@ -11,6 +11,7 @@ using NotificationCompatMusic = Android.Support.V4.Media.App.NotificationCompat;
 using RestSharp;
 using SpotyPie.Music.Manager;
 using Mobile_Api.Models;
+using System.Threading.Tasks;
 
 namespace SpotyPie.Music
 {
@@ -104,6 +105,11 @@ namespace SpotyPie.Music
             SPMediaControllerCallback.OnPlaybackStateChangedImpl = (state) =>
             {
                 playbackState = state;
+                var notification = CreateNotification(SongManager.Song);
+                if (notification != null)
+                {
+                    NotificationManager.Notify(NotificationId, notification);
+                }
             };
 
             SPMediaControllerCallback.OnMetadataChangedImpl = (meta) =>
@@ -324,18 +330,27 @@ namespace SpotyPie.Music
 
         private void LoadLargeImage()
         {
-            //Task.Run(() =>
-            //{
-            //    if (LastImgUrl == null || LastImgUrl != Metadata.GetString("SpotyPieImgUrl"))
-            //    {
-            //        var id = Metadata.Description.MediaId;
-            //        GetLargeImage(NotificationBuilder);
-            //        if (id == Metadata.Description.MediaId && NotificationBuilder != null)
-            //        {
-            //            Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, NotificationBuilder.Build());
-            //        }
-            //    }
-            //});
+            var id = Metadata.Description.MediaId;
+            if (LastImgUrl == null || LastImgUrl != Metadata.GetString("SpotyPieImgUrl"))
+            {
+                LastImgUrl = Metadata.GetString("SpotyPieImgUrl");
+                Task.Run(() =>
+                {
+                    GetLargeImage(NotificationBuilder);
+                    if (id == Metadata.Description.MediaId && NotificationBuilder != null)
+                    {
+                        Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, NotificationBuilder.Build());
+                    }
+                });
+            }
+            else if (LastImg != null)
+            {
+                NotificationBuilder.SetLargeIcon(LastImg);
+                if (id == Metadata.Description.MediaId && NotificationBuilder != null)
+                {
+                    Android.App.NotificationManager.FromContext(Service.ApplicationContext).Notify(NotificationId, NotificationBuilder.Build());
+                }
+            }
         }
 
         private void UpdateMetadata(Songs song)
@@ -345,7 +360,7 @@ namespace SpotyPie.Music
             {
                 Metadata = null;
             }
-            else if(Metadata == null || Metadata.Description.MediaId != currentSong.Id.ToString())
+            else if (Metadata == null || Metadata.Description.MediaId != currentSong.Id.ToString())
             {
                 Metadata = new MediaMetadataCompat.Builder()
                     .PutString(MediaMetadataCompat.MetadataKeyMediaId, currentSong.Id.ToString())
@@ -363,13 +378,15 @@ namespace SpotyPie.Music
             }
         }
 
+        private Bitmap LastImg;
         public void GetLargeImage(NotificationCompat.Builder builder)
         {
             _client.BaseUrl = new Uri(Metadata.GetString("SpotyPieImgUrl"));
             byte[] image = _client.DownloadData(request, false);
             if (image.Length > 1000)
             {
-                builder.SetLargeIcon(BitmapFactory.DecodeByteArray(image, 0, image.Length));
+                LastImg = BitmapFactory.DecodeByteArray(image, 0, image.Length);
+                builder.SetLargeIcon(LastImg);
             }
         }
 
@@ -386,13 +403,13 @@ namespace SpotyPie.Music
             {
                 builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_pause_black_36, "Pause", PauseIntent));
             }
-            else if (playbackState.State == PlaybackStateCompat.StateBuffering)
+            else if (playbackState.State == PlaybackStateCompat.StatePaused)
             {
-                builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_loop_black_18, "Loading", null));
+                builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_play_arrow_black_36, "Play", PlayIntent));
             }
             else
             {
-                builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_play_arrow_black_36, "Play", PlayIntent));
+                builder.AddAction(new NotificationCompat.Action(Resource.Drawable.baseline_loop_black_18, "Loading", null));
             }
 
             //NEXT SONG BUTTON
