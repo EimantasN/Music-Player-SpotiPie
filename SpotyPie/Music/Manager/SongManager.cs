@@ -99,6 +99,22 @@ namespace SpotyPie.Music.Manager
             }
         }
 
+        public static void Play(Songs song)
+        {
+            SetPlayState(PlayState.Loading);
+            var searchIndex = SongQueue.FindIndex(x => x.Id == song.Id);
+            if (searchIndex >= 0 && searchIndex < SongQueue.Count)
+            {
+                if (SongQueue[searchIndex] != null)
+                {
+                    SongHandler?.Invoke(SongQueue[searchIndex]);
+                    SongId = SongQueue[searchIndex].Id;
+                    Index = searchIndex;
+                    _serviceConnection.PlayerPlay();
+                }
+            }
+        }
+
         public static void Pause()
         {
             _playState = PlayState.Stopeed;
@@ -117,7 +133,7 @@ namespace SpotyPie.Music.Manager
                 return false;
                 //Load next song from WS
             }
-            else if (Index >= 0 && Index + 1 < SongQueue.Count)
+            else if (Index >= 0)
             {
                 if (SongQueue[Index + 1] != null)
                 {

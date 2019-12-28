@@ -134,7 +134,7 @@ namespace SpotyPie
 
         #region Library
 
-        public async Task GetAll<T>(RvList<T> RvList, Action action, RvType type) where T : IBaseInterface<T>
+        public async Task GetAll<T>(ThreadSafeRvList<T> RvList, Action action, RvType type) where T : IBaseInterface<T>
         {
                 List<T> AlbumsData = new List<T>() { default(T) };
                 RvList.AddList(AlbumsData);

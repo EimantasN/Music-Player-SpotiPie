@@ -294,7 +294,7 @@ namespace SpotyPie
             await SearchBaseAsync<Artist>(RvBaseArtist.GetData(), ArtistContainer, query, SongLimit, RvType.ArtistGrid);
         }
 
-        public async Task SearchBaseAsync<T>(RvList<T> RvList, TextView Container, string query, int limit, RvType type) where T : IBaseInterface<T>
+        public async Task SearchBaseAsync<T>(ThreadSafeRvList<T> RvList, TextView Container, string query, int limit, RvType type) where T : IBaseInterface<T>
         {
             try
             {

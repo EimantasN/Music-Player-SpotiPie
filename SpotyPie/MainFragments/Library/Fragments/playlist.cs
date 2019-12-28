@@ -10,7 +10,7 @@ namespace SpotyPie.Library.Fragments
     public class PlaylistFragment : FragmentBase
     {
         private List<Playlist> PlaylistLocal;
-        private RvList<Playlist> PlaylistsData;
+        private ThreadSafeRvList<Playlist> PlaylistsData;
         //private RecyclerView.LayoutManager PlaylistSongsLayoutManager;
         //private RecyclerView.Adapter PlaylistSongsAdapter;
         //private RecyclerView PlaylistsSongsRecyclerView;

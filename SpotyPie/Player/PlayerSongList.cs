@@ -1,15 +1,14 @@
-﻿using Android.Support.Constraints;
-using Android.Views;
-using Android.Widget;
+﻿using Android.Widget;
 using Mobile_Api.Models;
 using Realms;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.Music.Manager;
 using SpotyPie.RecycleView;
+using SpotyPie.RecycleView.Adapters;
+using SpotyPie.RecycleView.Views;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using MusicList = Mobile_Api.Models.Realm.Music;
 
 namespace SpotyPie.Player
@@ -20,61 +19,64 @@ namespace SpotyPie.Player
 
         protected override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
-        private BaseRecycleView<Songs> RvData { get; set; }
+        private SongListAdapter SongsAdapter { get; set; }
 
-        public override int GetParentView()
-        {
-            return Resource.Id.innerWrapper;
-        }
+        private SpotyPieRecycleView Rv { get; set; }
 
         protected override void InitView()
         {
-            SongManager.SongListHandler += OnSongListChange;
-        }
-
-        public void OnSongListChange(List<Songs> songs)
-        {
-            RvData?.GetData()?.AddList(songs);
-        }
-
-        public void Update(List<Songs> songs = null)
-        {
-            if (songs != null)
-                RvData?.GetData()?.AddList(songs);
-            else
-                RvData?.GetData()?.AddList(SongManager.SongQueue);
+            SongsAdapter = new SongListAdapter().SetInitSongs(SongManager.SongQueue);
+            Rv = new SpotyPieRecycleView(this, Resource.Id.song_list)
+                .Setup(RecycleView.Enums.LayoutManagers.Linear_vertical)
+                .DisableScroolNested()
+                .SetAdapter(SongsAdapter);
         }
 
         public override void ForceUpdate()
         {
-            if (RvData == null)
+            if (SongsAdapter == null)
             {
-                RvData = new BaseRecycleView<Songs>(this, Resource.Id.song_list);
-                RvData.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical,
-                    new List<Action>(){
-                        () => { LoadFragmentInner(Enums.Activitys.Player.SongDetails, screen: LayoutScreenState.FullScreen); },
-                        () => { GetState().SetSong(RvData.GetData().GetList() as List<Songs>, -1); }
-                    });
-                RvData.DisableScroolNested();
+                SongsAdapter = new SongListAdapter().SetInitSongs(SongManager.SongQueue);
             }
-            Update();
-        }
 
-        private void Songs_CollectionChanged(IRealmCollection<MusicList> songList, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (RvData != null)
+            SongsAdapter.OnSongClick = (song) =>
             {
-                Update();
-            }
+                SongManager.Play(song);
+                SongsAdapter.NotifyDataSetChanged();
+            };
+
+            SongsAdapter.OnSongOptionClick = (song) =>
+            {
+                Toast.MakeText(this.Context, "OnSongOptionClick", ToastLength.Long).Show();
+            };
+
+            SongManager.SongListHandler += OnSongListChange;
         }
 
         public override void ReleaseData()
         {
-            if (RvData != null)
+            if (SongsAdapter != null)
             {
-                RvData.Dispose();
-                RvData = null;
+                SongsAdapter.Release();
+                SongsAdapter.Dispose();
+                SongsAdapter = null;
             }
+
+            SongManager.SongListHandler -= OnSongListChange;
+        }
+
+        public void OnSongListChange(List<Songs> songs)
+        {
+            SongsAdapter?.AddList(songs);
+        }
+
+        public void LoadSongOptionsFragment()
+        {
+            LoadFragmentInner(Enums.Activitys.Player.SongDetails, screen: LayoutScreenState.FullScreen);
+        }
+
+        public void SetSongActive()
+        {
         }
 
         public override void LoadFragment(dynamic switcher)
@@ -85,6 +87,11 @@ namespace SpotyPie.Player
         public bool CheckForLayout()
         {
             return true;
+        }
+
+        public override int GetParentView()
+        {
+            return Resource.Id.innerWrapper;
         }
     }
 }

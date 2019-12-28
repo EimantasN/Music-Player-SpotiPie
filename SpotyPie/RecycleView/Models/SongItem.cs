@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.Content.Res;
-using Android.Support.Design.Widget;
+﻿using Android.Content.Res;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
-using SpotyPie.Music.Helpers;
 using SpotyPie.Music.Manager;
+using System;
 
 namespace SpotyPie.RecycleView.Models
 {
     public class SongItem : RecyclerView.ViewHolder
     {
-        private bool Disposed { get; set; }
+        public Action<Songs> OnSongClickAction { get; set; }
 
-        public View EmptyTimeView { get; set; }
+        public Action<Songs> OnSongOptionClickAction { get; set; }
 
-        public int SongId { get; set; }
+        private Songs Song { get; set; }
 
-        public List<Action> Actions { get; set; }
+        public View SongView { get; set; }
 
         public ImageView SmallIcon { get; set; }
 
@@ -29,51 +26,34 @@ namespace SpotyPie.RecycleView.Models
 
         public ImageButton Options { get; set; }
 
-        public SongItem(View view, ViewGroup parent, List<Action> actions) : base(view)
+        public SongItem(View view, ViewGroup parent) : base(view)
         {
-            EmptyTimeView = view;
-
+            SongView = view;
             Title = view.FindViewById<TextView>(Resource.Id.Title);
             SubTitile = view.FindViewById<TextView>(Resource.Id.subtitle);
             Options = view.FindViewById<ImageButton>(Resource.Id.option);
             SmallIcon = view.FindViewById<ImageView>(Resource.Id.small_img);
 
+            SongView.Click += OnSongClick;
+            Options.Click += OnSongOptionClick;
+
             IsRecyclable = true;
-
-            if (actions != null)
-            {
-                Actions = actions;
-                EmptyTimeView.Click += EmptyTimeView_Click;
-                Options.Click += Options_Click1;
-            }
         }
 
-        private void EmptyTimeView_Click(object sender, EventArgs e)
+        private void OnSongOptionClick(object sender, EventArgs e)
         {
-            Actions[1]?.Invoke();
+            OnSongOptionClickAction?.Invoke(Song);
         }
 
-        private void Options_Click1(object sender, EventArgs e)
+        private void OnSongClick(object sender, EventArgs e)
         {
-            Actions[0]?.Invoke();
+            OnSongClickAction?.Invoke(Song);
         }
 
-        protected override void Dispose(bool disposing)
+        internal void PrepareView(Songs song)
         {
-            if (Actions != null && !Disposed)
-            {
-                Disposed = true;
-                Actions = null;
-                //EmptyTimeView.Click -= EmptyTimeView_Click;
-                //Options.Click -= Options_Click1;
-                base.Dispose(disposing);
-            }
-        }
-
-        internal void PrepareView(Songs t)
-        {
-            SongId = t.Id;
-            if (t.Id == SongManager.SongId)
+            Song = song;
+            if (song.Id == SongManager.SongId)
             {
                 SmallIcon.SetImageResource(Resource.Drawable.music_pause_small);
                 Title.SetTextColor(ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#1db954")));
@@ -85,8 +65,8 @@ namespace SpotyPie.RecycleView.Models
                 Title.SetTextColor(ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#ffffff")));
                 SubTitile.SetTextColor(ColorStateList.ValueOf(Android.Graphics.Color.ParseColor("#ffffff")));
             }
-            Title.Text = t.Name;
-            SubTitile.Text = t.ArtistName;
+            Title.Text = song.Name;
+            SubTitile.Text = song.ArtistName;
         }
     }
 }

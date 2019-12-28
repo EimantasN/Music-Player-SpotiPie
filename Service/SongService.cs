@@ -197,7 +197,7 @@ namespace Services
             {
                 string fileName;
                 string newPath;
-                foreach (var path in System.IO.Directory.EnumerateFiles(EnviromentPath.GetEnviromentPathMusic()))
+                foreach (var path in Directory.EnumerateFiles(EnviromentPath.GetEnviromentPathMusic()))
                 {
                     try
                     {

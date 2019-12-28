@@ -3,17 +3,15 @@ using Android.Support.V7.Util;
 using Android.Support.V7.Widget;
 using Android.Widget;
 using Mobile_Api.Interfaces;
-using SpotyPie.Base;
 using SpotyPie.RecycleView.Helpers;
 
 namespace SpotyPie.RecycleView
 {
     public class RvList<T> where T : IBaseInterface<T>
     {
-        public bool Updating = false;
-        private List<T> mItems;
-        private RecyclerView.Adapter mAdapter;
-        private FragmentBase Activity;
+        private List<T> mItems = new List<T>();
+
+        public RecyclerView.Adapter Adapter { get; set; }
 
         public List<T> GetList()
         {
@@ -22,66 +20,40 @@ namespace SpotyPie.RecycleView
 
         public void Erase()
         {
-            mItems = new List<T>();
-        }
-
-        public RvList(FragmentBase activity)
-        {
-            Activity = activity;
-            mItems = new List<T>();
-        }
-
-        public RecyclerView.Adapter Adapter
-        {
-            get { return mAdapter; }
-            set { mAdapter = value; }
+            mItems.Clear();
         }
 
         public void Clear()
         {
-            Activity?.RunOnUiThread(() =>
-            {
-                Updating = true;
-                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, new List<T>()), false);
+            DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, new List<T>()), false);
 
-                // Overwrite the old data
-                Erase();
-                mItems.AddRange(new List<T>());
-                result.DispatchUpdatesTo(Adapter);
-                Updating = false;
-            });
+            // Overwrite the old data
+            Erase();
+            mItems.AddRange(new List<T>());
+
+            result.DispatchUpdatesTo(Adapter);
         }
 
         public void AddList(List<T> newData)
         {
-            Activity?.RunOnUiThread(() =>
-            {
-                Updating = true;
-                DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, newData), true);
+            DiffUtil.DiffResult result = DiffUtil.CalculateDiff(new RecycleUpdate<T>(mItems, newData), true);
 
-                // Overwrite the old data
-                Erase();
-                mItems.AddRange(newData);
+            // Overwrite the old data
+            Erase();
+            mItems.AddRange(newData);
 
-                // Despatch the updates to your RecyclerAdapter
-                result.DispatchUpdatesTo(Adapter);
-                Updating = false;
-            });
+            // Despatch the updates to your RecyclerAdapter
+            result.DispatchUpdatesTo(Adapter);
         }
 
         public void Add(T item)
         {
-            Activity?.RunOnUiThread(() =>
-            {
-                Updating = true;
-                mItems.Add(item);
+            mItems.Add(item);
 
-                if (Adapter != null)
-                {
-                    Adapter.NotifyItemInserted(Count);
-                }
-                Updating = false;
-            });
+            if (Adapter != null)
+            {
+                Adapter.NotifyItemInserted(Count);
+            }
         }
 
         public void Remove(int position)
@@ -89,10 +61,8 @@ namespace SpotyPie.RecycleView
             if (position < 0 || position > mItems.Count || position > Adapter.ItemCount)
                 return;
 
-            Updating = true;
             mItems.RemoveAt(position);
             Adapter?.NotifyItemRemoved(0);
-            Updating = false;
         }
 
         public T this[int index]

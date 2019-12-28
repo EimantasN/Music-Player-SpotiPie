@@ -115,7 +115,7 @@ namespace SpotyPie
         {
             SearchBase<Artist>(RvRevated.GetData(), await ParentActivity.GetAPIService().GetRelatedAsync(CurrentArtist.Id), ArtistListTitle, RvType.Artist);
         }
-        public void SearchBase<T>(RvList<T> RvList, List<T> DataList, TextView header, RvType type, int limit = int.MaxValue) where T : IBaseInterface<T>
+        public void SearchBase<T>(ThreadSafeRvList<T> RvList, List<T> DataList, TextView header, RvType type, int limit = int.MaxValue) where T : IBaseInterface<T>
         {
             try
             {

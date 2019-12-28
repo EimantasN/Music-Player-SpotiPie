@@ -9,14 +9,14 @@ using System.Collections.Generic;
 
 namespace SpotyPie.RecycleView
 {
-    public class BaseRv<T> : RecyclerView.Adapter where T : IBaseInterface<T>
+    public class BaseRvAdapter<T> : RecyclerView.Adapter where T : IBaseInterface<T>
     {
-        protected RvList<T> Dataset;
+        protected ThreadSafeRvList<T> Dataset;
         protected RecyclerView mRecyclerView;
         protected Context Context;
         protected List<Action> Action;
 
-        public BaseRv(RvList<T> data, RecyclerView recyclerView, Context context, List<Action> actions = null)
+        public BaseRvAdapter(ThreadSafeRvList<T> data, RecyclerView recyclerView, Context context, List<Action> actions = null)
         {
             Dataset = data;
             mRecyclerView = recyclerView;
@@ -92,7 +92,7 @@ namespace SpotyPie.RecycleView
                 case Resource.Layout.big_rv_list:
                     return new BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.big_rv_list, parent, false), parent);
                 case Resource.Layout.song_list_rv:
-                    return new SongItem(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_rv, parent, false), parent, Action);
+                    return new SongItem(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.song_list_rv, parent, false), parent);
                 case Resource.Layout.grid_rv:
                     return new BlockImage(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.grid_rv, parent, false), parent);
                 case Resource.Layout.big_rv_list_one:

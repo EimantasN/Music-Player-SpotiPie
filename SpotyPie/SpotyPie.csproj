@@ -66,20 +66,22 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <EnableProguard>false</EnableProguard>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidSupportedAbis />
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
-    <MandroidI18n>CJK;Mideast;Rare;West</MandroidI18n>
+    <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
     <AndroidHttpClientHandlerType>
     </AndroidHttpClientHandlerType>
-    <AotAssemblies>true</AotAssemblies>
-    <EnableLLVM>true</EnableLLVM>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <AndroidLinkTool>proguard</AndroidLinkTool>
+    <AndroidDexTool>dx</AndroidDexTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -138,9 +140,12 @@
     <Compile Include="Player\ImageAdapter.cs" />
     <Compile Include="Player\Interfaces\IMusicPlayerUiControls.cs" />
     <Compile Include="Player\SpotyPieViewPager.cs" />
+    <Compile Include="RecycleView\Adapters\SongListAdapter.cs" />
     <Compile Include="RecycleView\AttachStateChangeListener.cs" />
     <Compile Include="RecycleView\Models\SongBindList.cs" />
     <Compile Include="RecycleView\Models\SongOption.cs" />
+    <Compile Include="RecycleView\RvList.cs" />
+    <Compile Include="RecycleView\Views\RecycleView.cs" />
     <Compile Include="RecycleView\SpotyPieRv.cs" />
     <Compile Include="Services\Binders\Bluetooth\BthHelper.cs" />
     <Compile Include="Services\Binders\Bluetooth\Enumerators\BlhStatus.cs" />
@@ -161,7 +166,7 @@
     <Compile Include="Services\Helpers\MusicServiceBinder.cs" />
     <Compile Include="Services\LockScreenMusicPlayer.cs" />
     <Compile Include="Services\MediaButtonBroadcastReceiver.cs" />
-    <Compile Include="RecycleView\BaseRv.cs" />
+    <Compile Include="RecycleView\BaseRvAdapter.cs" />
     <Compile Include="Helpers\IFastScrollRecyclerViewAdapter.cs" />
     <Compile Include="Helpers\RecycleViewList.cs" />
     <Compile Include="Helpers\RV_click.cs" />
@@ -192,7 +197,7 @@
     <Compile Include="RecycleView\Models\RvBaseModel.cs" />
     <Compile Include="RecycleView\Models\SongItem.cs" />
     <Compile Include="RecycleView\Models\SongWithImage.cs" />
-    <Compile Include="RecycleView\RvList.cs" />
+    <Compile Include="RecycleView\ThreadSafeRvList.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainFragments\Search.cs" />

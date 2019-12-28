@@ -1,16 +1,13 @@
 ﻿using Android.Support.V4.View;
 using Android.Support.V7.Widget;
-using Microsoft.Win32.SafeHandles;
 using Mobile_Api.Interfaces;
 using Mobile_Api.Models;
 using SpotyPie.Base;
-using SpotyPie.Enums.Activitys;
 using SpotyPie.Helpers;
 using SpotyPie.Music.Manager;
 using SpotyPie.RecycleView.Enums;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace SpotyPie.RecycleView
@@ -25,7 +22,7 @@ namespace SpotyPie.RecycleView
 
         public bool IgnoreClick { get; set; } = false;
 
-        private RvList<T> RvDataset { get; set; }
+        private ThreadSafeRvList<T> RvDataset { get; set; }
         private SpotyPieRv CustomRecyclerView { get; set; }
         private LayoutManagers Manager { get; set; } = LayoutManagers.Unseted;
         private List<Action> CustomActions { get; set; }
@@ -33,12 +30,12 @@ namespace SpotyPie.RecycleView
 
         public BaseRecycleView(FragmentBase activity, int rvId)
         {
-            RvDataset = new RvList<T>(activity);
+            RvDataset = new ThreadSafeRvList<T>(activity);
             this.Activity = activity;
             this.RvId = rvId;
         }
 
-        public RvList<T> Setup(LayoutManagers layout, List<Action> actionsToView = null)
+        public ThreadSafeRvList<T> Setup(LayoutManagers layout, List<Action> actionsToView = null)
         {
             if (actionsToView != null)
             {
@@ -54,12 +51,12 @@ namespace SpotyPie.RecycleView
         {
             CustomRecyclerView = new SpotyPieRv(Activity.GetView().FindViewById<RecyclerView>(RvId));
             SetLayoutManager(layout);
-            CustomRecyclerView.GetRecycleView().SetAdapter(new BaseRv<T>(RvDataset, CustomRecyclerView.GetRecycleView(), Activity.Context, CustomActions));
+            CustomRecyclerView.GetRecycleView().SetAdapter(new BaseRvAdapter<T>(RvDataset, CustomRecyclerView.GetRecycleView(), Activity.Context, CustomActions));
             RvDataset.Adapter = CustomRecyclerView.GetRecycleView().GetAdapter();
             SetOnClick();
         }
 
-        public RvList<T> GetData()
+        public ThreadSafeRvList<T> GetData()
         {
             return RvDataset;
         }

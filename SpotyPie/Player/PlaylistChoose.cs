@@ -156,10 +156,10 @@ namespace SpotyPie.Player
 
         public class PlayListChoose : RecyclerView.Adapter
         {
-            private RvList<Playlist> Dataset;
+            private ThreadSafeRvList<Playlist> Dataset;
             private Context Context;
 
-            public PlayListChoose(RvList<Playlist> data, Context context)
+            public PlayListChoose(ThreadSafeRvList<Playlist> data, Context context)
             {
                 Dataset = data;
                 Context = context;
