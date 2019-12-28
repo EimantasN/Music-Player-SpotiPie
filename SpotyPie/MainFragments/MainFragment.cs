@@ -173,9 +173,9 @@ namespace SpotyPie
             return Resource.Id.parent_view;
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            return;
+            return null;
         }
     }
 }

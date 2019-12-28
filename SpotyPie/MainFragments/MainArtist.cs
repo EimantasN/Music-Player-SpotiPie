@@ -1,15 +1,8 @@
-﻿using Android.App;
-using Android.Support.V7.Widget;
-using Android.Widget;
-using Mobile_Api;
-using Mobile_Api.Models;
-using Mobile_Api.Models.Enums;
+﻿using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.RecycleView;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SpotyPie
 {
@@ -24,11 +17,6 @@ namespace SpotyPie
 
         protected override void InitView()
         {
-        }
-
-        public async Task PopulateData()
-        {
-
         }
 
         public override void ForceUpdate()
@@ -49,9 +37,9 @@ namespace SpotyPie
             throw new NotImplementedException();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

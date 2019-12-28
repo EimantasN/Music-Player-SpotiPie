@@ -3,17 +3,13 @@ using Android.Content;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Views;
-using Android.Widget;
 using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Enums;
-using SpotyPie.Enums.Activitys;
 using SpotyPie.Helpers;
 using SpotyPie.MainFragments;
 using SpotyPie.Music;
-using System;
-using System.Threading.Tasks;
 
 namespace SpotyPie
 {
@@ -57,7 +53,7 @@ namespace SpotyPie
             BottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.NavBot);
 
             BottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
-            LoadFragmentInner(Main.Home, AddToBackButtonStack: false);
+            LoadFragmentInner(FragmentEnum.Home, AddToBackButtonStack: false);
         }
 
         protected override void OnResume()
@@ -85,17 +81,14 @@ namespace SpotyPie
             switch (e.Item.ItemId)
             {
                 case Resource.Id.home:
-                    LoadFragmentInner(Main.Home);
+                    LoadFragmentInner(FragmentEnum.Home);
                     break;
                 case Resource.Id.search:
-                    LoadFragmentInner(Main.Search);
+                    LoadFragmentInner(FragmentEnum.Search);
                     break;
                 case Resource.Id.library:
-                    LoadFragmentInner(Main.Library);
+                    LoadFragmentInner(FragmentEnum.Library);
                     break;
-                //case Resource.Id.performance:
-                //    LoadFragmentInner(Main.Performance);
-                //    break;
             }
         }
 
@@ -121,64 +114,14 @@ namespace SpotyPie
             base.LoadBaseFragment();
         }
 
-        public override void LoadFragment(dynamic switcher, string jsonModel = null)
-        {
-            bool NAvBotVisible = true;
-            switch (switcher)
-            {
-                case Main main:
-                    switch (main)
-                    {
-                        case Main.Home:
-                            if (MainFragment == null)
-                                MainFragment = new MainFragment();
-                            GetFManager().SetCurrentFragment(MainFragment);
-                            break;
-                        case Main.Search:
-                            if (Search == null)
-                                Search = new Search();
-                            GetFManager().SetCurrentFragment(Search);
-
-                            break;
-                        case Main.Library:
-                            if (Library == null) Library = new LibraryFragment();
-                            GetFManager().SetCurrentFragment(Library);
-                            break;
-                        //case Main.Performance:
-                        //    if (Performance == null)
-                        //        Performance = new HostStats();
-                        //    GetFManager().SetCurrentFragment(Performance);
-                        //    break;
-                    }
-                    break;
-                case HomePage home:
-                    switch (home)
-                    {
-                        case HomePage.Album:
-                            if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
-                            GetFManager().SetCurrentFragment(AlbumFragment);
-                            GetFManager().GetCurrentFragment().SendData(jsonModel);
-                            break;
-                        case HomePage.Artist:
-                            if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
-                            GetFManager().SetCurrentFragment(ArtistFragment);
-                            break;
-                        case HomePage.Player:
-                            StartPlayer();
-                            break;
-                    }
-                    break;
-            }
-        }
-
         public void LoadAlbum(Album album)
         {
-            LoadFragmentInner(HomePage.Album, JsonConvert.SerializeObject(album));
+            LoadFragmentInner(FragmentEnum.Album, JsonConvert.SerializeObject(album));
         }
 
         public void LoadArtist(Artist artist)
         {
-            LoadFragmentInner(HomePage.Artist, JsonConvert.SerializeObject(artist));
+            LoadFragmentInner(FragmentEnum.Artist, JsonConvert.SerializeObject(artist));
         }
 
         public override dynamic GetInstance()
@@ -210,6 +153,35 @@ namespace SpotyPie
                         BottomNavigation.Visibility = ViewStates.Visible;
                     }
                     break;
+            }
+        }
+
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
+        {
+            switch (switcher)
+            {
+                case FragmentEnum.Home:
+                    if (MainFragment == null)
+                        MainFragment = new MainFragment();
+                    return MainFragment;
+                case FragmentEnum.Search:
+                    if (Search == null)
+                        Search = new Search();
+                    return Search;
+                case FragmentEnum.Library:
+                    if (Library == null) Library = new LibraryFragment();
+                    return Library;
+                case FragmentEnum.Album:
+                    if (AlbumFragment == null) AlbumFragment = new AlbumFragment();
+                    return AlbumFragment;
+                case FragmentEnum.Artist:
+                    if (ArtistFragment == null) ArtistFragment = new ArtistFragment();
+                    return ArtistFragment;
+                case FragmentEnum.Player:
+                    StartPlayer();
+                    return null;
+                default:
+                    return null;
             }
         }
     }

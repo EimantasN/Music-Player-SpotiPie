@@ -124,9 +124,9 @@ namespace SpotyPie.MainFragments
             return Resource.Id.PlayerContainer;
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-
+            return null;
         }
     }
 }

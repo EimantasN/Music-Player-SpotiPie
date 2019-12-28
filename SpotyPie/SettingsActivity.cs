@@ -340,11 +340,6 @@ namespace SpotyPie
             return devices;
         }
 
-        public override void LoadFragment(dynamic switcher, string jsonModel = null)
-        {
-
-        }
-
         public override dynamic GetInstance()
         {
             return this;
@@ -358,6 +353,11 @@ namespace SpotyPie
         public override void SetScreen(LayoutScreenState screen)
         {
             ShowMessage("SetScreen not implemented");
+        }
+
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
+        {
+            return null;
         }
     }
 }

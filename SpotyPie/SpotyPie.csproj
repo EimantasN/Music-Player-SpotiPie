@@ -90,9 +90,9 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\IAutoFragmentManagement.cs" />
     <Compile Include="Database\Helpers\SettingHelper.cs" />
-    <Compile Include="DataManagement\CurrentSongsManager.cs" />
-    <Compile Include="DataManagement\DataManager.cs" />
+    <Compile Include="Enums\FragmentEnum.cs" />
     <Compile Include="Enums\NavigationColorStates.cs" />
     <Compile Include="HelperFragments\ConnectionLostWithServer.cs" />
     <Compile Include="HelperFragments\NoInternet.cs" />
@@ -106,13 +106,11 @@
     <Compile Include="Base\FragmentBase.cs" />
     <Compile Include="Database\ViewModels\CurrentState.cs" />
     <Compile Include="Database\ViewModels\Settings.cs" />
-    <Compile Include="Enums\Activitys\MainActivity.cs" />
-    <Compile Include="Enums\Activitys\Player.cs" />
     <Compile Include="Enums\Screen.cs" />
     <Compile Include="MainFragments\HostStats.cs" />
     <Compile Include="MainFragments\NowPlayingFragment.cs" />
     <Compile Include="Models\FragmentState.cs" />
-    <Compile Include="Models\CustomFragmetManager.cs" />
+    <Compile Include="Models\SpotyPieFragmetManager.cs" />
     <Compile Include="Models\FragmentTransitions.cs" />
     <Compile Include="Monitoring\SystemInfo.cs" />
     <Compile Include="Music\DelayedStopHandler.cs" />
@@ -208,7 +206,6 @@
     <Compile Include="Services\Interfaces\ServiceCallbacks.cs" />
     <Compile Include="Services\MediaPlayerService.cs" />
     <Compile Include="SettingsActivity.cs" />
-    <Compile Include="SongBinder\Enumerators\BinderFragments.cs" />
     <Compile Include="SongBinder\Fragments\BindIndividualSongFragment.cs" />
     <Compile Include="SongBinder\Fragments\SongBindList.cs" />
     <Compile Include="SongBinder\Fragments\SongDetailsFragment.cs" />

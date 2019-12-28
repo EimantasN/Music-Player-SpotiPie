@@ -10,7 +10,7 @@ namespace SpotyPie
     public class SongOptionsFragment : FragmentBase
     {
         public override int LayoutId { get; set; } = Resource.Layout.song_option_layout;
-        protected override Enums.LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
+        protected override LayoutScreenState ScreenState { get; set; } = LayoutScreenState.Default;
 
         private ImageView SongImage;
         private TextView SongTitle;
@@ -57,9 +57,9 @@ namespace SpotyPie
             throw new System.NotImplementedException();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
     }
 }

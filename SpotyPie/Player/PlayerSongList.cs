@@ -1,15 +1,10 @@
-﻿using Android.Widget;
-using Mobile_Api.Models;
-using Realms;
+﻿using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.Music.Manager;
-using SpotyPie.RecycleView;
 using SpotyPie.RecycleView.Adapters;
 using SpotyPie.RecycleView.Views;
-using System;
 using System.Collections.Generic;
-using MusicList = Mobile_Api.Models.Realm.Music;
 
 namespace SpotyPie.Player
 {
@@ -47,7 +42,7 @@ namespace SpotyPie.Player
 
             SongsAdapter.OnSongOptionClick = (song) =>
             {
-                Toast.MakeText(this.Context, "OnSongOptionClick", ToastLength.Long).Show();
+                LoadSongOptionsFragment(song);
             };
 
             SongManager.SongListHandler += OnSongListChange;
@@ -70,18 +65,24 @@ namespace SpotyPie.Player
             SongsAdapter?.AddList(songs);
         }
 
-        public void LoadSongOptionsFragment()
+        public void LoadSongOptionsFragment(Songs song)
         {
-            LoadFragmentInner(Enums.Activitys.Player.SongDetails, screen: LayoutScreenState.FullScreen);
+            LoadFragmentInner(FragmentEnum.SongDetails, screen: LayoutScreenState.FullScreen);
         }
 
         public void SetSongActive()
         {
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            ParentActivity.FManager.SetCurrentFragment(new SongOptionsFragment());
+            switch (switcher)
+            {
+                case FragmentEnum.SongOptionsFragment:
+                    return new SongOptionsFragment();
+                default:
+                    return null;
+            }
         }
 
         public bool CheckForLayout()

@@ -70,8 +70,9 @@ namespace SpotyPie
             throw new System.NotImplementedException();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
+            return null;
         }
     }
 }

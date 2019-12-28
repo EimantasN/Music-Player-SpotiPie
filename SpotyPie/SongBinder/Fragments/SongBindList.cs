@@ -1,10 +1,8 @@
 ﻿using Mobile_Api.Models;
-using Mobile_Api.Models.Enums;
 using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.RecycleView;
-using SpotyPie.SongBinder.Enumerators;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -31,7 +29,7 @@ namespace SpotyPie.SongBinder.Fragments
                 Songs.Setup(RecycleView.Enums.LayoutManagers.Linear_vertical,
                     new List<Action>()
                     {
-                        () => GetActivity().LoadFragmentInner(BinderFragments.SongDetailsFragment, JsonConvert.SerializeObject(Songs.GetData().GetList()[Songs.LastPosition]))
+                        () => GetActivity().LoadFragmentInner(FragmentEnum.SongDetailsFragment, JsonConvert.SerializeObject(Songs.GetData().GetList()[Songs.LastPosition]))
                     });
             }
             Task.Run(() => LoadUnbindedSongsAsync());
@@ -67,8 +65,9 @@ namespace SpotyPie.SongBinder.Fragments
             throw new NotImplementedException();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
+            return null;
         }
     }
 }

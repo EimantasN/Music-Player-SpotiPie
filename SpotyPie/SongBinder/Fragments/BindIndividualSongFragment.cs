@@ -164,7 +164,7 @@ namespace SpotyPie.SongBinder.Fragments
                     }
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 RunOnUiThread(() =>
                 {
@@ -220,9 +220,9 @@ namespace SpotyPie.SongBinder.Fragments
             throw new NotImplementedException();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

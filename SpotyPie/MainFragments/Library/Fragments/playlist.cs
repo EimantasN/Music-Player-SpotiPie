@@ -36,9 +36,9 @@ namespace SpotyPie.Library.Fragments
             throw new System.NotImplementedException();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
     }
 }

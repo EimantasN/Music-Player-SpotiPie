@@ -30,7 +30,7 @@ namespace SpotyPie.Models
 
         public FragmentState FatherState { get; set; }
 
-        public Action BackButton { get; set; }
+        public Action BackButtonAction { get; set; }
 
         public bool AddToBackStack { get; set; } = true;
 
@@ -56,7 +56,6 @@ namespace SpotyPie.Models
 
         internal void SendData(string jsonModel)
         {
-            this.Fragment.SendData(jsonModel);
             this.JsonData = jsonModel;
         }
     }

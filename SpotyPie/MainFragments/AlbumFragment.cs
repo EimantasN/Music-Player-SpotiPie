@@ -146,16 +146,9 @@ namespace SpotyPie
             return Resource.Id.parent_view;
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            switch (switcher)
-            {
-                case Enums.Activitys.HomePage.Player:
-                    var intent = new Intent(this.Context, typeof(Player.Player));
-                    intent.AddFlags(ActivityFlags.SingleTop);
-                    StartActivity(intent);
-                    return;
-            }
+            return null;
         }
     }
 }

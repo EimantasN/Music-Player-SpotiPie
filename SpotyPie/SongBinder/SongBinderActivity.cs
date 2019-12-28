@@ -2,7 +2,6 @@
 using Android.Widget;
 using SpotyPie.Base;
 using SpotyPie.Enums;
-using SpotyPie.SongBinder.Enumerators;
 
 namespace SpotyPie.SongBinder
 {
@@ -46,26 +45,7 @@ namespace SpotyPie.SongBinder
 
         private void BindSongs_Click(object sender, System.EventArgs e)
         {
-            LoadFragmentInner(BinderFragments.UnBindedSongList);
-        }
-
-        //DO not use this to load fragment
-        public override void LoadFragment(dynamic switcher, string jsonModel = null)
-        {
-            switch (switcher)
-            {
-                case BinderFragments.UnBindedSongList:
-                    GetFManager().SetCurrentFragment(new Fragments.SongBindList());
-                    break;
-                case BinderFragments.SongDetailsFragment:
-                    GetFManager().SetCurrentFragment(new Fragments.SongDetailsFragment());
-                    break;
-                case BinderFragments.BindIndividualSongFragment:
-                    GetFManager().SetCurrentFragment(new Fragments.BindIndividualSongFragment());
-                    break;
-                default:
-                    break;
-            }
+            LoadFragmentInner(FragmentEnum.UnBindedSongList);
         }
 
         public override dynamic GetInstance()
@@ -81,6 +61,21 @@ namespace SpotyPie.SongBinder
         public override void SetScreen(LayoutScreenState screen)
         {
 
+        }
+
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
+        {
+            switch (switcher)
+            {
+                case FragmentEnum.UnBindedSongList:
+                    return new Fragments.SongBindList();
+                case FragmentEnum.SongDetailsFragment:
+                    return new Fragments.SongDetailsFragment();
+                case FragmentEnum.BindIndividualSongFragment:
+                    return new Fragments.BindIndividualSongFragment();
+                default:
+                    return null;
+            }
         }
     }
 }

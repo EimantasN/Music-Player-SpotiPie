@@ -105,7 +105,7 @@ namespace SpotyPie.SongBinder.Fragments
 
         private void Connect_Song_Click(object sender, EventArgs e)
         {
-            ParentActivity?.LoadFragmentInner(Enumerators.BinderFragments.BindIndividualSongFragment, JsonModel);
+            ParentActivity?.LoadFragmentInner(FragmentEnum.BindIndividualSongFragment, JsonModel);
         }
 
         private void LoadInfo()
@@ -141,9 +141,9 @@ namespace SpotyPie.SongBinder.Fragments
             throw new NotImplementedException();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

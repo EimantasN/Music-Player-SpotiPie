@@ -234,7 +234,7 @@ namespace SpotyPie.Player
                         DisableSmoothScrool = false;
                         Pager.SetCurrentItem(SongManager.Index, false);
                     }
-                    else 
+                    else
                     {
                         Pager.SetCurrentItem(SongManager.Index, true);
                     }
@@ -276,16 +276,6 @@ namespace SpotyPie.Player
             }
         }
 
-        public override void LoadFragment(dynamic switcher, string jsonModel = null)
-        {
-            switch (switcher)
-            {
-                case Enums.Activitys.Player.CurrentSongList:
-                    GetFManager().SetCurrentFragment(new PlayerSongList());
-                    return;
-            }
-        }
-
         public override int GetParentView(bool Player = false)
         {
             return Resource.Id.parent_view;
@@ -293,7 +283,7 @@ namespace SpotyPie.Player
 
         private void OnSongListButtonClick(object sender, EventArgs ee)
         {
-            LoadFragmentInner(Enums.Activitys.Player.CurrentSongList, screen: LayoutScreenState.FullScreen);
+            LoadFragmentInner(FragmentEnum.CurrentSongList, screen: LayoutScreenState.FullScreen);
         }
 
         #region Player events
@@ -309,7 +299,7 @@ namespace SpotyPie.Player
 
         private void OnNextSongClick(object sender, EventArgs e)
         {
-            if(SongManager.Next())
+            if (SongManager.Next())
             {
                 OnDurationChange(0);
                 OnPositionChange(0);
@@ -496,5 +486,15 @@ namespace SpotyPie.Player
             }
         }
 
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
+        {
+            switch (switcher)
+            {
+                case FragmentEnum.CurrentSongList:
+                    return new PlayerSongList();
+                default:
+                    return null;
+            }
+        }
     }
 }

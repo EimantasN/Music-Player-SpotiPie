@@ -437,9 +437,9 @@ namespace SpotyPie
             throw new NotImplementedException();
         }
 
-        public override void LoadFragment(dynamic switcher)
+        public override FragmentBase LoadFragment(FragmentEnum switcher)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

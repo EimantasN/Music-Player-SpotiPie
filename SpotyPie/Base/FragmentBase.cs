@@ -1,5 +1,4 @@
-﻿using Android.App;
-using Android.OS;
+﻿using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Views;
@@ -8,15 +7,18 @@ using Mobile_Api.Models;
 using Newtonsoft.Json;
 using SpotyPie.Enums;
 using SpotyPie.Models;
+using SupportFragmentManager = Android.Support.V4.App.FragmentManager;
 using System;
 using System.Collections.Generic;
 using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace SpotyPie.Base
 {
-    public abstract class FragmentBase : SupportFragment
+    public abstract class FragmentBase : SupportFragment, IAutoFragmentManagement
     {
         private static int FrameLayoutId { get; set; } = 1;
+
+        public SupportFragmentManager SupportFragmentManager => ParentActivity?.SupportFragmentManager;
 
         protected abstract Enums.LayoutScreenState ScreenState { get; set; }
 
@@ -103,8 +105,6 @@ namespace SpotyPie.Base
             return GetActivity()?.GetState();
         }
 
-
-
         public SupportFragment GetCurrentFragment()
         {
             return GetActivity().GetInstance().FirstLayerFragment;
@@ -186,136 +186,64 @@ namespace SpotyPie.Base
         {
             if (!string.IsNullOrEmpty(JsonModel))
             {
-                try
-                {
-                    return JsonConvert.DeserializeObject<T>(JsonModel);
-                }
-                catch //Ignored
-                {
-                }
+                return JsonConvert.DeserializeObject<T>(JsonModel);
             }
-            Snackbar snacbar = Snackbar.Make(RootView, "Failed to load song details", Snackbar.LengthLong);
-            snacbar.SetAction("Ok", (view) =>
-            {
-                snacbar.Dismiss();
-                snacbar.Dispose();
-            });
-            snacbar.Show();
             return default(T);
         }
 
-        public void LoadFragmentInner(dynamic switcher, string jsonModel = null, bool AddToBackButtonStack = true, LayoutScreenState screen = LayoutScreenState.Holder)
+        private Stack<FragmentState> GetFHistory()
         {
-            GetActivity().GetFManager().FragmentHistory.Push(new FragmentState());
-            GetActivity().GetFManager().FragmentHistory.Peek().AddToBackStack = AddToBackButtonStack;
-            GetActivity().GetFManager().FragmentHistory.Peek().FatherState = ParentActivity.FManager.CurrentFragmentState;
-            GetActivity().GetFManager().FragmentHistory.Peek().ScreenState = screen;
-
-            if (GetActivity().GetFManager().FragmentHistory.Peek()?.FatherState?.Fragment != null)
-            {
-                GetActivity().GetFManager().CurrentFragmentState?.FatherState?.Fragment.Hide();
-            }
-
-            GetActivity().GetFManager().GetFragmentStack().Push(switcher);
-
-            LoadFragment(switcher);
-
-            if (GetActivity().GetFManager().FragmentHistory?.Peek()?.Fragment == null)
-            {
-                throw new Exception("Fragment not founded");
-            }
-
-            //Can send data to fragment
-            if (!string.IsNullOrEmpty(jsonModel))
-                GetActivity().GetFManager().FragmentHistory?.Peek()?.SendData(jsonModel);
-
-            if (GetActivity().GetFManager().FragmentHistory.Peek().Fragment is Player.Player)
-                GetActivity().GetFManager().FragmentHistory.Peek().LayoutId = GetFragmentViewId(true);
-            else
-                GetActivity().GetFManager().FragmentHistory.Peek().LayoutId = GetFragmentViewId();
-
-            InsertFragment(GetActivity().GetFManager().FragmentHistory.Peek().LayoutId, ParentActivity.GetFManager().FragmentHistory.Peek().Fragment);
-            GetActivity().FManager.FragmentHistory.Peek().BackButton =
-                () =>
-                {
-                    ParentView.RemoveView(FragmentFrame);
-                    FragmentFrame = null;
-                    GetActivity().RemoveCurrentFragment(ChildFragmentManager,
-                        GetActivity().GetFManager().FragmentHistory.Peek().Fragment);
-                };
-
-            SetScreen(screen);
+            return GetActivity()?.GetFManager()?.FragmentHistory;
         }
 
-        public void InsertFragment(int layoutId, FragmentBase fragment)
+        public void LoadFragmentInner(FragmentEnum switcher, string jsonModel = null, bool AddToBackButtonStack = true, LayoutScreenState screen = LayoutScreenState.Holder)
         {
-            if (ChildFragmentManager != null)
-            {
-                var transaction = ChildFragmentManager.BeginTransaction();
-                if (transaction != null)
-                {
-                    FragmentTransitions.SetCustomTransitions(ref transaction, fragment);
-                    transaction.Replace(layoutId, fragment);
-                    //transaction.AddToBackStack(null);
-                    transaction.Commit();
-                }
-            }
+            GetActivity()?.LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
         }
 
-        public abstract void LoadFragment(dynamic switcher);
+        public abstract FragmentBase LoadFragment(FragmentEnum switcher);
 
-        public int GetFragmentViewId(bool isPlayer = false)
+        public int GetFragmentViewId()
         {
-            if (!isPlayer)
+            if (PlayerFrame == null)
             {
-                if (FragmentFrame == null)
-                {
-                    FragmentFrame = new FrameLayout(this.Context);
+                PlayerFrame = new FrameLayout(this.Context);
 
-                    FragmentFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
-                        ConstraintLayout.LayoutParams.MatchParent,
-                        ConstraintLayout.LayoutParams.MatchParent);
+                PlayerFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MatchParent,
+                    ConstraintLayout.LayoutParams.MatchParent);
 
-                    FragmentFrame.Id = GetFragmentId();
+                PlayerFrame.Id = int.MaxValue - 2;
 
-                    GetViewToInsert();
+                GetViewToInsert();
 
-                    ParentView.AddView(FragmentFrame);
+                ParentView.AddView(PlayerFrame);
 
-                    return FragmentFrame.Id;
-                }
-                else
-                    return FragmentFrame.Id;
+                return PlayerFrame.Id;
             }
             else
             {
-                if (PlayerFrame == null)
-                {
-                    PlayerFrame = new FrameLayout(this.Context);
-
-                    PlayerFrame.LayoutParameters = new ConstraintLayout.LayoutParams(
-                        ConstraintLayout.LayoutParams.MatchParent,
-                        ConstraintLayout.LayoutParams.MatchParent);
-
-                    PlayerFrame.Id = int.MaxValue - 2;
-
-                    GetViewToInsert();
-
-                    ParentView.AddView(PlayerFrame);
-
-                    return PlayerFrame.Id;
-                }
-                else
-                {
-                    PlayerFrame.BringToFront();
-                    return PlayerFrame.Id;
-                }
+                PlayerFrame.BringToFront();
+                return PlayerFrame.Id;
             }
         }
 
         public virtual void SetScreen(LayoutScreenState screen)
         {
-            ParentActivity.SetScreen(screen);
+            ParentActivity?.SetScreen(screen);
+        }
+
+        public void RemoveCurrentFragment(SupportFragmentManager supportFragmentManager, FragmentBase fragmentBase)
+        {
+            if (ParentView != null && FragmentFrame != null)
+            {
+                if (fragmentBase != null)
+                {
+                    ParentView.RemoveView(FragmentFrame);
+                    FragmentFrame = null;
+                }
+            }
+            GetActivity().RemoveCurrentFragment(supportFragmentManager, fragmentBase);
         }
     }
 }
