@@ -103,17 +103,17 @@ namespace SpotyPie
 
         public async Task LoadSongs()
         {
-            SearchBase<Songs>(RvSongs.GetData(), await ParentActivity.GetAPIService().GetTopTrackByArtistIdAsync(CurrentArtist.Id), SongListTitle, RvType.SongWithImage, limit: 5);
+            SearchBase<Songs>(RvSongs.GetData(), await GetActivity().GetAPIService().GetTopTrackByArtistIdAsync(CurrentArtist.Id), SongListTitle, RvType.SongWithImage, limit: 5);
         }
 
         public async Task LoadAlbums()
         {
-            SearchBase<Album>(RvAlbums.GetData(), await ParentActivity.GetAPIService().GetArtistAlbumsAsync(CurrentArtist.Id), AlbumListTitle, RvType.AlbumGrid);
+            SearchBase<Album>(RvAlbums.GetData(), await GetActivity().GetAPIService().GetArtistAlbumsAsync(CurrentArtist.Id), AlbumListTitle, RvType.AlbumGrid);
         }
 
         public async Task LoadRelatedArtists()
         {
-            SearchBase<Artist>(RvRevated.GetData(), await ParentActivity.GetAPIService().GetRelatedAsync(CurrentArtist.Id), ArtistListTitle, RvType.Artist);
+            SearchBase<Artist>(RvRevated.GetData(), await GetActivity().GetAPIService().GetRelatedAsync(CurrentArtist.Id), ArtistListTitle, RvType.Artist);
         }
         public void SearchBase<T>(ThreadSafeRvList<T> RvList, List<T> DataList, TextView header, RvType type, int limit = int.MaxValue) where T : IBaseInterface<T>
         {

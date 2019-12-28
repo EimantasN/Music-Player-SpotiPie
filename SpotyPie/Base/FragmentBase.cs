@@ -1,6 +1,5 @@
 ﻿using Android.OS;
 using Android.Support.Constraints;
-using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
 using Mobile_Api.Models;
@@ -18,13 +17,15 @@ namespace SpotyPie.Base
     {
         private static int FrameLayoutId { get; set; } = 1;
 
-        public SupportFragmentManager SupportFragmentManager => ParentActivity?.SupportFragmentManager;
+        public SupportFragmentManager SupportFragmentManager => ChildFragmentManager;
 
-        protected abstract Enums.LayoutScreenState ScreenState { get; set; }
+        protected abstract LayoutScreenState ScreenState { get; set; }
 
         public virtual NavigationColorState NavigationBtnColorState { get; set; } = NavigationColorState.Default;
 
         public abstract int LayoutId { get; set; }
+
+        public SpotyPieFragmetManager FManager { get; set; }
 
         private ViewGroup ParentView { get; set; }
 
@@ -34,7 +35,7 @@ namespace SpotyPie.Base
 
         protected View RootView;
 
-        protected ActivityBase ParentActivity;
+        protected ActivityBase ParentActivity { get; private set; }
 
         public FrameLayout FragmentFrame;
 
@@ -77,7 +78,6 @@ namespace SpotyPie.Base
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             RootView = inflater.Inflate(GetLayout(), container, false);
-            ParentActivity = (ActivityBase)Activity;
             InitView();
             return RootView;
         }
@@ -103,11 +103,6 @@ namespace SpotyPie.Base
         public Current_state GetState()
         {
             return GetActivity()?.GetState();
-        }
-
-        public SupportFragment GetCurrentFragment()
-        {
-            return GetActivity().GetInstance().FirstLayerFragment;
         }
 
         public API GetAPIService()
@@ -191,14 +186,24 @@ namespace SpotyPie.Base
             return default(T);
         }
 
-        private Stack<FragmentState> GetFHistory()
+        public SpotyPieFragmetManager GetFManager()
         {
-            return GetActivity()?.GetFManager()?.FragmentHistory;
+            if (FManager == null)
+                FManager = new SpotyPieFragmetManager(this);
+
+            return FManager;
         }
 
-        public void LoadFragmentInner(FragmentEnum switcher, string jsonModel = null, bool AddToBackButtonStack = true, LayoutScreenState screen = LayoutScreenState.Holder)
+        public void LoadFragmentInner(FragmentEnum switcher, FragmentScope scope = FragmentScope.Activity, string jsonModel = null, bool AddToBackButtonStack = true, LayoutScreenState screen = LayoutScreenState.Holder)
         {
-            GetActivity()?.LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
+            if (scope == FragmentScope.Activity)
+            {
+                GetActivity()?.LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
+            }
+            else
+            {
+                GetFManager().LoadFragmentInner(switcher, jsonModel, AddToBackButtonStack, screen);
+            }
         }
 
         public abstract FragmentBase LoadFragment(FragmentEnum switcher);
@@ -230,7 +235,7 @@ namespace SpotyPie.Base
 
         public virtual void SetScreen(LayoutScreenState screen)
         {
-            ParentActivity?.SetScreen(screen);
+            GetActivity()?.SetScreen(screen);
         }
 
         public void RemoveCurrentFragment(SupportFragmentManager supportFragmentManager, FragmentBase fragmentBase)

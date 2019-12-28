@@ -1,4 +1,5 @@
 ﻿using Mobile_Api.Models;
+using Newtonsoft.Json;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.Music.Manager;
@@ -46,6 +47,7 @@ namespace SpotyPie.Player
             };
 
             SongManager.SongListHandler += OnSongListChange;
+            SongManager.SongHandler += OnSongChange;
         }
 
         public override void ReleaseData()
@@ -58,6 +60,12 @@ namespace SpotyPie.Player
             }
 
             SongManager.SongListHandler -= OnSongListChange;
+            SongManager.SongHandler -= OnSongChange;
+        }
+
+        private void OnSongChange(Songs song)
+        {
+            SongsAdapter?.NotifyDataSetChanged();
         }
 
         public void OnSongListChange(List<Songs> songs)
@@ -67,7 +75,12 @@ namespace SpotyPie.Player
 
         public void LoadSongOptionsFragment(Songs song)
         {
-            LoadFragmentInner(FragmentEnum.SongDetails, screen: LayoutScreenState.FullScreen);
+            LoadFragmentInner(
+                switcher: FragmentEnum.SongOptionsFragment, 
+                scope: FragmentScope.Fragment,
+                jsonModel: JsonConvert.SerializeObject(song), 
+                screen: LayoutScreenState.FullScreen
+            );
         }
 
         public void SetSongActive()
@@ -83,11 +96,6 @@ namespace SpotyPie.Player
                 default:
                     return null;
             }
-        }
-
-        public bool CheckForLayout()
-        {
-            return true;
         }
 
         public override int GetParentView()

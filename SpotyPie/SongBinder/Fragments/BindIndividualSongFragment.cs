@@ -127,7 +127,7 @@ namespace SpotyPie.SongBinder.Fragments
         {
             try
             {
-                var songs = await ParentActivity?.GetAPIService().GetSongToBind(
+                var songs = await GetActivity()?.GetAPIService().GetSongToBind(
                     SongText.Text,
                     SongCof.Progress,
                     AlbumText.Text,

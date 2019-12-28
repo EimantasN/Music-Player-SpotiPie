@@ -14,24 +14,11 @@ namespace SpotyPie.Models
 
         public Stack<FragmentState> FragmentHistory { get; } = new Stack<FragmentState>();
 
-        public Stack<FragmentEnum> FragmentStack { get; } = new Stack<FragmentEnum>();
-
-        public Stack<Action> FragmentBackBtn { get; } = new Stack<Action>();
-
         private bool Loading { get; set; } = false;
 
         public SpotyPieFragmetManager(IAutoFragmentManagement host)
         {
             Host = host;
-        }
-
-        public bool CheckFragments()
-        {
-            if (FragmentStack == null || FragmentStack.Count <= 1)
-                return true;
-
-            FragmentEnum fragmentState = FragmentStack.Pop();
-            return false;
         }
 
         //TODO Investigate
@@ -47,8 +34,6 @@ namespace SpotyPie.Models
             return FragmentHistory?.Peek()?.Fragment;
         }
 
-
-
         public void LoadFragmentInner(FragmentEnum switcher, string jsonModel = null, bool AddToBackButtonStack = true, LayoutScreenState screen = LayoutScreenState.Holder)
         {
             try
@@ -61,7 +46,7 @@ namespace SpotyPie.Models
                 if (FragmentHistory == null)
                     return;
 
-                FragmentState newFState = FormatFragmentState(AddToBackButtonStack, screen, jsonModel);
+                FragmentState newFState = FormatFragmentState(switcher, AddToBackButtonStack, screen, jsonModel);
 
                 //Custom Fragment Load Logic
                 FragmentBase fragment = Host.LoadFragment(switcher);
@@ -78,9 +63,9 @@ namespace SpotyPie.Models
                 {
                     Toast.MakeText(
                         Host.Context,
-                        $"Provider LoadFragment Implementation For {switcher.ToString()}",
+                        $"Provide LoadFragment Implementation For {switcher.ToString()}",
                         ToastLength.Long
-                        ).Show();
+                    ).Show();
 
                     return;
                 }
@@ -88,18 +73,28 @@ namespace SpotyPie.Models
                 if (InsertFragment(newFState.LayoutId, newFState.Fragment))
                 {
                     FragmentHistory.Push(newFState);
-                    FragmentStack.Push(switcher);
-                    newFState.BackButtonAction =
-                        () =>
-                        {
-                            Host.RemoveCurrentFragment(Host.SupportFragmentManager, newFState.Fragment);
-                        };
+                    newFState.BackButtonAction = () =>
+                    {
+                        Host.RemoveCurrentFragment(Host.SupportFragmentManager, newFState.Fragment);
+                    };
                     Host.SetScreen(screen);
                 }
+                else
+                {
+                    Toast.MakeText(
+                            Host.Context,
+                            $"Failed To Insert Fragment {switcher.ToString()}",
+                            ToastLength.Long
+                    ).Show();
+                }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-
+                Toast.MakeText(
+                    Host.Context,
+                    $"Exeption Loading Fragment {switcher.ToString()}",
+                    ToastLength.Long
+                    ).Show();
             }
             finally
             {
@@ -107,15 +102,16 @@ namespace SpotyPie.Models
             }
         }
 
-        private FragmentState FormatFragmentState(bool AddToBackButtonStack, LayoutScreenState screen, string json)
+        private FragmentState FormatFragmentState(FragmentEnum fragmentEnum, bool AddToBackButtonStack, LayoutScreenState screen, string json)
         {
             FragmentState state = new FragmentState();
             state.AddToBackStack = AddToBackButtonStack;
             state.FatherState = CurrentFragmentState;
             state.ScreenState = screen;
+            state.FragmentEnum = fragmentEnum;
 
             //Hide father fragment if exists
-            state.FatherState?.Fragment?.Hide();
+            //state.FatherState?.Fragment?.Hide();
 
             //Can send data to fragment
             if (!string.IsNullOrEmpty(json))
@@ -151,7 +147,7 @@ namespace SpotyPie.Models
             }
         }
 
-        public bool CheckBackButton()
+        public bool OnBackButtonPressed()
         {
             if (FragmentHistory == null || FragmentHistory.Count == 0)
             {
@@ -159,25 +155,35 @@ namespace SpotyPie.Models
             }
 
             FragmentState state = FragmentHistory.Peek();
-            state.BackButtonAction?.Invoke();
+            if (state.Fragment != null && state.Fragment.FManager == null || state.Fragment.FManager.OnBackButtonPressed())
+            {
+                if (state.FragmentEnum == FragmentEnum.Home)
+                {
+                    return true;
+                }
 
-            FragmentHistory.Pop();
+                state.BackButtonAction?.Invoke();
 
-            if (FragmentHistory.Count != 0)
-                Host.SetScreen(FragmentHistory.Peek().ScreenState);
+                FragmentHistory.Pop();
 
-            if (FragmentHistory.Count != 0 && state.LayoutId == FragmentHistory.Peek().LayoutId)
-                InsertFragment(FragmentHistory.Peek().LayoutId, FragmentHistory.Peek().Fragment);
+                if (FragmentHistory.Count != 0)
+                    Host.SetScreen(FragmentHistory.Peek().ScreenState);
 
-            return false;
+                if (FragmentHistory.Count != 0 && state.LayoutId == FragmentHistory.Peek().LayoutId)
+                    InsertFragment(FragmentHistory.Peek().LayoutId, FragmentHistory.Peek().Fragment);
+
+                return false;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Reset()
         {
             CurrentFragmentState = null;
             FragmentHistory.Clear();
-            FragmentStack.Clear();
-            FragmentBackBtn.Clear();
         }
     }
 }

@@ -18,9 +18,7 @@ namespace SpotyPie.Models
 
         public string JsonData { get; set; }
 
-        public dynamic FragmentEnum { get; set; }
-
-        public dynamic FatherFragmentEnum { get; set; }
+        public FragmentEnum FragmentEnum { get; set; }
 
         public StateStatus State { get; set; } = StateStatus.Stateful;
 
@@ -47,11 +45,6 @@ namespace SpotyPie.Models
         public void SetCurrentFragment(dynamic fragment)
         {
             this.FragmentEnum = fragment;
-        }
-
-        public void SerFatherFragment(dynamic fatherFragment)
-        {
-            this.FatherFragmentEnum = fatherFragment;
         }
 
         internal void SendData(string jsonModel)

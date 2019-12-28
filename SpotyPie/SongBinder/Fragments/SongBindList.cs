@@ -39,7 +39,7 @@ namespace SpotyPie.SongBinder.Fragments
         {
             try
             {
-                List<SongTag> unbindedSongs = await ParentActivity.GetAPIService().GetUnbindedSongList();
+                List<SongTag> unbindedSongs = await GetActivity().GetAPIService().GetUnbindedSongList();
                 if (unbindedSongs != null && unbindedSongs.Count != 0)
                 {
                     Songs?.GetData()?.AddList(unbindedSongs);

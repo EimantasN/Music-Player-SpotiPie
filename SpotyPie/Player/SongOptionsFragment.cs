@@ -3,6 +3,7 @@ using Mobile_Api.Models;
 using SpotyPie.Base;
 using SpotyPie.Enums;
 using SpotyPie.RecycleView;
+using Square.Picasso;
 using System.Collections.Generic;
 
 namespace SpotyPie
@@ -27,6 +28,15 @@ namespace SpotyPie
 
         public override void ForceUpdate()
         {
+            Songs song = GetModel<Songs>();
+
+            if (song != null)
+            {
+                Picasso.With(Context).Load(song.MediumImage).Into(SongImage);
+                SongTitle.Text = song.Name;
+                SongArtist.Text = song.ArtistName;
+            }
+
             if (RvData == null)
             {
                 RvData = new BaseRecycleView<SongOptions>(this, Resource.Id.song_option_rv);

@@ -93,6 +93,7 @@
     <Compile Include="Base\IAutoFragmentManagement.cs" />
     <Compile Include="Database\Helpers\SettingHelper.cs" />
     <Compile Include="Enums\FragmentEnum.cs" />
+    <Compile Include="Enums\FragmentScope.cs" />
     <Compile Include="Enums\NavigationColorStates.cs" />
     <Compile Include="HelperFragments\ConnectionLostWithServer.cs" />
     <Compile Include="HelperFragments\NoInternet.cs" />

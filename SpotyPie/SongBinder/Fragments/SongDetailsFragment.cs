@@ -105,7 +105,7 @@ namespace SpotyPie.SongBinder.Fragments
 
         private void Connect_Song_Click(object sender, EventArgs e)
         {
-            ParentActivity?.LoadFragmentInner(FragmentEnum.BindIndividualSongFragment, JsonModel);
+            GetActivity()?.LoadFragmentInner(FragmentEnum.BindIndividualSongFragment, JsonModel);
         }
 
         private void LoadInfo()

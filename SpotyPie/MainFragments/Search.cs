@@ -298,7 +298,7 @@ namespace SpotyPie
         {
             try
             {
-                List<T> DataList = await ParentActivity.GetAPIService().SearchAsync<T>(query);
+                List<T> DataList = await GetActivity().GetAPIService().SearchAsync<T>(query);
                 if (DataList != null && DataList.Count > 0)
                 {
                     if (Container.Visibility == ViewStates.Gone)

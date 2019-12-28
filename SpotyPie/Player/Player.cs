@@ -492,6 +492,8 @@ namespace SpotyPie.Player
             {
                 case FragmentEnum.CurrentSongList:
                     return new PlayerSongList();
+                case FragmentEnum.SongOptionsFragment:
+                    return new SongOptionsFragment();
                 default:
                     return null;
             }

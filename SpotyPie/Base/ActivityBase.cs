@@ -102,7 +102,7 @@ namespace SpotyPie.Base
 
         public override void OnBackPressed()
         {
-            if (GetFManager().CheckBackButton())
+            if (GetFManager().OnBackButtonPressed())
                 base.OnBackPressed();
         }
 
@@ -189,20 +189,14 @@ namespace SpotyPie.Base
 
         public void RemoveCurrentFragment(SupportFragmentManager fragmentManager, FragmentBase fragment)
         {
-            try
+            if (fragment != null)
             {
-                if (fragment != null)
-                {
-                    fragment?.ReleaseData();
-                    var transaction = fragmentManager?.BeginTransaction();
-                    transaction?.Remove(fragment);
-                    transaction?.Commit();
-                    transaction?.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitExitMask);
-                    transaction = null;
-                }
-            }
-            finally
-            {
+                fragment?.ReleaseData();
+                var transaction = fragmentManager?.BeginTransaction();
+                transaction?.Remove(fragment);
+                transaction?.Commit();
+                transaction?.SetTransition(Android.Support.V4.App.FragmentTransaction.TransitExitMask);
+                transaction = null;
                 fragment = null;
             }
         }
