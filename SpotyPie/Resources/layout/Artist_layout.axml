@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent"
+    android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -130,6 +130,8 @@
                 android:background="#222222"
                 android:gravity="left|bottom"
                 android:paddingTop="25dp"
+                android:paddingStart="16dp"
+                android:paddingLeft="16dp"
                 android:text="Popular songs"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textColor="@android:color/white"

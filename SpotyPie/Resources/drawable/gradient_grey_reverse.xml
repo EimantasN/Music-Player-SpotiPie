@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <gradient
-        android:angle="90"
-        android:startColor="@color/bottomNav"
-        android:centerColor="#6b7373"
-        android:endColor="@color/greylight">
+  <gradient
+      android:angle="90"
+      android:startColor="@color/bottomNav"
+      android:centerColor="@color/BottomNavBarColor"
+      android:endColor="@color/greylight">
 
-    </gradient>
+  </gradient>
 </shape>

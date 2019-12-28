@@ -19,6 +19,7 @@ using MusicList = Mobile_Api.Models.Realm.Music;
 using Android.Content;
 using SpotyPie.Music;
 using SpotyPie.Music.Manager;
+using Android.Graphics;
 
 namespace SpotyPie.Base
 {

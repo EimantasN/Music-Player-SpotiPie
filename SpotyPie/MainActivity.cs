@@ -27,7 +27,7 @@ namespace SpotyPie
 
         private MainFragment MainFragment;
         private Search Search;
-        private HostStats Performance;
+        //private HostStats Performance;
         private LibraryFragment Library;
         private AlbumFragment AlbumFragment;
         private ArtistFragment ArtistFragment;
@@ -93,9 +93,9 @@ namespace SpotyPie
                 case Resource.Id.library:
                     LoadFragmentInner(Main.Library);
                     break;
-                case Resource.Id.performance:
-                    LoadFragmentInner(Main.Performance);
-                    break;
+                //case Resource.Id.performance:
+                //    LoadFragmentInner(Main.Performance);
+                //    break;
             }
         }
 
@@ -144,11 +144,11 @@ namespace SpotyPie
                             if (Library == null) Library = new LibraryFragment();
                             GetFManager().SetCurrentFragment(Library);
                             break;
-                        case Main.Performance:
-                            if (Performance == null)
-                                Performance = new HostStats();
-                            GetFManager().SetCurrentFragment(Performance);
-                            break;
+                        //case Main.Performance:
+                        //    if (Performance == null)
+                        //        Performance = new HostStats();
+                        //    GetFManager().SetCurrentFragment(Performance);
+                        //    break;
                     }
                     break;
                 case HomePage home:

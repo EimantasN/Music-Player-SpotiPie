@@ -4,7 +4,7 @@
   <gradient
       android:angle="270"
       android:startColor="@android:color/transparent"
-      android:centerColor="@android:color/transparent"
+      android:centerColor="@color/BottomNavBarColor"
       android:endColor="@color/BottomNavBarColor">
   </gradient>
 </shape>

@@ -908,6 +908,7 @@
     <AndroidResource Include="Resources\values\font_certs.xml" />
     <AndroidResource Include="Resources\layout\player.xml" />
     <AndroidResource Include="Resources\layout\now_playing_layout.xml" />
+    <AndroidResource Include="Resources\layout\Album_layout.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
