@@ -290,20 +290,14 @@ namespace Services
         {
             Task.Factory.StartNew(() =>
             {
-                try
-                {
-                    if (!Directory.Exists(settings.AudioCachePath))
-                        Directory.CreateDirectory(settings.AudioCachePath);
+                if (!Directory.Exists(settings.AudioCachePath))
+                    Directory.CreateDirectory(settings.AudioCachePath);
 
-                    DirectoryInfo di = new DirectoryInfo(oldDir);
-                    foreach (FileInfo file in di.EnumerateFiles())
-                    {
-                        file.MoveTo(settings.AudioCachePath);
-                        file.Delete();
-                    }
-                }
-                catch (Exception)
+                DirectoryInfo di = new DirectoryInfo(oldDir);
+                foreach (FileInfo file in di.EnumerateFiles())
                 {
+                    file.MoveTo(settings.AudioCachePath);
+                    file.Delete();
                 }
             });
         }
@@ -341,10 +335,10 @@ namespace Services
 
                     if (File.Exists(path))
                     {
-                        _ctx.Update(img);
-                        img.Url = "http://cdn.spotypie.deveim.com/" + filename;
-                        if (_ctx.SaveChanges() == 1)
-                            savedCount++;
+                        //_ctx.Update(img);
+                        //img.Url = "http://cdn.spotypie.deveim.com/" + filename;
+                        //if (_ctx.SaveChanges() == 1)
+                        //    savedCount++;
                     }
                 }
             }
@@ -408,36 +402,6 @@ namespace Services
             catch (Exception ex)
             {
                 return ex.Message;
-            }
-        }
-
-        public void Start()
-        {
-            StartAdding();
-        }
-
-        public void StartAdding()
-        {
-            try
-            {
-                //string[] lines = System.IO.File.ReadAllLines(@"C:\Users\Public\TestFolder\WriteLines2.txt");
-                string artist = System.IO.File.ReadAllText(@"C:\Users\lukas\source\repos\SpotyPie\API\bin\Debug\netcoreapp2.1\Spotify\Artist19data.json");
-                var Artist = JsonConvert.DeserializeObject<Spotify.ArtistRoot>(artist);
-
-                foreach (var file in Directory.EnumerateFiles(@"C:\Users\lukas\source\repos\SpotyPie\API\bin\Debug\netcoreapp2.1\Spotify\JSON\"))
-                {
-                    string albums = System.IO.File.ReadAllText(file);
-                    var Albums = JsonConvert.DeserializeObject<Spotify.AlbumRoot>(albums);
-
-                    InsertArtist(Albums);
-                    UpdateArtisthFullData(Artist);
-                    InsertCopyrights(Albums);
-                    InsertAlbums(Albums);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
             }
         }
 

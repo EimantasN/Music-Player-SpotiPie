@@ -23,13 +23,13 @@ namespace Service
             try
             {
                 //Task.Run(() => Update(id));
-                var album = await _ctx.Artists
+                var artist = await _ctx.Artists
                     .FirstAsync(x => x.Id == id);
 
-                Update(album);
-                if (album == null)
+                await UpdateAsync(artist);
+                if (artist == null)
                     throw new Exception("album with id " + id + " not found");
-                return album;
+                return artist;
             }
             catch (Exception e)
             {
@@ -41,9 +41,8 @@ namespace Service
         {
             try
             {
-                //Task.Run(() => Update(id));
                 var artist = await _ctx.Artists.FirstAsync(x => x.Id == id);
-                Update(artist);
+                await UpdateAsync(artist);
                 if (artist == null)
                     throw new Exception("album with id " + id + " not found");
                 return artist;
@@ -54,14 +53,14 @@ namespace Service
             }
         }
 
-        public void Update(Artist artist)
+        public async Task UpdateAsync(Artist artist)
         {
             try
             {
                 artist.Popularity++;
                 artist.LastActiveTime = DateTime.Now.ToUniversalTime();
                 _ctx.Entry(artist).State = EntityState.Modified;
-                _ctx.SaveChanges();
+                await _ctx.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -91,7 +90,7 @@ namespace Service
                     .AsNoTracking()
                     .OrderByDescending(x => x.LastActiveTime).ThenBy(x => x.Popularity)
                     .OrderByDescending(x => x.LastActiveTime)
-                    .Take(6)
+                    .Take(12)
                     .ToListAsync();
             }
             catch (Exception e)
@@ -107,7 +106,7 @@ namespace Service
                 return await _ctx.Artists
                     .AsNoTracking()
                     .OrderByDescending(x => x.Popularity)
-                    .Take(6)
+                    .Take(12)
                     .ToListAsync();
             }
             catch (Exception e)
@@ -123,7 +122,7 @@ namespace Service
                 return await _ctx.Artists
                         .AsNoTracking()
                         .OrderByDescending(x => x.LastActiveTime)
-                        .Take(6)
+                        .Take(12)
                         .ToListAsync();
             }
             catch (Exception e)
@@ -152,7 +151,10 @@ namespace Service
         {
             try
             {
-                var art = await _ctx.Artists.Include(x => x.Albums).Select(x => new { x.Id, x.Albums }).FirstOrDefaultAsync(x => x.Id == id);
+                var art = await _ctx.Artists
+                    .Include(x => x.Albums)
+                    .Select(x => new { x.Id, x.Albums })
+                    .FirstOrDefaultAsync(x => x.Id == id);
                 return art.Albums;
             }
             catch (Exception e)

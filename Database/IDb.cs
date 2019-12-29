@@ -7,7 +7,6 @@ namespace Database
 {
     public interface IDb
     {
-        void Start();
         bool OpenFile(string path, out FileStream fs);
         Task<string> GetAudioPathById(int id);
         Task<bool> AddAudioToLibrary(string path, string name, Song file);
